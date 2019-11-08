@@ -12,10 +12,9 @@ deps
 ebin/*.beam
 erl_crash.dump
 ora_bench.jar
-ora_bench_bulk_data.txt
+ora_bench_bulk_data.csv
 ora_bench_erlang.properties
 rebar.lock
 rel/example_project
 run_bench_c.sh
 test/bin/*
-/priv/ora_bench_bulk_data.csv
