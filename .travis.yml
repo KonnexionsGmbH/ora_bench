@@ -8,4 +8,5 @@ before_install:
 script:
   - java -version
   - chmod +x *.sh
+  - chmod +x priv/sqlcl/bin/sql
   - ./run_bench.sh
