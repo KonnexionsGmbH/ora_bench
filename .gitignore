@@ -1,6 +1,5 @@
 *.beam
 *.class
-*.csv
 *.log
 *.o
 *.plt
@@ -19,3 +18,4 @@ rebar.lock
 rel/example_project
 run_bench_c.sh
 test/bin/*
+/priv/ora_bench_bulk_data.csv

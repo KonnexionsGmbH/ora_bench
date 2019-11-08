@@ -1,0 +1,126 @@
+benchmark comment;database;module;interface;trial no.;SQL statement;bulk length;bulk size;batch size;action;start day time;end day time;duration
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;1;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 14:56:19.343608900;2019.11.07 14:56:51.613345500;269736600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;1;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 14:56:51.617347200;2019.11.07 14:57:39.032637400;415290200
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;1;;512;100000;1024;trial;2019.11.07 14:56:18.721608600;2019.11.07 14:57:45.079644600;358036000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;2;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 14:57:45.185635600;2019.11.07 14:58:15.225398900;39763300
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;2;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 14:58:15.226392600;2019.11.07 14:58:58.910286300;683893700
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;2;;512;100000;1024;trial;2019.11.07 14:57:45.079644600;2019.11.07 14:59:04.147194000;67549400
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;3;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 14:59:04.238194700;2019.11.07 14:59:33.694282400;456087700
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;3;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 14:59:33.694282400;2019.11.07 15:00:18.118938900;424656500
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;3;;512;100000;1024;trial;2019.11.07 14:59:04.147194000;2019.11.07 15:00:23.125953000;978759000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;4;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 15:00:23.273537500;2019.11.07 15:00:52.921992000;648454500
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;4;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 15:00:52.922991100;2019.11.07 15:01:36.597036200;674045100
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;4;;512;100000;1024;trial;2019.11.07 15:00:23.126945700;2019.11.07 15:01:41.468034000;341088300
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;5;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 15:01:41.535037600;2019.11.07 15:02:10.298642700;763605100
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;5;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 15:02:10.298642700;2019.11.07 15:02:53.659934500;361291800
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;5;;512;100000;1024;trial;2019.11.07 15:01:41.468034000;2019.11.07 15:02:59.328953600;860919600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;6;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 15:02:59.410935500;2019.11.07 15:03:29.317996900;907061400
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;6;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 15:03:29.317996900;2019.11.07 15:04:12.276293900;958297000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;6;;512;100000;1024;trial;2019.11.07 15:02:59.328953600;2019.11.07 15:04:16.900309300;571355700
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;7;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 15:04:16.997294000;2019.11.07 15:04:44.461992100;464698100
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;7;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 15:04:44.461992100;2019.11.07 15:05:29.015791700;553799600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;7;;512;100000;1024;trial;2019.11.07 15:04:16.900309300;2019.11.07 15:05:34.067800900;167491600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;8;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 15:05:34.232791700;2019.11.07 15:06:04.506163400;273371700
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;8;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 15:06:04.506163400;2019.11.07 15:06:48.703313400;197150000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;8;;512;100000;1024;trial;2019.11.07 15:05:34.067800900;2019.11.07 15:06:53.802315600;734514700
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;9;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 15:06:54.102315700;2019.11.07 15:07:20.575175600;472859900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;9;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 15:07:20.575175600;2019.11.07 15:08:03.977221200;402045600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;9;;512;100000;1024;trial;2019.11.07 15:06:53.802315600;2019.11.07 15:08:08.587223200;784907600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;10;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 15:08:08.871221400;2019.11.07 15:08:38.169174500;297953100
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;10;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 15:08:38.169174500;2019.11.07 15:09:25.689966700;520792200
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;10;;512;100000;1024;trial;2019.11.07 15:08:08.588224200;2019.11.07 15:09:30.447965800;859741600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;0;;512;100000;1024;benchmark;2019.11.07 14:56:16.008605300;2019.11.07 15:09:30.449972100;861747900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;1;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 15:53:30.920216700;2019.11.07 15:54:03.826533600;906316900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;1;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 15:54:03.828530900;2019.11.07 15:54:48.315427900;486897000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;1;;512;100000;1024;trial;2019.11.07 15:53:30.744218700;2019.11.07 15:54:52.882438400;138219700
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;2;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 15:54:52.981432500;2019.11.07 15:55:23.211373400;229940900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;2;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 15:55:23.212373500;2019.11.07 15:56:11.633441400;421067900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;2;;512;100000;1024;trial;2019.11.07 15:54:52.883435400;2019.11.07 15:56:16.598444300;715008900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;3;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 15:56:16.684438800;2019.11.07 15:56:45.813193100;128754300
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;3;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 15:56:45.813193100;2019.11.07 15:57:29.136478400;323285300
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;3;;512;100000;1024;trial;2019.11.07 15:56:16.598444300;2019.11.07 15:57:33.985478700;387034400
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;4;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 15:57:34.068477300;2019.11.07 15:57:59.982831900;914354600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;4;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 15:57:59.982831900;2019.11.07 15:58:46.050339700;67507800
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;4;;512;100000;1024;trial;2019.11.07 15:57:33.985478700;2019.11.07 15:58:51.355345900;369867200
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;5;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 15:58:51.504340900;2019.11.07 15:59:22.076616100;572275200
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;5;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 15:59:22.076616100;2019.11.07 16:00:08.828912500;752296400
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;5;;512;100000;1024;trial;2019.11.07 15:58:51.355345900;2019.11.07 16:00:14.072926000;717580100
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;6;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 16:00:14.213916200;2019.11.07 16:00:43.578877900;364961700
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;6;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 16:00:43.578877900;2019.11.07 16:01:30.516498100;937620200
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;6;;512;100000;1024;trial;2019.11.07 16:00:14.073923300;2019.11.07 16:01:35.491023400;417100100
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;7;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 16:01:35.583021200;2019.11.07 16:02:02.889182500;306161300
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;7;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 16:02:02.889182500;2019.11.07 16:02:45.836145900;946963400
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;7;;512;100000;1024;trial;2019.11.07 16:01:35.491023400;2019.11.07 16:02:50.661188600;170165200
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;8;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 16:02:50.885191000;2019.11.07 16:03:23.184227800;299036800
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;8;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 16:03:23.184227800;2019.11.07 16:04:07.976005600;791777800
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;8;;512;100000;1024;trial;2019.11.07 16:02:50.661188600;2019.11.07 16:04:13.112016600;450828000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;9;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 16:04:13.470003400;2019.11.07 16:04:42.169940700;699937300
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;9;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 16:04:42.169940700;2019.11.07 16:05:25.259814000;89873300
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;9;;512;100000;1024;trial;2019.11.07 16:04:13.113016400;2019.11.07 16:05:30.799822600;686806200
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;10;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 16:05:31.047815000;2019.11.07 16:06:01.278990900;231175900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;10;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 16:06:01.278990900;2019.11.07 16:06:45.235674600;956683700
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;10;;512;100000;1024;trial;2019.11.07 16:05:30.799822600;2019.11.07 16:06:49.583673200;783850600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;0;;512;100000;1024;benchmark;2019.11.07 15:53:29.475218200;2019.11.07 16:06:49.585674500;785851900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;1;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 17:19:57.025451800;2019.11.07 17:20:32.354144400;328692600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;1;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 17:20:32.358138200;2019.11.07 17:21:15.482470600;124332400
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;1;;512;100000;1024;trial;2019.11.07 17:19:56.824441100;2019.11.07 17:21:20.933471400;109030300
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;2;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 17:21:21.073468900;2019.11.07 17:21:50.055040400;981571500
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;2;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 17:21:50.055040400;2019.11.07 17:22:33.140840800;85800400
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;2;;512;100000;1024;trial;2019.11.07 17:21:20.933471400;2019.11.07 17:22:37.675837700;742366300
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;3;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 17:22:37.817845500;2019.11.07 17:23:04.607724100;789878600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;3;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 17:23:04.607724100;2019.11.07 17:23:47.230924600;623200500
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;3;;512;100000;1024;trial;2019.11.07 17:22:37.675837700;2019.11.07 17:23:56.135985300;460147600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;4;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 17:23:56.534979200;2019.11.07 17:24:47.437760000;902780800
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;4;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 17:24:47.437760000;2019.11.07 17:25:30.226824400;789064400
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;4;;512;100000;1024;trial;2019.11.07 17:23:56.135985300;2019.11.07 17:25:38.664843600;528858300
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;5;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 17:25:38.795824600;2019.11.07 17:26:28.642166200;846341600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;5;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 17:26:28.643166900;2019.11.07 17:27:13.138044800;494877900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;5;;512;100000;1024;trial;2019.11.07 17:25:38.665844100;2019.11.07 17:27:23.697047200;31203100
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;6;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 17:27:23.897064700;2019.11.07 17:28:17.383484700;486420000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;6;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 17:28:17.384485400;2019.11.07 17:29:00.752229300;367743900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;6;;512;100000;1024;trial;2019.11.07 17:27:23.697047200;2019.11.07 17:29:11.297033300;599986100
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;7;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 17:29:11.533009500;2019.11.07 17:30:00.184615200;651605700
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;7;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 17:30:00.184615200;2019.11.07 17:30:43.435009600;250394400
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;7;;512;100000;1024;trial;2019.11.07 17:29:11.298032600;2019.11.07 17:30:53.358027200;59994600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;8;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 17:30:53.588007700;2019.11.07 17:31:47.900979700;312972000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;8;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 17:31:47.900979700;2019.11.07 17:32:30.175002100;274022400
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;8;;512;100000;1024;trial;2019.11.07 17:30:53.359026700;2019.11.07 17:32:35.497003500;137976800
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;9;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 17:32:35.797015400;2019.11.07 17:33:04.787299300;990283900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;9;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 17:33:04.787299300;2019.11.07 17:33:48.044419800;257120500
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;9;;512;100000;1024;trial;2019.11.07 17:32:35.497003500;2019.11.07 17:33:53.516418600;19415100
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;10;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100000;1024;query;2019.11.07 17:33:53.783419100;2019.11.07 17:34:30.163239600;379820500
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;10;SELECT data FROM ora_bench_table WHERE key = :key;512;100000;1024;query;2019.11.07 17:34:30.163239600;2019.11.07 17:35:12.072432200;909192600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;10;;512;100000;1024;trial;2019.11.07 17:33:53.516418600;2019.11.07 17:35:16.644045600;127627000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;0;;512;100000;1024;benchmark;2019.11.07 17:19:55.399438400;2019.11.07 17:35:16.645047300;128628700
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;1;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100;1024;query;2019.11.08 11:34:15.457092400;2019.11.08 11:34:15.565091400;107999000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;1;SELECT data FROM ora_bench_table WHERE key = :key;512;100;1024;query;2019.11.08 11:34:15.566092300;2019.11.08 11:34:15.702096300;136004000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;1;;512;100;1024;trial;2019.11.08 11:34:15.291093100;2019.11.08 11:34:16.673093700;382000600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;2;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100;1024;query;2019.11.08 11:34:16.765094200;2019.11.08 11:34:16.814095300;49001100
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;2;SELECT data FROM ora_bench_table WHERE key = :key;512;100;1024;query;2019.11.08 11:34:16.815095100;2019.11.08 11:34:16.885092900;69997800
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;2;;512;100;1024;trial;2019.11.08 11:34:16.673093700;2019.11.08 11:34:17.448092100;774998400
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;3;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100;1024;query;2019.11.08 11:34:17.531096900;2019.11.08 11:34:17.589091800;57994900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;3;SELECT data FROM ora_bench_table WHERE key = :key;512;100;1024;query;2019.11.08 11:34:17.589091800;2019.11.08 11:34:17.655094700;66002900
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;3;;512;100;1024;trial;2019.11.08 11:34:17.448092100;2019.11.08 11:34:18.173094100;725002000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;4;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100;1024;query;2019.11.08 11:34:18.256093100;2019.11.08 11:34:18.298091700;41998600
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;4;SELECT data FROM ora_bench_table WHERE key = :key;512;100;1024;query;2019.11.08 11:34:18.298091700;2019.11.08 11:34:18.359091700;61000000
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;4;;512;100;1024;trial;2019.11.08 11:34:18.173094100;2019.11.08 11:34:18.914095200;741001100
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;5;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100;1024;query;2019.11.08 11:34:19.006091600;2019.11.08 11:34:19.047092300;41000700
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;5;SELECT data FROM ora_bench_table WHERE key = :key;512;100;1024;query;2019.11.08 11:34:19.048092900;2019.11.08 11:34:19.109091600;60998700
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;5;;512;100;1024;trial;2019.11.08 11:34:18.915094700;2019.11.08 11:34:19.789093500;873998800
+testing batch sizes;db_11_2_xe;OraBench.java;Oracle JDBC;0;;512;100;1024;benchmark;2019.11.08 11:34:13.990093400;2019.11.08 11:34:19.791095300;876000600
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;1;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100;1024;query;2019.11.08 12:41:38.133847100;2019.11.08 12:41:38.224867800;91020700
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;1;SELECT data FROM ora_bench_table WHERE key = :key;512;100;1024;query;2019.11.08 12:41:38.225867600;2019.11.08 12:41:38.316889000;91021400
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;1;;512;100;1024;trial;2019.11.08 12:41:37.953807000;2019.11.08 12:41:39.041055500;87248500
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;2;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100;1024;query;2019.11.08 12:41:39.124074400;2019.11.08 12:41:39.166083800;42009400
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;2;SELECT data FROM ora_bench_table WHERE key = :key;512;100;1024;query;2019.11.08 12:41:39.166083800;2019.11.08 12:41:39.228099700;62015900
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;2;;512;100;1024;trial;2019.11.08 12:41:39.041055500;2019.11.08 12:41:39.708209700;667154200
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;3;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100;1024;query;2019.11.08 12:41:39.792232900;2019.11.08 12:41:39.875249100;83016200
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;3;SELECT data FROM ora_bench_table WHERE key = :key;512;100;1024;query;2019.11.08 12:41:39.875249100;2019.11.08 12:41:39.933263400;58014300
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;3;;512;100;1024;trial;2019.11.08 12:41:39.708209700;2019.11.08 12:41:40.451386200;743176500
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;4;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100;1024;query;2019.11.08 12:41:40.549443600;2019.11.08 12:41:40.591453700;42010100
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;4;SELECT data FROM ora_bench_table WHERE key = :key;512;100;1024;query;2019.11.08 12:41:40.591453700;2019.11.08 12:41:40.649467800;58014100
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;4;;512;100;1024;trial;2019.11.08 12:41:40.452392400;2019.11.08 12:41:41.166586400;714194000
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;5;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100;1024;query;2019.11.08 12:41:41.241603800;2019.11.08 12:41:41.283612400;42008600
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;5;SELECT data FROM ora_bench_table WHERE key = :key;512;100;1024;query;2019.11.08 12:41:41.283612400;2019.11.08 12:41:41.338626600;55014200
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;5;;512;100;1024;trial;2019.11.08 12:41:41.166586400;2019.11.08 12:41:41.791729500;625143100
+testing batch sizes_xxxxx;db_11_2_xe;OraBench.java;Oracle JDBC;0;;512;100;1024;benchmark;2019.11.08 12:41:37.337663700;2019.11.08 12:41:41.792730400;626144000
