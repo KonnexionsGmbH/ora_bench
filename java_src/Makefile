@@ -18,7 +18,7 @@ jar_verbose = $(jar_verbose_$(V))
 SOURCES := $(shell find $(JAVA_SRC_DIR) -type f \( -name "*.java" \))
 
 COMPILE_JAVAC = $(javac_verbose) $(JAVAC) -g -deprecation -Werror \
-	-cp ".:$(JAVA_JAR_DIR)/*" \
+	-cp "${ORA_BENCH_JAVA_CLASSPATH}" \
 	-sourcepath $(JAVA_SRC_DIR)
 
 $(JAVA_JAR_OUT): $(SOURCES)

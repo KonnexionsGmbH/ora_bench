@@ -6,6 +6,9 @@
 #
 # ------------------------------------------------------------------------------
 
+if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
+    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+fi
 if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/ora_bench.properties
     make -f java_src/Makefile clean

@@ -10,6 +10,11 @@ sleep .1
 # ------------------------------------------------------------------------------
 
 export ORA_BENCH_BENCHMARK_COMMENT='testing batch sizes_xxxxx'
+
+if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
+    export ORA_BENCH_JAVA_CLASSPATH=.;priv/java_jar/*
+fi
+
 export ORA_BENCH_CONNECTION_HOST=0.0.0.0
 export ORA_BENCH_CONNECTION_PORT=1521
 
