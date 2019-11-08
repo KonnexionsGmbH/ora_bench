@@ -41,25 +41,25 @@ export ORA_BENCH_BENCHMARK_DATABASE=db_11_2_xe
 export ORA_BENCH_CONNECTION_SERVICE=xe
 { /bin/bash run_bench_database.sh; }
 
-### export ORA_BENCH_BENCHMARK_DATABASE=db_12_1_ee
-### export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-### { /bin/bash run_bench_database.sh; }
-###
-### export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
-### export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-### { /bin/bash run_bench_database.sh; }
-###
-### export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
-### export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-### { /bin/bash run_bench_database.sh; }
-###
-### export ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
-### export ORA_BENCH_CONNECTION_SERVICE=xe
-### { /bin/bash run_bench_database.sh; }
+export ORA_BENCH_BENCHMARK_DATABASE=db_12_1_ee
+export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+{ /bin/bash run_bench_database.sh; }
 
-### export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
-### export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-### { /bin/bash run_bench_database.sh; }
+export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
+export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+{ /bin/bash run_bench_database.sh; }
+
+export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
+export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+{ /bin/bash run_bench_database.sh; }
+
+export ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
+export ORA_BENCH_CONNECTION_SERVICE=xe
+{ /bin/bash run_bench_database.sh; }
+
+export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
+export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+{ /bin/bash run_bench_database.sh; }
 
 EXITCODE=$?
 
