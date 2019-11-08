@@ -1,14 +1,10 @@
 sudo: true
-language:
-erlang
-    otp_release:
-      - 20.3
-jdk:
-      - openjdk8
-      - openjdk11
-      - openjdk-ea
-      - oraclejdk8
-      - oraclejdk11
+language: erlang
+otp_release:
+  - 20.3
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install oracle-java11-installer-local
 script:
   - pwd
   - ls -l *.sh

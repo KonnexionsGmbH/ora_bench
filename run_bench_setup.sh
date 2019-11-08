@@ -45,7 +45,7 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME          : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-sqlplus sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @run_bench_setup.sql
+priv/sqlcl/bin/sql sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @run_bench_setup.sql
 
 make -f java_src/Makefile clean
 
