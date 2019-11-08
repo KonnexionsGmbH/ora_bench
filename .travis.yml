@@ -3,5 +3,7 @@ language: erlang
 otp_release:
   - 20.3
 script:
+  - pwd
+  - ls -l
   - chmod=+x run_bench.sh
   - ./run_bench.sh
