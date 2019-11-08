@@ -4,9 +4,8 @@ otp_release:
   - 20.3
 before_install:
   - sudo apt-get update
-  - sudo apt-get install oracle-java11-installer-local
+  - apt-get install default-jdk
 script:
-  - pwd
-  - ls -l *.sh
+  - java -version
   - chmod +x *.sh
   - ./run_bench.sh
