@@ -1,7 +1,14 @@
 sudo: true
-language: erlang
-otp_release:
-  - 20.3
+language:
+erlang
+    otp_release:
+      - 20.3
+jdk:
+      - openjdk8
+      - openjdk11
+      - openjdk-ea
+      - oraclejdk8
+      - oraclejdk11
 script:
   - pwd
   - ls -l *.sh
