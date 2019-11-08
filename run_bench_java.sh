@@ -6,6 +6,12 @@
 #
 # ------------------------------------------------------------------------------
 
+if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
+    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/ora_bench.properties
+    make -f java_src/Makefile clean
+    make -f java_src/Makefile
+fi
+
 EXITCODE="0"
 
 PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
