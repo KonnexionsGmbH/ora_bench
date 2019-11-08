@@ -2,26 +2,7 @@ sudo: true
 language: erlang
 otp_release:
   - 20.3
-env:
-  - ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe ORACLE_SID=XE
-before_install:
-  - export PATH=$PATH:$ORACLE_HOME/bin/
-  - wget https://raw.githubusercontent.com/Vincit/travis-oracledb-xe/master/accept_the_license_agreement_for_oracledb_xe_11g_and_install.sh
-  - bash ./accept_the_license_agreement_for_oracledb_xe_11g_and_install.sh
-  - export LD_LIBRARY_PATH=$ORACLE_HOME/lib/${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-install:
-  - wget https://s3.amazonaws.com/rebar3/rebar3
-  - chmod +x rebar3
-before_script:
-  - kerl list installations
 script:
-  - echo exit | sqlplus sys/travis@127.0.0.1:1521/XE as sysdba @test/travis.sql $(pwd)/log/
-  - OTP_ERTS_DIR="$(ls -d ~/otp/$TRAVIS_OTP_RELEASE/erts*/)"
-  - export OTP_ERTS_DIR="${OTP_ERTS_DIR:0:$((${#OTP_ERTS_DIR} - 1))}"
-  - export LD_LIBRARY_PATH=./priv/${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-  - rebar3 ct --verbose=true --readable=false --config=test/ct.cfg
-  - cd test
-  - make
-  - bin/OracleBulkInsert scott regit 127.0.0.1 1521 XE
+  - ./run_bench.sh
 after_success:
   cat /home/travis/ora_bench_test_report.log
