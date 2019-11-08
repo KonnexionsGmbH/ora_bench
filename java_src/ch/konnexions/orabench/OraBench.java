@@ -17,7 +17,6 @@
 package ch.konnexions.orabench;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
@@ -27,6 +26,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 
 import ch.konnexions.orabench.utils.Config;
 import ch.konnexions.orabench.utils.Database;
@@ -45,22 +48,20 @@ public class OraBench {
 
     private static Config config;
 
-    private static final File FILE_ORA_BENCH_CONFIG = new File("priv/ora_bench.properties");
-
     private static Logger log = new Logger(OraBench.class);
 
     private static Result result;
 
-    private static ArrayList<String> getBulkdata() {
-        ArrayList<String> bulkData = new ArrayList<String>(config.getFileBulkSize());
+    private static ArrayList<String[]> getBulkData() {
+        ArrayList<String[]> bulkData = new ArrayList<String[]>(config.getFileBulkSize());
 
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(config.getFileBulkName()));
+            Iterable<CSVRecord> records = CSVFormat.EXCEL.withDelimiter(config.getFileBulkDelimiter().charAt(0))
+                    .withHeader(config.getFileBulkHeader().split(config.getFileBulkDelimiter())).parse(bufferedReader);
 
-            String currLine;
-
-            while ((currLine = bufferedReader.readLine()) != null) {
-                bulkData.add(currLine);
+            for (CSVRecord record : records) {
+                bulkData.add(new String[] { record.get("key"), record.get("data") });
             }
 
             bufferedReader.close();
@@ -86,17 +87,25 @@ public class OraBench {
         if (args.length > 0) {
             args0 = args[0].toString();
         }
-        log.info("args[0]=" + args0);
 
-        config = new Config(FILE_ORA_BENCH_CONFIG);
+        log.info("args[0]=" + args0);
 
         if (args0.equals("createBulkFile")) {
             log.info("Start Creating BulkFile");
-            new Setup(new Config(FILE_ORA_BENCH_CONFIG)).createBulkFile();
+            config = new Config();
+            try {
+                config.updatePropertiesFromEnvironment();
+                config.createConfigurationFileC();
+            } catch (ConfigurationException e) {
+                e.printStackTrace();
+            }
+            config.createConfigurationFileErlang();
+            new Setup(config).createBulkFile();
             log.info("End   Creating BulkFile");
         } else if (args0.equals("runBenchmark")) {
             log.info("Start Running Benchmark");
-            OraBench.runBenchmark();
+            config = new Config();
+            runBenchmark();
             log.info("End   Running Benchmark");
         } else if (args0.contentEquals("")) {
             log.error("Command line argument missing");
@@ -112,7 +121,7 @@ public class OraBench {
 
         result = new Result(config);
 
-        ArrayList<String> bulkData = getBulkdata();
+        ArrayList<String[]> bulkData = getBulkData();
 
         Database database = new Database(config);
 
@@ -127,15 +136,23 @@ public class OraBench {
         result.endBenchmark(LocalDateTime.now());
     }
 
-    private static void runBenchmarkInsert(Connection connection, int trialNumber, ArrayList<String> bulkData, String sqlStatement) {
+    private static void runBenchmarkInsert(Connection connection, int trialNumber, ArrayList<String[]> bulkData, String sqlStatement, int batchSize) {
+        int count = 0;
         result.startQuery(LocalDateTime.now());
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement.replace(":item", "?"));
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement.replace(":key", "?").replace(":data", "?"));
 
-            for (String value : bulkData) {
-                preparedStatement.setString(1, value);
+            for (String[] value : bulkData) {
+                preparedStatement.setString(1, value[0]);
+                preparedStatement.setString(2, value[1]);
                 preparedStatement.addBatch();
+
+                count += 1;
+
+                if (count % batchSize == 0) {
+                    preparedStatement.executeBatch();
+                }
             }
 
             preparedStatement.executeBatch();
@@ -144,18 +161,18 @@ public class OraBench {
             e.printStackTrace();
         }
 
-        result.endQuery(LocalDateTime.now(), trialNumber, sqlStatement);
+        result.endQueryInsert(LocalDateTime.now(), trialNumber, sqlStatement);
     }
 
-    private static void runBenchmarkSelect(Connection connection, int trialNumber, ArrayList<String> bulkData, String sqlStatement) {
+    private static void runBenchmarkSelect(Connection connection, int trialNumber, ArrayList<String[]> bulkData, String sqlStatement) {
         result.startQuery(LocalDateTime.now());
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement.replace(":item", "?"));
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement.replace(":key", "?"));
             ResultSet resultSet = null;
 
-            for (String value : bulkData) {
-                preparedStatement.setString(1, value);
+            for (String[] value : bulkData) {
+                preparedStatement.setString(1, value[0]);
                 resultSet = preparedStatement.executeQuery();
 
                 String foundValue = null;
@@ -164,8 +181,8 @@ public class OraBench {
                     foundValue = resultSet.getString(1);
                 }
 
-                if (!(value.equals(foundValue))) {
-                    log.error("expected=" + value);
+                if (!(value[1].equals(foundValue))) {
+                    log.error("expected=" + value[1]);
                     log.error("found   =" + foundValue);
                 }
             }
@@ -176,10 +193,10 @@ public class OraBench {
             e.printStackTrace();
         }
 
-        result.endQuery(LocalDateTime.now(), trialNumber, sqlStatement);
+        result.endQuerySelect(LocalDateTime.now(), trialNumber, sqlStatement);
     }
 
-    private static void runBenchmarkTrial(Connection connection, int trialNumber, ArrayList<String> bulkData) {
+    private static void runBenchmarkTrial(Connection connection, int trialNumber, ArrayList<String[]> bulkData) {
         result.startTrial(LocalDateTime.now());
 
         log.info("Start trial no. " + Integer.toString(trialNumber));
@@ -198,7 +215,7 @@ public class OraBench {
             }
         }
 
-        runBenchmarkInsert(connection, trialNumber, bulkData, config.getSqlInsertOracle());
+        runBenchmarkInsert(connection, trialNumber, bulkData, config.getSqlInsertOracle(), config.getBenchmarkBatchSize());
 
         runBenchmarkSelect(connection, trialNumber, bulkData, config.getSqlSelect());
 

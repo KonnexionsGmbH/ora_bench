@@ -22,6 +22,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.RandomStringUtils;
 
 /**
@@ -42,7 +44,7 @@ public class Setup {
      * The Constant BULK_LENGTH_MIN defines the minimum length of a text line in the
      * bulk file.
      */
-    static final int BULK_LENGTH_MIN = LENGTH_DIGEST * 2 + 8;
+    static final int BULK_LENGTH_MIN = LENGTH_DIGEST + 1;
 
     /**
      * The Constant BULK_SIZE_MIN defines the minimum number of text lines in the
@@ -70,8 +72,6 @@ public class Setup {
      */
     public final void createBulkFile() {
 
-        final String fileBulkName = config.getFileBulkName();
-
         int fileBulkLength = config.getFileBulkLength();
         if (fileBulkLength < BULK_LENGTH_MIN) {
             fileBulkLength = BULK_LENGTH_MIN;
@@ -85,23 +85,23 @@ public class Setup {
         }
 
         final String baseRandomString = RandomStringUtils.randomAlphanumeric(fileBulkLength - LENGTH_DIGEST * 2);
-        String lastDigest = ("not yet avalable " + baseRandomString).substring(0, LENGTH_DIGEST);
+        String lastDigest = ("not yet available " + baseRandomString).substring(0, LENGTH_DIGEST);
 
         try {
-
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(fileBulkName)));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(config.getFileBulkName()), false));
+            CSVPrinter bulkFile = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.withDelimiter(config.getFileBulkDelimiter().charAt(0))
+                    .withHeader(config.getFileBulkHeader().split(config.getFileBulkDelimiter())));
 
             for (int i = 0; i <= fileBulkSize; i++) {
                 String currDigest = DigestUtils.md5Hex(lastDigest + baseRandomString);
-                bufferedWriter.write(currDigest + baseRandomString + lastDigest);
-                bufferedWriter.write(System.lineSeparator());
+                bulkFile.printRecord(currDigest, lastDigest + baseRandomString + lastDigest);
                 lastDigest = currDigest;
             }
 
-            bufferedWriter.close();
+            bulkFile.close();
 
         } catch (IOException e) {
-            log.error("bulk file name  =: " + fileBulkName);
+            log.error("bulk file name  =: " + config.getFileBulkName());
             log.error("bulk file length=: " + fileBulkLength);
             log.error("bulk file size  =: " + fileBulkSize);
             e.printStackTrace();
