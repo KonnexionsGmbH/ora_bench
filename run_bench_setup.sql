@@ -21,8 +21,9 @@ END;
 /
 
 DECLARE
-    l_username                     VARCHAR2 (128);
     l_sql_stmnt                    VARCHAR2 (4000);
+    l_username                     VARCHAR2 (128);
+    l_version                      VARCHAR2 (128);
 BEGIN
     DBMS_OUTPUT.put_line ('================================================================================');
     DBMS_OUTPUT.put_line ('Adding database schema SCOTT ...');
@@ -37,9 +38,16 @@ BEGIN
 EXCEPTION
     WHEN NO_DATA_FOUND
     THEN
-        l_sql_stmnt := 'ALTER SESSION SET "_ORACLE_SCRIPT"=TRUE';
-        EXECUTE IMMEDIATE l_sql_stmnt;
-        DBMS_OUTPUT.put_line ('Executed: ' || l_sql_stmnt);
+        SELECT VERSION
+          INTO l_version
+          FROM PRODUCT_COMPONENT_VERSION;
+
+        IF l_version > "11" THEN
+            l_sql_stmnt := 'ALTER SESSION SET "_ORACLE_SCRIPT"=TRUE';
+            EXECUTE IMMEDIATE l_sql_stmnt;
+            DBMS_OUTPUT.put_line ('Executed: ' || l_sql_stmnt);
+        END IF;
+
         l_sql_stmnt := 'CREATE USER SCOTT IDENTIFIED BY regit';
         EXECUTE IMMEDIATE l_sql_stmnt;
         DBMS_OUTPUT.put_line ('Executed: ' || l_sql_stmnt);
