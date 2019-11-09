@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_setup.sh: Database Setup.
+# run_bench_setup.sh: Oracle Benchmark Database Setup.
 #
 # ------------------------------------------------------------------------------
 
@@ -22,13 +22,7 @@ if [ -z "$ORA_BENCH_PASSWORD_SYS" ]; then
     export ORA_BENCH_PASSWORD_SYS=oracle
 fi
 
-EXITCODE="0"
-
-# ==============================================================================
-
 export ORA_BENCH_CONNECT_IDENTIFIER=//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE
-
-PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 
 echo "================================================================================"
 echo "Start $0"
@@ -44,8 +38,12 @@ echo "JAVA_CLASSPATH     : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
 echo "CONNECT_IDENTIFIER : $ORA_BENCH_CONNECT_IDENTIFIER"
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME         : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
+
+EXITCODE="0"
+
+PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 
 priv/sqlcl/bin/sql sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @run_bench_setup.sql
 
@@ -58,7 +56,7 @@ EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME         : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"

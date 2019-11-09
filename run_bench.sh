@@ -5,7 +5,7 @@ sleep .1
 
 # ------------------------------------------------------------------------------
 #
-# run_bench.sh: Oracle Benchmark.
+# run_bench.sh: Oracle Benchmark for all database versions.
 #
 # ------------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
 echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME              : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
@@ -64,7 +64,7 @@ EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME              : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"

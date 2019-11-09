@@ -6,8 +6,6 @@
 #
 # ------------------------------------------------------------------------------
 
-EXITCODE="0"
-
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
 fi
@@ -17,12 +15,6 @@ fi
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
 fi
-
-docker stop ora_bench_db
-docker rm -f ora_bench_db
-docker create -e ORACLE_PWD=oracle --health-retries 20 --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/$ORA_BENCH_BENCHMARK_DATABASE
-docker start ora_bench_db
-while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
 
 echo "================================================================================"
 echo "Start $0"
@@ -36,8 +28,16 @@ echo "CONNECTION_PORT    : $ORA_BENCH_CONNECTION_PORT"
 echo "CONNECTION_SERVICE : $ORA_BENCH_CONNECTION_SERVICE"
 echo "JAVA_CLASSPATH     : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME         : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
+
+EXITCODE="0"
+
+docker stop ora_bench_db
+docker rm -f ora_bench_db
+docker create -e ORACLE_PWD=oracle --health-retries 99 --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/$ORA_BENCH_BENCHMARK_DATABASE
+docker start ora_bench_db
+while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
 
 { /bin/bash run_bench_setup.sh; }
 
@@ -47,7 +47,7 @@ EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME         : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"

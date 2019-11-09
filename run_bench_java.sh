@@ -15,10 +15,6 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     make -f java_src/Makefile
 fi
 
-EXITCODE="0"
-
-PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
-
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -31,8 +27,12 @@ echo "CONNECTION_PORT    : $ORA_BENCH_CONNECTION_PORT"
 echo "CONNECTION_SERVICE : $ORA_BENCH_CONNECTION_SERVICE"
 echo "JAVA_CLASSPATH     : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME         : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
+
+EXITCODE="0"
+
+PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench runBenchmark
 
@@ -40,7 +40,7 @@ EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME         : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
