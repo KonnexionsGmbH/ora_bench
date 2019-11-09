@@ -165,7 +165,7 @@ public class Config {
             bufferedWriter.newLine();
             bufferedWriter.write("echo \"--------------------------------------------------------------------------------\"");
             bufferedWriter.newLine();
-            bufferedWriter.write("echo \"ora_bench - C.\"");
+            bufferedWriter.write("echo \"ora_bench - Oracle benchmark - C.\"");
             bufferedWriter.newLine();
             bufferedWriter.write("echo \"--------------------------------------------------------------------------------\"");
             bufferedWriter.newLine();

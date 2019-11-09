@@ -14,6 +14,9 @@ fi
 if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=xe
 fi
+if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
+    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+fi
 
 docker stop ora_bench_db
 docker rm -f ora_bench_db
@@ -24,15 +27,16 @@ while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy"
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
+echo "ora_bench - Oracle benchmark - specific database."
+echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_COMMENT  : $ORA_BENCH_BENCHMARK_COMMENT"
 echo "BENCHMARK_DATABASE : $ORA_BENCH_BENCHMARK_DATABASE"
-echo "CONNECTION_SERVICE : $ORA_BENCH_CONNECTION_SERVICE"
 echo "CONNECTION_HOST    : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT    : $ORA_BENCH_CONNECTION_PORT"
+echo "CONNECTION_SERVICE : $ORA_BENCH_CONNECTION_SERVICE"
+echo "JAVA_CLASSPATH     : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark."
-echo "--------------------------------------------------------------------------------"
-date +"DATE TIME          : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME         : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 { /bin/bash run_bench_setup.sh; }
@@ -43,7 +47,7 @@ EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME          : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME         : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"

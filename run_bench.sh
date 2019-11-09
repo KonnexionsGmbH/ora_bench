@@ -10,29 +10,28 @@ sleep .1
 # ------------------------------------------------------------------------------
 
 export ORA_BENCH_BENCHMARK_COMMENT='first test'
+export ORA_BENCH_CONNECTION_HOST=0.0.0.0
+export ORA_BENCH_CONNECTION_PORT=1521
+export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/ora_bench.properties
 
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
 fi
-
-export ORA_BENCH_CONNECTION_HOST=0.0.0.0
-export ORA_BENCH_CONNECTION_PORT=1521
-
-export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/ora_bench.properties
 
 export ORA_BENCH_PASSWORD_SYS=oracle
 
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark."
+echo "ora_bench - Oracle benchmark - all databases."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_COMMENT       : $ORA_BENCH_BENCHMARK_COMMENT"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
 echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
+echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME          : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME              : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
@@ -65,7 +64,7 @@ EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME          : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME              : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"

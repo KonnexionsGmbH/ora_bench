@@ -22,9 +22,16 @@ PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Java."
+echo "ora_bench - Oracle benchmark - Java."
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME          : %d.%m.%Y %H:%M:%S"
+echo "BENCHMARK_COMMENT  : $ORA_BENCH_BENCHMARK_COMMENT"
+echo "BENCHMARK_DATABASE : $ORA_BENCH_BENCHMARK_DATABASE"
+echo "CONNECTION_HOST    : $ORA_BENCH_CONNECTION_HOST"
+echo "CONNECTION_PORT    : $ORA_BENCH_CONNECTION_PORT"
+echo "CONNECTION_SERVICE : $ORA_BENCH_CONNECTION_SERVICE"
+echo "JAVA_CLASSPATH     : $ORA_BENCH_JAVA_CLASSPATH"
+echo "--------------------------------------------------------------------------------"
+date +"DATE TIME         : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench runBenchmark
@@ -33,7 +40,7 @@ EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
-date +"DATE TIME          : %d.%m.%Y %H:%M:%S"
+date +"DATE TIME         : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"

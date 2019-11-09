@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# ------------------------------------------------------------------------------
+#
+# run_bench_travis_push.sh: Oracle benchmark - push results bach to GitHub.
+#
+# ------------------------------------------------------------------------------
+
 setup_git() {
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "Travis CI"
