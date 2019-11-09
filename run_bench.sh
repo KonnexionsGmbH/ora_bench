@@ -9,7 +9,7 @@ sleep .1
 #
 # ------------------------------------------------------------------------------
 
-export ORA_BENCH_BENCHMARK_COMMENT='first test'
+export ORA_BENCH_BENCHMARK_COMMENT='Start with run_bench.sh'
 export ORA_BENCH_CONNECTION_HOST=0.0.0.0
 export ORA_BENCH_CONNECTION_PORT=1521
 export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/ora_bench.properties

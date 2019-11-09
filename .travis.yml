@@ -6,6 +6,7 @@ otp_release:
 
 env:
   - ORA_BENCH_BENCHMARK_DATABASE=db_11_2_xe
+  - ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
 
 before_install:
   - sudo apt-get update

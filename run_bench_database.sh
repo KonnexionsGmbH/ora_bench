@@ -6,11 +6,23 @@
 #
 # ------------------------------------------------------------------------------
 
+if [ -z "$ORA_BENCH_BENCHMARK_COMMENT" ]; then
+    export ORA_BENCH_BENCHMARK_COMMENT='Start with run_bench_database.sh'
+fi
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
 fi
+if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
+    export ORA_BENCH_CONNECTION_HOST=0.0.0.0
+fi
+if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
+    export ORA_BENCH_CONNECTION_PORT=1521
+fi
 if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=xe
+fi
+if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
+    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/ora_bench.properties
 fi
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
@@ -21,12 +33,13 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - specific database."
 echo "--------------------------------------------------------------------------------"
-echo "BENCHMARK_COMMENT  : $ORA_BENCH_BENCHMARK_COMMENT"
-echo "BENCHMARK_DATABASE : $ORA_BENCH_BENCHMARK_DATABASE"
-echo "CONNECTION_HOST    : $ORA_BENCH_CONNECTION_HOST"
-echo "CONNECTION_PORT    : $ORA_BENCH_CONNECTION_PORT"
-echo "CONNECTION_SERVICE : $ORA_BENCH_CONNECTION_SERVICE"
-echo "JAVA_CLASSPATH     : $ORA_BENCH_JAVA_CLASSPATH"
+echo "BENCHMARK_COMMENT       : $ORA_BENCH_BENCHMARK_COMMENT"
+echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
+echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
+echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
+echo "CONNECTION_SERVICE      : $ORA_BENCH_CONNECTION_SERVICE"
+echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
+echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
