@@ -37,6 +37,9 @@ BEGIN
 EXCEPTION
     WHEN NO_DATA_FOUND
     THEN
+        l_sql_stmnt := 'ALTER SESSION SET "_ORACLE_SCRIPT"=TRUE';
+        EXECUTE IMMEDIATE l_sql_stmnt;
+        DBMS_OUTPUT.put_line ('Executed: ' || l_sql_stmnt);
         l_sql_stmnt := 'CREATE USER SCOTT IDENTIFIED BY regit';
         EXECUTE IMMEDIATE l_sql_stmnt;
         DBMS_OUTPUT.put_line ('Executed: ' || l_sql_stmnt);
