@@ -30,3 +30,34 @@ Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;10;INSERT INTO ora_bench_t
 Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;10;SELECT data FROM ora_bench_table WHERE key = :key;1024;100000;256;query;2019.11.09 12:52:16.383774000;2019.11.09 12:52:33.151640000;767866000
 Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;10;;1024;100000;256;trial;2019.11.09 12:52:04.942989000;2019.11.09 12:52:33.666359000;723370000
 Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;0;;1024;100000;256;benchmark;2019.11.09 12:47:52.053903000;2019.11.09 12:52:33.668359000;725370000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;1;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);1024;100000;256;query;2019.11.09 13:18:52.301158000;2019.11.09 13:19:01.388686000;87528000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;1;SELECT data FROM ora_bench_table WHERE key = :key;1024;100000;256;query;2019.11.09 13:19:01.391330000;2019.11.09 13:19:17.329475000;938145000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;1;;1024;100000;256;trial;2019.11.09 13:18:52.051387000;2019.11.09 13:19:17.796792000;745405000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;2;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);1024;100000;256;query;2019.11.09 13:19:17.813136000;2019.11.09 13:19:27.088651000;275515000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;2;SELECT data FROM ora_bench_table WHERE key = :key;1024;100000;256;query;2019.11.09 13:19:27.088920000;2019.11.09 13:19:42.944135000;855215000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;2;;1024;100000;256;trial;2019.11.09 13:19:17.797038000;2019.11.09 13:19:43.376193000;579155000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;3;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);1024;100000;256;query;2019.11.09 13:19:43.386041000;2019.11.09 13:19:56.087290000;701249000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;3;SELECT data FROM ora_bench_table WHERE key = :key;1024;100000;256;query;2019.11.09 13:19:56.087614000;2019.11.09 13:20:11.483421000;395807000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;3;;1024;100000;256;trial;2019.11.09 13:19:43.376504000;2019.11.09 13:20:11.903689000;527185000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;4;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);1024;100000;256;query;2019.11.09 13:20:11.914444000;2019.11.09 13:20:22.118581000;204137000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;4;SELECT data FROM ora_bench_table WHERE key = :key;1024;100000;256;query;2019.11.09 13:20:22.119020000;2019.11.09 13:20:37.402096000;283076000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;4;;1024;100000;256;trial;2019.11.09 13:20:11.904050000;2019.11.09 13:20:37.834511000;930461000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;5;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);1024;100000;256;query;2019.11.09 13:20:37.848726000;2019.11.09 13:20:47.352270000;503544000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;5;SELECT data FROM ora_bench_table WHERE key = :key;1024;100000;256;query;2019.11.09 13:20:47.352588000;2019.11.09 13:21:03.089754000;737166000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;5;;1024;100000;256;trial;2019.11.09 13:20:37.834814000;2019.11.09 13:21:03.521707000;686893000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;6;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);1024;100000;256;query;2019.11.09 13:21:03.532900000;2019.11.09 13:21:13.302515000;769615000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;6;SELECT data FROM ora_bench_table WHERE key = :key;1024;100000;256;query;2019.11.09 13:21:13.302818000;2019.11.09 13:21:28.570149000;267331000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;6;;1024;100000;256;trial;2019.11.09 13:21:03.521923000;2019.11.09 13:21:29.008057000;486134000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;7;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);1024;100000;256;query;2019.11.09 13:21:29.018344000;2019.11.09 13:21:38.815204000;796860000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;7;SELECT data FROM ora_bench_table WHERE key = :key;1024;100000;256;query;2019.11.09 13:21:38.815479000;2019.11.09 13:21:54.305402000;489923000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;7;;1024;100000;256;trial;2019.11.09 13:21:29.008448000;2019.11.09 13:21:54.759124000;750676000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;8;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);1024;100000;256;query;2019.11.09 13:21:54.802782000;2019.11.09 13:22:07.539178000;736396000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;8;SELECT data FROM ora_bench_table WHERE key = :key;1024;100000;256;query;2019.11.09 13:22:07.539420000;2019.11.09 13:22:22.790499000;251079000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;8;;1024;100000;256;trial;2019.11.09 13:21:54.760218000;2019.11.09 13:22:23.234788000;474570000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;9;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);1024;100000;256;query;2019.11.09 13:22:23.319255000;2019.11.09 13:22:32.769680000;450425000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;9;SELECT data FROM ora_bench_table WHERE key = :key;1024;100000;256;query;2019.11.09 13:22:32.769871000;2019.11.09 13:22:48.104088000;334217000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;9;;1024;100000;256;trial;2019.11.09 13:22:23.234950000;2019.11.09 13:22:48.539363000;304413000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;10;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);1024;100000;256;query;2019.11.09 13:22:48.614649000;2019.11.09 13:22:58.737330000;122681000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;10;SELECT data FROM ora_bench_table WHERE key = :key;1024;100000;256;query;2019.11.09 13:22:58.737571000;2019.11.09 13:23:14.023940000;286369000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;10;;1024;100000;256;trial;2019.11.09 13:22:48.539530000;2019.11.09 13:23:14.473021000;933491000
+Basic Java tests;db_11_2_xe;OraBench.java;Oracle JDBC;0;;1024;100000;256;benchmark;2019.11.09 13:18:49.534384000;2019.11.09 13:23:14.475111000;935581000
