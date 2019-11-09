@@ -10,7 +10,7 @@ if [ -z "$ORA_BENCH_BENCHMARK_COMMENT" ]; then
     export ORA_BENCH_BENCHMARK_COMMENT='Start with run_bench_database.sh'
 fi
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_11_2_xe
+    export ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
 fi
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
     export ORA_BENCH_CONNECTION_HOST=0.0.0.0
