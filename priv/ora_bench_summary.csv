@@ -1,1 +1,3 @@
 benchmark comment;database;module;interface;SQL statement;bulk length;bulk size;batch size;trials;start day time;end day time;average duration;average per SQL stmnt;minimum duaration;maximum duartion
+Start with run_bench_database.sh;db_11_2_xe;OraBench.java;Oracle JDBC;INSERT INTO ora_bench_table (key, data) VALUES (:key, :data);512;100;1024;5;2019.11.09 12:20:12.005123000;2019.11.09 12:20:13.443776000;13998600;139986;4680000;35509000
+Start with run_bench_database.sh;db_11_2_xe;OraBench.java;Oracle JDBC;SELECT data FROM ora_bench_table WHERE key = :key;512;100;1024;5;2019.11.09 12:20:12.005123000;2019.11.09 12:20:13.443776000;58794000;587940;39845000;97730000
