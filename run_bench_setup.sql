@@ -21,28 +21,29 @@ END;
 /
 
 DECLARE
-    l_sql_stmnt                    VARCHAR2 (4000);
-    l_username                     VARCHAR2 (128);
-    l_version                      VARCHAR2 (128);
+    l_sql_stmnt                             VARCHAR2 (4000);
+    l_username                              VARCHAR2 (128);
+    l_version                               VARCHAR2 (128);
 BEGIN
     DBMS_OUTPUT.put_line ('================================================================================');
     DBMS_OUTPUT.put_line ('Adding database schema SCOTT ...');
     DBMS_OUTPUT.put_line ('<------------------------------------------------------------------------------>');
 
-    SELECT USERNAME
-      INTO l_username
-      FROM SYS.ALL_USERS
-     WHERE USERNAME = 'SCOTT';
+    SELECT username
+    INTO   l_username
+    FROM   sys.all_users
+    WHERE  username = 'SCOTT';
 
     DBMS_OUTPUT.put_line ('Database schema SCOTT is already existing !!!');
 EXCEPTION
     WHEN NO_DATA_FOUND
     THEN
-        SELECT VERSION
-          INTO l_version
-          FROM PRODUCT_COMPONENT_VERSION;
+        SELECT DISTINCT version
+        INTO   l_version
+        FROM   product_component_version;
 
-        IF l_version > "11" THEN
+        IF l_version >= '12'
+        THEN
             l_sql_stmnt := 'ALTER SESSION SET "_ORACLE_SCRIPT"=TRUE';
             EXECUTE IMMEDIATE l_sql_stmnt;
             DBMS_OUTPUT.put_line ('Executed: ' || l_sql_stmnt);
