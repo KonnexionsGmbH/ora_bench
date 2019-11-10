@@ -13,6 +13,7 @@ setup_git() {
 
 commit_result_files() {
   git checkout master
+  git pull
   # Current month and year, e.g: Apr 2018
   dateAndMonth=`date "+%b %Y"`
   # Stage the modified files in dist/output
