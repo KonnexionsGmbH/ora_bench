@@ -92,3 +92,34 @@ Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	10	INSERT INTO o
 Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	10	SELECT data FROM ora_bench_table WHERE key = :key	1024	100000	256	query	2019.11.11 17:58:54.811711000	2019.11.11 17:59:11.433343000	17	16621640219
 Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	10		1024	100000	256	trial	2019.11.11 17:58:42.745016000	2019.11.11 17:59:11.890130000	29	29145125116
 Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	0		1024	100000	256	benchmark	2019.11.11 17:54:25.491190000	2019.11.11 17:59:11.892297000	286	286400883134
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	1	INSERT INTO ora_bench_table (key, data) VALUES (:key, :data)	1024	100000	256	query	2019.11.11 18:51:25.988138000	2019.11.11 18:51:34.582321000	9	8594178654
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	1	SELECT data FROM ora_bench_table WHERE key = :key	1024	100000	256	query	2019.11.11 18:51:34.586308000	2019.11.11 18:51:51.679661000	17	17093361680
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	1		1024	100000	256	trial	2019.11.11 18:51:25.792877000	2019.11.11 18:51:52.134653000	26	26341774863
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	2	INSERT INTO ora_bench_table (key, data) VALUES (:key, :data)	1024	100000	256	query	2019.11.11 18:51:52.143345000	2019.11.11 18:52:02.807889000	11	10664544020
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	2	SELECT data FROM ora_bench_table WHERE key = :key	1024	100000	256	query	2019.11.11 18:52:02.808202000	2019.11.11 18:52:18.718021000	16	15909838787
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	2		1024	100000	256	trial	2019.11.11 18:51:52.134876000	2019.11.11 18:52:19.121549000	27	26986693294
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	3	INSERT INTO ora_bench_table (key, data) VALUES (:key, :data)	1024	100000	256	query	2019.11.11 18:52:19.131165000	2019.11.11 18:52:30.860766000	12	11729601984
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	3	SELECT data FROM ora_bench_table WHERE key = :key	1024	100000	256	query	2019.11.11 18:52:30.861097000	2019.11.11 18:52:46.965804000	16	16104715699
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	3		1024	100000	256	trial	2019.11.11 18:52:19.121934000	2019.11.11 18:52:47.364344000	28	28242442949
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	4	INSERT INTO ora_bench_table (key, data) VALUES (:key, :data)	1024	100000	256	query	2019.11.11 18:52:47.374988000	2019.11.11 18:52:56.712866000	9	9337850606
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	4	SELECT data FROM ora_bench_table WHERE key = :key	1024	100000	256	query	2019.11.11 18:52:56.713170000	2019.11.11 18:53:12.903365000	16	16190215665
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	4		1024	100000	256	trial	2019.11.11 18:52:47.366217000	2019.11.11 18:53:13.312574000	26	25946360595
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	5	INSERT INTO ora_bench_table (key, data) VALUES (:key, :data)	1024	100000	256	query	2019.11.11 18:53:13.321030000	2019.11.11 18:53:25.224828000	12	11903785788
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	5	SELECT data FROM ora_bench_table WHERE key = :key	1024	100000	256	query	2019.11.11 18:53:25.225118000	2019.11.11 18:53:41.128223000	16	15903124039
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	5		1024	100000	256	trial	2019.11.11 18:53:13.312921000	2019.11.11 18:53:41.589412000	28	28276485800
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	6	INSERT INTO ora_bench_table (key, data) VALUES (:key, :data)	1024	100000	256	query	2019.11.11 18:53:41.599385000	2019.11.11 18:53:51.538991000	10	9939600365
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	6	SELECT data FROM ora_bench_table WHERE key = :key	1024	100000	256	query	2019.11.11 18:53:51.539292000	2019.11.11 18:54:07.393365000	16	15854108470
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	6		1024	100000	256	trial	2019.11.11 18:53:41.589652000	2019.11.11 18:54:07.797570000	26	26207932241
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	7	INSERT INTO ora_bench_table (key, data) VALUES (:key, :data)	1024	100000	256	query	2019.11.11 18:54:07.807117000	2019.11.11 18:54:16.750402000	9	8943283454
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	7	SELECT data FROM ora_bench_table WHERE key = :key	1024	100000	256	query	2019.11.11 18:54:16.750734000	2019.11.11 18:54:32.762518000	16	16011797556
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	7		1024	100000	256	trial	2019.11.11 18:54:07.797898000	2019.11.11 18:54:33.160659000	25	25362771861
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	8	INSERT INTO ora_bench_table (key, data) VALUES (:key, :data)	1024	100000	256	query	2019.11.11 18:54:33.200214000	2019.11.11 18:54:45.483837000	12	12283616093
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	8	SELECT data FROM ora_bench_table WHERE key = :key	1024	100000	256	query	2019.11.11 18:54:45.484072000	2019.11.11 18:55:00.922190000	15	15438127685
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	8		1024	100000	256	trial	2019.11.11 18:54:33.160907000	2019.11.11 18:55:01.328229000	28	28167340696
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	9	INSERT INTO ora_bench_table (key, data) VALUES (:key, :data)	1024	100000	256	query	2019.11.11 18:55:01.404626000	2019.11.11 18:55:11.062215000	10	9657585521
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	9	SELECT data FROM ora_bench_table WHERE key = :key	1024	100000	256	query	2019.11.11 18:55:11.062401000	2019.11.11 18:55:27.622471000	17	16560096863
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	9		1024	100000	256	trial	2019.11.11 18:55:01.328418000	2019.11.11 18:55:28.023519000	27	26695117721
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	10	INSERT INTO ora_bench_table (key, data) VALUES (:key, :data)	1024	100000	256	query	2019.11.11 18:55:28.108310000	2019.11.11 18:55:39.516361000	11	11408019403
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	10	SELECT data FROM ora_bench_table WHERE key = :key	1024	100000	256	query	2019.11.11 18:55:39.518197000	2019.11.11 18:55:55.372999000	16	15854794240
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	10		1024	100000	256	trial	2019.11.11 18:55:28.023724000	2019.11.11 18:55:55.751743000	28	27728043119
+Basic Java tests	Travis CI	db_11_2_xe	OraBench.java	Oracle JDBC	0		1024	100000	256	benchmark	2019.11.11 18:51:23.141730000	2019.11.11 18:55:55.755275000	273	272613324965
