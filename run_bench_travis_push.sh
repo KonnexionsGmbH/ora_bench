@@ -12,8 +12,8 @@ setup_git() {
 }
 
 commit_result_files() {
-  git checkout master
-  echo git checkout master
+  # git checkout master
+  # echo git checkout master
   git pull
   echo git pull
   # Current month and year, e.g: Apr 2018

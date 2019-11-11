@@ -623,7 +623,7 @@ public class Config {
 
         if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_ENVIRONMENT")) {
             benchmarkEnvironment = environmentVariables.get("ORA_BENCH_BENCHMARK_ENVIRONMENT");
-            propertiesConfiguration.setProperty("benchmark.database", benchmarkEnvironment);
+            propertiesConfiguration.setProperty("benchmark.environment", benchmarkEnvironment);
             isChanged = true;
         }
 
