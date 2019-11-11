@@ -12,6 +12,8 @@ setup_git() {
 }
 
 commit_result_files() {
+  git diff --name-only HEAD~10 HEAD~5
+  echo git diff --name-only HEAD~10 HEAD~5
   git checkout master
   echo git checkout master
   git pull
@@ -22,7 +24,7 @@ commit_result_files() {
   git add -f priv/ora_bench_result.tsv
   echo git add -f priv/ora_bench_result.tsv
   git add -f priv/ora_bench_summary.tsv
-  rcho git add -f priv/ora_bench_summary.tsv
+  echo git add -f priv/ora_bench_summary.tsv
   # Create a new commit with a custom build message
   # with "[skip ci]" to avoid a build loop
   # and Travis build number for reference
