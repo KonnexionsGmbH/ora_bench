@@ -12,8 +12,8 @@ setup_git() {
 }
 
 commit_result_files() {
-  git diff --name-only HEAD~10 HEAD~5
-  echo git diff --name-only HEAD~10 HEAD~5
+  git log --stat
+  echo git log --stat
   git checkout master
   echo git checkout master
   git pull
