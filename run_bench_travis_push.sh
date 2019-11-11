@@ -12,8 +12,8 @@ setup_git() {
 }
 
 commit_result_files() {
-  # git checkout master
-  # echo git checkout master
+  git checkout master
+  echo git checkout master
   git pull
   echo git pull
   # Current month and year, e.g: Apr 2018
@@ -33,9 +33,12 @@ commit_result_files() {
 upload_files() {
   # Remove existing "origin"
   git remote rm origin
+  echo git remote rm origin
   # Add new "origin" with access token in the git URL for authentication
   git remote add origin https://KonnexionsGmbH:${ORA_BENCH_TOKEN}@github.com/KonnexionsGmbH/ora_bench.git > /dev/null 2>&1
+  echo git remote add origin https://KonnexionsGmbH:${ORA_BENCH_TOKEN}@github.com/KonnexionsGmbH/ora_bench.git > /dev/null 2>&1
   git push origin master --quiet
+  echo git push origin master --quiet
 }
 
 setup_git
