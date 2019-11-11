@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -35,20 +35,24 @@ import org.apache.commons.csv.CSVPrinter;
 public class Result {
     Config config;
 
-    private int durationInsertMaximum = 0;
-    private int durationInsertMinimum = 0;
+    private final DecimalFormat decimalFormat = new DecimalFormat("##");
+    private long durationInsertMaximum = 0;
+    private long durationInsertMinimum = 0;
     private long durationInsertSum = 0;
-    private int durationSelectMaximum = 0;
-    private int durationSelectMinimum = 0;
+    private long durationSelectMaximum = 0;
+    private long durationSelectMinimum = 0;
     private long durationSelectSum = 0;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss.nnnnnnnnn");
 
     private final String interfaceName = "Oracle JDBC";
 
-    private LocalDateTime lastBenchmark;
+    private final LocalDateTime lastBenchmark = LocalDateTime.now();
+    private final long lastBenchmarkNano = System.nanoTime();
     private LocalDateTime lastQuery;
+    private long lastQueryNano;
     private LocalDateTime lastTrial;
+    private long lastTrialNano;
     private Logger log = new Logger(Result.class);
 
     private String moduleName = "OraBench.java";
@@ -66,19 +70,22 @@ public class Result {
         this.config = config;
 
         openResultFile();
-
-        startBenchmark(LocalDateTime.now());
     }
 
-    private void createMeasuringPoint(String action, int trialNo, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        createMeasuringPoint(action, trialNo, null, startDateTime, endDateTime, Duration.between(lastTrial, endDateTime).getNano());
+    private void createMeasuringPoint(String action, LocalDateTime endDateTime, long duration) {
+        createMeasuringPoint(action, 0, null, lastBenchmark, endDateTime, duration);
+
     }
 
-    private void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime, LocalDateTime endDateTime, int duration) {
+    private void createMeasuringPoint(String action, int trialNo, LocalDateTime startDateTime, LocalDateTime endDateTime, long duration) {
+        createMeasuringPoint(action, trialNo, null, startDateTime, endDateTime, duration);
+    }
+
+    private void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime, LocalDateTime endDateTime, long duration) {
         try {
-            resultFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkDatabase(), moduleName, interfaceName, trialNo, sqlStatement,
-                    config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(), action, startDateTime.format(formatter),
-                    endDateTime.format(formatter), Integer.toString(duration));
+            resultFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkEnvironment(), config.getBenchmarkDatabase(), moduleName, interfaceName,
+                    trialNo, sqlStatement, config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(), action,
+                    startDateTime.format(formatter), endDateTime.format(formatter), decimalFormat.format(duration / 1000000000.0), Long.toString(duration));
         } catch (IOException e) {
             log.error("file result delimiter=: " + config.getFileResultDelimiter());
             log.error("file result header   =: " + config.getFileResultHeader());
@@ -87,26 +94,22 @@ public class Result {
         }
     }
 
-    private void createMeasuringPoint(String action, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        createMeasuringPoint(action, 0, null, startDateTime, endDateTime, Duration.between(lastTrial, endDateTime).getNano());
-
-    }
-
     private void createSummary(LocalDateTime endDateTime) {
         String startDateTimeStr = lastBenchmark.format(formatter);
         String endDateTimeStr = endDateTime.format(formatter);
 
         try {
-            summaryFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkDatabase(), moduleName, interfaceName, config.getSqlInsertOracle(),
-                    config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(), config.getBenchmarkTrials(), startDateTimeStr,
-                    endDateTimeStr, Integer.toString((int) (durationInsertSum / config.getBenchmarkTrials())),
-                    Integer.toString((int) (durationInsertSum / config.getBenchmarkTrials()) / config.getFileBulkSize()),
-                    Integer.toString(durationInsertMinimum), Integer.toString(durationInsertMaximum));
-            summaryFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkDatabase(), moduleName, interfaceName, config.getSqlSelect(),
-                    config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(), config.getBenchmarkTrials(), startDateTimeStr,
-                    endDateTimeStr, Integer.toString((int) (durationSelectSum / config.getBenchmarkTrials())),
-                    Integer.toString((int) (durationSelectSum / config.getBenchmarkTrials()) / config.getFileBulkSize()),
-                    Integer.toString(durationSelectMinimum), Integer.toString(durationSelectMaximum));
+            summaryFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkEnvironment(), config.getBenchmarkDatabase(), moduleName, interfaceName,
+                    config.getSqlInsertOracle(), config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(),
+                    config.getBenchmarkTrials(), startDateTimeStr, endDateTimeStr,
+                    decimalFormat.format(durationInsertSum / (double) config.getBenchmarkTrials()),
+                    decimalFormat.format((durationInsertSum / (double) config.getBenchmarkTrials()) / config.getFileBulkSize()),
+                    Long.toString(durationInsertMinimum), Long.toString(durationInsertMaximum));
+            summaryFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkEnvironment(), config.getBenchmarkDatabase(), moduleName, interfaceName,
+                    config.getSqlSelect(), config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(), config.getBenchmarkTrials(),
+                    startDateTimeStr, endDateTimeStr, decimalFormat.format(durationSelectSum / (double) config.getBenchmarkTrials()),
+                    decimalFormat.format((durationSelectSum / (double) config.getBenchmarkTrials()) / config.getFileBulkSize()),
+                    Long.toString(durationSelectMinimum), Long.toString(durationSelectMaximum));
         } catch (IOException e) {
             log.error("file summary delimiter=: " + config.getFileSummaryDelimiter());
             log.error("file summary header   =: " + config.getFileSummaryHeader());
@@ -120,8 +123,11 @@ public class Result {
      *
      * @param endDateTime the end time
      */
-    public void endBenchmark(LocalDateTime endDateTime) {
-        createMeasuringPoint("benchmark", lastBenchmark, endDateTime);
+    public void endBenchmark() {
+        LocalDateTime endDateTime = LocalDateTime.now();
+        long duration = System.nanoTime() - lastBenchmarkNano;
+
+        createMeasuringPoint("benchmark", endDateTime, duration);
 
         try {
             resultFile.close();
@@ -154,8 +160,9 @@ public class Result {
      * @param trialNo      the current trial number
      * @param sqlStatement the SQL statement to be applied
      */
-    public void endQueryInsert(LocalDateTime endDateTime, int trialNo, String sqlStatement) {
-        int duration = Duration.between(lastQuery, endDateTime).getNano();
+    public void endQueryInsert(int trialNo, String sqlStatement) {
+        LocalDateTime endDateTime = LocalDateTime.now();
+        long duration = System.nanoTime() - lastQueryNano;
 
         if (durationInsertSum == 0) {
             durationInsertMinimum = duration;
@@ -181,8 +188,9 @@ public class Result {
      * @param trialNo      the current trial number
      * @param sqlStatement the SQL statement to be applied
      */
-    public void endQuerySelect(LocalDateTime endDateTime, int trialNo, String sqlStatement) {
-        int duration = Duration.between(lastQuery, endDateTime).getNano();
+    public void endQuerySelect(int trialNo, String sqlStatement) {
+        LocalDateTime endDateTime = LocalDateTime.now();
+        long duration = System.nanoTime() - lastQueryNano;
 
         if (durationSelectSum == 0) {
             durationSelectMinimum = duration;
@@ -207,8 +215,8 @@ public class Result {
      * @param endDateTime the end time
      * @param trialNo     the current trial number
      */
-    public void endTrial(LocalDateTime endDateTime, int trialNo) {
-        createMeasuringPoint("trial", trialNo, lastTrial, endDateTime);
+    public void endTrial(int trialNo) {
+        createMeasuringPoint("trial", trialNo, lastTrial, LocalDateTime.now(), System.nanoTime() - lastTrialNano);
     }
 
     private void openResultFile() {
@@ -275,17 +283,14 @@ public class Result {
         }
     }
 
-    private void startBenchmark(LocalDateTime startDateTime) {
-        lastBenchmark = startDateTime;
-    }
-
     /**
      * Start a new query.
      *
      * @param startDateTime the start time
      */
-    public void startQuery(LocalDateTime startDateTime) {
-        lastQuery = startDateTime;
+    public void startQuery() {
+        lastQuery = LocalDateTime.now();
+        lastQueryNano = System.nanoTime();
     }
 
     /**
@@ -293,8 +298,9 @@ public class Result {
      *
      * @param startDateTime the start time
      */
-    public void startTrial(LocalDateTime startDateTime) {
-        lastTrial = startDateTime;
+    public void startTrial() {
+        lastTrial = LocalDateTime.now();
+        lastTrialNano = System.nanoTime();
     }
 
 }

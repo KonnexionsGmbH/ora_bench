@@ -6,8 +6,11 @@
 #
 # ------------------------------------------------------------------------------
 
-if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
-    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/ora_bench.properties
+if [ -z "$ORA_BENCH_BENCHMARK_COMMENT" ]; then
+    export ORA_BENCH_BENCHMARK_COMMENT='Start with run_bench_database.sh'
+fi
+if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
     export ORA_BENCH_CONNECTION_HOST=0.0.0.0
@@ -16,7 +19,13 @@ if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
     export ORA_BENCH_CONNECTION_PORT=1521
 fi
 if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
-    export ORA_BENCH_CONNECTION_SERVICE=xe
+    export ORA_BENCH_CONNECTION_SERVICE=orclcdb
+fi
+if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
+    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/ora_bench.properties
+fi
+if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
+    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
 fi
 if [ -z "$ORA_BENCH_PASSWORD_SYS" ]; then
     export ORA_BENCH_PASSWORD_SYS=oracle

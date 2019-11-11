@@ -12,6 +12,9 @@ fi
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
+if [ -z "$ORA_BENCH_BENCHMARK_ENVIRONMENT" ]; then
+    export ORA_BENCH_BENCHMARK_ENVIRONMENT=local
+fi
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
     export ORA_BENCH_CONNECTION_HOST=0.0.0.0
 fi

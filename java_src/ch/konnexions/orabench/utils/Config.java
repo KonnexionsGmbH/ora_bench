@@ -28,6 +28,8 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>benchmark.batch.size
  * <li>benchmark.comment
  * <li>benchmark.database
+ * <li>benchmark.environment
+ * <li>benchmark.program.name.c
  * <li>benchmark.trials
  * <li>connection.host
  * <li>connection.password
@@ -64,6 +66,8 @@ public class Config {
     private int benchmarkBatchSize;
     private String benchmarkComment;
     private String benchmarkDatabase;
+    private String benchmarkEnvironment;
+    private String benchmarkProgramNameC;
     private int benchmarkTrials;
 
     private final File configFile = new File(System.getenv("ORA_BENCH_FILE_CONFIGURATION_NAME"));
@@ -177,7 +181,7 @@ public class Config {
             bufferedWriter.write("EXITCODE=\"0\"");
             bufferedWriter.newLine();
             bufferedWriter.newLine();
-            bufferedWriter.write("./OraBench.bin ");
+            bufferedWriter.write("./" + getBenchmarkProgramNameC() + " ");
 
             for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
                 final String key = iterator.next();
@@ -281,6 +285,24 @@ public class Config {
      */
     public final String getBenchmarkDatabase() {
         return benchmarkDatabase;
+    }
+
+    /**
+     * Gets the environment description.
+     *
+     * @return the environment description
+     */
+    public final String getBenchmarkEnvironment() {
+        return benchmarkEnvironment;
+    }
+
+    /**
+     * Gets the C program name.
+     *
+     * @return the C program name
+     */
+    public final String getBenchmarkProgramNameC() {
+        return benchmarkProgramNameC;
     }
 
     /**
@@ -543,6 +565,8 @@ public class Config {
         benchmarkBatchSize = propertiesConfiguration.getInt("benchmark.batch.size");
         benchmarkComment = propertiesConfiguration.getString("benchmark.comment");
         benchmarkDatabase = propertiesConfiguration.getString("benchmark.database");
+        benchmarkEnvironment = propertiesConfiguration.getString("benchmark.environment");
+        benchmarkProgramNameC = propertiesConfiguration.getString("benchmark.program.name.c");
         benchmarkTrials = propertiesConfiguration.getInt("benchmark.trials");
 
         connectionHost = propertiesConfiguration.getString("connection.host");
@@ -561,10 +585,10 @@ public class Config {
         fileConfigurationNameC = propertiesConfiguration.getString("file.configuration.name.c");
         fileConfigurationNameErlang = propertiesConfiguration.getString("file.configuration.name.erlang");
         fileResultDelimiter = propertiesConfiguration.getString("file.result.delimiter");
-        fileResultHeader = propertiesConfiguration.getString("file.result.header");
+        fileResultHeader = propertiesConfiguration.getString("file.result.header").replace(";", fileResultDelimiter);
         fileResultName = propertiesConfiguration.getString("file.result.name");
         fileSummaryDelimiter = propertiesConfiguration.getString("file.summary.delimiter");
-        fileSummaryHeader = propertiesConfiguration.getString("file.summary.header");
+        fileSummaryHeader = propertiesConfiguration.getString("file.summary.header").replace(";", fileSummaryDelimiter);
         fileSummaryName = propertiesConfiguration.getString("file.summary.name");
 
         sqlCreateTable = propertiesConfiguration.getString("sql.create");
@@ -594,6 +618,12 @@ public class Config {
         if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_DATABASE")) {
             benchmarkDatabase = environmentVariables.get("ORA_BENCH_BENCHMARK_DATABASE");
             propertiesConfiguration.setProperty("benchmark.database", benchmarkDatabase);
+            isChanged = true;
+        }
+
+        if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_ENVIRONMENT")) {
+            benchmarkEnvironment = environmentVariables.get("ORA_BENCH_BENCHMARK_ENVIRONMENT");
+            propertiesConfiguration.setProperty("benchmark.database", benchmarkEnvironment);
             isChanged = true;
         }
 

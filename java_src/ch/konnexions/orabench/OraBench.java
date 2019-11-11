@@ -24,7 +24,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -133,12 +132,12 @@ public class OraBench {
 
         database.disconnect();
 
-        result.endBenchmark(LocalDateTime.now());
+        result.endBenchmark();
     }
 
     private static void runBenchmarkInsert(Connection connection, int trialNumber, ArrayList<String[]> bulkData, String sqlStatement, int batchSize) {
         int count = 0;
-        result.startQuery(LocalDateTime.now());
+        result.startQuery();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement.replace(":key", "?").replace(":data", "?"));
@@ -161,11 +160,11 @@ public class OraBench {
             e.printStackTrace();
         }
 
-        result.endQueryInsert(LocalDateTime.now(), trialNumber, sqlStatement);
+        result.endQueryInsert(trialNumber, sqlStatement);
     }
 
     private static void runBenchmarkSelect(Connection connection, int trialNumber, ArrayList<String[]> bulkData, String sqlStatement) {
-        result.startQuery(LocalDateTime.now());
+        result.startQuery();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement.replace(":key", "?"));
@@ -193,11 +192,11 @@ public class OraBench {
             e.printStackTrace();
         }
 
-        result.endQuerySelect(LocalDateTime.now(), trialNumber, sqlStatement);
+        result.endQuerySelect(trialNumber, sqlStatement);
     }
 
     private static void runBenchmarkTrial(Connection connection, int trialNumber, ArrayList<String[]> bulkData) {
-        result.startTrial(LocalDateTime.now());
+        result.startTrial();
 
         log.info("Start trial no. " + Integer.toString(trialNumber));
 
@@ -226,7 +225,7 @@ public class OraBench {
             es.printStackTrace();
         }
 
-        result.endTrial(LocalDateTime.now(), trialNumber);
+        result.endTrial(trialNumber);
     }
 
 }
