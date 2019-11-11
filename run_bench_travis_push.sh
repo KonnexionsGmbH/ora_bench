@@ -12,10 +12,12 @@ setup_git() {
 }
 
 commit_result_files() {
+  git diff --name-only HEAD
+  echo git diff --name-only HEAD
   git checkout master
   echo git checkout master
-  git log --stat
-  echo git log --stat
+  git diff --name-only HEAD
+  echo git diff --name-only HEAD
   git pull
   echo git pull
   # Current month and year, e.g: Apr 2018
