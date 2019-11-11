@@ -12,10 +12,10 @@ setup_git() {
 }
 
 commit_result_files() {
-  git log --stat
-  echo git log --stat
   git checkout master
   echo git checkout master
+  git log --stat
+  echo git log --stat
   git pull
   echo git pull
   # Current month and year, e.g: Apr 2018
