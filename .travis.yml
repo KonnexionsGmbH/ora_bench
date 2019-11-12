@@ -21,4 +21,4 @@ script:
 - chmod +x priv/sqlcl/bin/sql
 - export ORA_BENCH_BENCHMARK_COMMENT='Basic Java tests'
 - export ORA_BENCH_JAVA_CLASSPATH=.:priv/java_jar/*
-- "./run_bench_database.sh"
+- ./run_bench_database.sh

@@ -16,13 +16,13 @@ commit_result_files() {
   # Current month and year, e.g: Apr 2018
   dateAndMonth=`date "+%b %Y"`
   # Stage the modified files in dist/output
-  git add -f priv/ora_bench.properties
   git add -f priv/ora_bench_result.tsv
   git add -f priv/ora_bench_summary.tsv
   # Create a new commit with a custom build message
   # with "[skip ci]" to avoid a build loop
   # and Travis build number for reference
   git commit -m "Travis update: $dateAndMonth (Build $TRAVIS_BUILD_NUMBER)" -m "[skip ci]"
+  git stash save --keep-index
 }
 
 upload_files() {
@@ -30,7 +30,7 @@ upload_files() {
   git remote rm origin
   # Add new "origin" with access token in the git URL for authentication
   git remote add origin https://KonnexionsGmbH:${ORA_BENCH_TOKEN}@github.com/KonnexionsGmbH/ora_bench.git > /dev/null 2>&1
-  git push origin master --quiet
+  git push origin master
 }
 
 setup_git
