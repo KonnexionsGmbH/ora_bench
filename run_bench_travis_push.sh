@@ -22,7 +22,6 @@ commit_result_files() {
   # with "[skip ci]" to avoid a build loop
   # and Travis build number for reference
   git commit -m "Travis update: $dateAndMonth (Build $TRAVIS_BUILD_NUMBER)" -m "[skip ci]"
-  git stash save --keep-index
 }
 
 upload_files() {

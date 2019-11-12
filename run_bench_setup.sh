@@ -7,7 +7,7 @@
 # ------------------------------------------------------------------------------
 
 if [ -z "$ORA_BENCH_BENCHMARK_COMMENT" ]; then
-    export ORA_BENCH_BENCHMARK_COMMENT='Start with run_bench_database.sh'
+    export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (setup)'
 fi
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee

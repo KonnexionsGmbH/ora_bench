@@ -19,6 +19,7 @@ script:
 - java -version
 - chmod +x *.sh
 - chmod +x priv/sqlcl/bin/sql
-- export ORA_BENCH_BENCHMARK_COMMENT='Basic Java tests'
+- export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (Travis CI)'
 - export ORA_BENCH_JAVA_CLASSPATH=.:priv/java_jar/*
+- git stash save --keep-index
 - ./run_bench_database.sh
