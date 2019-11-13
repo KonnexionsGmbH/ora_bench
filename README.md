@@ -26,6 +26,12 @@ The results of the benchmark runs are collected in either csv (comma-separated v
 
 ### 2.1 Benchmark Configuration
 
+The benchmark configuration file controls the execution and output of the benchmark.
+The default name for the configuration file is `priv/ora_bench.properties`.
+A detailed description of the configuration options can be found [here](docs/benchmark_configuration_parameter.md).
+For reasons of convenience the executable script `scripts/run_bench_c.sh` with corresponding environment variables is created for the programming language C and the configuration file `priv/ora_bench_erlang.properties` with a corresponding map is created for the programming language Erlang.
+All the file names specified here are also part of the configuration file and can be changed if necessary.
+
 ### 2.2 Benchmark Execution
 
 #### 2.2.1 Locally

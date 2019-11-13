@@ -34,6 +34,6 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | file.summary.name | priv/ora_bench_summary.tsv | yes | The relative filename of the summary result file. |
 | sql.create | CREATE TABLE ora_bench_table<br>(key VARCHAR2(32) PRIMARY KEY,<br>data VARCHAR2(4000)) | no | The SQL statement to create the test table. |
 | sql.drop | DROP TABLE ora_bench_table | no | The SQL statement to delete the test table. |
-| sql.insert.jamdb | INSERT INTO ora_bench_table<br>(item)<br>VALUES<br>>('~10..0B') | no | The SQL statement to insert the data from the bulk file into the test table - JamDB version. |
-| sql.insert.oracle | INSERT INTO ora_bench_table<br>(key, data)<br>VALUES<br>>(:key, :data) | no | The SQL statement to insert the data from the bulk file into the test table - standard version. |
+| sql.insert.jamdb | INSERT INTO ora_bench_table<br>(item)<br>VALUES<br>('~10..0B') | no | The SQL statement to insert the data from the bulk file into the test table - JamDB version. |
+| sql.insert.oracle | INSERT INTO ora_bench_table<br>(key, data)<br>VALUES<br>(:key, :data) | no | The SQL statement to insert the data from the bulk file into the test table - standard version. |
 | sql.select | SELECT data<br>FROM ora_bench_table<br>WHERE key = :key | no | The SQL statement to retrieve the previously inserted data. |
