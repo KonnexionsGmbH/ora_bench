@@ -7,9 +7,9 @@ The framework parameters for a benchmark run are stored in a central configurati
 
 The currently supported database drivers are:
 
-| Drivers | Programming language |
-| :--- | :--- |
-| JDBC | Java |
+| Driver | Version | Programming language | Version |
+| :--- | :--- | :--- | :--- |
+| JDBC | ojdbc10.jar| Java | 11.0.5 |
 
 The following Oracle database versions are provided in a benchmark run via Docker Container:
 
