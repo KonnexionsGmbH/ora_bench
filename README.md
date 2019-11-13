@@ -42,7 +42,7 @@ The results of the benchmark runs are collected in either csv (comma-separated v
 
 ## 4 Driver Specific Features
 
-## 5 Task List
+## 5 ToDo List
 
 | Completed | Created | Responsible | Task Description |
 | :---: | :---: | :--- | :--- |
@@ -70,7 +70,4 @@ The results of the benchmark runs are collected in either csv (comma-separated v
 2. create your feature branch (`git checkout -b my-new-feature`)
 3. commit your changes (`git commit -am 'Add some feature'`)
 4. push to the branch (`git push origin my-new-feature`)
-5th Create new Pull Request
-
-
-Translated with www.DeepL.com/Translator
+5. Create new Pull Request
