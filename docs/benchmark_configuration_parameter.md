@@ -16,10 +16,10 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | connection.password | regit | no | The password corresponding to the connection user name. |
 | connection.port | 1521 | yes | The number of the TCP port that the Oracle server uses to listen for client connections. |
 | connection.service | orclpdb1 | yes | The service name of the database to access. |
-| connection.string | (DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521)))(CONNECT_DATA=(SERVER=dedicated)(SERVICE_NAME=xe))) | no | The connection string for direct access to the database. |
+| connection.string | (DESCRIPTION=<p>(ADDRESS_LIST=<p>(ADDRESS=<p>(PROTOCOL=TCP)<p>(HOST=127.0.0.1)<p>(PORT=1521)))<p>(CONNECT_DATA=<p>(SERVER=dedicated)<p>(SERVICE_NAME=xe))) | no | The connection string for direct access to the database. |
 | connection.user | scott | no | The user name to use to access the Oracle server. |
 | file.bulk.delimiter | ; | no | The delimiter character in the bulk file. |
-| file.bulk.header | key;data | no | The header used to generate the bulk file. |
+| file.bulk.header | key;<p>data | no | The header used to generate the bulk file. |
 | file.bulk.length | 1024 | no | The length of the data part in the bulk file - minimum 33 and maximum 4000. |
 | file.bulk.name | priv/ora_bench_bulk_data.csv | no | The relative filename of the bulk file. |
 | file.bulk.size | 100000 | no | The number of records to be generated in the bulk file. |
@@ -27,13 +27,13 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | file.configuration.name.erlang | priv/ora_bench_erlang.properties | no | The relative filename of Erlang version of the configuration file. |
 | file.configuration.name | priv/ora_bench.properties | yes | The relative filename of the configuration file. |
 | file.result.delimiter | \t | no | The delimiter character in the detailed result file. Here the semicolon must be used as separator. |
-| file.result.header | benchmark comment;environment;database;module;interface;trial no.;SQL statement;bulk length;bulk size;batch size;action;start day time;end day time;duration (sec);duration (ns) | no | The header used to generate the detailed result file. At runtime, this is replaced by the character specified in parameter `file.result.delimiter`. |
+| file.result.header | benchmark comment;<p>environment;<p>database;<p>module;<p>interface;<p>trial no.;<p>SQL statement;<p>bulk length;<p>bulk size;<p>batch size;<p>action;<p>start day time;<p>end day time;<p>duration (sec);<p>duration (ns) | no | The header used to generate the detailed result file. At runtime, this is replaced by the character specified in parameter `file.result.delimiter`. |
 | file.result.name | priv/ora_bench_result.tsv | yes | The relative filename of the detailed result file. |
 | file.summary.delimiter | \t | no | The delimiter character in the summary result file. |
-| file.summary.header | benchmark comment;environment;database;module;interface;SQL statement;bulk length;bulk size;batch size;trials;start day time;end day time;average duration (ns);average per SQL stmnt (ns);minimum duaration (ns);maximum duartion (ns) | no | The header used to generate the summary result file. At runtime, this is replaced by the character specified in parameter `file.summary.delimiter`. |
+| file.summary.header | benchmark comment;<p>environment;<p>database;<p>module;<p>interface;<p>SQL statement;<p>bulk length;<p>bulk size;<p>batch size;<p>trials;<p>start day time;<p>end day time;<p>average duration (ns);<p>average per SQL stmnt (ns);<p>minimum duaration (ns);<p>maximum duartion (ns) | no | The header used to generate the summary result file. At runtime, this is replaced by the character specified in parameter `file.summary.delimiter`. |
 | file.summary.name | priv/ora_bench_summary.tsv | yes | The relative filename of the summary result file. |
-| sql.create | CREATE TABLE ora_bench_table (key VARCHAR2(32) PRIMARY KEY, data VARCHAR2(4000)) | no | The SQL statement to create the test table. |
+| sql.create | CREATE TABLE ora_bench_table<p> (key VARCHAR2(32) PRIMARY KEY,<p>data VARCHAR2(4000)) | no | The SQL statement to create the test table. |
 | sql.drop | DROP TABLE ora_bench_table | no | The SQL statement to delete the test table. |
-| sql.insert.jamdb | INSERT INTO ora_bench_table (item) VALUES ('~10..0B') | no | The SQL statement to insert the data from the bulk file into the test table - JamDB version. |
-| sql.insert.oracle | INSERT INTO ora_bench_table (key, data) VALUES (:key, :data) | no | The SQL statement to insert the data from the bulk file into the test table - standard version. |
-| sql.select | SELECT data FROM ora_bench_table WHERE key = :key | no | The SQL statement to retrieve the previously inserted data. |
+| sql.insert.jamdb | INSERT INTO ora_bench_table<p> (item)<p> VALUES ('~10..0B') | no | The SQL statement to insert the data from the bulk file into the test table - JamDB version. |
+| sql.insert.oracle | INSERT INTO ora_bench_table<p>(key, data)<p>VALUES (:key, :data) | no | The SQL statement to insert the data from the bulk file into the test table - standard version. |
+| sql.select | SELECT data<p>FROM ora_bench_table<p>WHERE key = :key | no | The SQL statement to retrieve the previously inserted data. |
