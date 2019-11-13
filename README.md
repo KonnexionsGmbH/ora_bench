@@ -7,13 +7,13 @@ The framework parameters for a benchmark run are stored in a central configurati
 
 The currently supported database drivers are:
 
-| Driver | Version | Programming language | Version |
+| Driver | Version | Programming Language | Version |
 | :--- | :--- | :--- | :--- |
 | JDBC | ojdbc10.jar| Java | 11.0.5 |
 
 The following Oracle database versions are provided in a benchmark run via Docker Container:
 
-| Shortcut | Oracle database version |
+| Shortcut | Oracle Database Version |
 | :--- | :--- |
 | db_11_2_xe | Oracle Database 11gR2 Express Edition for Linux x64 |
 | db_12_2_ee | Oracle Database 12c Release 2 (12.2.0.1.0) - Enterprise Edition - Linux x86-64 |
@@ -44,8 +44,18 @@ The results of the benchmark runs are collected in either csv (comma-separated v
 
 ## 5 ToDo List
 
-| Completed | Created | Responsible | Task Description |
+| Completed | Created | Assigned | Task Description |
 | :---: | :---: | :--- | :--- |
+|  | 2019.11.05 | c_bik | C / odpi-c: new |
+|  | 2019.11.05 | c_bik | C++ / occi: new |
+|  | 2019.11.05 | c_bik | Erlang / JamDB : new |
+|  | 2019.11.05 | c_bik | Erlang / odbc: new |
+|  | 2019.11.05 | c_bik | Erlang / oranif: dynamic batchsize |
+|  | 2019.11.05 | c_bik | Erlang / oranif: multithreading |
+|  | 2019.11.05 | wwe | Java / JDBC: multithreading |
+|  | 2019.11.05 | wwe | Overall: documentation |
+|  | 2019.11.05 | wwe | Overall: partitioned table |
+|  | 2019.11.05 | wwe | Python / cx_Oracle: new |
 | 2019.11.05 | 2019.11.05 | wwe | Java / JDBC: dynamic batchsize | 
 | 2019.11.06 | 2019.11.05 | wwe | Java: finishing with summary report |
 | 2019.11.06 | 2019.11.05 | wwe | Overall: separating key column and data column |
@@ -53,16 +63,6 @@ The results of the benchmark runs are collected in either csv (comma-separated v
 | 2019.11.07 | 2019.11.05 | wwe | Overall: databases via docker containers |
 | 2019.11.08 | 2019.11.05 | wwe | Java: generating language specific configuration files |
 | 2019.11.12 | 2019.11.05 | wwe | Overall: Travis/CI integration |
-| open | 2019.11.05 | c_bik | C / odpi-c: new |
-| open | 2019.11.05 | c_bik | C++ / occi: new |
-| open | 2019.11.05 | c_bik | Erlang / JamDB : new |
-| open | 2019.11.05 | c_bik | Erlang / odbc: new |
-| open | 2019.11.05 | c_bik | Erlang / oranif: dynamic batchsize |
-| open | 2019.11.05 | c_bik | Erlang / oranif: multithreading |
-| open | 2019.11.05 | wwe | Java / JDBC: multithreading |
-| open | 2019.11.05 | wwe | Overall: partitioned table |
-| open | 2019.11.05 | wwe | Overall: Wiki: new |
-| open | 2019.11.05 | wwe | Python / cx_Oracle: new |
 
 ## 6. Contributing
 
