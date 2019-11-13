@@ -70,4 +70,4 @@ The results of the benchmark runs are collected in either csv (comma-separated v
 2. create your feature branch (`git checkout -b my-new-feature`)
 3. commit your changes (`git commit -am 'Add some feature'`)
 4. push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+5. create a new pull request
