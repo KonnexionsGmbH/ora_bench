@@ -42,7 +42,48 @@ All the file names specified here are also part of the configuration file and ca
 
 #### 2.3.1 Detailed Results
 
+In a file defined by the configuration parameters `file.result.delimiter`, `file.result.header` and `file.result.name`, the detailed results of the benchmark run with the actions `benchmark`, `trial` and `query` are stored.
+
+| Column | Format | Content |
+| :--- | :--- | :--- |
+| benchmark comment | alphanumeric  | config param `benchmark.comment` |
+| environment | alphanumeric | config param `benchmark.environment` |
+| database | alphanumeric | config param `benchmark.database` |
+| module | alphanumeric |  the name of the benchmark module, e.g. OraBench.java |
+| interface | alphanumeric |  the name of the database driver, e.g. JDBC |
+| trial no. | integer | trial no. if action equals `trial` , `0` elsewise |
+| SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
+| bulk length | integer | config param `file.bulk.length` |
+| bulk size | integer | config param `file.bulk.size` |
+| batch size | integer | config param `benchmark.batch.size` |
+| action | alphanumeric | one of `benchmark`, `query` or `trial`   |
+| start day time | yyyy.mm.dd hh24:mi:ss.ffffffff | current date and time at the start of the action |
+| end day time | yyyy.mm.dd hh24:mi:ss.ffffffff | current date and time at the end of the action |
+| duration (sec) | integer | time difference in seconds between start time and end time of the action |
+| duration (ns) | integer | time difference in nanoseconds between start time and end time of the action |
+ 
 #### 2.3.2 Statistical Results
+
+In a file defined by the configuration parameters `file.summary.delimiter`, `file.summary.header` and `file.summary.name`, the statistical results of the benchmark run with the actions `query` are stored.
+
+| Column | Format | Content |
+| :--- | :--- | :--- |
+| benchmark comment | alphanumeric  | config param `benchmark.comment` |
+| environment | alphanumeric | config param `benchmark.environment` |
+| database | alphanumeric | config param `benchmark.database` |
+| module | alphanumeric |  the name of the benchmark module, e.g. OraBench.java |
+| interface | alphanumeric |  the name of the database driver, e.g. JDBC |
+| SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
+| bulk length | integer | config param `file.bulk.length` |
+| bulk size | integer | config param `file.bulk.size` |
+| batch size | integer | config param `benchmark.batch.size` |
+| trials | integer | number of test runs within a benchmark run |
+| start day time | yyyy.mm.dd hh24:mi:ss.ffffffff | current date and time at the start of the benchmark run |
+| end day time | yyyy.mm.dd hh24:mi:ss.ffffffff | current date and time at the end of the benchmark run |
+| average duration (ns) | integer | average time in nanoseconds to execute the SQL statement for all bulk data in a test run |
+| average per SQL stmnt (ns) | integer | average time in nanoseconds to execute the SQL statement once |
+| minimum duaration (ns) | integer | minimum time in nanoseconds to execute the SQL statement for all bulk data in a test run |
+| maximum duartion (ns) | integer | maximum time in nanoseconds to execute the SQL statement for all bulk data in a test run |
 
 ## 3 Coding Pattern
 
