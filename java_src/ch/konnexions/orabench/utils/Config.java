@@ -657,6 +657,12 @@ public class Config {
             isChanged = true;
         }
 
+        if (environmentVariables.containsKey("ORA_BENCH_FILE_SUMMARY_NAME")) {
+            fileSummaryName = environmentVariables.get("ORA_BENCH_FILE_SUMMARY_NAME");
+            propertiesConfiguration.setProperty("file.summary.name", fileSummaryName);
+            isChanged = true;
+        }
+
         if (isChanged) {
             fileBasedConfigurationBuilder.save();
         }
