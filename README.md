@@ -112,7 +112,7 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 1. close the database connection
 1. create the benchmark entry for the detailed results
 1. close the detailed results file (config param `file.result.name`)
-1. open the statistical results file (config param `file.summary. ...`)
+1. open the statistical results file (config params `file.summary. ...`)
 1. if the statistical file did not exist yet, then write a header line (config param `file.summary.header`)
 1. produce the statistical results
 1. close the statistical results file (config param `file.summary.name`)
@@ -132,7 +132,7 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 ### 3.2 `Insert Routine`
 
 1. record the current time as the start of the query
-1. execute the SQL statement in the config param `sql.insert. ...` for each record in the bulk file.
+1. execute the SQL statement either in the config param `sql.insert.jamdb` or in the config param `sql.insert.oracle`for each record in the bulk file.
 1. create the query entry for the detailed results
 1. save the average, maximum and minimum values for the statistical results
 1. finish the query run
@@ -146,6 +146,8 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 1. finish the query run
 
 ## 4 <a name="driver_specifica"></a> Driver Specific Features
+
+### 4.1 JDBC and Java
 
 ## 5 <a name="todo_list"></a> ToDo List
 
