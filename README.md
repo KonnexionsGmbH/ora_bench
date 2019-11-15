@@ -102,9 +102,9 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 
 ### 3.1 `Benchmark Routine` (main routine)
 
-1. load the configuration parameters (config params `file.configuration. ..`)
+1. load the configuration parameters (config params `file.configuration. ...`)
 1. open the detailed results file (config params `file.result. ...`)
-1  if the result file did not exist yet, then write a header line (config param `file.result.header`)
+1. if the result file did not exist yet, then write a header line (config param `file.result.header`)
 1. record the current time as the benchmark start
 1. load the bulk data into the memory (config params `file.bulk. ...`)
 1. establish the database connection (config params `connection. ...`)
@@ -113,7 +113,7 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 1. create the benchmark entry for the detailed results
 1. close the detailed results file (config param `file.result.name`)
 1. open the statistical results file (config param `file.summary. ...`)
-1  if the statistical file did not exist yet, then write a header line (config param `file.summary.header`)
+1. if the statistical file did not exist yet, then write a header line (config param `file.summary.header`)
 1. produce the statistical results
 1. close the statistical results file (config param `file.summary.name`)
 1. terminate the benchmark run
