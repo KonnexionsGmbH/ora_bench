@@ -8,7 +8,7 @@
 **[2. Framework Tools](#framework_tools)**<br>
 **[3. Coding Pattern](#coding_pattern)**<br>
 **[4. Driver Specific Features](#driver_specifica)**<br>
-**[5. ToDo List](#stodo_list)**<br>
+**[5. ToDo List](#todo_list)**<br>
 **[6. Contributing](#contributing)**<br>
 
 ----
@@ -35,7 +35,7 @@ The following Oracle database versions are provided in a benchmark run via Docke
 
 The results of the benchmark runs are collected in either csv (comma-separated values) or tsv (tab-separated values) files.
 
-## <a name="framework_tool"></a> 2 Framework Tools
+## <a name="framework_tools"></a> 2 Framework Tools
 
 ### 2.1 Benchmark Configuration
 
@@ -99,6 +99,51 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 | maximum duartion (ns) | integer | maximum time in nanoseconds to execute the SQL statement for all bulk data in a test run |
 
 ## 3 <a name="coding_pattern"></a> Coding Pattern
+
+### 3.1 `Benchmark Routine` (main routine)
+
+1. load the configuration parameters (config params `file.configuration. ..`)
+1. open the detailed results file (config params `file.result. ...`)
+1  if the result file did not exist yet, then write a header line (config param `file.result.header`)
+1. record the current time as the benchmark start
+1. load the bulk data into the memory (config params `file.bulk. ...`)
+1. establish the database connection (config params `connection. ...`)
+1. execute the `Trial Routine` as often as defined in config param `benchmark.trials`
+1. close the database connection
+1. create the benchmark entry for the detailed results
+1. close the detailed results file (config param `file.result.name`)
+1. open the statistical results file (config param `file.summary. ...`)
+1  if the statistical file did not exist yet, then write a header line (config param `file.summary.header`)
+1. produce the statistical results
+1. close the statistical results file (config param `file.summary.name`)
+1. terminate the benchmark run
+
+### 3.2 `Trial Routine`
+
+1. record the current time as the trial start time
+1. execute the SQL statement in the config param `sql.create` 
+1. In case of error: Execute the SQL statement in the config param `sql.drop` and repeat step 2.
+1. execute the `Insert Routine`
+1. execute the `Select Routine`
+1. execute the SQL statement in the config param `sql.drop` 
+1. create the trial entry for the detailed results
+1. terminate the trial run
+
+### 3.2 `Insert Routine`
+
+1. record the current time as the start of the query
+1. execute the SQL statement in the config param `sql.insert. ...` for each record in the bulk file.
+1. create the query entry for the detailed results
+1. save the average, maximum and minimum values for the statistical results
+1. finish the query run
+
+### 3.2 `Select Routine`
+
+1. record the current time as the start of the query
+1. execute the SQL statement in the config param `sql.select` for each record in the bulk file and compare the found value with the value in the bulk file for match. 
+1. create the query entry for the detailed results
+1. save the average, maximum and minimum values for the statistical results
+1. finish the query run
 
 ## 4 <a name="driver_specifica"></a> Driver Specific Features
 
