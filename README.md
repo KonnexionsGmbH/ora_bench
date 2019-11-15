@@ -1,6 +1,19 @@
 # ora_bench - Benchmark Framework for Oracle Database Drivers.
 
-## 1 Introduction
+----
+
+### Table of Contents
+
+**[1. Introduction](#introduction)**<br>
+**[2. Framework Tools](#framework_tools)**<br>
+**[3. Coding Pattern](#coding_pattern)**<br>
+**[4. Driver Specific Features](#driver_specifica)**<br>
+**[5. ToDo List](#stodo_list)**<br>
+**[6. Contributing](#contributing)**<br>
+
+----
+
+## <a name="introduction"></a> 1 Introduction
 
 **ora_bench** can be used to determine the performance of different Oracle database drivers under identical conditions.
 The framework parameters for a benchmark run are stored in a central configuration file.
@@ -22,7 +35,7 @@ The following Oracle database versions are provided in a benchmark run via Docke
 
 The results of the benchmark runs are collected in either csv (comma-separated values) or tsv (tab-separated values) files.
 
-## 2 Framework Tools
+## <a name="framework_tool"></a> 2 Framework Tools
 
 ### 2.1 Benchmark Configuration
 
@@ -85,11 +98,11 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 | minimum duaration (ns) | integer | minimum time in nanoseconds to execute the SQL statement for all bulk data in a test run |
 | maximum duartion (ns) | integer | maximum time in nanoseconds to execute the SQL statement for all bulk data in a test run |
 
-## 3 Coding Pattern
+## 3 <a name="coding_pattern"></a> Coding Pattern
 
-## 4 Driver Specific Features
+## 4 <a name="driver_specifica"></a> Driver Specific Features
 
-## 5 ToDo List
+## 5 <a name="todo_list"></a> ToDo List
 
 | Completed | Created | Assigned | Task Description |
 | :---: | :---: | :--- | :--- |
@@ -111,7 +124,7 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 | 2019.11.08 | 2019.11.05 | wwe | Java: generating language specific configuration files |
 | 2019.11.12 | 2019.11.05 | wwe | Overall: Travis/CI integration |
 
-## 6. Contributing
+## 6. <a name="contributing"></a> Contributing
 
 1. fork it
 2. create your feature branch (`git checkout -b my-new-feature`)
