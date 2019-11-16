@@ -10,11 +10,14 @@ sleep .1
 # ------------------------------------------------------------------------------
 
 export ORA_BENCH_BENCHMARK_COMMENT='Standard tests'
-export ORA_BENCH_CONNECTION_HOST=0.0.0.0
-export ORA_BENCH_CONNECTION_PORT=1521
+
 if [ -z "$ORA_BENCH_BENCHMARK_ENVIRONMENT" ]; then
     export ORA_BENCH_BENCHMARK_ENVIRONMENT=${HOSTNAME}
 fi
+
+export ORA_BENCH_CONNECTION_HOST=0.0.0.0
+export ORA_BENCH_CONNECTION_PORT=1521
+
 export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/ora_bench.properties
 
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then

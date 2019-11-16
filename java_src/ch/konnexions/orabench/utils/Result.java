@@ -68,16 +68,17 @@ public class Result {
         openResultFile();
     }
 
-    private void createMeasuringPoint(String action, LocalDateTime endDateTime, long duration) {
+    private final void createMeasuringPoint(String action, LocalDateTime endDateTime, long duration) {
         createMeasuringPoint(action, 0, null, lastBenchmark, endDateTime, duration);
 
     }
 
-    private void createMeasuringPoint(String action, int trialNo, LocalDateTime startDateTime, LocalDateTime endDateTime, long duration) {
+    private final void createMeasuringPoint(String action, int trialNo, LocalDateTime startDateTime, LocalDateTime endDateTime, long duration) {
         createMeasuringPoint(action, trialNo, null, startDateTime, endDateTime, duration);
     }
 
-    private void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime, LocalDateTime endDateTime, long duration) {
+    private final void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime, LocalDateTime endDateTime,
+            long duration) {
         try {
             resultFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkEnvironment(), config.getBenchmarkDatabase(), config.getBenchmarkModule(),
                     config.getBenchmarkDriver(), trialNo, sqlStatement, config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(),
@@ -91,7 +92,7 @@ public class Result {
         }
     }
 
-    private void createSummary(LocalDateTime endDateTime) {
+    private final void createSummary(LocalDateTime endDateTime) {
         String startDateTimeStr = lastBenchmark.format(formatter);
         String endDateTimeStr = endDateTime.format(formatter);
 
@@ -119,7 +120,7 @@ public class Result {
     /**
      * End the benchmark.
      */
-    public void endBenchmark() {
+    public final void endBenchmark() {
         LocalDateTime endDateTime = LocalDateTime.now();
         long duration = System.nanoTime() - lastBenchmarkNano;
 
@@ -155,7 +156,7 @@ public class Result {
      * @param trialNo      the current trial number
      * @param sqlStatement the SQL statement to be applied
      */
-    public void endQueryInsert(int trialNo, String sqlStatement) {
+    public final void endQueryInsert(int trialNo, String sqlStatement) {
         LocalDateTime endDateTime = LocalDateTime.now();
         long duration = System.nanoTime() - lastQueryNano;
 
@@ -182,7 +183,7 @@ public class Result {
      * @param trialNo      the current trial number
      * @param sqlStatement the SQL statement to be applied
      */
-    public void endQuerySelect(int trialNo, String sqlStatement) {
+    public final void endQuerySelect(int trialNo, String sqlStatement) {
         LocalDateTime endDateTime = LocalDateTime.now();
         long duration = System.nanoTime() - lastQueryNano;
 
@@ -208,11 +209,11 @@ public class Result {
      *
      * @param trialNo the current trial number
      */
-    public void endTrial(int trialNo) {
+    public final void endTrial(int trialNo) {
         createMeasuringPoint("trial", trialNo, lastTrial, LocalDateTime.now(), System.nanoTime() - lastTrialNano);
     }
 
-    private void openResultFile() {
+    private final void openResultFile() {
         String resultDelimiter = config.getFileResultDelimiter();
         String resultName = config.getFileResultName();
 
@@ -244,7 +245,7 @@ public class Result {
         }
     }
 
-    private void openSummaryFile() {
+    private final void openSummaryFile() {
         String summaryDelimiter = config.getFileSummaryDelimiter();
         String summaryName = config.getFileSummaryName();
 
@@ -279,7 +280,7 @@ public class Result {
     /**
      * Start a new query.
      */
-    public void startQuery() {
+    public final void startQuery() {
         lastQuery = LocalDateTime.now();
         lastQueryNano = System.nanoTime();
     }
@@ -287,7 +288,7 @@ public class Result {
     /**
      * Start a new trial.
      */
-    public void startTrial() {
+    public final void startTrial() {
         lastTrial = LocalDateTime.now();
         lastTrialNano = System.nanoTime();
     }

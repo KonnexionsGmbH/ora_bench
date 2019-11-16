@@ -120,6 +120,7 @@ public class Config {
 
         try {
             propertiesConfiguration = fileBasedConfigurationBuilder.getConfiguration();
+            updatePropertiesFromEnvironment();
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }
@@ -129,8 +130,10 @@ public class Config {
 
     /**
      * Creates the C version of the configuration file.
+     *
+     * @throws ConfigurationException the configuration exception
      */
-    public void createConfigurationFileC() throws ConfigurationException {
+    public final void createConfigurationFileC() throws ConfigurationException {
         try {
             List<String> list = getNumericProperties();
 
@@ -227,7 +230,7 @@ public class Config {
     /**
      * Creates the Erlang version of the configuration file.
      */
-    public void createConfigurationFileErlang() {
+    public final void createConfigurationFileErlang() {
         try {
             List<String> list = getNumericProperties();
 
@@ -581,7 +584,7 @@ public class Config {
         return sqlSelect;
     }
 
-    private void storeConfiguration() {
+    private final void storeConfiguration() {
         propertiesConfiguration.setThrowExceptionOnMissing(true);
 
         benchmarkBatchSize = propertiesConfiguration.getInt("benchmark.batch.size");
@@ -622,12 +625,7 @@ public class Config {
         sqlSelect = propertiesConfiguration.getString("sql.select");
     }
 
-    /**
-     * Updates the properties from the environment variables.
-     *
-     * @throws ConfigurationException the configuration exception
-     */
-    public void updatePropertiesFromEnvironment() throws ConfigurationException {
+    private final void updatePropertiesFromEnvironment() throws ConfigurationException {
 
         Map<String, String> environmentVariables = System.getenv();
 
