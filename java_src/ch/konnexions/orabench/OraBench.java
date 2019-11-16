@@ -93,7 +93,7 @@ public class OraBench {
             log.info("Start Creating BulkFile");
             config = new Config();
             try {
-                config.createConfigurationFileC();
+                config.createConfigurationFileOranifC();
             } catch (ConfigurationException e) {
                 e.printStackTrace();
             }

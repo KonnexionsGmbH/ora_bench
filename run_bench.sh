@@ -11,10 +11,6 @@ sleep .1
 
 export ORA_BENCH_BENCHMARK_COMMENT='Standard tests'
 
-if [ -z "$ORA_BENCH_BENCHMARK_ENVIRONMENT" ]; then
-    export ORA_BENCH_BENCHMARK_ENVIRONMENT=${HOSTNAME}
-fi
-
 export ORA_BENCH_CONNECTION_HOST=0.0.0.0
 export ORA_BENCH_CONNECTION_PORT=1521
 
@@ -32,7 +28,6 @@ echo "--------------------------------------------------------------------------
 echo "ora_bench - Oracle benchmark - all databases."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_COMMENT       : $ORA_BENCH_BENCHMARK_COMMENT"
-echo "BENCHMARK_ENVIRONMENT   : $ORA_BENCH_BENCHMARK_ENVIRONMENT"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
 echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"

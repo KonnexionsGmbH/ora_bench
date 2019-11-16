@@ -10,9 +10,9 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | benchmark.comment | Standard tests | yes | In the result files, this comment is used to identify the benchmark run. |
 | benchmark.database | db_19_3_ee | yes | The database shortcut defines the Oracle database used in the benchmark run. |
 | benchmark.driver | oranif (Version 0.2.2) | yes | The name and version of the database driver used in the benchmark run. |
-| benchmark.environment | jfww-windows | yes | In the result files, this comment is used to identify the system environment. |
+| benchmark.environment | TBD | yes | In the result files, this comment is used to identify the operating system environment. |
 | benchmark.module | OraBench (C) | yes | The name of the module and the programming language with name and version executing the benchmark run. |
-| benchmark.program.name.c | OraBench.bin | no | Specifies the name of the executable C file. |
+| benchmark.program.name.oranif.c | OraBench.bin | no | Specifies the name of the executable C file. |
 | benchmark.trials | 10 | no | This determines the number of tests to be performed per database. |
 | connection.host | 0.0.0.0 | yes | The IP address or host name of the Oracle server to which you are connecting. |
 | connection.password | regit | no | The password corresponding to the connection user name. |
@@ -25,14 +25,14 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | file.bulk.length | 1024 | no | The length of the data part in the bulk file - minimum 33 and maximum 4000. |
 | file.bulk.name | priv/ora_bench_bulk_data.csv | no | The relative filename of the bulk file. |
 | file.bulk.size | 100000 | no | The number of records to be generated in the bulk file. |
-| file.configuration.name.c | scripts/run_bench_c.sh | no | The relative filename of the C version of the configuration file. |
-| file.configuration.name.erlang | priv/ora_bench_erlang.properties | no | The relative filename of Erlang version of the configuration file. |
+| file.configuration.name.oranif.c | scripts/run_bench_oranif_c.sh | no | The relative filename of the oranif & C version of the configuration file. |
+| file.configuration.name.oranif.erlang | priv/ora_bench_oranif_erlang.properties | no | The relative filename of the oranif & Erlang version of the configuration file. |
 | file.configuration.name | priv/ora_bench.properties | yes | The relative filename of the configuration file. |
 | file.result.delimiter | \t | no | The delimiter character in the detailed result file. Here the semicolon must be used as separator. |
-| file.result.header | benchmark comment;<br>environment;<br>database;<br>module;<br>interface;<br>trial no.;<br>SQL statement;<br>bulk length;<br>bulk size;<br>batch size;<br>action;<br>start day time;<br>end day time;<br>duration (sec);<br>duration (ns) | no | The header used to generate the detailed result file. At runtime, this is replaced by the character specified in parameter `file.result.delimiter`. |
+| file.result.header | benchmark comment;<br>environment;<br>database;<br>module;<br>driver;<br>trial no.;<br>SQL statement;<br>bulk length;<br>bulk size;<br>batch size;<br>action;<br>start day time;<br>end day time;<br>duration (sec);<br>duration (ns) | no | The header used to generate the detailed result file. At runtime, this is replaced by the character specified in parameter `file.result.delimiter`. |
 | file.result.name | priv/ora_bench_result.tsv | yes | The relative filename of the detailed result file. |
 | file.summary.delimiter | \t | no | The delimiter character in the summary result file. |
-| file.summary.header | benchmark comment;<br>environment;<br>database;<br>module;<br>interface;<br>SQL statement;<br>bulk length;<br>bulk size;<br>batch size;<br>trials;<br>start day time;<br>end day time;<br>average duration (ns);<br>average per SQL stmnt (ns);<br>minimum duaration (ns);<br>maximum duartion (ns) | no | The header used to generate the summary result file. At runtime, this is replaced by the character specified in parameter `file.summary.delimiter`. |
+| file.summary.header | benchmark comment;<br>environment;<br>database;<br>module;<br>driver;<br>SQL statement;<br>bulk length;<br>bulk size;<br>batch size;<br>trials;<br>start day time;<br>end day time;<br>average duration (ns);<br>average per SQL stmnt (ns);<br>minimum duaration (ns);<br>maximum duartion (ns) | no | The header used to generate the summary result file. At runtime, this is replaced by the character specified in parameter `file.summary.delimiter`. |
 | file.summary.name | priv/ora_bench_summary.tsv | yes | The relative filename of the summary result file. |
 | sql.create | CREATE TABLE ora_bench_table<br>(key VARCHAR2(32) PRIMARY KEY,<br>data VARCHAR2(4000)) | no | The SQL statement to create the test table. |
 | sql.drop | DROP TABLE ora_bench_table | no | The SQL statement to delete the test table. |

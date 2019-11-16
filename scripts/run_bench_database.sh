@@ -12,9 +12,6 @@ fi
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
-if [ -z "$ORA_BENCH_BENCHMARK_ENVIRONMENT" ]; then
-    export ORA_BENCH_BENCHMARK_ENVIRONMENT=local
-fi
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
     export ORA_BENCH_CONNECTION_HOST=0.0.0.0
 fi
@@ -38,7 +35,6 @@ echo "ora_bench - Oracle benchmark - specific database."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_COMMENT       : $ORA_BENCH_BENCHMARK_COMMENT"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
-echo "BENCHMARK_ENVIRONMENT   : $ORA_BENCH_BENCHMARK_ENVIRONMENT"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
 echo "CONNECTION_SERVICE      : $ORA_BENCH_CONNECTION_SERVICE"
@@ -58,7 +54,7 @@ while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy"
 
 { /bin/bash scripts/run_bench_setup.sh; }
 
-{ /bin/bash scripts/run_bench_java.sh; }
+{ /bin/bash scripts/run_bench_jdbc_java.sh; }
 
 EXITCODE=$?
 

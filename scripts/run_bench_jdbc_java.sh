@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_java.sh: Oracle Benchmark based on Java.
+# run_bench_jdbc_java.sh: Oracle Benchmark based on Java.
 #
 # ------------------------------------------------------------------------------
 
@@ -14,10 +14,6 @@ if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
 fi
 
 export ORA_BENCH_BENCHMARK_DRIVER='JDBC (Version version)'
-
-if [ -z "$ORA_BENCH_BENCHMARK_ENVIRONMENT" ]; then
-    export ORA_BENCH_BENCHMARK_ENVIRONMENT=local
-fi
 
 export ORA_BENCH_BENCHMARK_MODULE='OraBench (Java version)'
 
@@ -43,12 +39,11 @@ fi
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - Java."
+echo "ora_bench - Oracle benchmark - JDBC & Java."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_COMMENT       : $ORA_BENCH_BENCHMARK_COMMENT"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "BENCHMARK_DRIVER        : $ORA_BENCH_BENCHMARK_DRIVER"
-echo "BENCHMARK_ENVIRONMENT   : $ORA_BENCH_BENCHMARK_ENVIRONMENT"
 echo "BENCHMARK_MODULE        : $ORA_BENCH_BENCHMARK_MODULE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"

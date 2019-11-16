@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 
 package ch.konnexions.orabench.utils;
@@ -31,7 +31,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>benchmark.driver
  * <li>benchmark.environment
  * <li>benchmark.module
- * <li>benchmark.program.name.c
+ * <li>benchmark.program.name.oranif.c
  * <li>benchmark.trials
  * <li>connection.host
  * <li>connection.password
@@ -45,8 +45,8 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>file.bulk.name
  * <li>file.bulk.size
  * <li>file.configuration.name
- * <li>file.configuration.name.c
- * <li>file.configuration.name.erlang
+ * <li>file.configuration.name.oranif.c
+ * <li>file.configuration.name.oranif.erlang
  * <li>file.result.delimiter
  * <li>file.result.header
  * <li>file.result.name
@@ -71,7 +71,7 @@ public class Config {
     private String benchmarkDriver;
     private String benchmarkEnvironment;
     private String benchmarkModule;
-    private String benchmarkProgramNameC;
+    private String benchmarkProgramNameOranifC;
     private int benchmarkTrials;
 
     private final File configFile = new File(System.getenv("ORA_BENCH_FILE_CONFIGURATION_NAME"));
@@ -89,8 +89,8 @@ public class Config {
     private String fileBulkName;
     private int fileBulkSize;
     private String fileConfigurationName;
-    private String fileConfigurationNameC;
-    private String fileConfigurationNameErlang;
+    private String fileConfigurationNameOranifC;
+    private String fileConfigurationNameOranifErlang;
     private String fileResultDelimiter;
     private String fileResultHeader;
     private String fileResultName;
@@ -133,11 +133,11 @@ public class Config {
      *
      * @throws ConfigurationException the configuration exception
      */
-    public final void createConfigurationFileC() throws ConfigurationException {
+    public final void createConfigurationFileOranifC() throws ConfigurationException {
         try {
             List<String> list = getNumericProperties();
 
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameC(), false));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOranifC(), false));
 
             bufferedWriter.write("#!/bin/bash");
             bufferedWriter.newLine();
@@ -146,7 +146,7 @@ public class Config {
             bufferedWriter.newLine();
             bufferedWriter.write("#");
             bufferedWriter.newLine();
-            bufferedWriter.write("# run_bench_c.sh: Oracle Benchmark based on C.");
+            bufferedWriter.write("# run_bench_oranif_c.sh: Oracle Benchmark based on oranif & C.");
             bufferedWriter.newLine();
             bufferedWriter.write("#");
             bufferedWriter.newLine();
@@ -176,7 +176,7 @@ public class Config {
             bufferedWriter.newLine();
             bufferedWriter.write("echo \"--------------------------------------------------------------------------------\"");
             bufferedWriter.newLine();
-            bufferedWriter.write("echo \"ora_bench - Oracle benchmark - C.\"");
+            bufferedWriter.write("echo \"ora_bench - Oracle benchmark - oranif & C.\"");
             bufferedWriter.newLine();
             bufferedWriter.write("echo \"--------------------------------------------------------------------------------\"");
             bufferedWriter.newLine();
@@ -188,7 +188,7 @@ public class Config {
             bufferedWriter.write("EXITCODE=\"0\"");
             bufferedWriter.newLine();
             bufferedWriter.newLine();
-            bufferedWriter.write("./" + getBenchmarkProgramNameC() + " ");
+            bufferedWriter.write("./" + getBenchmarkProgramNameOranifC() + " ");
 
             for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
                 final String key = iterator.next();
@@ -234,7 +234,7 @@ public class Config {
         try {
             List<String> list = getNumericProperties();
 
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameErlang(), false));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOranifErlang(), false));
 
             bufferedWriter.write("#{");
             bufferedWriter.newLine();
@@ -322,12 +322,12 @@ public class Config {
     }
 
     /**
-     * Gets the C program name.
+     * Gets the oranif &amp; C program name.
      *
-     * @return the C program name
+     * @return the oranif &amp; C program name
      */
-    public final String getBenchmarkProgramNameC() {
-        return benchmarkProgramNameC;
+    public final String getBenchmarkProgramNameOranifC() {
+        return benchmarkProgramNameOranifC;
     }
 
     /**
@@ -450,25 +450,25 @@ public class Config {
     }
 
     /**
-     * Gets the file name of the configuration file for the C programming language.
+     * Gets the file name of the configuration file for the oranif &amp; C version.
      *
-     * @return the name of the configuration file for the C programming language.
+     * @return the name of the configuration file for the oranif &amp; C version.
      *         The file name may contain the absolute or relative file path.
      */
-    public final String getFileConfigurationNameC() {
-        return fileConfigurationNameC;
+    public final String getFileConfigurationNameOranifC() {
+        return fileConfigurationNameOranifC;
     }
 
     /**
-     * Gets the file name of the configuration file for the Erlang programming
-     * language.
+     * Gets the file name of the configuration file for the oranif &amp; Erlang
+     * version language.
      *
-     * @return the name of the configuration file for the Erlang programming
-     *         language. The file name may contain the absolute or relative file
-     *         path.
+     * @return the name of the configuration file for the oranif &amp; Erlang
+     *         version language. The file name may contain the absolute or relative
+     *         file path.
      */
-    public final String getFileConfigurationNameErlang() {
-        return fileConfigurationNameErlang;
+    public final String getFileConfigurationNameOranifErlang() {
+        return fileConfigurationNameOranifErlang;
     }
 
     /**
@@ -586,7 +586,7 @@ public class Config {
 
     /**
      * Sets the name of the applied driver.
-     * 
+     *
      * @param benchmarkDriver the name of the applied driver to set
      */
     public final void setBenchmarkDriver(String benchmarkDriver) {
@@ -602,7 +602,7 @@ public class Config {
         benchmarkDriver = propertiesConfiguration.getString("benchmark.driver");
         benchmarkEnvironment = propertiesConfiguration.getString("benchmark.environment");
         benchmarkModule = propertiesConfiguration.getString("benchmark.module");
-        benchmarkProgramNameC = propertiesConfiguration.getString("benchmark.program.name.c");
+        benchmarkProgramNameOranifC = propertiesConfiguration.getString("benchmark.program.name.oranif.c");
         benchmarkTrials = propertiesConfiguration.getInt("benchmark.trials");
 
         connectionHost = propertiesConfiguration.getString("connection.host");
@@ -618,8 +618,8 @@ public class Config {
         fileBulkName = propertiesConfiguration.getString("file.bulk.name");
         fileBulkSize = propertiesConfiguration.getInt("file.bulk.size");
         fileConfigurationName = propertiesConfiguration.getString("file.configuration.name");
-        fileConfigurationNameC = propertiesConfiguration.getString("file.configuration.name.c");
-        fileConfigurationNameErlang = propertiesConfiguration.getString("file.configuration.name.erlang");
+        fileConfigurationNameOranifC = propertiesConfiguration.getString("file.configuration.name.oranif.c");
+        fileConfigurationNameOranifErlang = propertiesConfiguration.getString("file.configuration.name.oranif.erlang");
         fileResultDelimiter = propertiesConfiguration.getString("file.result.delimiter");
         fileResultHeader = propertiesConfiguration.getString("file.result.header").replace(";", fileResultDelimiter);
         fileResultName = propertiesConfiguration.getString("file.result.name");

@@ -20,9 +20,9 @@ The framework parameters for a benchmark run are stored in a central configurati
 
 The currently supported database drivers are:
 
-| Driver | Version | Programming Language | Version |
-| :--- | :--- | :--- | :--- |
-| JDBC | ojdbc10.jar| Java | 11.0.5 |
+| Driver | Programming Language |
+| :--- | :--- |
+| JDBC | Java |
 
 The following Oracle database versions are provided in a benchmark run via Docker Container:
 
@@ -49,6 +49,14 @@ All the file names specified here are also part of the configuration file and ca
 
 #### 2.2.1 Locally
 
+##### 2.2.1.1 `run_bench.sh`
+
+##### 2.2.1.2 `run_bench_database.sh`
+
+##### 2.2.1.3 `run_bench_setup.sh`
+
+##### 2.2.1.4 `run_bench_<driver>_<programming language>.sh`
+
 #### 2.2.2 Travis CI
 
 ### 2.3 Benchmark Results
@@ -63,7 +71,7 @@ In a file defined by the configuration parameters `file.result.delimiter`, `file
 | environment | alphanumeric | config param `benchmark.environment` |
 | database | alphanumeric | config param `benchmark.database` |
 | module | alphanumeric |  config param `benchmark.module` |
-| interface | alphanumeric |  config param `benchmark.interface` |
+| driver | alphanumeric |  config param `benchmark.driver` |
 | trial no. | integer | trial no. if action equals `trial` , `0` elsewise |
 | SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
 | bulk length | integer | config param `file.bulk.length` |
@@ -85,7 +93,7 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 | environment | alphanumeric | config param `benchmark.environment` |
 | database | alphanumeric | config param `benchmark.database` |
 | module | alphanumeric |  config param `benchmark.module` |
-| interface | alphanumeric |  config param `benchmark.interface` |
+| driver | alphanumeric |  config param `benchmark.driver` |
 | SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
 | bulk length | integer | config param `file.bulk.length` |
 | bulk size | integer | config param `file.bulk.size` |
@@ -148,6 +156,9 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 ## 4 <a name="driver_specifica"></a> Driver Specific Features
 
 ### 4.1 JDBC and Java
+
+- the following data in the configuration parameters is determined at runtime: operating system environment (`benchmark.environment`), the JRE version (`benchmark.module`) and JDBC version (`benchmark.driver`)
+- in 
 
 ## 5 <a name="todo_list"></a> ToDo List
 
