@@ -17,6 +17,7 @@
 package ch.konnexions.orabench.utils;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -30,6 +31,7 @@ import java.sql.SQLException;
  */
 public class Database {
 
+    private Config config;
     private Connection connection;
     private String connectionHost;
     private String connectionPassword;
@@ -45,6 +47,7 @@ public class Database {
      * @param config the {@link Config} object
      */
     public Database(Config config) {
+        this.config = config;
         connectionHost = config.getConnectionHost();
         connectionPassword = config.getConnectionPassword();
         connectionPort = config.getConnectionPort();
@@ -64,6 +67,8 @@ public class Database {
         if (connection == null) {
             try {
                 connection = DriverManager.getConnection(url, connectionUser, connectionPassword);
+                DatabaseMetaData meta = connection.getMetaData();
+                config.setBenchmarkDriver(config.getBenchmarkDriver().replace("version", meta.getDriverVersion()));
             } catch (SQLException ec) {
                 log.error("connection parameter url     =: " + url);
                 log.error("connection parameter username=: " + connectionUser);

@@ -62,8 +62,8 @@ In a file defined by the configuration parameters `file.result.delimiter`, `file
 | benchmark comment | alphanumeric  | config param `benchmark.comment` |
 | environment | alphanumeric | config param `benchmark.environment` |
 | database | alphanumeric | config param `benchmark.database` |
-| module | alphanumeric |  the name of the benchmark module, e.g. OraBench.java |
-| interface | alphanumeric |  the name of the database driver, e.g. JDBC |
+| module | alphanumeric |  config param `benchmark.module` |
+| interface | alphanumeric |  config param `benchmark.interface` |
 | trial no. | integer | trial no. if action equals `trial` , `0` elsewise |
 | SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
 | bulk length | integer | config param `file.bulk.length` |
@@ -84,8 +84,8 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 | benchmark comment | alphanumeric  | config param `benchmark.comment` |
 | environment | alphanumeric | config param `benchmark.environment` |
 | database | alphanumeric | config param `benchmark.database` |
-| module | alphanumeric |  the name of the benchmark module, e.g. OraBench.java |
-| interface | alphanumeric |  the name of the database driver, e.g. JDBC |
+| module | alphanumeric |  config param `benchmark.module` |
+| interface | alphanumeric |  config param `benchmark.interface` |
 | SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
 | bulk length | integer | config param `file.bulk.length` |
 | bulk size | integer | config param `file.bulk.size` |

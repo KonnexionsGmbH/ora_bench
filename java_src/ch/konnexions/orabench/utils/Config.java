@@ -304,12 +304,12 @@ public class Config {
     }
 
     /**
-     * Gets the environment description.
+     * Gets the operating system description.
      *
-     * @return the environment description
+     * @return the operating system description
      */
     public final String getBenchmarkEnvironment() {
-        return benchmarkEnvironment;
+        return System.getProperty("os.arch") + " / " + System.getProperty("os.name") + " / " + System.getProperty("os.version");
     }
 
     /**
@@ -527,7 +527,7 @@ public class Config {
         return fileSummaryName;
     }
 
-    private List<String> getNumericProperties() {
+    private final List<String> getNumericProperties() {
         List<String> list = new ArrayList<String>();
 
         list.add("benchmark.batch.size");
@@ -582,6 +582,15 @@ public class Config {
      */
     public final String getSqlSelect() {
         return sqlSelect;
+    }
+
+    /**
+     * Sets the name of the applied driver.
+     * 
+     * @param benchmarkDriver the name of the applied driver to set
+     */
+    public final void setBenchmarkDriver(String benchmarkDriver) {
+        this.benchmarkDriver = benchmarkDriver;
     }
 
     private final void storeConfiguration() {
@@ -656,7 +665,7 @@ public class Config {
         }
 
         if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_MODULE")) {
-            benchmarkModule = environmentVariables.get("ORA_BENCH_BENCHMARK_MODULE");
+            benchmarkModule = environmentVariables.get("ORA_BENCH_BENCHMARK_MODULE").replace("version", System.getProperty("java.version"));
             propertiesConfiguration.setProperty("benchmark.module", benchmarkModule);
             isChanged = true;
         }

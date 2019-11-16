@@ -9,7 +9,9 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | benchmark.batch.size | 256 | no | If the database driver used allows batch operations, this value must be used as the upper limit for the database operations contained in a batch. |
 | benchmark.comment | Standard tests | yes | In the result files, this comment is used to identify the benchmark run. |
 | benchmark.database | db_19_3_ee | yes | The database shortcut defines the Oracle database used in the benchmark run. |
+| benchmark.driver | oranif (Version 0.2.2) | yes | The name and version of the database driver used in the benchmark run. |
 | benchmark.environment | jfww-windows | yes | In the result files, this comment is used to identify the system environment. |
+| benchmark.module | OraBench (C) | yes | The name of the module and the programming language with name and version executing the benchmark run. |
 | benchmark.program.name.c | OraBench.bin | no | Specifies the name of the executable C file. |
 | benchmark.trials | 10 | no | This determines the number of tests to be performed per database. |
 | connection.host | 0.0.0.0 | yes | The IP address or host name of the Oracle server to which you are connecting. |
