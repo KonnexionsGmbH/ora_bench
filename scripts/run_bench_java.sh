@@ -12,9 +12,15 @@ fi
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
+
+export ORA_BENCH_BENCHMARK_DRIVER='JDBC (Version 10)'
+
 if [ -z "$ORA_BENCH_BENCHMARK_ENVIRONMENT" ]; then
     export ORA_BENCH_BENCHMARK_ENVIRONMENT=local
 fi
+
+export ORA_BENCH_BENCHMARK_MODULE='OraBench (Java 11.0.5)'
+
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
     export ORA_BENCH_CONNECTION_HOST=0.0.0.0
 fi

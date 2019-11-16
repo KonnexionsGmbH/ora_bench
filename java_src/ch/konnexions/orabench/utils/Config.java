@@ -28,7 +28,9 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>benchmark.batch.size
  * <li>benchmark.comment
  * <li>benchmark.database
+ * <li>benchmark.driver
  * <li>benchmark.environment
+ * <li>benchmark.module
  * <li>benchmark.program.name.c
  * <li>benchmark.trials
  * <li>connection.host
@@ -66,7 +68,9 @@ public class Config {
     private int benchmarkBatchSize;
     private String benchmarkComment;
     private String benchmarkDatabase;
+    private String benchmarkDriver;
     private String benchmarkEnvironment;
+    private String benchmarkModule;
     private String benchmarkProgramNameC;
     private int benchmarkTrials;
 
@@ -288,12 +292,30 @@ public class Config {
     }
 
     /**
+     * Gets the name of the applied driver.
+     *
+     * @return the driver name and its version
+     */
+    public final String getBenchmarkDriver() {
+        return benchmarkDriver;
+    }
+
+    /**
      * Gets the environment description.
      *
      * @return the environment description
      */
     public final String getBenchmarkEnvironment() {
         return benchmarkEnvironment;
+    }
+
+    /**
+     * Gets the name of the applied module.
+     *
+     * @return the module name and the programming language with name and version
+     */
+    public final String getBenchmarkModule() {
+        return benchmarkModule;
     }
 
     /**
@@ -565,7 +587,9 @@ public class Config {
         benchmarkBatchSize = propertiesConfiguration.getInt("benchmark.batch.size");
         benchmarkComment = propertiesConfiguration.getString("benchmark.comment");
         benchmarkDatabase = propertiesConfiguration.getString("benchmark.database");
+        benchmarkDriver = propertiesConfiguration.getString("benchmark.driver");
         benchmarkEnvironment = propertiesConfiguration.getString("benchmark.environment");
+        benchmarkModule = propertiesConfiguration.getString("benchmark.module");
         benchmarkProgramNameC = propertiesConfiguration.getString("benchmark.program.name.c");
         benchmarkTrials = propertiesConfiguration.getInt("benchmark.trials");
 
@@ -621,9 +645,21 @@ public class Config {
             isChanged = true;
         }
 
+        if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_DRIVER")) {
+            benchmarkDriver = environmentVariables.get("ORA_BENCH_BENCHMARK_DRIVER");
+            propertiesConfiguration.setProperty("benchmark.driver", benchmarkDriver);
+            isChanged = true;
+        }
+
         if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_ENVIRONMENT")) {
             benchmarkEnvironment = environmentVariables.get("ORA_BENCH_BENCHMARK_ENVIRONMENT");
             propertiesConfiguration.setProperty("benchmark.environment", benchmarkEnvironment);
+            isChanged = true;
+        }
+
+        if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_MODULE")) {
+            benchmarkModule = environmentVariables.get("ORA_BENCH_BENCHMARK_MODULE");
+            propertiesConfiguration.setProperty("benchmark.module", benchmarkModule);
             isChanged = true;
         }
 
