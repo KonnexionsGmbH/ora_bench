@@ -9,7 +9,7 @@ sleep .1
 #
 # ------------------------------------------------------------------------------
 
-export ORA_BENCH_BENCHMARK_COMMENT='Standard tests'
+export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (locally)'
 
 export ORA_BENCH_CONNECTION_HOST=0.0.0.0
 export ORA_BENCH_CONNECTION_PORT=1521

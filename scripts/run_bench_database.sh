@@ -6,9 +6,6 @@
 #
 # ------------------------------------------------------------------------------
 
-if [ -z "$ORA_BENCH_BENCHMARK_COMMENT" ]; then
-    export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (database)'
-fi
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
@@ -33,7 +30,6 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - specific database."
 echo "--------------------------------------------------------------------------------"
-echo "BENCHMARK_COMMENT       : $ORA_BENCH_BENCHMARK_COMMENT"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"

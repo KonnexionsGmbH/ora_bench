@@ -125,6 +125,12 @@ public class OraBench {
 
         Connection connection = database.connect();
 
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         for (int i = 1; i <= benchmarkTrials; i++) {
             runBenchmarkTrial(connection, i, bulkData);
         }
@@ -134,7 +140,8 @@ public class OraBench {
         result.endBenchmark();
     }
 
-    private static void runBenchmarkInsert(Connection connection, int trialNumber, ArrayList<String[]> bulkData, String sqlStatement, int batchSize) {
+    private static void runBenchmarkInsert(Connection connection, int trialNumber, ArrayList<String[]> bulkData, String sqlStatement, int batchSize,
+            int transactionSize) {
         int count = 0;
         result.startQuery();
 
@@ -151,9 +158,14 @@ public class OraBench {
                 if (count % batchSize == 0) {
                     preparedStatement.executeBatch();
                 }
+
+                if (count % transactionSize == 0) {
+                    connection.commit();
+                }
             }
 
             preparedStatement.executeBatch();
+            connection.commit();
             preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -213,7 +225,8 @@ public class OraBench {
             }
         }
 
-        runBenchmarkInsert(connection, trialNumber, bulkData, config.getSqlInsertOracle(), config.getBenchmarkBatchSize());
+        runBenchmarkInsert(connection, trialNumber, bulkData, config.getSqlInsertOracle(), config.getBenchmarkBatchSize(),
+                config.getBenchmarkTransactionSize());
 
         runBenchmarkSelect(connection, trialNumber, bulkData, config.getSqlSelect());
 

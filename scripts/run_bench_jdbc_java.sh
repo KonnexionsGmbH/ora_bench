@@ -6,9 +6,6 @@
 #
 # ------------------------------------------------------------------------------
 
-if [ -z "$ORA_BENCH_BENCHMARK_COMMENT" ]; then
-    export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (Java)'
-fi
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
@@ -41,7 +38,6 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - JDBC & Java."
 echo "--------------------------------------------------------------------------------"
-echo "BENCHMARK_COMMENT       : $ORA_BENCH_BENCHMARK_COMMENT"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "BENCHMARK_DRIVER        : $ORA_BENCH_BENCHMARK_DRIVER"
 echo "BENCHMARK_MODULE        : $ORA_BENCH_BENCHMARK_MODULE"

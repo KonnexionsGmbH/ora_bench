@@ -32,6 +32,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>benchmark.environment
  * <li>benchmark.module
  * <li>benchmark.program.name.oranif.c
+ * <li>benchmark.transaction.size
  * <li>benchmark.trials
  * <li>connection.host
  * <li>connection.password
@@ -72,6 +73,7 @@ public class Config {
     private String benchmarkEnvironment;
     private String benchmarkModule;
     private String benchmarkProgramNameOranifC;
+    private int benchmarkTransactionSize;
     private int benchmarkTrials;
 
     private final File configFile = new File(System.getenv("ORA_BENCH_FILE_CONFIGURATION_NAME"));
@@ -331,6 +333,15 @@ public class Config {
     }
 
     /**
+     * Gets the transaction size of the INSERT operation.
+     *
+     * @return the transaction size
+     */
+    public final int getBenchmarkTransactionSize() {
+        return benchmarkTransactionSize;
+    }
+
+    /**
      * Gets the number of benchmark trials to be carried out.
      *
      * @return the number of benchmark trials
@@ -531,10 +542,11 @@ public class Config {
         List<String> list = new ArrayList<String>();
 
         list.add("benchmark.batch.size");
+        list.add("benchmark.transaction.size");
         list.add("benchmark.trials");
+        list.add("connection.port");
         list.add("file.bulk.length");
         list.add("file.bulk.size");
-        list.add("connection.port");
 
         return list;
     }
@@ -603,6 +615,7 @@ public class Config {
         benchmarkEnvironment = propertiesConfiguration.getString("benchmark.environment");
         benchmarkModule = propertiesConfiguration.getString("benchmark.module");
         benchmarkProgramNameOranifC = propertiesConfiguration.getString("benchmark.program.name.oranif.c");
+        benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
         benchmarkTrials = propertiesConfiguration.getInt("benchmark.trials");
 
         connectionHost = propertiesConfiguration.getString("connection.host");

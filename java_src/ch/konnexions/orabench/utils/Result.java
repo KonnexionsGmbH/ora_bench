@@ -81,9 +81,9 @@ public class Result {
             long duration) {
         try {
             resultFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkEnvironment(), config.getBenchmarkDatabase(), config.getBenchmarkModule(),
-                    config.getBenchmarkDriver(), trialNo, sqlStatement, config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(),
-                    action, startDateTime.format(formatter), endDateTime.format(formatter), decimalFormat.format(duration / 1000000000.0),
-                    Long.toString(duration));
+                    config.getBenchmarkDriver(), trialNo, sqlStatement, config.getBenchmarkTransactionSize(), config.getFileBulkLength(),
+                    config.getFileBulkSize(), config.getBenchmarkBatchSize(), action, startDateTime.format(formatter), endDateTime.format(formatter),
+                    decimalFormat.format(duration / 1000000000.0), Long.toString(duration));
         } catch (IOException e) {
             log.error("file result delimiter=: " + config.getFileResultDelimiter());
             log.error("file result header   =: " + config.getFileResultHeader());
@@ -98,14 +98,14 @@ public class Result {
 
         try {
             summaryFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkEnvironment(), config.getBenchmarkDatabase(), config.getBenchmarkModule(),
-                    config.getBenchmarkDriver(), config.getSqlInsertOracle(), config.getFileBulkLength(), config.getFileBulkSize(),
-                    config.getBenchmarkBatchSize(), config.getBenchmarkTrials(), startDateTimeStr, endDateTimeStr,
+                    config.getBenchmarkDriver(), config.getSqlInsertOracle(), config.getBenchmarkTransactionSize(), config.getFileBulkLength(),
+                    config.getFileBulkSize(), config.getBenchmarkBatchSize(), config.getBenchmarkTrials(), startDateTimeStr, endDateTimeStr,
                     decimalFormat.format(durationInsertSum / (double) config.getBenchmarkTrials()),
                     decimalFormat.format((durationInsertSum / (double) config.getBenchmarkTrials()) / config.getFileBulkSize()),
                     Long.toString(durationInsertMinimum), Long.toString(durationInsertMaximum));
             summaryFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkEnvironment(), config.getBenchmarkDatabase(), config.getBenchmarkModule(),
-                    config.getBenchmarkDriver(), config.getSqlSelect(), config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(),
-                    config.getBenchmarkTrials(), startDateTimeStr, endDateTimeStr,
+                    config.getBenchmarkDriver(), config.getSqlSelect(), config.getBenchmarkTransactionSize(), config.getFileBulkLength(),
+                    config.getFileBulkSize(), config.getBenchmarkBatchSize(), config.getBenchmarkTrials(), startDateTimeStr, endDateTimeStr,
                     decimalFormat.format(durationSelectSum / (double) config.getBenchmarkTrials()),
                     decimalFormat.format((durationSelectSum / (double) config.getBenchmarkTrials()) / config.getFileBulkSize()),
                     Long.toString(durationSelectMinimum), Long.toString(durationSelectMaximum));
