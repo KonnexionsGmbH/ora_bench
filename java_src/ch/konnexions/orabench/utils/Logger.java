@@ -22,7 +22,6 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A simple logging class abstracting underlying logging APIs. The six logging
  * levels used by Log are (in order):
- * <p>
  * <ul>
  * <li>trace (the least serious)
  * <li>debug

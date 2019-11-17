@@ -24,7 +24,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * configuration parameters are made available to the configuration object in a
  * text file. This text file must contain the values of the following
  * configuration parameters:
- * <p>
  * <ul>
  * <li>benchmark.batch.size
  * <li>benchmark.comment
@@ -61,7 +60,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>sql.insert.oracle
  * <li>sql.select
  * </ul>
- * <p>
  * The parameter name and parameter value must be separated by an equal sign
  * (=).
  */
@@ -126,6 +124,7 @@ public class Config {
         try {
             propertiesConfiguration = fileBasedConfigurationBuilder.getConfiguration();
             updatePropertiesFromEnvironment();
+            keysSorted = getKeysSorted(propertiesConfiguration);
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }
@@ -144,14 +143,6 @@ public class Config {
 
             bufferedWriter.write("#{");
             bufferedWriter.newLine();
-
-            try {
-                propertiesConfiguration = fileBasedConfigurationBuilder.getConfiguration();
-            } catch (ConfigurationException e) {
-                e.printStackTrace();
-            }
-
-            keysSorted = getKeysSorted(propertiesConfiguration);
 
             for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
@@ -177,10 +168,8 @@ public class Config {
 
     /**
      * Creates the C version of the configuration file.
-     *
-     * @throws ConfigurationException the configuration exception
      */
-    public final void createConfigurationFileOranifC() throws ConfigurationException {
+    public final void createConfigurationFileOranifC() {
         try {
             List<String> list = getNumericProperties();
 
@@ -200,14 +189,6 @@ public class Config {
             bufferedWriter.write("# ------------------------------------------------------------------------------");
             bufferedWriter.newLine();
             bufferedWriter.newLine();
-
-            try {
-                propertiesConfiguration = fileBasedConfigurationBuilder.getConfiguration();
-            } catch (ConfigurationException e1) {
-                e1.printStackTrace();
-            }
-
-            keysSorted = getKeysSorted(propertiesConfiguration);
 
             for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
@@ -507,6 +488,19 @@ public class Config {
         return keysSorted;
     }
 
+    private final List<String> getNotAvailables() {
+        List<String> list = new ArrayList<String>();
+
+        list.add("benchmark.comment");
+        list.add("benchmark.database");
+        list.add("benchmark.driver");
+        list.add("benchmark.environment");
+        list.add("benchmark.module");
+        list.add("connection.service");
+
+        return list;
+    }
+
     private final List<String> getNumericProperties() {
         List<String> list = new ArrayList<String>();
 
@@ -553,6 +547,35 @@ public class Config {
      */
     public final String getSqlSelect() {
         return sqlSelect;
+    }
+
+    /**
+     * Resets the runtime configuration parameters to "n/a".
+     */
+    public final void resetNotAvailables() {
+
+        List<String> list = getNotAvailables();
+
+        boolean isChanged = false;
+
+        for (final Iterator<String> iterator = list.iterator(); iterator.hasNext();) {
+            final String key = iterator.next();
+
+            if (!(propertiesConfiguration.getString(key).equals("n/a"))) {
+                propertiesConfiguration.setProperty(key, "n/a");
+                isChanged = true;
+            }
+
+        }
+
+        if (isChanged) {
+            try {
+                fileBasedConfigurationBuilder.save();
+                propertiesConfiguration = fileBasedConfigurationBuilder.getConfiguration();
+            } catch (ConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -604,7 +627,7 @@ public class Config {
         sqlSelect = propertiesConfiguration.getString("sql.select");
     }
 
-    private final void updatePropertiesFromEnvironment() throws ConfigurationException {
+    private final void updatePropertiesFromEnvironment() {
 
         Map<String, String> environmentVariables = System.getenv();
 
@@ -671,7 +694,12 @@ public class Config {
         }
 
         if (isChanged) {
-            fileBasedConfigurationBuilder.save();
+            try {
+                fileBasedConfigurationBuilder.save();
+                propertiesConfiguration = fileBasedConfigurationBuilder.getConfiguration();
+            } catch (ConfigurationException e) {
+                e.printStackTrace();
+            }
         }
     }
 

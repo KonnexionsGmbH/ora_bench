@@ -1,8 +1,8 @@
 /*
- * Licensed to the Konnexions GmbH under one or more contributor license 
- * agreements.  The Konnexions GmbH licenses this file to You under the 
- * Apache License, Version 2.0 (the "License"); you may not use this file 
- * except in compliance with the License.  You may obtain a copy of the 
+ * Licensed to the Konnexions GmbH under one or more contributor license
+ * agreements.  The Konnexions GmbH licenses this file to You under the
+ * Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a copy of the
  * License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -26,7 +26,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
@@ -73,14 +72,20 @@ public class OraBench {
     }
 
     /**
-     * This is the main method which Depending on the command line argument
-     * provided, creates either a bulk file or performs a benchmark run.
-     *
-     * @param args createBulkfile / runBenchmark
+     * This is the main method for the Oracle benchmark run. The operations to be
+     * performed are determined with a command line argument:
+     * <ul>
+     * <li>setup - prepares the database and creates the bulk file
+     * <li>runBenchmark - executes all database and driver-related activities of the
+     * benchmark run
+     * <li>finalise - resets the configuration file to its initial state
+     * </ul>
+     * 
+     * @param args finalise / runBenchmark / setup
      */
     public static void main(String[] args) {
 
-        log.info("Start Oracle JDBC Benchmark");
+        log.info("Start OraBench.java");
 
         String args0 = null;
         if (args.length > 0) {
@@ -89,29 +94,29 @@ public class OraBench {
 
         log.info("args[0]=" + args0);
 
-        if (args0.equals("createBulkFile")) {
-            log.info("Start Creating BulkFile");
+        if (args0.equals("setup")) {
+            log.info("Start Setup Benchmark Run");
             config = new Config();
-            try {
-                config.createConfigurationFileOranifC();
-            } catch (ConfigurationException e) {
-                e.printStackTrace();
-            }
+            config.createConfigurationFileOranifC();
             config.createConfigurationFileErlang();
             new Setup(config).createBulkFile();
-            log.info("End   Creating BulkFile");
+            log.info("End   Setup Benchmark Run");
         } else if (args0.equals("runBenchmark")) {
             log.info("Start Running Benchmark");
             config = new Config();
             runBenchmark();
             log.info("End   Running Benchmark");
+        } else if (args0.equals("finalise")) {
+            log.info("Start Finalise Benchmark Run");
+            new Config().resetNotAvailables();
+            log.info("End   Finalise Benchmark Run");
         } else if (args0.contentEquals("")) {
             log.error("Command line argument missing");
         } else {
             log.error("Unknown command line argument");
         }
 
-        log.info("End   Oracle JDBC Benchmark");
+        log.info("End   OraBench.java");
     }
 
     private static void runBenchmark() {

@@ -158,29 +158,31 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 ### 4.1 JDBC and Java
 
 - the following data in the configuration parameters is determined at runtime: operating system environment (`benchmark.environment`), the JRE version (`benchmark.module`) and JDBC version (`benchmark.driver`)
-- in 
+- the Java source code is compiled with the help of a make file
+- Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
+- Java uses the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
 ## 5 <a name="todo_list"></a> ToDo List
 
 | Completed | Created | Assigned | Task Description |
 | :---: | :---: | :--- | :--- |
-|  | 2019.11.05 | c_bik | C / odpi-c: new |
-|  | 2019.11.05 | c_bik | C++ / occi: new |
-|  | 2019.11.05 | c_bik | Erlang / JamDB : new |
-|  | 2019.11.05 | c_bik | Erlang / odbc: new |
-|  | 2019.11.05 | c_bik | Erlang / oranif: dynamic batchsize |
-|  | 2019.11.05 | c_bik | Erlang / oranif: multithreading |
-|  | 2019.11.05 | wwe | Java / JDBC: multithreading |
-|  | 2019.11.05 | wwe | Overall: documentation |
-|  | 2019.11.05 | wwe | Overall: partitioned table |
-|  | 2019.11.05 | wwe | Python / cx_Oracle: new |
-| 2019.11.05 | 2019.11.05 | wwe | Java / JDBC: dynamic batchsize | 
-| 2019.11.06 | 2019.11.05 | wwe | Java: finishing with summary report |
+|  | 2019.11.05 | c_bik | JamDB & Erlang: new |
+|  | 2019.11.05 | c_bik | occi & C++: new |
+|  | 2019.11.05 | c_bik | odbc & Erlang: new |
+|  | 2019.11.05 | c_bik | odpi-c & C: new |
+|  | 2019.11.05 | c_bik | oranif & Erlang: multithreading ??? |
+|  | 2019.11.05 | c_bik | oranif & Erlang: using the configuration parameters |
+|  | 2019.11.05 | wwe | cx_Oracle & Python: new |
+|  | 2019.11.05 | wwe | JDBC & Java: multithreading ??? |
+|  | 2019.11.05 | wwe | Overall: partitioned table ??? |
+| 2019.11.05 | 2019.11.05 | wwe | JDBC & Java: dynamic batchsize | 
+| 2019.11.06 | 2019.11.05 | wwe | JDBC & Java: finishing with summary report |
 | 2019.11.06 | 2019.11.05 | wwe | Overall: separating key column and data column |
-| 2019.11.07 | 2019.11.05 | wwe | Java / JDBC: dynamic Oracle database version |
+| 2019.11.07 | 2019.11.05 | wwe | JDBC & Java: dynamic Oracle database version |
 | 2019.11.07 | 2019.11.05 | wwe | Overall: databases via docker containers |
-| 2019.11.08 | 2019.11.05 | wwe | Java: generating language specific configuration files |
+| 2019.11.08 | 2019.11.05 | wwe | JDBC & Java: generating language specific configuration files |
 | 2019.11.12 | 2019.11.05 | wwe | Overall: Travis/CI integration |
+| 2019.11.17 | 2019.11.05 | wwe | Overall: documentation |
 
 ## 6. <a name="contributing"></a> Contributing
 

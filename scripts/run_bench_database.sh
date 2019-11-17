@@ -52,6 +52,8 @@ while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy"
 
 { /bin/bash scripts/run_bench_jdbc_java.sh; }
 
+{ /bin/bash scripts/run_bench_finalise.sh; }
+
 EXITCODE=$?
 
 echo ""

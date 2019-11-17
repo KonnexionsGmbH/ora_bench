@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_setup.sh: Oracle Benchmark Database Setup.
+# run_bench_setup.sh: Oracle Benchmark Run Setup.
 #
 # ------------------------------------------------------------------------------
 
@@ -33,7 +33,7 @@ export ORA_BENCH_CONNECT_IDENTIFIER=//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONN
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - database setup."
+echo "ora_bench - Oracle benchmark - setup benchmark run."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
@@ -56,7 +56,7 @@ priv/sqlcl/bin/sql sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS 
 make -f java_src/Makefile clean
 make -f java_src/Makefile
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench createBulkFile
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup
 
 EXITCODE=$?
 
