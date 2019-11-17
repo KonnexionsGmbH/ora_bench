@@ -14,7 +14,7 @@ export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (locally)'
 export ORA_BENCH_CONNECTION_HOST=0.0.0.0
 export ORA_BENCH_CONNECTION_PORT=1521
 
-export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/ora_bench.properties
+export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"

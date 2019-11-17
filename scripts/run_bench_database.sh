@@ -19,7 +19,7 @@ if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclcdb
 fi
 if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
-    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/ora_bench.properties
+    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
