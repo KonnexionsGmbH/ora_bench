@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,12 +49,12 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>file.configuration.name
  * <li>file.configuration.name.oranif.c
  * <li>file.configuration.name.oranif.erlang
- * <li>file.result.delimiter
- * <li>file.result.header
- * <li>file.result.name
- * <li>file.summary.delimiter
- * <li>file.summary.header
- * <li>file.summary.name
+ * <li>file.result.detailed.delimiter
+ * <li>file.result.detailed.header
+ * <li>file.result.detailed.name
+ * <li>file.result.statistical.delimiter
+ * <li>file.result.statistical.header
+ * <li>file.result.statistical.name
  * <li>sql.create
  * <li>sql.drop
  * <li>sql.insert.jamdb
@@ -93,12 +94,14 @@ public class Config {
     private String fileConfigurationName;
     private String fileConfigurationNameOranifC;
     private String fileConfigurationNameOranifErlang;
-    private String fileResultDelimiter;
-    private String fileResultHeader;
-    private String fileResultName;
-    private String fileSummaryDelimiter;
-    private String fileSummaryHeader;
-    private String fileSummaryName;
+    private String fileResultDetailedDelimiter;
+    private String fileResultDetailedHeader;
+    private String fileResultDetailedName;
+    private String fileResultStatisticalDelimiter;
+    private String fileResultStatisticalHeader;
+    private String fileResultStatisticalName;
+
+    private ArrayList<String> keysSorted = new ArrayList<String>();
 
     // private static Logger log = new Logger(Config.class);
 
@@ -128,6 +131,48 @@ public class Config {
         }
 
         storeConfiguration();
+    }
+
+    /**
+     * Creates the Erlang version of the configuration file.
+     */
+    public final void createConfigurationFileErlang() {
+        try {
+            List<String> list = getNumericProperties();
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOranifErlang(), false));
+
+            bufferedWriter.write("#{");
+            bufferedWriter.newLine();
+
+            try {
+                propertiesConfiguration = fileBasedConfigurationBuilder.getConfiguration();
+            } catch (ConfigurationException e) {
+                e.printStackTrace();
+            }
+
+            keysSorted = getKeysSorted(propertiesConfiguration);
+
+            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
+                final String key = iterator.next();
+
+                final String quote = (list.contains(key.toLowerCase())) ? "" : "\"";
+
+                bufferedWriter.write("    " + key.replace(".", "_") + " => " + quote + propertiesConfiguration.getString(key) + quote);
+
+                if (iterator.hasNext()) {
+                    bufferedWriter.write(",");
+                }
+
+                bufferedWriter.newLine();
+            }
+
+            bufferedWriter.write("}");
+
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -162,12 +207,21 @@ public class Config {
                 e1.printStackTrace();
             }
 
-            for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
+            keysSorted = getKeysSorted(propertiesConfiguration);
+
+            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
 
                 final String quote = (list.contains(key.toLowerCase())) ? "" : "'";
 
-                bufferedWriter.write("ORA_BENCH_" + key.replace(".", "_").toUpperCase() + "=" + quote + propertiesConfiguration.getString(key) + quote);
+                if (key.contentEquals("benchmark.driver")) {
+                    bufferedWriter.write("ORA_BENCH_BENCHMARK_DRIVER='oranif (Version version)'");
+                } else if (key.equals("benchmark.module")) {
+                    bufferedWriter.write("ORA_BENCH_BENCHMARK_MODULE='OraBench (C version)'");
+                } else {
+                    bufferedWriter.write("ORA_BENCH_" + key.replace(".", "_").toUpperCase() + "=" + quote + propertiesConfiguration.getString(key) + quote);
+                }
+
                 bufferedWriter.newLine();
             }
 
@@ -192,7 +246,7 @@ public class Config {
             bufferedWriter.newLine();
             bufferedWriter.write("./" + getBenchmarkProgramNameOranifC() + " ");
 
-            for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
+            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
 
                 bufferedWriter.write("$ORA_BENCH_" + key.replace(".", "_").toUpperCase());
@@ -230,57 +284,13 @@ public class Config {
     }
 
     /**
-     * Creates the Erlang version of the configuration file.
-     */
-    public final void createConfigurationFileErlang() {
-        try {
-            List<String> list = getNumericProperties();
-
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOranifErlang(), false));
-
-            bufferedWriter.write("#{");
-            bufferedWriter.newLine();
-
-            try {
-                propertiesConfiguration = fileBasedConfigurationBuilder.getConfiguration();
-            } catch (ConfigurationException e) {
-                e.printStackTrace();
-            }
-
-            for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
-                final String key = iterator.next();
-
-                final String quote = (list.contains(key.toLowerCase())) ? "" : "\"";
-
-                bufferedWriter.write("    " + key.replace(".", "_") + " => " + quote + propertiesConfiguration.getString(key) + quote);
-
-                if (iterator.hasNext()) {
-                    bufferedWriter.write(",");
-                }
-
-                bufferedWriter.newLine();
-            }
-
-            bufferedWriter.write("}");
-
-            bufferedWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Gets the batch size of the INSERT operation.
-     *
-     * @return the batch size
+     * @return the batch size of the INSERT operation
      */
     public final int getBenchmarkBatchSize() {
         return benchmarkBatchSize;
     }
 
     /**
-     * Gets the benchmark specific comment.
-     *
      * @return the benchmark specific comment
      */
     public final String getBenchmarkComment() {
@@ -288,8 +298,6 @@ public class Config {
     }
 
     /**
-     * Gets the database description.
-     *
      * @return the database description
      */
     public final String getBenchmarkDatabase() {
@@ -297,17 +305,13 @@ public class Config {
     }
 
     /**
-     * Gets the name of the applied driver.
-     *
-     * @return the driver name and its version
+     * @return the applied driver name and its version
      */
     public final String getBenchmarkDriver() {
         return benchmarkDriver;
     }
 
     /**
-     * Gets the operating system description.
-     *
      * @return the operating system description
      */
     public final String getBenchmarkEnvironment() {
@@ -315,17 +319,14 @@ public class Config {
     }
 
     /**
-     * Gets the name of the applied module.
-     *
-     * @return the module name and the programming language with name and version
+     * @return the applied module name its programming language with name and
+     *         version
      */
     public final String getBenchmarkModule() {
         return benchmarkModule;
     }
 
     /**
-     * Gets the oranif &amp; C program name.
-     *
      * @return the oranif &amp; C program name
      */
     public final String getBenchmarkProgramNameOranifC() {
@@ -333,62 +334,48 @@ public class Config {
     }
 
     /**
-     * Gets the transaction size of the INSERT operation.
-     *
-     * @return the transaction size
+     * @return the transaction size of the INSERT operation
      */
     public final int getBenchmarkTransactionSize() {
         return benchmarkTransactionSize;
     }
 
     /**
-     * Gets the number of benchmark trials to be carried out.
-     *
-     * @return the number of benchmark trials
+     * @return the number of benchmark trials to be carried out
      */
     public final int getBenchmarkTrials() {
         return benchmarkTrials;
     }
 
     /**
-     * Gets the host name of the database.
-     *
-     * @return the host name or the IP address
+     * @return the host name or the IP address of the database
      */
     public final String getConnectionHost() {
         return connectionHost;
     }
 
     /**
-     * Gets the password to connect to the database.
-     *
-     * @return the password
+     * @return the password to connect to the database
      */
     public final String getConnectionPassword() {
         return connectionPassword;
     }
 
     /**
-     * Gets the port number where the database server is listening for requests.
-     *
-     * @return the port number
+     * @return the port number where the database server is listening for requests
      */
     public final int getConnectionPort() {
         return connectionPort;
     }
 
     /**
-     * Gets the service name to connect to the database.
-     *
-     * @return the service name
+     * @return the service name to connect to the database
      */
     public final String getConnectionService() {
         return connectionService;
     }
 
     /**
-     * Gets the connection string.
-     *
      * @return the connection string
      */
     public final String getConnectionString() {
@@ -396,35 +383,27 @@ public class Config {
     }
 
     /**
-     * Gets the user name to connect to the database.
-     *
-     * @return the user name
+     * @return the user name to connect to the database
      */
     public final String getConnectionUser() {
         return connectionUser;
     }
 
     /**
-     * Gets the delimiter character of the bulk file.
-     *
-     * @return the delimiter character of the bulk file
+     * @return the delimiter character of the bulk data file
      */
     public final String getFileBulkDelimiter() {
         return fileBulkDelimiter;
     }
 
     /**
-     * Gets the the bulk header.
-     *
-     * @return the bulk header
+     * @return the header line of the bulk data file
      */
     public final String getFileBulkHeader() {
         return fileBulkHeader;
     }
 
     /**
-     * Gets the length of a test column value.
-     *
      * @return the length of a test column value
      */
     public final int getFileBulkLength() {
@@ -432,18 +411,14 @@ public class Config {
     }
 
     /**
-     * Gets the file name of the text file with the example data (bulk data file).
-     *
-     * @return the name of the bulk data file. The file name may contain the
-     *         absolute or relative file path.
+     * @return the file name of the text file with the example data (bulk data
+     *         file). The file name may contain the absolute or relative file path.
      */
     public final String getFileBulkName() {
         return fileBulkName;
     }
 
     /**
-     * Gets the number of different test column values.
-     *
      * @return the number of different test column values
      */
     public final int getFileBulkSize() {
@@ -451,8 +426,6 @@ public class Config {
     }
 
     /**
-     * Gets the file name of the configuration file.
-     *
      * @return the name of the configuration file. The file name may contain the
      *         absolute or relative file path.
      */
@@ -461,21 +434,17 @@ public class Config {
     }
 
     /**
-     * Gets the file name of the configuration file for the oranif &amp; C version.
-     *
-     * @return the name of the configuration file for the oranif &amp; C version.
-     *         The file name may contain the absolute or relative file path.
+     * @return the name of the configuration file for the oranif &amp; C language
+     *         version. The file name may contain the absolute or relative file
+     *         path.
      */
     public final String getFileConfigurationNameOranifC() {
         return fileConfigurationNameOranifC;
     }
 
     /**
-     * Gets the file name of the configuration file for the oranif &amp; Erlang
-     * version language.
-     *
      * @return the name of the configuration file for the oranif &amp; Erlang
-     *         version language. The file name may contain the absolute or relative
+     *         language version. The file name may contain the absolute or relative
      *         file path.
      */
     public final String getFileConfigurationNameOranifErlang() {
@@ -483,59 +452,59 @@ public class Config {
     }
 
     /**
-     * Gets the delimiter character of the result file.
-     *
-     * @return the delimiter character of the result file
+     * @return the delimiter character of the detailed result file
      */
-    public final String getFileResultDelimiter() {
-        return fileResultDelimiter;
+    public final String getFileResultDetailedDelimiter() {
+        return fileResultDetailedDelimiter;
     }
 
     /**
-     * Gets the the result header.
-     *
-     * @return the result header
+     * @return the header line of the detailed result file
      */
-    public final String getFileResultHeader() {
-        return fileResultHeader;
+    public final String getFileResultDetailedHeader() {
+        return fileResultDetailedHeader;
     }
 
     /**
-     * Gets the file name of the result file containing the benchmark results.
-     *
-     * @return the name of the result file. The file name may contain the absolute
-     *         or relative file path.
+     * @return the name of the detailed result file containing the benchmark
+     *         results. The file name may contain the absolute or relative file
+     *         path.
      */
-    public final String getFileResultName() {
-        return fileResultName;
+    public final String getFileResultDetailedName() {
+        return fileResultDetailedName;
     }
 
     /**
-     * Gets the delimiter character of the summary file.
-     *
-     * @return the delimiter character of the summary file
+     * @return the delimiter character of the statistical result file
      */
-    public final String getFileSummaryDelimiter() {
-        return fileSummaryDelimiter;
+    public final String getFileResultStatisticalDelimiter() {
+        return fileResultStatisticalDelimiter;
     }
 
     /**
-     * Gets the the summary header.
-     *
-     * @return the summary header
+     * @return the header line of the statistical result file
      */
-    public final String getFileSummaryHeader() {
-        return fileSummaryHeader;
+    public final String getFileResultStatisticalHeader() {
+        return fileResultStatisticalHeader;
     }
 
     /**
-     * Gets the file name of the summary file containing the benchmark summaries.
-     *
-     * @return the name of the summary file. The file name may contain the absolute
-     *         or relative file path.
+     * @return the name of the statistical result file containing the benchmark
+     *         results. The file name may contain the absolute or relative file
+     *         path.
      */
-    public final String getFileSummaryName() {
-        return fileSummaryName;
+    public final String getFileResultStatisticalName() {
+        return fileResultStatisticalName;
+    }
+
+    private final ArrayList<String> getKeysSorted(PropertiesConfiguration propertiesConfiguration2) {
+        for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
+            keysSorted.add(iterator.next());
+        }
+
+        Collections.sort(keysSorted);
+
+        return keysSorted;
     }
 
     private final List<String> getNumericProperties() {
@@ -552,8 +521,6 @@ public class Config {
     }
 
     /**
-     * Gets the CREATE TABLE statement.
-     *
      * @return the CREATE TABLE statement
      */
     public final String getSqlCreateTable() {
@@ -561,8 +528,6 @@ public class Config {
     }
 
     /**
-     * Gets the DROP TABLE statement.
-     *
      * @return the DROP TABLE statement
      */
     public final String getSqlDropTable() {
@@ -570,26 +535,20 @@ public class Config {
     }
 
     /**
-     * Gets the INSERT statement for JamDB.
-     *
-     * @return the INSERT statement
+     * @return the INSERT statement for JamDB
      */
     public final String getSqlInsertJamdb() {
         return sqlInsertJamdb;
     }
 
     /**
-     * Gets the INSERT statement for Oracle.
-     *
-     * @return the INSERT statement
+     * @return the INSERT statement for Oracle
      */
     public final String getSqlInsertOracle() {
         return sqlInsertOracle;
     }
 
     /**
-     * Gets the SELECT statement.
-     *
      * @return the SELECT statement
      */
     public final String getSqlSelect() {
@@ -597,8 +556,6 @@ public class Config {
     }
 
     /**
-     * Sets the name of the applied driver.
-     *
      * @param benchmarkDriver the name of the applied driver to set
      */
     public final void setBenchmarkDriver(String benchmarkDriver) {
@@ -613,7 +570,7 @@ public class Config {
         benchmarkDatabase = propertiesConfiguration.getString("benchmark.database");
         benchmarkDriver = propertiesConfiguration.getString("benchmark.driver");
         benchmarkEnvironment = propertiesConfiguration.getString("benchmark.environment");
-        benchmarkModule = propertiesConfiguration.getString("benchmark.module");
+        benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
         benchmarkProgramNameOranifC = propertiesConfiguration.getString("benchmark.program.name.oranif.c");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
         benchmarkTrials = propertiesConfiguration.getInt("benchmark.trials");
@@ -633,12 +590,12 @@ public class Config {
         fileConfigurationName = propertiesConfiguration.getString("file.configuration.name");
         fileConfigurationNameOranifC = propertiesConfiguration.getString("file.configuration.name.oranif.c");
         fileConfigurationNameOranifErlang = propertiesConfiguration.getString("file.configuration.name.oranif.erlang");
-        fileResultDelimiter = propertiesConfiguration.getString("file.result.delimiter");
-        fileResultHeader = propertiesConfiguration.getString("file.result.header").replace(";", fileResultDelimiter);
-        fileResultName = propertiesConfiguration.getString("file.result.name");
-        fileSummaryDelimiter = propertiesConfiguration.getString("file.summary.delimiter");
-        fileSummaryHeader = propertiesConfiguration.getString("file.summary.header").replace(";", fileSummaryDelimiter);
-        fileSummaryName = propertiesConfiguration.getString("file.summary.name");
+        fileResultDetailedDelimiter = propertiesConfiguration.getString("file.result.detailed.delimiter");
+        fileResultDetailedHeader = propertiesConfiguration.getString("file.result.detailed.header").replace(";", fileResultDetailedDelimiter);
+        fileResultDetailedName = propertiesConfiguration.getString("file.result.detailed.name");
+        fileResultStatisticalDelimiter = propertiesConfiguration.getString("file.result.statistical.delimiter");
+        fileResultStatisticalHeader = propertiesConfiguration.getString("file.result.statistical.header").replace(";", fileResultStatisticalDelimiter);
+        fileResultStatisticalName = propertiesConfiguration.getString("file.result.statistical.name");
 
         sqlCreateTable = propertiesConfiguration.getString("sql.create");
         sqlDropTable = propertiesConfiguration.getString("sql.drop");
@@ -677,12 +634,6 @@ public class Config {
             isChanged = true;
         }
 
-        if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_MODULE")) {
-            benchmarkModule = environmentVariables.get("ORA_BENCH_BENCHMARK_MODULE").replace("version", System.getProperty("java.version"));
-            propertiesConfiguration.setProperty("benchmark.module", benchmarkModule);
-            isChanged = true;
-        }
-
         if (environmentVariables.containsKey("ORA_BENCH_CONNECTION_HOST")) {
             connectionHost = environmentVariables.get("ORA_BENCH_CONNECTION_HOST");
             propertiesConfiguration.setProperty("connection.host", connectionHost);
@@ -707,15 +658,15 @@ public class Config {
             isChanged = true;
         }
 
-        if (environmentVariables.containsKey("ORA_BENCH_FILE_RESULT_NAME")) {
-            fileResultName = environmentVariables.get("ORA_BENCH_FILE_RESULT_NAME");
-            propertiesConfiguration.setProperty("file.result.name", fileResultName);
+        if (environmentVariables.containsKey("ORA_BENCH_FILE_RESULT_DETAILED_NAME")) {
+            fileResultDetailedName = environmentVariables.get("ORA_BENCH_FILE_RESULT_DETAILED_NAME");
+            propertiesConfiguration.setProperty("file.result.detailed.name", fileResultDetailedName);
             isChanged = true;
         }
 
-        if (environmentVariables.containsKey("ORA_BENCH_FILE_SUMMARY_NAME")) {
-            fileSummaryName = environmentVariables.get("ORA_BENCH_FILE_SUMMARY_NAME");
-            propertiesConfiguration.setProperty("file.summary.name", fileSummaryName);
+        if (environmentVariables.containsKey("ORA_BENCH_FILE_RESULT_STATISTICAL_NAME")) {
+            fileResultStatisticalName = environmentVariables.get("ORA_BENCH_FILE_RESULT_STATISTICAL_NAME");
+            propertiesConfiguration.setProperty("file.result.statistical.name", fileResultStatisticalName);
             isChanged = true;
         }
 

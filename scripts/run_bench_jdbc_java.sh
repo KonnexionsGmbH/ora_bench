@@ -9,11 +9,6 @@
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
-
-export ORA_BENCH_BENCHMARK_DRIVER='JDBC (Version version)'
-
-export ORA_BENCH_BENCHMARK_MODULE='OraBench (Java version)'
-
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
     export ORA_BENCH_CONNECTION_HOST=0.0.0.0
 fi
@@ -39,8 +34,6 @@ echo "--------------------------------------------------------------------------
 echo "ora_bench - Oracle benchmark - JDBC & Java."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
-echo "BENCHMARK_DRIVER        : $ORA_BENCH_BENCHMARK_DRIVER"
-echo "BENCHMARK_MODULE        : $ORA_BENCH_BENCHMARK_MODULE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
 echo "CONNECTION_SERVICE      : $ORA_BENCH_CONNECTION_SERVICE"

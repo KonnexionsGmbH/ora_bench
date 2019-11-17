@@ -68,7 +68,7 @@ public class Database {
             try {
                 connection = DriverManager.getConnection(url, connectionUser, connectionPassword);
                 DatabaseMetaData meta = connection.getMetaData();
-                config.setBenchmarkDriver(config.getBenchmarkDriver().replace("version", meta.getDriverVersion()));
+                config.setBenchmarkDriver("JDBC (Version " + meta.getDriverVersion() + ")");
             } catch (SQLException ec) {
                 log.error("connection parameter url     =: " + url);
                 log.error("connection parameter username=: " + connectionUser);

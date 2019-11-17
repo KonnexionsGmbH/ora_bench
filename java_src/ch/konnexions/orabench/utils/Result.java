@@ -85,8 +85,8 @@ public class Result {
                     config.getFileBulkSize(), config.getBenchmarkBatchSize(), action, startDateTime.format(formatter), endDateTime.format(formatter),
                     decimalFormat.format(duration / 1000000000.0), Long.toString(duration));
         } catch (IOException e) {
-            log.error("file result delimiter=: " + config.getFileResultDelimiter());
-            log.error("file result header   =: " + config.getFileResultHeader());
+            log.error("file result delimiter=: " + config.getFileResultDetailedDelimiter());
+            log.error("file result header   =: " + config.getFileResultDetailedHeader());
             log.error("file result name     =: " + config.getFileBulkSize());
             e.printStackTrace();
         }
@@ -110,8 +110,8 @@ public class Result {
                     decimalFormat.format((durationSelectSum / (double) config.getBenchmarkTrials()) / config.getFileBulkSize()),
                     Long.toString(durationSelectMinimum), Long.toString(durationSelectMaximum));
         } catch (IOException e) {
-            log.error("file summary delimiter=: " + config.getFileSummaryDelimiter());
-            log.error("file summary header   =: " + config.getFileSummaryHeader());
+            log.error("file summary delimiter=: " + config.getFileResultStatisticalDelimiter());
+            log.error("file summary header   =: " + config.getFileResultStatisticalHeader());
             log.error("file summary name     =: " + config.getFileBulkSize());
             e.printStackTrace();
         }
@@ -129,8 +129,8 @@ public class Result {
         try {
             resultFile.close();
         } catch (IOException e) {
-            log.error("file result delimiter=: " + config.getFileResultDelimiter());
-            log.error("file result header   =: " + config.getFileResultHeader());
+            log.error("file result delimiter=: " + config.getFileResultDetailedDelimiter());
+            log.error("file result header   =: " + config.getFileResultDetailedHeader());
             log.error("file result name     =: " + config.getFileBulkSize());
             e.printStackTrace();
         }
@@ -142,8 +142,8 @@ public class Result {
         try {
             summaryFile.close();
         } catch (IOException e) {
-            log.error("file summary delimiter=: " + config.getFileSummaryDelimiter());
-            log.error("file summary header   =: " + config.getFileSummaryHeader());
+            log.error("file summary delimiter=: " + config.getFileResultStatisticalDelimiter());
+            log.error("file summary header   =: " + config.getFileResultStatisticalHeader());
             log.error("file summary name     =: " + config.getFileBulkSize());
             e.printStackTrace();
         }
@@ -214,8 +214,8 @@ public class Result {
     }
 
     private final void openResultFile() {
-        String resultDelimiter = config.getFileResultDelimiter();
-        String resultName = config.getFileResultName();
+        String resultDelimiter = config.getFileResultDetailedDelimiter();
+        String resultName = config.getFileResultDetailedName();
 
         try {
             Path resultPath = Paths.get(resultName);
@@ -234,11 +234,11 @@ public class Result {
             } else {
                 bufferedWriter = new BufferedWriter(new FileWriter(resultName, false));
                 resultFile = new CSVPrinter(bufferedWriter,
-                        CSVFormat.EXCEL.withDelimiter(resultDelimiter.charAt(0)).withHeader(config.getFileResultHeader().split(resultDelimiter)));
+                        CSVFormat.EXCEL.withDelimiter(resultDelimiter.charAt(0)).withHeader(config.getFileResultDetailedHeader().split(resultDelimiter)));
             }
         } catch (IOException e) {
             log.error("file result delimiter=: " + resultDelimiter);
-            log.error("file result header   =: " + config.getFileResultHeader());
+            log.error("file result header   =: " + config.getFileResultDetailedHeader());
             log.error("file result name     =: " + resultName);
             log.error("-----------------------");
             e.printStackTrace();
@@ -246,8 +246,8 @@ public class Result {
     }
 
     private final void openSummaryFile() {
-        String summaryDelimiter = config.getFileSummaryDelimiter();
-        String summaryName = config.getFileSummaryName();
+        String summaryDelimiter = config.getFileResultStatisticalDelimiter();
+        String summaryName = config.getFileResultStatisticalName();
 
         try {
             Path summaryPath = Paths.get(summaryName);
@@ -266,11 +266,11 @@ public class Result {
             } else {
                 bufferedWriter = new BufferedWriter(new FileWriter(summaryName, false));
                 summaryFile = new CSVPrinter(bufferedWriter,
-                        CSVFormat.EXCEL.withDelimiter(summaryDelimiter.charAt(0)).withHeader(config.getFileSummaryHeader().split(summaryDelimiter)));
+                        CSVFormat.EXCEL.withDelimiter(summaryDelimiter.charAt(0)).withHeader(config.getFileResultStatisticalHeader().split(summaryDelimiter)));
             }
         } catch (IOException e) {
             log.error("file summary delimiter=: " + summaryDelimiter);
-            log.error("file summary header   =: " + config.getFileSummaryHeader());
+            log.error("file summary header   =: " + config.getFileResultStatisticalHeader());
             log.error("file summary name     =: " + summaryName);
             log.error("-----------------------");
             e.printStackTrace();
