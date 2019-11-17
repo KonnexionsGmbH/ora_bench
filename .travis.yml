@@ -20,5 +20,5 @@ script:
 - export ORA_BENCH_JAVA_CLASSPATH=.:priv/java_jar/*
 - git pull
 - ./scripts/run_bench_database.sh
-# after_success:
-# - "./scripts/run_bench_travis_push.sh"
+after_success:
+- "./scripts/run_bench_travis_push.sh"
