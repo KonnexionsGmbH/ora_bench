@@ -139,8 +139,6 @@ public class Config {
      */
     public final void createConfigurationFileCxOraclePython() {
         try {
-            List<String> list = getNumericProperties();
-
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameCxOraclePython(), false));
 
             bufferedWriter.write("[DEFAULT]");
@@ -149,9 +147,7 @@ public class Config {
             for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
 
-                final String quote = (list.contains(key.toLowerCase())) ? "" : "\"";
-
-                bufferedWriter.write("    " + key.replace(".", "_") + " => " + quote + propertiesConfiguration.getString(key) + quote);
+                bufferedWriter.write(key + " = " + propertiesConfiguration.getString(key));
                 bufferedWriter.newLine();
             }
 

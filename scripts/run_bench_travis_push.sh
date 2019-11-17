@@ -19,8 +19,8 @@ commit_result_files() {
   # Current month and year, e.g: Apr 2018
   dateAndMonth=`date "+%b %Y"`
   # Stage the modified files in dist/output
-  git add -f priv/ora_bench_result.tsv
-  git add -f priv/ora_bench_summary.tsv
+  git add -f priv/ora_bench_result_detailed.tsv
+  git add -f priv/ora_bench_results_statistical.tsv
   # Create a new commit with a custom build message
   # with "[skip ci]" to avoid a build loop
   # and Travis build number for reference
