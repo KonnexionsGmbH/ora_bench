@@ -27,6 +27,7 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | file.bulk.length | 1024 | no | The length of the data part in the bulk file - minimum 33 and maximum 4000. |
 | file.bulk.name | priv/ora_bench_bulk_data.csv | no | The relative filename of the bulk file. |
 | file.bulk.size | 100000 | no | The number of records to be generated in the bulk file. |
+| file.configuration.name.cx_oracle.python | priv/properties/ora_bench_cx_oracle_python.ini | no | The relative filename of the cx_Oracle & Python version of the configuration file. |
 | file.configuration.name.oranif.c | scripts/run_bench_oranif_c.sh | no | The relative filename of the oranif & C version of the configuration file. |
 | file.configuration.name.oranif.erlang | priv/properties/ora_bench_oranif_erlang.properties | no | The relative filename of the oranif & Erlang version of the configuration file. |
 | file.configuration.name | priv/properties/ora_bench.properties | yes | The relative filename of the configuration file. |
