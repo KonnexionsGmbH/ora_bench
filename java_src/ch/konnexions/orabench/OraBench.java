@@ -97,8 +97,9 @@ public class OraBench {
         if (args0.equals("setup")) {
             log.info("Start Setup Benchmark Run");
             config = new Config();
+            config.createConfigurationFileCxOraclePython();
             config.createConfigurationFileOranifC();
-            config.createConfigurationFileErlang();
+            config.createConfigurationFileOranifErlang();
             new Setup(config).createBulkFile();
             log.info("End   Setup Benchmark Run");
         } else if (args0.equals("runBenchmark")) {

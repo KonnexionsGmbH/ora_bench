@@ -46,6 +46,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>file.bulk.name
  * <li>file.bulk.size
  * <li>file.configuration.name
+ * <li>file.configuration.name.cx_oracle.python
  * <li>file.configuration.name.oranif.c
  * <li>file.configuration.name.oranif.erlang
  * <li>file.result.detailed.delimiter
@@ -90,6 +91,7 @@ public class Config {
     private String fileBulkName;
     private int fileBulkSize;
     private String fileConfigurationName;
+    private String fileConfigurationNameCxOraclePython;
     private String fileConfigurationNameOranifC;
     private String fileConfigurationNameOranifErlang;
     private String fileResultDetailedDelimiter;
@@ -133,15 +135,15 @@ public class Config {
     }
 
     /**
-     * Creates the Erlang version of the configuration file.
+     * Creates the cx_Oracle &amp; Python version of the configuration file.
      */
-    public final void createConfigurationFileErlang() {
+    public final void createConfigurationFileCxOraclePython() {
         try {
             List<String> list = getNumericProperties();
 
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOranifErlang(), false));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameCxOraclePython(), false));
 
-            bufferedWriter.write("#{");
+            bufferedWriter.write("[DEFAULT]");
             bufferedWriter.newLine();
 
             for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
@@ -150,15 +152,8 @@ public class Config {
                 final String quote = (list.contains(key.toLowerCase())) ? "" : "\"";
 
                 bufferedWriter.write("    " + key.replace(".", "_") + " => " + quote + propertiesConfiguration.getString(key) + quote);
-
-                if (iterator.hasNext()) {
-                    bufferedWriter.write(",");
-                }
-
                 bufferedWriter.newLine();
             }
-
-            bufferedWriter.write("}");
 
             bufferedWriter.close();
         } catch (IOException e) {
@@ -167,7 +162,7 @@ public class Config {
     }
 
     /**
-     * Creates the C version of the configuration file.
+     * Creates the oranif &amp; C version of the configuration file.
      */
     public final void createConfigurationFileOranifC() {
         try {
@@ -257,6 +252,40 @@ public class Config {
             bufferedWriter.newLine();
             bufferedWriter.write("exit $EXITCODE");
             bufferedWriter.newLine();
+
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Creates the oranif &amp; Erlang version of the configuration file.
+     */
+    public final void createConfigurationFileOranifErlang() {
+        try {
+            List<String> list = getNumericProperties();
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOranifErlang(), false));
+
+            bufferedWriter.write("#{");
+            bufferedWriter.newLine();
+
+            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
+                final String key = iterator.next();
+
+                final String quote = (list.contains(key.toLowerCase())) ? "" : "\"";
+
+                bufferedWriter.write("    " + key.replace(".", "_") + " => " + quote + propertiesConfiguration.getString(key) + quote);
+
+                if (iterator.hasNext()) {
+                    bufferedWriter.write(",");
+                }
+
+                bufferedWriter.newLine();
+            }
+
+            bufferedWriter.write("}");
 
             bufferedWriter.close();
         } catch (IOException e) {
@@ -412,6 +441,15 @@ public class Config {
      */
     public final String getFileConfigurationName() {
         return fileConfigurationName;
+    }
+
+    /**
+     * @return the name of the configuration file for the cx_Oracle &amp; Python
+     *         language version. The file name may contain the absolute or relative
+     *         file path.
+     */
+    public final String getFileConfigurationNameCxOraclePython() {
+        return fileConfigurationNameCxOraclePython;
     }
 
     /**
@@ -611,6 +649,7 @@ public class Config {
         fileBulkName = propertiesConfiguration.getString("file.bulk.name");
         fileBulkSize = propertiesConfiguration.getInt("file.bulk.size");
         fileConfigurationName = propertiesConfiguration.getString("file.configuration.name");
+        fileConfigurationNameCxOraclePython = propertiesConfiguration.getString("file.configuration.name.cx_oracle.python");
         fileConfigurationNameOranifC = propertiesConfiguration.getString("file.configuration.name.oranif.c");
         fileConfigurationNameOranifErlang = propertiesConfiguration.getString("file.configuration.name.oranif.erlang");
         fileResultDetailedDelimiter = propertiesConfiguration.getString("file.result.detailed.delimiter");
