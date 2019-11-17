@@ -98,6 +98,14 @@ In this script, OraBench.java is used to reset the following configuration param
 
 #### 2.2.2 Travis CI
 
+In Travis CI, the following two environment variables are defined per build for each of the databases listed in chapter [Introduction](#introduction):
+
+- `ORA_BENCH_BENCHMARK_DATABASE`
+- `ORA_BENCH_CONNECTION_SERVICE`
+
+In each build the script `run_bench_database.sh` will be executed.
+The results are uploaded to the repositopry at the end.
+
 ### 2.3 Benchmark Results
 
 #### 2.3.1 Detailed Results
@@ -113,6 +121,7 @@ In a file defined by the configuration parameters `file.result.detailed.delimite
 | driver | alphanumeric |  config param `benchmark.driver` |
 | trial no. | integer | trial no. if action equals `trial` , `0` elsewise |
 | SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
+| transaction size | integer | config param `benchmark.transaction.size` |
 | bulk length | integer | config param `file.bulk.length` |
 | bulk size | integer | config param `file.bulk.size` |
 | batch size | integer | config param `benchmark.batch.size` |
@@ -134,16 +143,30 @@ In a file defined by the configuration parameters `file.result.statistical.delim
 | module | alphanumeric |  config param `benchmark.module` |
 | driver | alphanumeric |  config param `benchmark.driver` |
 | SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
+| transaction size | integer | config param `benchmark.transaction.size` |
 | bulk length | integer | config param `file.bulk.length` |
 | bulk size | integer | config param `file.bulk.size` |
 | batch size | integer | config param `benchmark.batch.size` |
 | trials | integer | number of test runs within a benchmark run |
 | start day time | yyyy.mm.dd hh24:mi:ss.ffffffff | current date and time at the start of the benchmark run |
 | end day time | yyyy.mm.dd hh24:mi:ss.ffffffff | current date and time at the end of the benchmark run |
-| average duration (ns) | integer | average time in nanoseconds to execute the SQL statement for all bulk data in a test run |
-| average per SQL stmnt (ns) | integer | average time in nanoseconds to execute the SQL statement once |
+| mean duration (ns) | integer | mean time in nanoseconds to execute the SQL statement for all bulk data in a test run |
+| mean time per SQL stmnt (ns) | integer | mean time in nanoseconds to execute the SQL statement once |
 | minimum duaration (ns) | integer | minimum time in nanoseconds to execute the SQL statement for all bulk data in a test run |
 | maximum duartion (ns) | integer | maximum time in nanoseconds to execute the SQL statement for all bulk data in a test run |
+
+### 2.4 Bulk File
+
+The bulk file in `csv` or `tsv` format is created in the `run_bench_setup.sh` script if it does not already exist. 
+The following configuration parameters are taken into account:
+
+- `file.bulk.delimiter`
+- `file.bulk.header`
+- `file.bulk.length`
+- `file.bulk.name`
+- `file.bulk.size`
+
+The data column in the bulk file is randomly generated with a unique key column (MD5 hash code).
 
 ## 3 <a name="coding_pattern"></a> Coding Pattern
 
