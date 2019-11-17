@@ -51,11 +51,50 @@ All the file names specified here are also part of the configuration file and ca
 
 ##### 2.2.1.1 `run_bench.sh`
 
+This script executes the `run_bench_database.sh` script for each of the databases listed in chapter [Introduction](#introduction).
+The run log is stored in the `run_bench.log` file.
+
 ##### 2.2.1.2 `run_bench_database.sh`
+
+This script is executed for one of the databases listed in in chapter [Introduction](#introduction). 
+First the corresponding Docker Image is downloaded from the DockerHub, if not already available.
+Then a Docker Container is started.
+Finally the following child scripts will run:
+
+- `run_bench_setup.sh`
+- all `run_bench_jdbc_java.sh` scripts
+- `run_bench_finalise.sh`
 
 ##### 2.2.1.3 `run_bench_setup.sh`
 
+This script prepares the database for the benchmark run with the following steps:
+
+1. If not yet available, create the database user according to the parameters `connection.user` and `connection.password`.
+2. Grant this database user the following rights:
+
+- `ALTER SYSTEM`.
+- `CREATE PROCEDURE`
+- `CREATE SESSION`
+- `CREATE TABLE`
+- `UNLIMITED TABLESPACE`
+
+OraBench.java is also used to create a bulk file if it does not already exist.
+
 ##### 2.2.1.4 `run_bench_<driver>_<programming language>.sh`
+
+The driver and programming language related scripts, such as `run_bench_jdbc_java.sh`, first execute the insert statements and then the select statements in each trial with the bulk file.
+The time consumed is captured and recorded in result files.
+
+##### 2.2.1.5 `run_bench_finalise.sh`
+
+In this script, OraBench.java is used to reset the following configuration parameters to the value 'n/a':
+
+- `benchmark.comment`
+- `benchmark.database`
+- `benchmark.driver`
+- `benchmark.environment`
+- `benchmark.module`
+- `connection.service`
 
 #### 2.2.2 Travis CI
 
@@ -63,7 +102,7 @@ All the file names specified here are also part of the configuration file and ca
 
 #### 2.3.1 Detailed Results
 
-In a file defined by the configuration parameters `file.result.delimiter`, `file.result.header` and `file.result.name`, the detailed results of the benchmark run with the actions `benchmark`, `trial` and `query` are stored.
+In a file defined by the configuration parameters `file.result.detailed.delimiter`, `file.result.detailed.header` and `file.result.detailed.name`, the detailed results of the benchmark run with the actions `benchmark`, `trial` and `query` are stored.
 
 | Column | Format | Content |
 | :--- | :--- | :--- |
@@ -85,7 +124,7 @@ In a file defined by the configuration parameters `file.result.delimiter`, `file
  
 #### 2.3.2 Statistical Results
 
-In a file defined by the configuration parameters `file.summary.delimiter`, `file.summary.header` and `file.summary.name`, the statistical results of the benchmark run with the actions `query` are stored.
+In a file defined by the configuration parameters `file.result.statistical.delimiter`, `file.result.statistical.header` and `file.result.statistical.name`, the statistical results of the benchmark run with the actions `query` are stored.
 
 | Column | Format | Content |
 | :--- | :--- | :--- |
@@ -111,19 +150,19 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 ### 3.1 `Benchmark Routine` (main routine)
 
 1. load the configuration parameters (config params `file.configuration. ...`)
-1. open the detailed results file (config params `file.result. ...`)
-1. if the result file did not exist yet, then write a header line (config param `file.result.header`)
+1. open the detailed results file (config params `file.result.detailed. ...`)
+1. if the result file did not exist yet, then write a header line (config param `file.result.detailed.header`)
 1. record the current time as the benchmark start
 1. load the bulk data into the memory (config params `file.bulk. ...`)
 1. establish the database connection (config params `connection. ...`)
 1. execute the `Trial Routine` as often as defined in config param `benchmark.trials`
 1. close the database connection
 1. create the benchmark entry for the detailed results
-1. close the detailed results file (config param `file.result.name`)
-1. open the statistical results file (config params `file.summary. ...`)
-1. if the statistical file did not exist yet, then write a header line (config param `file.summary.header`)
+1. close the detailed results file (config param `file.result.detailed.name`)
+1. open the statistical results file (config params `file.result.statistical. ...`)
+1. if the statistical file did not exist yet, then write a header line (config param `file.result.statistical.header`)
 1. produce the statistical results
-1. close the statistical results file (config param `file.summary.name`)
+1. close the statistical results file (config param `file.result.statistical.name`)
 1. terminate the benchmark run
 
 ### 3.2 `Trial Routine`
@@ -174,7 +213,7 @@ In a file defined by the configuration parameters `file.summary.delimiter`, `fil
 |  | 2019.11.05 | c_bik | oranif & Erlang: using the configuration parameters |
 |  | 2019.11.05 | wwe | cx_Oracle & Python: new |
 |  | 2019.11.05 | wwe | JDBC & Java: multithreading ??? |
-|  | 2019.11.05 | wwe | Overall: partitioned table ??? |
+| rejected | 2019.11.05 | wwe | Overall: partitioned table ??? |
 | 2019.11.05 | 2019.11.05 | wwe | JDBC & Java: dynamic batchsize | 
 | 2019.11.06 | 2019.11.05 | wwe | JDBC & Java: finishing with summary report |
 | 2019.11.06 | 2019.11.05 | wwe | Overall: separating key column and data column |

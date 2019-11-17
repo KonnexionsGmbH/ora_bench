@@ -2,6 +2,7 @@
 
 The following table contains all possible configuration parameters.
 The `Parameter Name` column contains the parameter name as used in the configuration file.
+The parameters with the default value 'n/a' must be defined at runtime. 
 If the parameter can be overridden by an environment variable (column `Env.`) then this environment variable must have the prefix `ORA_BENCH_` and the dots in the `Parameter Name` must be replaced by underscores. 
 
 | Parameter Name | Default Value | Env. | Description |
