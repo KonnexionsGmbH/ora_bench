@@ -2,7 +2,7 @@ SHELL = /bin/bash
 
 CURDIR := .
 
-JAVA_JAR_DIR = $(CURDIR)/priv/src_java
+JAVA_JAR_DIR = $(CURDIR)/priv/java_jar
 JAVA_JAR_OUT ?= $(JAVA_JAR_DIR)/ora_bench.jar
 JAVA_SRC_DIR = $(CURDIR)/src_java
 
