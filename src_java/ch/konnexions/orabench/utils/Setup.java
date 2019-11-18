@@ -92,7 +92,7 @@ public class Setup {
             CSVPrinter bulkFile = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.withDelimiter(config.getFileBulkDelimiter().charAt(0))
                     .withHeader(config.getFileBulkHeader().split(config.getFileBulkDelimiter())));
 
-            for (int i = 0; i <= fileBulkSize; i++) {
+            for (int i = 0; i < fileBulkSize; i++) {
                 String currDigest = DigestUtils.md5Hex(lastDigest + baseRandomString);
                 bulkFile.printRecord(currDigest, lastDigest + baseRandomString + lastDigest);
                 lastDigest = currDigest;
