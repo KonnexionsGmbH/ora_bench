@@ -149,8 +149,9 @@ public class Config {
 
             for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
+                final String value = propertiesConfiguration.getString(key);
 
-                bufferedWriter.write(key + " = " + propertiesConfiguration.getString(key));
+                bufferedWriter.write(key + " = " + ((value.contentEquals("\t")) ? "TAB" : value));
                 bufferedWriter.newLine();
             }
 
