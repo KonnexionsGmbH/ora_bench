@@ -153,7 +153,7 @@ public class Config {
             for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
 
-                final String quote = (delimiterProperties.contains(key.toLowerCase())) ? "" : "'";
+                final String quote = (delimiterProperties.contains(key.toLowerCase())) ? "'" : "";
 
                 bufferedWriter.write(key + " = " + quote + propertiesConfiguration.getString(key) + quote);
                 bufferedWriter.newLine();
