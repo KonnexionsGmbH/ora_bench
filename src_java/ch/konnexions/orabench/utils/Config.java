@@ -105,6 +105,8 @@ public class Config {
 
     // private static Logger log = new Logger(Config.class);
 
+    private List<String> numericProperties = getNumericProperties();
+
     private PropertiesConfiguration propertiesConfiguration;
 
     private String sqlCreateTable;
@@ -147,7 +149,9 @@ public class Config {
             for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
 
-                bufferedWriter.write(key + " = " + propertiesConfiguration.getString(key));
+                final String quote = (numericProperties.contains(key.toLowerCase())) ? "" : "'";
+
+                bufferedWriter.write(key + " = " + quote + propertiesConfiguration.getString(key) + quote);
                 bufferedWriter.newLine();
             }
 
@@ -162,8 +166,6 @@ public class Config {
      */
     public final void createConfigurationFileOranifC() {
         try {
-            List<String> list = getNumericProperties();
-
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOranifC(), false));
 
             bufferedWriter.write("#!/bin/bash");
@@ -184,7 +186,7 @@ public class Config {
             for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
 
-                final String quote = (list.contains(key.toLowerCase())) ? "" : "'";
+                final String quote = (numericProperties.contains(key.toLowerCase())) ? "" : "'";
 
                 if (key.contentEquals("benchmark.driver")) {
                     bufferedWriter.write("ORA_BENCH_BENCHMARK_DRIVER='oranif (Version version)'");
