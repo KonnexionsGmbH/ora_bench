@@ -22,8 +22,8 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-make -f java_src/Makefile clean
-make -f java_src/Makefile
+make -f src_java/Makefile clean
+make -f src_java/Makefile
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench finalise
 
