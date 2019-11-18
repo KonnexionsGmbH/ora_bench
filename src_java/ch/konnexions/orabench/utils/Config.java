@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -84,6 +85,8 @@ public class Config {
     private String connectionString;
     private String connectionUser;
 
+    private List<String> delimiterProperties = Arrays.asList("file.bulk.delimiter", "file.result.detailed.delimiter", "file.result.statisical.delimiter");
+
     FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
     private String fileBulkDelimiter;
     private String fileBulkHeader;
@@ -141,6 +144,7 @@ public class Config {
      */
     public final void createConfigurationFileCxOraclePython() {
         try {
+
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameCxOraclePython(), false));
 
             bufferedWriter.write("[DEFAULT]");
@@ -149,7 +153,7 @@ public class Config {
             for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
 
-                final String quote = (numericProperties.contains(key.toLowerCase())) ? "" : "'";
+                final String quote = (delimiterProperties.contains(key.toLowerCase())) ? "" : "'";
 
                 bufferedWriter.write(key + " = " + quote + propertiesConfiguration.getString(key) + quote);
                 bufferedWriter.newLine();
