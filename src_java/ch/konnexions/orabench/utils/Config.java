@@ -85,7 +85,7 @@ public class Config {
     private String connectionString;
     private String connectionUser;
 
-    private List<String> delimiterProperties = Arrays.asList("file.bulk.delimiter", "file.result.detailed.delimiter", "file.result.statisical.delimiter");
+    private List<String> delimiterProperties = Arrays.asList("file.bulk.delimiter", "file.result.detailed.delimiter", "file.result.statistical.delimiter");
 
     FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
     private String fileBulkDelimiter;
