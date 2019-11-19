@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_database.sh: Oracle benchmark for a specific database version.
+# run_bench_cx_oracle_python.sh: Oracle Benchmark based on Python.
 #
 # ------------------------------------------------------------------------------
 
@@ -18,42 +18,30 @@ fi
 if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclcdb
 fi
-if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
-    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-fi
-if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
-fi
 
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - specific database."
+echo "ora_bench - Oracle benchmark - cx_Oracle & Python."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
 echo "CONNECTION_SERVICE      : $ORA_BENCH_CONNECTION_SERVICE"
-echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
-echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
 
-docker stop ora_bench_db
-docker rm -f ora_bench_db
-docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/$ORA_BENCH_BENCHMARK_DATABASE
-docker start ora_bench_db
-while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
+python -m pip install cx_Oracle --upgrade
 
-{ /bin/bash scripts/run_bench_setup.sh; }
+if [ "$OS" != "Windows_NT" ]; then
+    sudo apt-get install alien
+    sudo alien priv/oracle/oracle-instantclient19.3-basic-19.3.0.0.0-1.x86_64.rpm
+fi
 
-{ /bin/bash scripts/run_bench_cx_oracle_python.sh; }
-{ /bin/bash scripts/run_bench_jdbc_java.sh; }
-
-{ /bin/bash scripts/run_bench_finalise.sh; }
+python src_python/ora_bench/OraBench.py
 
 EXITCODE=$?
 
