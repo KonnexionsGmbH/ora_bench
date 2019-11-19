@@ -346,7 +346,7 @@ def get_config():
 
     connection_host = config['DEFAULT']['connection.host']
     connection_password = config['DEFAULT']['connection.password']
-    connection_pool_size = int(config['DEFAULT']['connection.pool_size'])
+    connection_pool_size = int(config['DEFAULT']['connection.pool.size'])
     connection_port = int(config['DEFAULT']['connection.port'])
     connection_service = config['DEFAULT']['connection.service']
     connection_user = config['DEFAULT']['connection.user']

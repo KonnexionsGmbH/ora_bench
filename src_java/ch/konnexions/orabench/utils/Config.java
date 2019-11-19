@@ -104,7 +104,7 @@ public class Config {
 
     private ArrayList<String> keysSorted = new ArrayList<String>();
 
-    // private static Logger log = new Logger(Config.class);
+    private static Logger log = new Logger(Config.class);
 
     private List<String> numericProperties = getNumericProperties();
 
@@ -134,6 +134,7 @@ public class Config {
         }
 
         storeConfiguration();
+        validateProperties();
     }
 
     /**
@@ -728,6 +729,58 @@ public class Config {
         if (environmentVariables.containsKey("ORA_BENCH_FILE_RESULT_STATISTICAL_NAME")) {
             fileResultStatisticalName = environmentVariables.get("ORA_BENCH_FILE_RESULT_STATISTICAL_NAME");
             propertiesConfiguration.setProperty("file.result.statistical.name", fileResultStatisticalName);
+            isChanged = true;
+        }
+
+        if (isChanged) {
+            try {
+                fileBasedConfigurationBuilder.save();
+                propertiesConfiguration = fileBasedConfigurationBuilder.getConfiguration();
+            } catch (ConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private final void validateProperties() {
+
+        boolean isChanged = false;
+
+        if (benchmarkBatchSize < 0) {
+            log.error(
+                    "Attention: The value of the configuration parameter 'benchmark.batch.size' must not be less than 0, the specified value is replaced by 0.");
+            benchmarkBatchSize = 0;
+            propertiesConfiguration.setProperty("benchmark.batch.size", benchmarkBatchSize);
+            isChanged = true;
+        }
+
+        if (benchmarkTrials < 1) {
+            log.error("Attention: The value of the configuration parameter 'benchmark.trials' must not be less than 1, the specified value is replaced by 1.");
+            benchmarkTrials = 1;
+            propertiesConfiguration.setProperty("benchmark.trials", benchmarkTrials);
+            isChanged = true;
+        }
+
+        if (connectionPoolSize < 0) {
+            log.error(
+                    "Attention: The value of the configuration parameter 'connection.pool.size' must not be less than 0, the specified value is replaced by 0.");
+            connectionPoolSize = 0;
+            propertiesConfiguration.setProperty("connection.pool.size", connectionPoolSize);
+            isChanged = true;
+        }
+
+        if (fileBulkLength < 80) {
+            log.error(
+                    "Attention: The value of the configuration parameter 'file.bulk.length' must not be less than 80, the specified value is replaced by 80.");
+            fileBulkLength = 80;
+            propertiesConfiguration.setProperty("file.bulk.length", fileBulkLength);
+            isChanged = true;
+        }
+
+        if (fileBulkSize < 1) {
+            log.error("Attention: The value of the configuration parameter 'file.bulk.size' must not be less than 1, the specified value is replaced by 1.");
+            fileBulkSize = 1;
+            propertiesConfiguration.setProperty("file.bulk.size", fileBulkSize);
             isChanged = true;
         }
 
