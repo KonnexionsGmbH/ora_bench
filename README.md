@@ -54,12 +54,16 @@ All the file names specified here are also part of the configuration file and ca
 
 #### 2.2.1 Locally
 
-##### 2.2.1.1 `run_bench.sh`
+##### 2.2.1.1 System Requirements
+
+TBD
+
+##### 2.2.1.2 `run_bench.sh`
 
 This script executes the `run_bench_database.sh` script for each of the databases listed in chapter [Introduction](#introduction).
 The run log is stored in the `run_bench.log` file.
 
-##### 2.2.1.2 `run_bench_database.sh`
+##### 2.2.1.3 `run_bench_database.sh`
 
 This script is executed for one of the databases listed in in chapter [Introduction](#introduction). 
 First the corresponding Docker image is downloaded from the DockerHub, if not already available.
@@ -70,7 +74,7 @@ Finally the following child scripts are running:
 - all `run_bench_jdbc_java.sh` scripts
 - `run_bench_finalise.sh`
 
-##### 2.2.1.3 `run_bench_setup.sh`
+##### 2.2.1.4 `run_bench_setup.sh`
 
 This script prepares the database for the benchmark run including the following steps:
 
@@ -86,12 +90,12 @@ This script prepares the database for the benchmark run including the following 
 
 OraBench.java is also used to create a bulk file (see chapter 2.4) if it does not already exist.
 
-##### 2.2.1.4 `run_bench_<driver>_<programming language>.sh`
+##### 2.2.1.5 `run_bench_<driver>_<programming language>.sh`
 
 The driver and programming language related scripts, such as `run_bench_jdbc_java.sh`, first execute the insert statements and then the select statements in each trial with the bulk file.
 The time consumed is captured and recorded in result files.
 
-##### 2.2.1.5 `run_bench_finalise.sh`
+##### 2.2.1.6 `run_bench_finalise.sh`
 
 In this script, OraBench.java is used to reset the following configuration parameters to the value 'n/a':
 
@@ -244,7 +248,12 @@ The data column in the bulk file is randomly generated with a unique key column 
 |  | 2019.11.05 | c_bik | oranif & Erlang: using the configuration parameters |
 |  | 2019.11.05 | wwe | cx_Oracle & Python: new |
 |  | 2019.11.05 | wwe | JDBC & Java: multithreading ??? |
-| rejected | 2019.11.05 | wwe | Overall: partitioned table ??? |
+|  | 2019.11.19 | wwe | cx_Oracle & Python: benchmark.batch.size = 0 |
+|  | 2019.11.19 | wwe | cx_Oracle & Python: benchmark.transaction.size = 0 |
+|  | 2019.11.19 | wwe | cx_Oracle & Python: connection pooling |
+|  | 2019.11.19 | wwe | JDBC & Java: benchmark.batch.size = 0 |
+|  | 2019.11.19 | wwe | JDBC & Java: benchmark.transaction.size = 0 |
+|  | 2019.11.19 | wwe | JDBC & Java: connection pooling |
 | 2019.11.05 | 2019.11.05 | wwe | JDBC & Java: dynamic batchsize | 
 | 2019.11.06 | 2019.11.05 | wwe | JDBC & Java: finishing with summary report |
 | 2019.11.06 | 2019.11.05 | wwe | Overall: separating key column and data column |
@@ -253,6 +262,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 | 2019.11.08 | 2019.11.05 | wwe | JDBC & Java: generating language specific configuration files |
 | 2019.11.12 | 2019.11.05 | wwe | Overall: Travis/CI integration |
 | 2019.11.17 | 2019.11.05 | wwe | Overall: documentation |
+| rejected | 2019.11.05 | wwe | Overall: partitioned table ??? |
 
 ## 6. <a name="contributing"></a> Contributing
 
