@@ -231,8 +231,7 @@ public class OraBench {
             }
         }
 
-        runBenchmarkInsert(connection, trialNumber, bulkData, config.getSqlInsertOracle(), config.getBenchmarkBatchSize(),
-                config.getBenchmarkTransactionSize());
+        runBenchmarkInsert(connection, trialNumber, bulkData, config.getSqlInsert(), config.getBenchmarkBatchSize(), config.getBenchmarkTransactionSize());
 
         runBenchmarkSelect(connection, trialNumber, bulkData, config.getSqlSelect());
 

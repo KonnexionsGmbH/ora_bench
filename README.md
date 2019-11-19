@@ -22,6 +22,7 @@ The currently supported database drivers are:
 
 | Driver | Programming Language |
 | :--- | :--- |
+| cx_Oracle | Python |
 | JDBC | Java |
 
 The following Oracle database versions are provided in a benchmark run via Docker Container:
@@ -133,6 +134,7 @@ In a file defined by the configuration parameters `file.result.detailed.delimite
 | driver | alphanumeric |  config param `benchmark.driver` |
 | trial no. | integer | trial no. if action equals `trial` , `0` elsewise |
 | SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
+| connection pool size | integer | config param `connection.pool.size` |
 | transaction size | integer | config param `benchmark.transaction.size` |
 | bulk length | integer | config param `file.bulk.length` |
 | bulk size | integer | config param `file.bulk.size` |
@@ -154,12 +156,13 @@ In a file defined by the configuration parameters `file.result.statistical.delim
 | database | alphanumeric | config param `benchmark.database` |
 | module | alphanumeric |  config param `benchmark.module` |
 | driver | alphanumeric |  config param `benchmark.driver` |
+| trials | integer | number of test runs within a benchmark run |
 | SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
+| connection pool size | integer | config param `connection.pool.size` |
 | transaction size | integer | config param `benchmark.transaction.size` |
 | bulk length | integer | config param `file.bulk.length` |
 | bulk size | integer | config param `file.bulk.size` |
 | batch size | integer | config param `benchmark.batch.size` |
-| trials | integer | number of test runs within a benchmark run |
 | start day time | yyyy.mm.dd hh24:mi:ss.ffffffff | current date and time at the start of the benchmark run |
 | end day time | yyyy.mm.dd hh24:mi:ss.ffffffff | current date and time at the end of the benchmark run |
 | mean duration (ns) | integer | mean time in nanoseconds to execute the SQL statement for all bulk data in a test run |
@@ -214,7 +217,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 ### 3.2 `Insert Routine`
 
 1. record the current time as the start of the query
-1. execute the SQL statement either in the config param `sql.insert.jamdb` or in the config param `sql.insert.oracle`for each record in the bulk file.
+1. execute the SQL statement in the config param `sql.insert` for each record in the bulk file.
 1. create the query entry for the detailed results
 1. save the average, maximum and minimum values for the statistical results
 1. finish the query run

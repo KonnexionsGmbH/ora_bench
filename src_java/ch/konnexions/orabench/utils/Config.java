@@ -36,6 +36,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>benchmark.trials
  * <li>connection.host
  * <li>connection.password
+ * <li>connection.pool.size
  * <li>connection.port
  * <li>connection.service
  * <li>connection.string
@@ -57,8 +58,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>file.result.statistical.name
  * <li>sql.create
  * <li>sql.drop
- * <li>sql.insert.jamdb
- * <li>sql.insert.oracle
+ * <li>sql.insert
  * <li>sql.select
  * </ul>
  * The parameter name and parameter value must be separated by an equal sign
@@ -79,6 +79,7 @@ public class Config {
     private final File configFile = new File(System.getenv("ORA_BENCH_FILE_CONFIGURATION_NAME"));
     private String connectionHost;
     private String connectionPassword;
+    private int connectionPoolSize;
     private int connectionPort;
     private String connectionService;
     private String connectionString;
@@ -111,8 +112,7 @@ public class Config {
 
     private String sqlCreateTable;
     private String sqlDropTable;
-    private String sqlInsertJamdb;
-    private String sqlInsertOracle;
+    private String sqlInsert;
     private String sqlSelect;
 
     /**
@@ -370,6 +370,13 @@ public class Config {
     }
 
     /**
+     * @return the number of simultaneous database connections
+     */
+    public final int getConnectionPoolSize() {
+        return connectionPoolSize;
+    }
+
+    /**
      * @return the port number where the database server is listening for requests
      */
     public final int getConnectionPort() {
@@ -543,6 +550,7 @@ public class Config {
         list.add("benchmark.batch.size");
         list.add("benchmark.transaction.size");
         list.add("benchmark.trials");
+        list.add("connection.pool.size");
         list.add("connection.port");
         list.add("file.bulk.length");
         list.add("file.bulk.size");
@@ -565,17 +573,10 @@ public class Config {
     }
 
     /**
-     * @return the INSERT statement for JamDB
+     * @return the INSERT statement
      */
-    public final String getSqlInsertJamdb() {
-        return sqlInsertJamdb;
-    }
-
-    /**
-     * @return the INSERT statement for Oracle
-     */
-    public final String getSqlInsertOracle() {
-        return sqlInsertOracle;
+    public final String getSqlInsert() {
+        return sqlInsert;
     }
 
     /**
@@ -636,6 +637,7 @@ public class Config {
 
         connectionHost = propertiesConfiguration.getString("connection.host");
         connectionPassword = propertiesConfiguration.getString("connection.password");
+        connectionPoolSize = propertiesConfiguration.getInt("connection.pool.size");
         connectionPort = propertiesConfiguration.getInt("connection.port");
         connectionService = propertiesConfiguration.getString("connection.service");
         connectionString = propertiesConfiguration.getString("connection.string");
@@ -659,8 +661,7 @@ public class Config {
 
         sqlCreateTable = propertiesConfiguration.getString("sql.create");
         sqlDropTable = propertiesConfiguration.getString("sql.drop");
-        sqlInsertJamdb = propertiesConfiguration.getString("sql.insert.jamdb");
-        sqlInsertOracle = propertiesConfiguration.getString("sql.insert.oracle");
+        sqlInsert = propertiesConfiguration.getString("sql.insert");
         sqlSelect = propertiesConfiguration.getString("sql.select");
     }
 
