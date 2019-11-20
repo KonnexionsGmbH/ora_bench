@@ -70,8 +70,12 @@ TBD
 
 TBD
 
-- python -m pip install --upgrade pip
-- python -m pip install --upgrade cx_Oracle
+##### 2.2.1.1.3 Platform-independent Installation
+
+Install [cx_Oracle](https://oracle.github.io/python-cx_Oracle/):
+
+- `python -m pip install --upgrade pip`
+- `python -m pip install --upgrade cx_Oracle`
 
 
 ##### 2.2.1.2 `run_bench.sh`
