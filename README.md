@@ -68,14 +68,20 @@ TBD
 
 ##### 2.2.1.1.2 Linux Platform
 
-TBD
+- Java SE Development Kit, e.g. `sudo apt install default-jdk`
+- Python 3, e.g.:
+    - `sudo apt install software-properties-common`
+    - `sudo add-apt-repository -y ppa:deadsnakes/ppa`
+    - `sudo apt install python3`
+    - `sudo apt install python3-venv`
+    - `python3 -m venv my-project-env`
+    - `source my-project-env/bin/activate`
 
 ##### 2.2.1.1.3 Platform-independent Installation
 
-Install [cx_Oracle](https://oracle.github.io/python-cx_Oracle/):
-
-- `python -m pip install --upgrade pip`
-- `python -m pip install --upgrade cx_Oracle`
+- Install [cx_Oracle](https://oracle.github.io/python-cx_Oracle/):
+    - `python -m pip install --upgrade pip`
+    - `python -m pip install --upgrade cx_Oracle`
 
 
 ##### 2.2.1.2 `run_bench.sh`
