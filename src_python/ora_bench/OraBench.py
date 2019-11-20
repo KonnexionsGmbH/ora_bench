@@ -20,6 +20,7 @@ bulk_data = None
 connection = None
 connection_host = None
 connection_password = None
+connection_poool_size = None
 connection_port = None
 connection_service = None
 connection_user = None
@@ -54,7 +55,7 @@ result_file_detailed = None
 
 sql_create_table = None
 sql_drop_table = None
-sql_insert_oracle = None
+sql_insert = None
 sql_select = None
 
 
@@ -113,6 +114,7 @@ def create_result_detailed(action, state, trial_number, sql_statement, start_dat
 
     global connection_host
     global connection_password
+    global connection_pool_size
     global connection_port
     global connection_service
     global connection_user
@@ -163,6 +165,7 @@ def create_result_detailed(action, state, trial_number, sql_statement, start_dat
                                BENCHMARK_DRIVER + file_result_detailed_delimiter +
                                str(trial_number) + file_result_detailed_delimiter +
                                sql_statement + file_result_detailed_delimiter +
+                               str(connection_pool_size) + file_result_detailed_delimiter +
                                str(benchmark_transaction_size) + file_result_detailed_delimiter +
                                str(file_bulk_length) + file_result_detailed_delimiter +
                                str(file_bulk_size) + file_result_detailed_delimiter +
@@ -210,6 +213,7 @@ def create_result_statistical():
 
     global connection_host
     global connection_password
+    global connection_pool_size
     global connection_port
     global connection_service
     global connection_user
@@ -231,7 +235,7 @@ def create_result_statistical():
 
     global last_benchmark
 
-    global sql_insert_oracle
+    global sql_insert
     global sql_select
 
     result_file_statistical = Path(file_result_statistical_name)
@@ -249,7 +253,8 @@ def create_result_statistical():
                                   BENCHMARK_MODULE + file_result_detailed_delimiter +
                                   BENCHMARK_DRIVER + file_result_detailed_delimiter +
                                   str(benchmark_trials) + file_result_detailed_delimiter +
-                                  sql_insert_oracle + file_result_detailed_delimiter +
+                                  sql_insert + file_result_detailed_delimiter +
+                                  str(connection_pool_size) + file_result_detailed_delimiter +
                                   str(benchmark_transaction_size) + file_result_detailed_delimiter +
                                   str(file_bulk_length) + file_result_detailed_delimiter +
                                   str(file_bulk_size) + file_result_detailed_delimiter +
@@ -269,6 +274,7 @@ def create_result_statistical():
                                   BENCHMARK_DRIVER + file_result_detailed_delimiter +
                                   str(benchmark_trials) + file_result_detailed_delimiter +
                                   sql_select + file_result_detailed_delimiter +
+                                  str(connection_pool_size) + file_result_detailed_delimiter +
                                   str(benchmark_transaction_size) + file_result_detailed_delimiter +
                                   str(file_bulk_length) + file_result_detailed_delimiter +
                                   str(file_bulk_size) + file_result_detailed_delimiter +
@@ -307,6 +313,7 @@ def get_config():
 
     global connection_host
     global connection_password
+    global connection_pool_size
     global connection_port
     global connection_service
     global connection_user
@@ -325,7 +332,7 @@ def get_config():
 
     global sql_create
     global sql_drop
-    global sql_insert_oracle
+    global sql_insert
     global sql_select
 
     config = configparser.ConfigParser()
@@ -339,6 +346,7 @@ def get_config():
 
     connection_host = config['DEFAULT']['connection.host']
     connection_password = config['DEFAULT']['connection.password']
+    connection_pool_size = int(config['DEFAULT']['connection.pool.size'])
     connection_port = int(config['DEFAULT']['connection.port'])
     connection_service = config['DEFAULT']['connection.service']
     connection_user = config['DEFAULT']['connection.user']
@@ -357,7 +365,7 @@ def get_config():
 
     sql_create = config['DEFAULT']['sql.create']
     sql_drop = config['DEFAULT']['sql.drop']
-    sql_insert_oracle = config['DEFAULT']['sql.insert.oracle'].replace(':key', ':1').replace(':data', ':2')
+    sql_insert = config['DEFAULT']['sql.insert'].replace(':key', ':1').replace(':data', ':2')
     sql_select = config['DEFAULT']['sql.select']
 
 
@@ -410,9 +418,9 @@ def run_benchmark_insert(trial_number):
     """
 
     global bulk_data
-    global sql_insert_oracle
+    global sql_insert
 
-    create_result('query', 'start', trial_number, sql_insert_oracle)
+    create_result('query', 'start', trial_number, sql_insert)
 
     count = 0;
     batch_data = []
@@ -423,17 +431,17 @@ def run_benchmark_insert(trial_number):
         count += 1
 
         if count % benchmark_batch_size == 0:
-            cursor.executemany(sql_insert_oracle, batch_data)
+            cursor.executemany(sql_insert, batch_data)
             batch_data = []
 
         if count % benchmark_transaction_size == 0:
             connection.commit()
 
     if batch_data.__len__() > 0:
-        cursor.executemany(sql_insert_oracle, batch_data)
+        cursor.executemany(sql_insert, batch_data)
         connection.commit()
 
-    create_result('query', 'end', trial_number, sql_insert_oracle, 'insert')
+    create_result('query', 'end', trial_number, sql_insert, 'insert')
 
 
 def run_benchmark_select(trial_number):

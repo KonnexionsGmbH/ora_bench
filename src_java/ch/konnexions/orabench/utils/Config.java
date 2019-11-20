@@ -36,6 +36,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>benchmark.trials
  * <li>connection.host
  * <li>connection.password
+ * <li>connection.pool.size
  * <li>connection.port
  * <li>connection.service
  * <li>connection.string
@@ -57,8 +58,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>file.result.statistical.name
  * <li>sql.create
  * <li>sql.drop
- * <li>sql.insert.jamdb
- * <li>sql.insert.oracle
+ * <li>sql.insert
  * <li>sql.select
  * </ul>
  * The parameter name and parameter value must be separated by an equal sign
@@ -79,6 +79,7 @@ public class Config {
     private final File configFile = new File(System.getenv("ORA_BENCH_FILE_CONFIGURATION_NAME"));
     private String connectionHost;
     private String connectionPassword;
+    private int connectionPoolSize;
     private int connectionPort;
     private String connectionService;
     private String connectionString;
@@ -103,7 +104,7 @@ public class Config {
 
     private ArrayList<String> keysSorted = new ArrayList<String>();
 
-    // private static Logger log = new Logger(Config.class);
+    private static Logger log = new Logger(Config.class);
 
     private List<String> numericProperties = getNumericProperties();
 
@@ -111,8 +112,7 @@ public class Config {
 
     private String sqlCreateTable;
     private String sqlDropTable;
-    private String sqlInsertJamdb;
-    private String sqlInsertOracle;
+    private String sqlInsert;
     private String sqlSelect;
 
     /**
@@ -134,6 +134,7 @@ public class Config {
         }
 
         storeConfiguration();
+        validateProperties();
     }
 
     /**
@@ -370,6 +371,13 @@ public class Config {
     }
 
     /**
+     * @return the number of simultaneous database connections
+     */
+    public final int getConnectionPoolSize() {
+        return connectionPoolSize;
+    }
+
+    /**
      * @return the port number where the database server is listening for requests
      */
     public final int getConnectionPort() {
@@ -543,6 +551,7 @@ public class Config {
         list.add("benchmark.batch.size");
         list.add("benchmark.transaction.size");
         list.add("benchmark.trials");
+        list.add("connection.pool.size");
         list.add("connection.port");
         list.add("file.bulk.length");
         list.add("file.bulk.size");
@@ -565,17 +574,10 @@ public class Config {
     }
 
     /**
-     * @return the INSERT statement for JamDB
+     * @return the INSERT statement
      */
-    public final String getSqlInsertJamdb() {
-        return sqlInsertJamdb;
-    }
-
-    /**
-     * @return the INSERT statement for Oracle
-     */
-    public final String getSqlInsertOracle() {
-        return sqlInsertOracle;
+    public final String getSqlInsert() {
+        return sqlInsert;
     }
 
     /**
@@ -636,6 +638,7 @@ public class Config {
 
         connectionHost = propertiesConfiguration.getString("connection.host");
         connectionPassword = propertiesConfiguration.getString("connection.password");
+        connectionPoolSize = propertiesConfiguration.getInt("connection.pool.size");
         connectionPort = propertiesConfiguration.getInt("connection.port");
         connectionService = propertiesConfiguration.getString("connection.service");
         connectionString = propertiesConfiguration.getString("connection.string");
@@ -659,8 +662,7 @@ public class Config {
 
         sqlCreateTable = propertiesConfiguration.getString("sql.create");
         sqlDropTable = propertiesConfiguration.getString("sql.drop");
-        sqlInsertJamdb = propertiesConfiguration.getString("sql.insert.jamdb");
-        sqlInsertOracle = propertiesConfiguration.getString("sql.insert.oracle");
+        sqlInsert = propertiesConfiguration.getString("sql.insert");
         sqlSelect = propertiesConfiguration.getString("sql.select");
     }
 
@@ -727,6 +729,58 @@ public class Config {
         if (environmentVariables.containsKey("ORA_BENCH_FILE_RESULT_STATISTICAL_NAME")) {
             fileResultStatisticalName = environmentVariables.get("ORA_BENCH_FILE_RESULT_STATISTICAL_NAME");
             propertiesConfiguration.setProperty("file.result.statistical.name", fileResultStatisticalName);
+            isChanged = true;
+        }
+
+        if (isChanged) {
+            try {
+                fileBasedConfigurationBuilder.save();
+                propertiesConfiguration = fileBasedConfigurationBuilder.getConfiguration();
+            } catch (ConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private final void validateProperties() {
+
+        boolean isChanged = false;
+
+        if (benchmarkBatchSize < 0) {
+            log.error(
+                    "Attention: The value of the configuration parameter 'benchmark.batch.size' must not be less than 0, the specified value is replaced by 0.");
+            benchmarkBatchSize = 0;
+            propertiesConfiguration.setProperty("benchmark.batch.size", benchmarkBatchSize);
+            isChanged = true;
+        }
+
+        if (benchmarkTrials < 1) {
+            log.error("Attention: The value of the configuration parameter 'benchmark.trials' must not be less than 1, the specified value is replaced by 1.");
+            benchmarkTrials = 1;
+            propertiesConfiguration.setProperty("benchmark.trials", benchmarkTrials);
+            isChanged = true;
+        }
+
+        if (connectionPoolSize < 0) {
+            log.error(
+                    "Attention: The value of the configuration parameter 'connection.pool.size' must not be less than 0, the specified value is replaced by 0.");
+            connectionPoolSize = 0;
+            propertiesConfiguration.setProperty("connection.pool.size", connectionPoolSize);
+            isChanged = true;
+        }
+
+        if (fileBulkLength < 80) {
+            log.error(
+                    "Attention: The value of the configuration parameter 'file.bulk.length' must not be less than 80, the specified value is replaced by 80.");
+            fileBulkLength = 80;
+            propertiesConfiguration.setProperty("file.bulk.length", fileBulkLength);
+            isChanged = true;
+        }
+
+        if (fileBulkSize < 1) {
+            log.error("Attention: The value of the configuration parameter 'file.bulk.size' must not be less than 1, the specified value is replaced by 1.");
+            fileBulkSize = 1;
+            propertiesConfiguration.setProperty("file.bulk.size", fileBulkSize);
             isChanged = true;
         }
 
