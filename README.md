@@ -59,6 +59,21 @@ All the file names specified here are also part of the configuration file and ca
 
 TBD
 
+##### 2.2.1.1.1 Windows Platform
+
+- Docker Desktop for Windows from [here](https://www.docker.com/products/docker-desktop)
+- Java SE Development Kit, e.g. Version 11 from [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
+- Make for Windows from [here](http://gnuwin32.sourceforge.net/packages/make.htm)
+- Python 3 from [here](https://www.python.org/downloads/)
+
+##### 2.2.1.1.2 Linux Platform
+
+TBD
+
+- python -m pip install --upgrade pip
+- python -m pip install --upgrade cx_Oracle
+
+
 ##### 2.2.1.2 `run_bench.sh`
 
 This script executes the `run_bench_database.sh` script for each of the databases listed in chapter [Introduction](#introduction).

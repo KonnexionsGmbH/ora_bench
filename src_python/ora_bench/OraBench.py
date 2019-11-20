@@ -7,6 +7,10 @@ from pathlib import Path
 
 import cx_Oracle
 
+# ------------------------------------------------------------------------------
+# Definition of the global variables.
+# ------------------------------------------------------------------------------
+
 benchmark_batch_size = None
 benchmark_comment = None
 benchmark_database = None
@@ -59,6 +63,10 @@ sql_insert = None
 sql_select = None
 
 
+# ------------------------------------------------------------------------------
+# Recording the results of the benchmark.
+# ------------------------------------------------------------------------------
+
 def create_result(action, state, trial_number, sql_statement, sql_operation=None):
     """xxxx
     """
@@ -98,6 +106,10 @@ def create_result(action, state, trial_number, sql_statement, sql_operation=None
 
     logging.error('action="' + action + '"' + ' state="' + state + '"')
 
+
+# ------------------------------------------------------------------------------
+# writing the detailed results.
+# ------------------------------------------------------------------------------
 
 def create_result_detailed(action, state, trial_number, sql_statement, start_date_time, sql_operation):
     """xxxx
@@ -178,6 +190,10 @@ def create_result_detailed(action, state, trial_number, sql_statement, start_dat
                                '\n')
 
 
+# ------------------------------------------------------------------------------
+# Creating the detailed result file.
+# ------------------------------------------------------------------------------
+
 def create_result_detailed_file():
     """xxxx
     """
@@ -192,11 +208,15 @@ def create_result_detailed_file():
 
     if not result_file_detailed.is_file():
         result_file_detailed = open(file_result_detailed_name, 'w')
-        result_file_detailed.write(file_result_detailed_header.replace(';', file_result_detailed_delimiter))
+        result_file_detailed.write(file_result_detailed_header.replace(';', file_result_detailed_delimiter) + '\n')
         result_file_detailed.close()
 
     result_file_detailed = open(file_result_detailed_name, 'a')
 
+
+# ------------------------------------------------------------------------------
+# Creating the statistical result file.
+# ------------------------------------------------------------------------------
 
 def create_result_statistical():
     """xxxx
@@ -242,7 +262,7 @@ def create_result_statistical():
 
     if not result_file_statistical.is_file():
         result_file_statistical = open(file_result_statistical_name, 'w')
-        result_file_statistical.write(file_result_statistical_header.replace(';', file_result_statistical_delimiter))
+        result_file_statistical.write(file_result_statistical_header.replace(';', file_result_statistical_delimiter) + '\n')
         result_file_statistical.close()
 
     result_file_statistical = open(file_result_statistical_name, 'a')
@@ -288,6 +308,10 @@ def create_result_statistical():
                                   '\n')
 
 
+# ------------------------------------------------------------------------------
+# Loading the bulk file into memory.
+# ------------------------------------------------------------------------------
+
 def get_bulk_data():
     """xxxx
     """
@@ -299,6 +323,10 @@ def get_bulk_data():
 
     del bulk_data[0]
 
+
+# ------------------------------------------------------------------------------
+# Loading the configuration parameters into memory.
+# ------------------------------------------------------------------------------
 
 def get_config():
     """xxxx
@@ -369,6 +397,10 @@ def get_config():
     sql_select = config['DEFAULT']['sql.select']
 
 
+# ------------------------------------------------------------------------------
+# Main routine.
+# ------------------------------------------------------------------------------
+
 def main():
     """This is the main method for the Oracle benchmark run.
     """
@@ -382,6 +414,10 @@ def main():
 
     logging.info('End   OraBench.py')
 
+
+# ------------------------------------------------------------------------------
+# Performing the benchmark run.
+# ------------------------------------------------------------------------------
 
 def run_benchmark():
     """xxxx
@@ -412,6 +448,10 @@ def run_benchmark():
 
     create_result_statistical()
 
+
+# ------------------------------------------------------------------------------
+# Performing the insert operations.
+# ------------------------------------------------------------------------------
 
 def run_benchmark_insert(trial_number):
     """xxxx
@@ -444,6 +484,10 @@ def run_benchmark_insert(trial_number):
     create_result('query', 'end', trial_number, sql_insert, 'insert')
 
 
+# ------------------------------------------------------------------------------
+# Performing the select operations.
+# ------------------------------------------------------------------------------
+
 def run_benchmark_select(trial_number):
     """xxxx
     """
@@ -465,6 +509,10 @@ def run_benchmark_select(trial_number):
 
     create_result('query', 'end', trial_number, sql_select, 'select')
 
+
+# ------------------------------------------------------------------------------
+# Performing one trial.
+# ------------------------------------------------------------------------------
 
 def run_benchmark_trial(trial_number):
     """xxxx
@@ -490,5 +538,9 @@ def run_benchmark_trial(trial_number):
 
     create_result('trial', 'end', trial_number, '')
 
+
+# ------------------------------------------------------------------------------
+# Program start.
+# ------------------------------------------------------------------------------
 
 main()
