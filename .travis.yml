@@ -1,25 +1,37 @@
+dist: xenial
 sudo: true
 language: erlang
 otp_release:
 - 20.3
 env:
   matrix:
-  - ORA_BENCH_BENCHMARK_DATABASE=db_11_2_xe ORA_BENCH_CONNECTION_SERVICE=xe
-#  - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-#  - ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-#  - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-  global:
-    secure: KyL1chle06LdkJsGY0hyppldxctvueAOSfcuHTUp40PwlUMgvOz/Nz6yIr07df64ItqQCyyxRl4t5H92Ncqy3jsPco9dLFqNMMOjU597uXGTrtD/V8bfzvSryUjnMacqJ7Wnyd+rpiC93U0kj6QHNYIJSe7t55/H5EodfrANm43Ot8qnXfXQFrkuEqceIM1b74t7b1yGjn+LTlulndjj2iSnQ1bFM3AG47ToB8Ni0noFQ358dkeoGdXSvhEmX2A/YICD+rzPmh2+K2BFT8J1jK3ONc3cE1tYGcVXRHUfVcVZY6qQaevNGCXbk2ijGJKbZ6xzqYUXmq5/JMeZUvnxlNUMkffRr6RLiXQmtM9+Fykj1GMJvggXl5RUvr6jABXrS2cz7nDo8VDULq2h0GFfINqQQdwTI0wDjbR/ss1sF/Gfzw+M//GdDkOhYtaq8catU4BpGnB7vi6DZsWsxYUxc+4iIHph//dByWGNI60yZuFzkPFGMFuch4DBv3NDS5o2nRocr7vzeikej+q8fNKaBX5rzImoUEvK/uzYLXFBOIO0h8mxw7znMvqM+ZQe5guDEDRt8SUTOTiCfgJSCGdjzmURVsYg7AZyARfQyH3UIxvDgjbRwBzRDDUTkaeD4Uq/JE26XV9T5wbAO8/iATVVFRL/emzZFzQePZz/gEXzMoE=
+    - ORA_BENCH_BENCHMARK_DATABASE=db_11_2_xe ORA_BENCH_CONNECTION_SERVICE=xe
+    - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    - ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+global:
+  secure: KyL1chle06LdkJsGY0hyppldxctvueAOSfcuHTUp40PwlUMgvOz/Nz6yIr07df64ItqQCyyxRl4t5H92Ncqy3jsPco9dLFqNMMOjU597uXGTrtD/V8bfzvSryUjnMacqJ7Wnyd+rpiC93U0kj6QHNYIJSe7t55/H5EodfrANm43Ot8qnXfXQFrkuEqceIM1b74t7b1yGjn+LTlulndjj2iSnQ1bFM3AG47ToB8Ni0noFQ358dkeoGdXSvhEmX2A/YICD+rzPmh2+K2BFT8J1jK3ONc3cE1tYGcVXRHUfVcVZY6qQaevNGCXbk2ijGJKbZ6xzqYUXmq5/JMeZUvnxlNUMkffRr6RLiXQmtM9+Fykj1GMJvggXl5RUvr6jABXrS2cz7nDo8VDULq2h0GFfINqQQdwTI0wDjbR/ss1sF/Gfzw+M//GdDkOhYtaq8catU4BpGnB7vi6DZsWsxYUxc+4iIHph//dByWGNI60yZuFzkPFGMFuch4DBv3NDS5o2nRocr7vzeikej+q8fNKaBX5rzImoUEvK/uzYLXFBOIO0h8mxw7znMvqM+ZQe5guDEDRt8SUTOTiCfgJSCGdjzmURVsYg7AZyARfQyH3UIxvDgjbRwBzRDDUTkaeD4Uq/JE26XV9T5wbAO8/iATVVFRL/emzZFzQePZz/gEXzMoE=
 
 before_install:
-- sudo apt-get update
-- sudo apt-get install default-jdk
-- python --version
-script:
+- sudo apt update
+# Java -------------------------------------------------------------------------
+- sudo apt install default-jdk
 - java -version
+# Python -----------------------------------------------------------------------
+- sudo apt install software-properties-common
+- sudo add-apt-repository -y ppa:deadsnakes/ppa
+- sudo apt install python3
+- python3 --version
+- sudo apt install python3-venv
+- python3 -m venv my-project-env
+- source my-project-env/bin/activate
+- python -V
+- python -m pip install --upgrade pip
+- python -m pip install --upgrade cx_Oracle
+script:
 - export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (Travis CI)'
 - export ORA_BENCH_JAVA_CLASSPATH=.:priv/java_jar/*
 - git pull
 - ./scripts/run_bench_database.sh
-# after_success:
-# - "./scripts/run_bench_travis_push.sh"
+after_success:
+- "./scripts/run_bench_travis_push.sh"

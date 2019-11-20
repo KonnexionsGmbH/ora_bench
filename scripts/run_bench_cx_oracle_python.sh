@@ -34,13 +34,6 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-python -m pip install cx_Oracle --upgrade
-
-if [ "$OS" != "Windows_NT" ]; then
-    sudo apt-get install alien
-    sudo alien priv/oracle/oracle-instantclient19.3-basic-19.3.0.0.0-1.x86_64.rpm
-fi
-
 python src_python/ora_bench/OraBench.py
 
 EXITCODE=$?
