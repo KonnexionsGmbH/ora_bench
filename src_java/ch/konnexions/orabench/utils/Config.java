@@ -747,38 +747,64 @@ public class Config {
         boolean isChanged = false;
 
         if (benchmarkBatchSize < 0) {
-            log.error(
-                    "Attention: The value of the configuration parameter 'benchmark.batch.size' must not be less than 0, the specified value is replaced by 0.");
+            log.error("Attention: The value of the configuration parameter 'benchmark.batch.size' [" + Integer.toString(benchmarkBatchSize)
+                    + "] must not be less than 0, the specified value is replaced by 0.");
             benchmarkBatchSize = 0;
             propertiesConfiguration.setProperty("benchmark.batch.size", benchmarkBatchSize);
             isChanged = true;
         }
 
+        if (benchmarkTransactionSize < benchmarkBatchSize) {
+            log.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' [" + Integer.toString(benchmarkTransactionSize)
+                    + "] must not be less than value of the configuration parameter 'benchmark.batch.size' [" + Integer.toString(benchmarkBatchSize)
+                    + "], the specified value of the configuration parameter 'benchmark.transaction.size' is replaced by "
+                    + Integer.toString(benchmarkBatchSize) + ".");
+            benchmarkTransactionSize = benchmarkBatchSize;
+            propertiesConfiguration.setProperty("benchmark.batch.size", benchmarkTransactionSize);
+            isChanged = true;
+        }
+
+        if (benchmarkTransactionSize < 0) {
+            log.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' [" + Integer.toString(benchmarkTransactionSize)
+                    + "] must not be less than 0, the specified value is replaced by 0.");
+            benchmarkTransactionSize = 0;
+            propertiesConfiguration.setProperty("benchmark.batch.size", benchmarkTransactionSize);
+            isChanged = true;
+        }
+
         if (benchmarkTrials < 1) {
-            log.error("Attention: The value of the configuration parameter 'benchmark.trials' must not be less than 1, the specified value is replaced by 1.");
+            log.error("Attention: The value of the configuration parameter 'benchmark.trials' [" + Integer.toString(benchmarkTrials)
+                    + "] must not be less than 1, the specified value is replaced by 1.");
             benchmarkTrials = 1;
             propertiesConfiguration.setProperty("benchmark.trials", benchmarkTrials);
             isChanged = true;
         }
 
         if (connectionPoolSize < 0) {
-            log.error(
-                    "Attention: The value of the configuration parameter 'connection.pool.size' must not be less than 0, the specified value is replaced by 0.");
+            log.error("Attention: The value of the configuration parameter 'connection.pool.size' [" + Integer.toString(connectionPoolSize)
+                    + "] must not be less than 0, the specified value is replaced by 0.");
             connectionPoolSize = 0;
             propertiesConfiguration.setProperty("connection.pool.size", connectionPoolSize);
             isChanged = true;
         }
 
         if (fileBulkLength < 80) {
-            log.error(
-                    "Attention: The value of the configuration parameter 'file.bulk.length' must not be less than 80, the specified value is replaced by 80.");
+            log.error("Attention: The value of the configuration parameter 'file.bulk.length' [" + Integer.toString(fileBulkLength)
+                    + "] must not be less than 80, the specified value is replaced by 80.");
+            fileBulkLength = 80;
+            propertiesConfiguration.setProperty("file.bulk.length", fileBulkLength);
+            isChanged = true;
+        } else if (fileBulkLength > 4000) {
+            log.error("Attention: The value of the configuration parameter 'file.bulk.length' [" + Integer.toString(fileBulkLength)
+                    + "] must not be greater than 4000, the specified value is replaced by 4000.");
             fileBulkLength = 80;
             propertiesConfiguration.setProperty("file.bulk.length", fileBulkLength);
             isChanged = true;
         }
 
         if (fileBulkSize < 1) {
-            log.error("Attention: The value of the configuration parameter 'file.bulk.size' must not be less than 1, the specified value is replaced by 1.");
+            log.error("Attention: The value of the configuration parameter 'file.bulk.size' [" + Integer.toString(fileBulkSize)
+                    + "] must not be less than 1, the specified value is replaced by 1.");
             fileBulkSize = 1;
             propertiesConfiguration.setProperty("file.bulk.size", fileBulkSize);
             isChanged = true;

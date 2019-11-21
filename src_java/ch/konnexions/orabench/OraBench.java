@@ -157,21 +157,31 @@ public class OraBench {
             for (String[] value : bulkData) {
                 preparedStatement.setString(1, value[0]);
                 preparedStatement.setString(2, value[1]);
-                preparedStatement.addBatch();
 
                 count += 1;
 
-                if (count % batchSize == 0) {
-                    preparedStatement.executeBatch();
+                if (batchSize == 0) {
+                    preparedStatement.execute();
+                } else {
+                    preparedStatement.addBatch();
+                    if (count % batchSize == 0) {
+                        preparedStatement.executeBatch();
+                    }
                 }
 
-                if (count % transactionSize == 0) {
+                if ((transactionSize > 0) && (count % transactionSize == 0)) {
                     connection.commit();
                 }
             }
 
-            preparedStatement.executeBatch();
-            connection.commit();
+            if ((batchSize > 0) && (count % batchSize != 0)) {
+                preparedStatement.executeBatch();
+            }
+
+            if ((transactionSize > 0) && (count % transactionSize != 0)) {
+                connection.commit();
+            }
+
             preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -189,6 +199,7 @@ public class OraBench {
 
             for (String[] value : bulkData) {
                 preparedStatement.setString(1, value[0]);
+
                 resultSet = preparedStatement.executeQuery();
 
                 String foundValue = null;

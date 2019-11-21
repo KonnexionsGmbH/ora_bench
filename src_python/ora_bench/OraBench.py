@@ -2,6 +2,7 @@ import configparser
 import csv
 import datetime
 import logging
+import os
 import platform
 from pathlib import Path
 
@@ -24,7 +25,7 @@ bulk_data = None
 connection = None
 connection_host = None
 connection_password = None
-connection_poool_size = None
+connection_pool_size = None
 connection_port = None
 connection_service = None
 connection_user = None
@@ -57,8 +58,8 @@ last_trial = None
 
 result_file_detailed = None
 
-sql_create_table = None
-sql_drop_table = None
+sql_create = None
+sql_drop = None
 sql_insert = None
 sql_select = None
 
@@ -68,9 +69,6 @@ sql_select = None
 # ------------------------------------------------------------------------------
 
 def create_result(action, state, trial_number, sql_statement, sql_operation=None):
-    """xxxx
-    """
-
     global last_benchmark
     global last_query
     global last_trial
@@ -94,13 +92,13 @@ def create_result(action, state, trial_number, sql_statement, sql_operation=None
         return
 
     if action == 'query':
-        create_result_detailed(action, state, trial_number, sql_statement, last_query, sql_operation)
+        create_result_detailed(action, trial_number, sql_statement, last_query, sql_operation)
         return
     if action == 'trial':
-        create_result_detailed(action, state, trial_number, sql_statement, last_trial, sql_operation)
+        create_result_detailed(action, trial_number, sql_statement, last_trial, sql_operation)
         return
     if action == 'benchmark':
-        create_result_detailed(action, state, trial_number, sql_statement, last_benchmark, sql_operation)
+        create_result_detailed(action, trial_number, sql_statement, last_benchmark, sql_operation)
         result_file_detailed.close()
         return
 
@@ -111,10 +109,7 @@ def create_result(action, state, trial_number, sql_statement, sql_operation=None
 # writing the detailed results.
 # ------------------------------------------------------------------------------
 
-def create_result_detailed(action, state, trial_number, sql_statement, start_date_time, sql_operation):
-    """xxxx
-    """
-
+def create_result_detailed(action, trial_number, sql_statement, start_date_time, sql_operation):
     global benchmark_batch_size
     global benchmark_comment
     global benchmark_database
@@ -195,9 +190,6 @@ def create_result_detailed(action, state, trial_number, sql_statement, start_dat
 # ------------------------------------------------------------------------------
 
 def create_result_detailed_file():
-    """xxxx
-    """
-
     global file_result_detailed_delimiter
     global file_result_detailed_header
     global file_result_detailed_name
@@ -207,11 +199,11 @@ def create_result_detailed_file():
     result_file_detailed = Path(file_result_detailed_name)
 
     if not result_file_detailed.is_file():
-        result_file_detailed = open(file_result_detailed_name, 'w')
+        result_file_detailed = open(os.path.abspath(file_result_detailed_name), 'w')
         result_file_detailed.write(file_result_detailed_header.replace(';', file_result_detailed_delimiter) + '\n')
         result_file_detailed.close()
 
-    result_file_detailed = open(file_result_detailed_name, 'a')
+    result_file_detailed = open(os.path.abspath(file_result_detailed_name), 'a')
 
 
 # ------------------------------------------------------------------------------
@@ -219,9 +211,6 @@ def create_result_detailed_file():
 # ------------------------------------------------------------------------------
 
 def create_result_statistical():
-    """xxxx
-    """
-
     global benchmark_batch_size
     global benchmark_comment
     global benchmark_database
@@ -261,11 +250,11 @@ def create_result_statistical():
     result_file_statistical = Path(file_result_statistical_name)
 
     if not result_file_statistical.is_file():
-        result_file_statistical = open(file_result_statistical_name, 'w')
+        result_file_statistical = open(os.path.abspath(file_result_statistical_name), 'w')
         result_file_statistical.write(file_result_statistical_header.replace(';', file_result_statistical_delimiter) + '\n')
         result_file_statistical.close()
 
-    result_file_statistical = open(file_result_statistical_name, 'a')
+    result_file_statistical = open(os.path.abspath(file_result_statistical_name), 'a')
 
     result_file_statistical.write(benchmark_comment + file_result_detailed_delimiter +
                                   BENCHMARK_ENVIRONMENT + file_result_detailed_delimiter +
@@ -313,12 +302,9 @@ def create_result_statistical():
 # ------------------------------------------------------------------------------
 
 def get_bulk_data():
-    """xxxx
-    """
-
     global bulk_data
 
-    with open(file_bulk_name) as csv_file:
+    with open(os.path.abspath(file_bulk_name)) as csv_file:
         bulk_data = [tuple(line) for line in csv.reader(csv_file, delimiter=file_bulk_delimiter)]
 
     del bulk_data[0]
@@ -329,9 +315,6 @@ def get_bulk_data():
 # ------------------------------------------------------------------------------
 
 def get_config():
-    """xxxx
-    """
-
     global benchmark_batch_size
     global benchmark_comment
     global benchmark_database
@@ -402,9 +385,6 @@ def get_config():
 # ------------------------------------------------------------------------------
 
 def main():
-    """This is the main method for the Oracle benchmark run.
-    """
-
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     logging.info('Start OraBench.py')
 
@@ -420,8 +400,7 @@ def main():
 # ------------------------------------------------------------------------------
 
 def run_benchmark():
-    """xxxx
-    """
+    global benchmark_trials
 
     global connection
     global connection_host
@@ -429,7 +408,6 @@ def run_benchmark():
     global connection_port
     global connection_service
     global connection_user
-    global database
 
     create_result('benchmark', 'start', 0, '')
 
@@ -437,7 +415,7 @@ def run_benchmark():
 
     connection = cx_Oracle.connect(connection_user, connection_password, connection_host + ':' + str(connection_port) + '/' + connection_service)
 
-    connection.autocommit = False;
+    connection.autocommit = False
 
     for trial_number in range(1, benchmark_trials + 1):
         run_benchmark_trial(trial_number)
@@ -454,31 +432,34 @@ def run_benchmark():
 # ------------------------------------------------------------------------------
 
 def run_benchmark_insert(trial_number):
-    """xxxx
-    """
-
+    global benchmark_batch_size
+    global benchmark_transaction_size
     global bulk_data
     global sql_insert
 
     create_result('query', 'start', trial_number, sql_insert)
 
-    count = 0;
+    count = 0
     batch_data = []
 
-    for tuple in bulk_data:
-        batch_data.append(tuple)
-
+    for key_data_tuple in bulk_data:
         count += 1
 
-        if count % benchmark_batch_size == 0:
-            cursor.executemany(sql_insert, batch_data)
-            batch_data = []
+        if benchmark_transaction_size == 0:
+            cursor.execute(sql_insert, [key_data_tuple[1], key_data_tuple[2]])
+        else:
+            batch_data.append(key_data_tuple)
+            if count % benchmark_batch_size == 0:
+                cursor.executemany(sql_insert, batch_data)
+                batch_data = []
 
-        if count % benchmark_transaction_size == 0:
+        if benchmark_transaction_size > 0 and count % benchmark_transaction_size == 0:
             connection.commit()
 
-    if batch_data.__len__() > 0:
+    if benchmark_transaction_size > 0 and batch_data.__len__() > 0:
         cursor.executemany(sql_insert, batch_data)
+
+    if benchmark_transaction_size > 0 and count % benchmark_transaction_size == 0:
         connection.commit()
 
     create_result('query', 'end', trial_number, sql_insert, 'insert')
@@ -489,9 +470,7 @@ def run_benchmark_insert(trial_number):
 # ------------------------------------------------------------------------------
 
 def run_benchmark_select(trial_number):
-    """xxxx
-    """
-
+    global benchmark_batch_size
     global bulk_data
     global sql_select
 
@@ -515,9 +494,6 @@ def run_benchmark_select(trial_number):
 # ------------------------------------------------------------------------------
 
 def run_benchmark_trial(trial_number):
-    """xxxx
-    """
-
     global cursor
 
     create_result('trial', 'start', trial_number, '')
@@ -527,12 +503,12 @@ def run_benchmark_trial(trial_number):
 
     try:
         cursor.execute(sql_create)
-    except(cx_Oracle.DatabaseError):
+    except cx_Oracle.DatabaseError:
         cursor.execute(sql_drop)
         cursor.execute(sql_create)
 
-    run_benchmark_insert(trial_number);
-    run_benchmark_select(trial_number);
+    run_benchmark_insert(trial_number)
+    run_benchmark_select(trial_number)
 
     cursor.execute(sql_drop)
 

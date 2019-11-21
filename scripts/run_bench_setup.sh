@@ -51,7 +51,7 @@ EXITCODE="0"
 
 PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 
-priv/sqlcl/bin/sql sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_setup.sql
+priv/oracle/sqlcl/bin/sql sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_setup.sql
 
 make -f src_java/Makefile clean
 make -f src_java/Makefile
