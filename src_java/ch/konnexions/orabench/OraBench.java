@@ -191,7 +191,6 @@ public class OraBench {
     }
 
     private static void runBenchmarkSelect(Connection connection, int trialNumber, ArrayList<String[]> bulkData, String sqlStatement) {
-        int count = 0;
         result.startQuery();
 
         try {
@@ -200,8 +199,6 @@ public class OraBench {
 
             for (String[] value : bulkData) {
                 preparedStatement.setString(1, value[0]);
-
-                count += 1;
 
                 resultSet = preparedStatement.executeQuery();
 
