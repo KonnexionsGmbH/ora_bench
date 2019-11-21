@@ -151,8 +151,11 @@ Otherwise, the new current results are appended to existing results.
 
 | Column | Format | Content |
 | :--- | :--- | :--- |
+| benchmark id | alphanumeric  | config param `benchmark.id` |
 | benchmark comment | alphanumeric  | config param `benchmark.comment` |
-| environment | alphanumeric | config param `benchmark.environment` |
+| host name | alphanumeric | config param `benchmark.host.name` |
+| os | alphanumeric | config param `benchmark.os` |
+| user name | alphanumeric | config param `benchmark.user.name` |
 | database | alphanumeric | config param `benchmark.database` |
 | module | alphanumeric |  config param `benchmark.module` |
 | driver | alphanumeric |  config param `benchmark.driver` |
