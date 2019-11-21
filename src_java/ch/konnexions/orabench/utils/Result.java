@@ -36,12 +36,6 @@ public class Result {
     Config config;
 
     private final DecimalFormat decimalFormat = new DecimalFormat("##");
-    private long durationInsertMaximum = 0;
-    private long durationInsertMinimum = 0;
-    private long durationInsertSum = 0;
-    private long durationSelectMaximum = 0;
-    private long durationSelectMinimum = 0;
-    private long durationSelectSum = 0;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss.nnnnnnnnn");
 
@@ -92,31 +86,6 @@ public class Result {
         }
     }
 
-    private final void createSummary(LocalDateTime endDateTime) {
-        String startDateTimeStr = lastBenchmark.format(formatter);
-        String endDateTimeStr = endDateTime.format(formatter);
-
-        try {
-            summaryFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkEnvironment(), config.getBenchmarkDatabase(), config.getBenchmarkModule(),
-                    config.getBenchmarkDriver(), config.getBenchmarkTrials(), config.getSqlInsert(), config.getConnectionPoolSize(),
-                    config.getBenchmarkTransactionSize(), config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(),
-                    startDateTimeStr, endDateTimeStr, decimalFormat.format(durationInsertSum / (double) config.getBenchmarkTrials()),
-                    decimalFormat.format((durationInsertSum / (double) config.getBenchmarkTrials()) / config.getFileBulkSize()),
-                    Long.toString(durationInsertMinimum), Long.toString(durationInsertMaximum));
-            summaryFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkEnvironment(), config.getBenchmarkDatabase(), config.getBenchmarkModule(),
-                    config.getBenchmarkDriver(), config.getBenchmarkTrials(), config.getSqlSelect(), config.getConnectionPoolSize(),
-                    config.getBenchmarkTransactionSize(), config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(),
-                    startDateTimeStr, endDateTimeStr, decimalFormat.format(durationSelectSum / (double) config.getBenchmarkTrials()),
-                    decimalFormat.format((durationSelectSum / (double) config.getBenchmarkTrials()) / config.getFileBulkSize()),
-                    Long.toString(durationSelectMinimum), Long.toString(durationSelectMaximum));
-        } catch (IOException e) {
-            log.error("file summary delimiter=: " + config.getFileResultStatisticalDelimiter());
-            log.error("file summary header   =: " + config.getFileResultStatisticalHeader());
-            log.error("file summary name     =: " + config.getFileBulkSize());
-            e.printStackTrace();
-        }
-    }
-
     /**
      * End the benchmark.
      */
@@ -134,20 +103,6 @@ public class Result {
             log.error("file result name     =: " + config.getFileBulkSize());
             e.printStackTrace();
         }
-
-        openSummaryFile();
-
-        createSummary(endDateTime);
-
-        try {
-            summaryFile.close();
-        } catch (IOException e) {
-            log.error("file summary delimiter=: " + config.getFileResultStatisticalDelimiter());
-            log.error("file summary header   =: " + config.getFileResultStatisticalHeader());
-            log.error("file summary name     =: " + config.getFileBulkSize());
-            e.printStackTrace();
-        }
-
     }
 
     /**
@@ -159,20 +114,6 @@ public class Result {
     public final void endQueryInsert(int trialNo, String sqlStatement) {
         LocalDateTime endDateTime = LocalDateTime.now();
         long duration = System.nanoTime() - lastQueryNano;
-
-        if (durationInsertSum == 0) {
-            durationInsertMinimum = duration;
-            durationInsertMaximum = duration;
-        } else {
-            if (duration < durationInsertMinimum) {
-                durationInsertMinimum = duration;
-            }
-            if (duration > durationInsertMaximum) {
-                durationInsertMaximum = duration;
-            }
-        }
-
-        durationInsertSum += duration;
 
         createMeasuringPoint("query", trialNo, sqlStatement, lastQuery, endDateTime, duration);
     }
@@ -186,20 +127,6 @@ public class Result {
     public final void endQuerySelect(int trialNo, String sqlStatement) {
         LocalDateTime endDateTime = LocalDateTime.now();
         long duration = System.nanoTime() - lastQueryNano;
-
-        if (durationSelectSum == 0) {
-            durationSelectMinimum = duration;
-            durationSelectMaximum = duration;
-        } else {
-            if (duration < durationSelectMinimum) {
-                durationSelectMinimum = duration;
-            }
-            if (duration > durationSelectMaximum) {
-                durationSelectMaximum = duration;
-            }
-        }
-
-        durationSelectSum += duration;
 
         createMeasuringPoint("query", trialNo, sqlStatement, lastQuery, endDateTime, duration);
     }
@@ -240,38 +167,6 @@ public class Result {
             log.error("file result delimiter=: " + resultDelimiter);
             log.error("file result header   =: " + config.getFileResultDetailedHeader());
             log.error("file result name     =: " + resultName);
-            log.error("-----------------------");
-            e.printStackTrace();
-        }
-    }
-
-    private final void openSummaryFile() {
-        String summaryDelimiter = config.getFileResultStatisticalDelimiter();
-        String summaryName = config.getFileResultStatisticalName();
-
-        try {
-            Path summaryPath = Paths.get(summaryName);
-
-            boolean isFileExisting = Files.exists(Paths.get(summaryName));
-
-            if (!(isFileExisting)) {
-                Files.createFile(summaryPath);
-            }
-
-            BufferedWriter bufferedWriter;
-
-            if (isFileExisting) {
-                bufferedWriter = new BufferedWriter(new FileWriter(summaryName, true));
-                summaryFile = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.withDelimiter(summaryDelimiter.charAt(0)));
-            } else {
-                bufferedWriter = new BufferedWriter(new FileWriter(summaryName, false));
-                summaryFile = new CSVPrinter(bufferedWriter,
-                        CSVFormat.EXCEL.withDelimiter(summaryDelimiter.charAt(0)).withHeader(config.getFileResultStatisticalHeader().split(summaryDelimiter)));
-            }
-        } catch (IOException e) {
-            log.error("file summary delimiter=: " + summaryDelimiter);
-            log.error("file summary header   =: " + config.getFileResultStatisticalHeader());
-            log.error("file summary name     =: " + summaryName);
             log.error("-----------------------");
             e.printStackTrace();
         }
