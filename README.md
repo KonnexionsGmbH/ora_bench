@@ -272,31 +272,41 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 ## 5 <a name="todo_list"></a> ToDo List
 
-| Completed | Created | Assigned | Task Description |
-| :---: | :---: | :--- | :--- |
-|  | 2019.11.05 | c_bik | JamDB & Erlang: new |
-|  | 2019.11.05 | c_bik | occi & C++: new |
-|  | 2019.11.05 | c_bik | odbc & Erlang: new |
-|  | 2019.11.05 | c_bik | odpi-c & C: new |
-|  | 2019.11.05 | c_bik | oranif & Erlang: multithreading ??? |
-|  | 2019.11.05 | c_bik | oranif & Erlang: using the configuration parameters |
-|  | 2019.11.05 | wwe | cx_Oracle & Python: new |
-|  | 2019.11.05 | wwe | JDBC & Java: multithreading ??? |
-|  | 2019.11.19 | wwe | cx_Oracle & Python: benchmark.batch.size = 0 |
-|  | 2019.11.19 | wwe | cx_Oracle & Python: benchmark.transaction.size = 0 |
-|  | 2019.11.19 | wwe | cx_Oracle & Python: connection pooling |
-|  | 2019.11.19 | wwe | JDBC & Java: benchmark.batch.size = 0 |
-|  | 2019.11.19 | wwe | JDBC & Java: benchmark.transaction.size = 0 |
-|  | 2019.11.19 | wwe | JDBC & Java: connection pooling |
-| 2019.11.05 | 2019.11.05 | wwe | JDBC & Java: dynamic batchsize | 
-| 2019.11.06 | 2019.11.05 | wwe | JDBC & Java: finishing with summary report |
-| 2019.11.06 | 2019.11.05 | wwe | Overall: separating key column and data column |
-| 2019.11.07 | 2019.11.05 | wwe | JDBC & Java: dynamic Oracle database version |
-| 2019.11.07 | 2019.11.05 | wwe | Overall: databases via docker containers |
-| 2019.11.08 | 2019.11.05 | wwe | JDBC & Java: generating language specific configuration files |
-| 2019.11.12 | 2019.11.05 | wwe | Overall: Travis/CI integration |
-| 2019.11.17 | 2019.11.05 | wwe | Overall: documentation |
-| rejected | 2019.11.05 | wwe | Overall: partitioned table ??? |
+| Completed  | Created    | Assignee | Task Description |
+| :---:      | :---:      | :---     | :--- |
+|            | 2019.11.05 | c_bik    | jamdb_erlang: new |
+|            | 2019.11.05 | c_bik    | occi_c++: new |
+|            | 2019.11.05 | c_bik    | odbc_erlang: new |
+|            | 2019.11.05 | c_bik    | odpi-c_c: new |
+|            | 2019.11.05 | c_bik    | oranif_erlang: new |
+|  prio. 1   | 2019.11.21 | c_bik    | setup: define new c ini file format |
+|  prio. 1   | 2019.11.21 | c_bik    | upload to GitHub from Travis CI: authentication method |
+|  prio. 1   | 2019.11.21 | wwe      | all: detailed result file -> result file |
+|  prio. 1   | 2019.11.21 | wwe      | all: new config param: benchmark.prefetch.size |
+|  prio. 1   | 2019.11.21 | wwe      | all: new config params: benchmark.hostname & benchmark.username |
+|  prio. 1   | 2019.11.21 | wwe      | all: remove statistical results file |
+|  prio. 1   | 2019.11.21 | wwe      | all: result file - date format: yyyy-mm-dd hh24:mi:ss.ffffffff |
+|  prio. 1   | 2019.11.21 | wwe      | documentation: pseudocode |
+|  prio. 2   | 2019.11.19 | wwe      | cx_oracle_python: connection pooling |
+|  prio. 2   | 2019.11.19 | wwe      | jdbc_java: connection pooling |
+|  prio. 2   | 2019.11.21 | wwe      | setup: c script-> new c ini file |
+|  prio. 3   | 2019.11.05 | wwe      | jdbc_java: multithreading |
+|  prio. 3   | 2019.11.19 | wwe      | cx_oracle_python: multithreading |
+|  prio. 4   | 2019.11.21 | wwe      | ecto_elixir: new |
+| 2019.11.05 | 2019.11.05 | wwe      | jdbc_java: dynamic batchsize | 
+| 2019.11.06 | 2019.11.05 | wwe      | all: separating key column and data column |
+| 2019.11.06 | 2019.11.05 | wwe      | jdbc_java: finishing with summary report |
+| 2019.11.07 | 2019.11.05 | wwe      | all: databases via docker containers |
+| 2019.11.07 | 2019.11.05 | wwe      | jdbc_java: dynamic Oracle database version |
+| 2019.11.08 | 2019.11.05 | wwe      | jdbc_java: generating language specific configuration files |
+| 2019.11.12 | 2019.11.05 | wwe      | all: Travis/CI integration |
+| 2019.11.17 | 2019.11.05 | wwe      | all: documentation |
+| 2019.11.21 | 2019.11.05 | wwe      | cx_oracle_python: new |
+| 2019.11.21 | 2019.11.19 | wwe      | cx_oracle_python: benchmark.batch.size = 0 |
+| 2019.11.21 | 2019.11.19 | wwe      | cx_oracle_python: benchmark.transaction.size = 0 |
+| 2019.11.21 | 2019.11.19 | wwe      | jdbc_java: benchmark.batch.size = 0 |
+| 2019.11.21 | 2019.11.19 | wwe      | jdbc_java: benchmark.transaction.size = 0 |
+| rejected   | 2019.11.05 | wwe      | all: partitioned table ??? |
 
 ## 6. <a name="contributing"></a> Contributing
 
