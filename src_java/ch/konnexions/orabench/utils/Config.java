@@ -8,12 +8,17 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
@@ -29,11 +34,15 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>benchmark.comment
  * <li>benchmark.database
  * <li>benchmark.driver
- * <li>benchmark.environment
+ * <li>benchmark.host.name
+ * <li>benchmark.id
  * <li>benchmark.module
+ * <li>benchmark.os
  * <li>benchmark.program.name.oranif.c
  * <li>benchmark.transaction.size
  * <li>benchmark.trials
+ * <li>benchmark.user.name
+ * <li>connection.fetch.size
  * <li>connection.host
  * <li>connection.password
  * <li>connection.pool.size
@@ -50,9 +59,9 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>file.configuration.name.cx_oracle.python
  * <li>file.configuration.name.oranif.c
  * <li>file.configuration.name.oranif.erlang
- * <li>file.result.detailed.delimiter
- * <li>file.result.detailed.header
- * <li>file.result.detailed.name
+ * <li>file.result.delimiter
+ * <li>file.result.header
+ * <li>file.result.name
  * <li>sql.create
  * <li>sql.drop
  * <li>sql.insert
@@ -63,17 +72,22 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  */
 public class Config {
 
+    private static Logger log = new Logger(Config.class);
     private int benchmarkBatchSize;
     private String benchmarkComment;
     private String benchmarkDatabase;
     private String benchmarkDriver;
-    private String benchmarkEnvironment;
+    private String benchmarkHostName;
+    private String benchmarkId;
     private String benchmarkModule;
+    private String benchmarkOs;
     private String benchmarkProgramNameOranifC;
     private int benchmarkTransactionSize;
     private int benchmarkTrials;
+    private String benchmarkUserName;
 
     private final File configFile = new File(System.getenv("ORA_BENCH_FILE_CONFIGURATION_NAME"));
+    private int connectionFetchSize;
     private String connectionHost;
     private String connectionPassword;
     private int connectionPoolSize;
@@ -81,6 +95,8 @@ public class Config {
     private String connectionService;
     private String connectionString;
     private String connectionUser;
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
 
     FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
     private String fileBulkDelimiter;
@@ -92,13 +108,11 @@ public class Config {
     private String fileConfigurationNameCxOraclePython;
     private String fileConfigurationNameOranifC;
     private String fileConfigurationNameOranifErlang;
-    private String fileResultDetailedDelimiter;
-    private String fileResultDetailedHeader;
-    private String fileResultDetailedName;
+    private String fileResultDelimiter;
+    private String fileResultHeader;
+    private String fileResultName;
 
     private ArrayList<String> keysSorted = new ArrayList<String>();
-
-    private static Logger log = new Logger(Config.class);
 
     private List<String> numericProperties = getNumericProperties();
 
@@ -121,7 +135,7 @@ public class Config {
 
         try {
             propertiesConfiguration = fileBasedConfigurationBuilder.getConfiguration();
-            updatePropertiesFromEnvironment();
+            updatePropertiesFromOs();
             keysSorted = getKeysSorted(propertiesConfiguration);
         } catch (ConfigurationException e) {
             e.printStackTrace();
@@ -315,10 +329,17 @@ public class Config {
     }
 
     /**
-     * @return the operating system description
+     * @return the host name
      */
-    public final String getBenchmarkEnvironment() {
-        return System.getProperty("os.arch") + " / " + System.getProperty("os.name") + " / " + System.getProperty("os.version");
+    public final String getBenchmarkHostName() {
+        return benchmarkHostName;
+    }
+
+    /**
+     * @return the benchmark identification
+     */
+    public final String getBenchmarkId() {
+        return benchmarkId;
     }
 
     /**
@@ -327,6 +348,13 @@ public class Config {
      */
     public final String getBenchmarkModule() {
         return benchmarkModule;
+    }
+
+    /**
+     * @return the operating system description
+     */
+    public final String getBenchmarkOs() {
+        return benchmarkOs;
     }
 
     /**
@@ -348,6 +376,20 @@ public class Config {
      */
     public final int getBenchmarkTrials() {
         return benchmarkTrials;
+    }
+
+    /**
+     * @return the user name
+     */
+    public final String getBenchmarkUserName() {
+        return benchmarkUserName;
+    }
+
+    /**
+     * @return how much data is pulled from the database across the network
+     */
+    public final int getConnectionFetchSize() {
+        return connectionFetchSize;
     }
 
     /**
@@ -471,26 +513,25 @@ public class Config {
     }
 
     /**
-     * @return the delimiter character of the detailed result file
+     * @return the delimiter character of the result file
      */
-    public final String getFileResultDetailedDelimiter() {
-        return fileResultDetailedDelimiter;
+    public final String getFileResultDelimiter() {
+        return fileResultDelimiter;
     }
 
     /**
-     * @return the header line of the detailed result file
+     * @return the header line of the result file
      */
-    public final String getFileResultDetailedHeader() {
-        return fileResultDetailedHeader;
+    public final String getFileResultHeader() {
+        return fileResultHeader;
     }
 
     /**
-     * @return the name of the detailed result file containing the benchmark
-     *         results. The file name may contain the absolute or relative file
-     *         path.
+     * @return the name of the result file containing the benchmark results. The
+     *         file name may contain the absolute or relative file path.
      */
-    public final String getFileResultDetailedName() {
-        return fileResultDetailedName;
+    public final String getFileResultName() {
+        return fileResultName;
     }
 
     private final ArrayList<String> getKeysSorted(PropertiesConfiguration propertiesConfiguration2) {
@@ -509,8 +550,11 @@ public class Config {
         list.add("benchmark.comment");
         list.add("benchmark.database");
         list.add("benchmark.driver");
-        list.add("benchmark.environment");
+        list.add("benchmark.host.name");
+        list.add("benchmark.id");
         list.add("benchmark.module");
+        list.add("benchmark.os");
+        list.add("benchmark.user.name");
         list.add("connection.service");
 
         return list;
@@ -522,6 +566,7 @@ public class Config {
         list.add("benchmark.batch.size");
         list.add("benchmark.transaction.size");
         list.add("benchmark.trials");
+        list.add("connection.fetch.size");
         list.add("connection.pool.size");
         list.add("connection.port");
         list.add("file.bulk.length");
@@ -601,12 +646,16 @@ public class Config {
         benchmarkComment = propertiesConfiguration.getString("benchmark.comment");
         benchmarkDatabase = propertiesConfiguration.getString("benchmark.database");
         benchmarkDriver = propertiesConfiguration.getString("benchmark.driver");
-        benchmarkEnvironment = propertiesConfiguration.getString("benchmark.environment");
+        benchmarkHostName = propertiesConfiguration.getString("benchmark.host.name");
+        benchmarkId = propertiesConfiguration.getString("benchmark.id");
         benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
+        benchmarkOs = propertiesConfiguration.getString("benchmark.os");
         benchmarkProgramNameOranifC = propertiesConfiguration.getString("benchmark.program.name.oranif.c");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
         benchmarkTrials = propertiesConfiguration.getInt("benchmark.trials");
+        benchmarkUserName = propertiesConfiguration.getString("benchmark.user.name");
 
+        connectionFetchSize = propertiesConfiguration.getInt("connection.fetch.size");
         connectionHost = propertiesConfiguration.getString("connection.host");
         connectionPassword = propertiesConfiguration.getString("connection.password");
         connectionPoolSize = propertiesConfiguration.getInt("connection.pool.size");
@@ -624,9 +673,9 @@ public class Config {
         fileConfigurationNameCxOraclePython = propertiesConfiguration.getString("file.configuration.name.cx_oracle.python");
         fileConfigurationNameOranifC = propertiesConfiguration.getString("file.configuration.name.oranif.c");
         fileConfigurationNameOranifErlang = propertiesConfiguration.getString("file.configuration.name.oranif.erlang");
-        fileResultDetailedDelimiter = propertiesConfiguration.getString("file.result.detailed.delimiter");
-        fileResultDetailedHeader = propertiesConfiguration.getString("file.result.detailed.header").replace(";", fileResultDetailedDelimiter);
-        fileResultDetailedName = propertiesConfiguration.getString("file.result.detailed.name");
+        fileResultDelimiter = propertiesConfiguration.getString("file.result.delimiter");
+        fileResultHeader = propertiesConfiguration.getString("file.result.header").replace(";", fileResultDelimiter);
+        fileResultName = propertiesConfiguration.getString("file.result.name");
 
         sqlCreateTable = propertiesConfiguration.getString("sql.create");
         sqlDropTable = propertiesConfiguration.getString("sql.drop");
@@ -634,7 +683,7 @@ public class Config {
         sqlSelect = propertiesConfiguration.getString("sql.select");
     }
 
-    private final void updatePropertiesFromEnvironment() {
+    private final void updatePropertiesFromOs() {
 
         Map<String, String> environmentVariables = System.getenv();
 
@@ -655,12 +704,6 @@ public class Config {
         if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_DRIVER")) {
             benchmarkDriver = environmentVariables.get("ORA_BENCH_BENCHMARK_DRIVER");
             propertiesConfiguration.setProperty("benchmark.driver", benchmarkDriver);
-            isChanged = true;
-        }
-
-        if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_ENVIRONMENT")) {
-            benchmarkEnvironment = environmentVariables.get("ORA_BENCH_BENCHMARK_ENVIRONMENT");
-            propertiesConfiguration.setProperty("benchmark.environment", benchmarkEnvironment);
             isChanged = true;
         }
 
@@ -688,9 +731,9 @@ public class Config {
             isChanged = true;
         }
 
-        if (environmentVariables.containsKey("ORA_BENCH_FILE_RESULT_DETAILED_NAME")) {
-            fileResultDetailedName = environmentVariables.get("ORA_BENCH_FILE_RESULT_DETAILED_NAME");
-            propertiesConfiguration.setProperty("file.result.detailed.name", fileResultDetailedName);
+        if (environmentVariables.containsKey("ORA_BENCH_FILE_RESULT_NAME")) {
+            fileResultName = environmentVariables.get("ORA_BENCH_FILE_RESULT_NAME");
+            propertiesConfiguration.setProperty("file.result.name", fileResultName);
             isChanged = true;
         }
 
@@ -713,6 +756,22 @@ public class Config {
                     + "] must not be less than 0, the specified value is replaced by 0.");
             benchmarkBatchSize = 0;
             propertiesConfiguration.setProperty("benchmark.batch.size", benchmarkBatchSize);
+            isChanged = true;
+        }
+
+        if (benchmarkHostName.equals("n/a")) {
+            try {
+                benchmarkHostName = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            propertiesConfiguration.setProperty("benchmark.host.name", benchmarkHostName);
+            isChanged = true;
+        }
+
+        if (benchmarkOs.equals("n/a")) {
+            benchmarkOs = System.getProperty("os.arch") + " / " + System.getProperty("os.name") + " / " + System.getProperty("os.version");
+            propertiesConfiguration.setProperty("benchmark.os", benchmarkOs);
             isChanged = true;
         }
 
@@ -739,6 +798,20 @@ public class Config {
                     + "] must not be less than 1, the specified value is replaced by 1.");
             benchmarkTrials = 1;
             propertiesConfiguration.setProperty("benchmark.trials", benchmarkTrials);
+            isChanged = true;
+        }
+
+        if (benchmarkUserName.equals("n/a")) {
+            benchmarkUserName = System.getProperty("user.name");
+            propertiesConfiguration.setProperty("benchmark.user.name", benchmarkUserName);
+            isChanged = true;
+        }
+
+        if (connectionFetchSize < 0) {
+            log.error("Attention: The value of the configuration parameter 'connection.fetch.size' [" + Integer.toString(connectionFetchSize)
+                    + "] must not be less than 0, the specified value is replaced by 0.");
+            connectionFetchSize = 0;
+            propertiesConfiguration.setProperty("connection.fetch.size", connectionFetchSize);
             isChanged = true;
         }
 
@@ -769,6 +842,12 @@ public class Config {
                     + "] must not be less than 1, the specified value is replaced by 1.");
             fileBulkSize = 1;
             propertiesConfiguration.setProperty("file.bulk.size", fileBulkSize);
+            isChanged = true;
+        }
+
+        if (benchmarkId.equals("n/a")) {
+            benchmarkId = DigestUtils.md5Hex(LocalDateTime.now().format(formatter) + benchmarkHostName + benchmarkOs + benchmarkUserName);
+            propertiesConfiguration.setProperty("benchmark.id", benchmarkId);
             isChanged = true;
         }
 
