@@ -145,7 +145,7 @@ The results are uploaded to the repositopry at the end.
 
 ### 2.3 Benchmark Results
 
-In a file defined by the configuration parameters `file.result.detailed.delimiter`, `file.result.detailed.header` and `file.result.detailed.name`, the detailed results of the benchmark run with the actions `benchmark`, `trial` and `query` are stored.
+In a file defined by the configuration parameters `file.result.delimiter`, `file.result.header` and `file.result.name`, the results of the benchmark run with the actions `benchmark`, `trial` and `query` are stored.
 If the result file does not yet exist, a new result file is created. 
 Otherwise, the new current results are appended to existing results. 
 
@@ -159,13 +159,14 @@ Otherwise, the new current results are appended to existing results.
 | trial no. | integer | trial no. if action equals `trial` , `0` elsewise |
 | SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
 | connection pool size | integer | config param `connection.pool.size` |
+| fetch size | integer | config param `connection.fetch.size` |
 | transaction size | integer | config param `benchmark.transaction.size` |
 | bulk length | integer | config param `file.bulk.length` |
 | bulk size | integer | config param `file.bulk.size` |
 | batch size | integer | config param `benchmark.batch.size` |
 | action | alphanumeric | one of `benchmark`, `query` or `trial`   |
-| start day time | yyyy.mm.dd hh24:mi:ss.ffffffff | current date and time at the start of the action |
-| end day time | yyyy.mm.dd hh24:mi:ss.ffffffff | current date and time at the end of the action |
+| start day time | yyyy-mm-dd hh24:mi:ss.fffffffff | current date and time at the start of the action |
+| end day time | yyyy-mm-dd hh24:mi:ss.fffffffff | current date and time at the end of the action |
 | duration (sec) | integer | time difference in seconds between start time and end time of the action |
 | duration (ns) | integer | time difference in nanoseconds between start time and end time of the action |
  
@@ -187,15 +188,15 @@ The data column in the bulk file is randomly generated with a unique key column 
 ### 3.1 `Benchmark Routine` (main routine)
 
 1. load the configuration parameters (config params `file.configuration. ...`)
-1. open the detailed results file (config params `file.result.detailed. ...`)
-1. if the result file did not exist yet, then write a header line (config param `file.result.detailed.header`)
+1. open the results file (config params `file.result. ...`)
+1. if the result file did not exist yet, then write a header line (config param `file.result.header`)
 1. record the current time as the benchmark start
 1. load the bulk data into the memory (config params `file.bulk. ...`)
 1. establish the database connection (config params `connection. ...`)
 1. execute the `Trial Routine` as often as defined in config param `benchmark.trials`
 1. close the database connection
-1. create the benchmark entry for the detailed results
-1. close the detailed results file (config param `file.result.detailed.name`)
+1. create the benchmark entry for the results
+1. close the results file (config param `file.result.name`)
 1. terminate the benchmark run
 
 ### 3.2 `Trial Routine`
@@ -206,21 +207,21 @@ The data column in the bulk file is randomly generated with a unique key column 
 1. execute the `Insert Routine`
 1. execute the `Select Routine`
 1. execute the SQL statement in the config param `sql.drop` 
-1. create the trial entry for the detailed results
+1. create the trial entry for the results
 1. terminate the trial run
 
 ### 3.2 `Insert Routine`
 
 1. record the current time as the start of the query
 1. execute the SQL statement in the config param `sql.insert` for each record in the bulk file whereby the following configuration parameters must be taken into account: `benchmark.batch.size`, `benchmark.transaction.size` and `connection.pool.size`.
-1. create the query entry for the detailed results
+1. create the query entry for the results
 1. finish the query run
 
 ### 3.2 `Select Routine`
 
 1. record the current time as the start of the query
 1. execute the SQL statement in the config param `sql.select` for each record in the bulk file and compare the found value with the value in the bulk file for match. 
-1. create the query entry for the detailed results
+1. create the query entry for the results
 1. finish the query run
 
 ## 4 <a name="driver_specifica"></a> Driver Specific Features
@@ -229,6 +230,8 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 - the following data in the configuration parameters is determined at runtime: operating system environment (`benchmark.environment`), the Python version (`benchmark.module`) and cx_Oracle version (`benchmark.driver`)
 - Python uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
+- the fetch size (`connection.fetch.size`) 
+- the value fetch size (`connection.fetch.size`) is not used because the operation `SELECT` uses the operation `Cursor.fetchall()`
 
 ### 4.2 JDBC and Java
 
@@ -248,10 +251,6 @@ The data column in the bulk file is randomly generated with a unique key column 
 |            | 2019.11.05 | c_bik    | oranif_erlang: new |
 |  prio. 1   | 2019.11.21 | c_bik    | setup: define new c ini file format |
 |  prio. 1   | 2019.11.21 | c_bik    | upload to GitHub from Travis CI: authentication method |
-|  prio. 1   | 2019.11.21 | wwe      | all: detailed result file -> result file |
-|  prio. 1   | 2019.11.21 | wwe      | all: new config param: benchmark.prefetch.size |
-|  prio. 1   | 2019.11.21 | wwe      | all: new config params: benchmark.hostname & benchmark.username |
-|  prio. 1   | 2019.11.21 | wwe      | all: result file - date format: yyyy-mm-dd hh24:mi:ss.ffffffff |
 |  prio. 1   | 2019.11.21 | wwe      | documentation: pseudocode |
 |  prio. 2   | 2019.11.19 | wwe      | cx_oracle_python: connection pooling |
 |  prio. 2   | 2019.11.19 | wwe      | jdbc_java: connection pooling |
@@ -272,7 +271,11 @@ The data column in the bulk file is randomly generated with a unique key column 
 | 2019.11.21 | 2019.11.19 | wwe      | cx_oracle_python: benchmark.transaction.size = 0 |
 | 2019.11.21 | 2019.11.19 | wwe      | jdbc_java: benchmark.batch.size = 0 |
 | 2019.11.21 | 2019.11.19 | wwe      | jdbc_java: benchmark.transaction.size = 0 |
+| 2019.11.21 | 2019.11.21 | wwe      | all: detailed result file -> result file |
+| 2019.11.21 | 2019.11.21 | wwe      | all: new config param: connection.fetch.size |
+| 2019.11.21 | 2019.11.21 | wwe      | all: new config params: benchmark.host.name, benchmark.id & benchmark.user.name |
 | 2019.11.21 | 2019.11.21 | wwe      | all: remove statistical results file |
+| 2019.11.21 | 2019.11.21 | wwe      | all: result file - date format: yyyy-mm-dd hh24:mi:ss.ffffffff |
 | rejected   | 2019.11.05 | wwe      | all: partitioned table ??? |
 
 ## 6. <a name="contributing"></a> Contributing

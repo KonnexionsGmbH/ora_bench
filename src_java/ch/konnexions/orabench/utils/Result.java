@@ -37,7 +37,7 @@ public class Result {
 
     private final DecimalFormat decimalFormat = new DecimalFormat("##");
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss.nnnnnnnnn");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
 
     private final LocalDateTime lastBenchmark = LocalDateTime.now();
     private final long lastBenchmarkNano = System.nanoTime();
@@ -74,13 +74,14 @@ public class Result {
     private final void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime, LocalDateTime endDateTime,
             long duration) {
         try {
-            resultFile.printRecord(config.getBenchmarkComment(), config.getBenchmarkEnvironment(), config.getBenchmarkDatabase(), config.getBenchmarkModule(),
-                    config.getBenchmarkDriver(), trialNo, sqlStatement, config.getConnectionPoolSize(), config.getBenchmarkTransactionSize(),
+            resultFile.printRecord(config.getBenchmarkId(), config.getBenchmarkComment(), config.getBenchmarkHostName(), config.getBenchmarkOs(),
+                    config.getBenchmarkUserName(), config.getBenchmarkDatabase(), config.getBenchmarkModule(), config.getBenchmarkDriver(), trialNo,
+                    sqlStatement, config.getConnectionPoolSize(), config.getConnectionFetchSize(), config.getBenchmarkTransactionSize(),
                     config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(), action, startDateTime.format(formatter),
                     endDateTime.format(formatter), decimalFormat.format(duration / 1000000000.0), Long.toString(duration));
         } catch (IOException e) {
-            log.error("file result delimiter=: " + config.getFileResultDetailedDelimiter());
-            log.error("file result header   =: " + config.getFileResultDetailedHeader());
+            log.error("file result delimiter=: " + config.getFileResultDelimiter());
+            log.error("file result header   =: " + config.getFileResultHeader());
             log.error("file result name     =: " + config.getFileBulkSize());
             e.printStackTrace();
         }
@@ -98,8 +99,8 @@ public class Result {
         try {
             resultFile.close();
         } catch (IOException e) {
-            log.error("file result delimiter=: " + config.getFileResultDetailedDelimiter());
-            log.error("file result header   =: " + config.getFileResultDetailedHeader());
+            log.error("file result delimiter=: " + config.getFileResultDelimiter());
+            log.error("file result header   =: " + config.getFileResultHeader());
             log.error("file result name     =: " + config.getFileBulkSize());
             e.printStackTrace();
         }
@@ -141,8 +142,8 @@ public class Result {
     }
 
     private final void openResultFile() {
-        String resultDelimiter = config.getFileResultDetailedDelimiter();
-        String resultName = config.getFileResultDetailedName();
+        String resultDelimiter = config.getFileResultDelimiter();
+        String resultName = config.getFileResultName();
 
         try {
             Path resultPath = Paths.get(resultName);
@@ -161,11 +162,11 @@ public class Result {
             } else {
                 bufferedWriter = new BufferedWriter(new FileWriter(resultName, false));
                 resultFile = new CSVPrinter(bufferedWriter,
-                        CSVFormat.EXCEL.withDelimiter(resultDelimiter.charAt(0)).withHeader(config.getFileResultDetailedHeader().split(resultDelimiter)));
+                        CSVFormat.EXCEL.withDelimiter(resultDelimiter.charAt(0)).withHeader(config.getFileResultHeader().split(resultDelimiter)));
             }
         } catch (IOException e) {
             log.error("file result delimiter=: " + resultDelimiter);
-            log.error("file result header   =: " + config.getFileResultDetailedHeader());
+            log.error("file result header   =: " + config.getFileResultHeader());
             log.error("file result name     =: " + resultName);
             log.error("-----------------------");
             e.printStackTrace();

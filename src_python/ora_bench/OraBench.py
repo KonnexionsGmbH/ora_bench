@@ -16,13 +16,17 @@ benchmark_batch_size = None
 benchmark_comment = None
 benchmark_database = None
 BENCHMARK_DRIVER = 'cx_Oracle (Version v' + cx_Oracle.version + ')'
-BENCHMARK_ENVIRONMENT = platform.machine() + ' / ' + platform.platform()
+benchmark_host_name = None
+benchmark_id = None
 BENCHMARK_MODULE = 'OraBench (Python ' + platform.python_version() + ')'
+benchmark_os = None
 benchmark_transaction_size = None
 benchmark_trials = None
+benchmark_user_name = None
 bulk_data = None
 
 connection = None
+connection_fetch_size = None
 connection_host = None
 connection_password = None
 connection_pool_size = None
@@ -45,15 +49,15 @@ file_bulk_length = None
 file_bulk_name = None
 file_bulk_size = None
 file_configuration_name_cx_oracle_python = None
-file_result_detailed_delimiter = None
-file_result_detailed_header = None
-file_result_detailed_name = None
+file_result_delimiter = None
+file_result_header = None
+file_result_name = None
 
 last_benchmark = None
 last_query = None
 last_trial = None
 
-result_file_detailed = None
+result_file = None
 
 sql_create = None
 sql_drop = None
@@ -62,59 +66,21 @@ sql_select = None
 
 
 # ------------------------------------------------------------------------------
-# Recording the results of the benchmark.
+# Writing the results.
 # ------------------------------------------------------------------------------
 
-def create_result(action, state, trial_number, sql_statement, sql_operation=None):
-    global last_benchmark
-    global last_query
-    global last_trial
-
-    global result_file_detailed
-
-    if state == 'start':
-        if action == 'query':
-            last_query = datetime.datetime.now()
-            return
-        if action == 'trial':
-            last_trial = datetime.datetime.now()
-            return
-        if action == 'benchmark':
-            last_benchmark = datetime.datetime.now()
-            create_result_detailed_file()
-            return
-
-    if state != 'end':
-        logging.error('action="' + action + '"' + ' state="' + state + '"')
-        return
-
-    if action == 'query':
-        create_result_detailed(action, trial_number, sql_statement, last_query, sql_operation)
-        return
-    if action == 'trial':
-        create_result_detailed(action, trial_number, sql_statement, last_trial, sql_operation)
-        return
-    if action == 'benchmark':
-        create_result_detailed(action, trial_number, sql_statement, last_benchmark, sql_operation)
-        result_file_detailed.close()
-        return
-
-    logging.error('action="' + action + '"' + ' state="' + state + '"')
-
-
-# ------------------------------------------------------------------------------
-# writing the detailed results.
-# ------------------------------------------------------------------------------
-
-def create_result_detailed(action, trial_number, sql_statement, start_date_time, sql_operation):
+def create_result(action, trial_number, sql_statement, start_date_time, sql_operation):
     global benchmark_batch_size
     global benchmark_comment
     global benchmark_database
-    global BENCHMARK_ENVIRONMENT
-    global BENCHMARK_MODULE
     global BENCHMARK_DRIVER
+    global benchmark_host_name
+    global benchmark_id
+    global BENCHMARK_MODULE
+    global benchmark_os
     global benchmark_transaction_size
     global benchmark_trials
+    global benchmark_user_name
 
     global connection_host
     global connection_password
@@ -134,9 +100,9 @@ def create_result_detailed(action, trial_number, sql_statement, start_date_time,
 
     global file_bulk_length
     global file_bulk_size
-    global file_result_detailed_delimiter
+    global file_result_delimiter
 
-    global result_file_detailed
+    global result_file
 
     end_date_time = datetime.datetime.now()
 
@@ -163,44 +129,89 @@ def create_result_detailed(action, trial_number, sql_statement, start_date_time,
             if duration_ns > duration_select_maximum:
                 duration_select_maximum = duration_ns
 
-    result_file_detailed.write(benchmark_comment + file_result_detailed_delimiter +
-                               BENCHMARK_ENVIRONMENT + file_result_detailed_delimiter + benchmark_database +
-                               file_result_detailed_delimiter + BENCHMARK_MODULE + file_result_detailed_delimiter +
-                               BENCHMARK_DRIVER + file_result_detailed_delimiter +
-                               str(trial_number) + file_result_detailed_delimiter +
-                               sql_statement + file_result_detailed_delimiter +
-                               str(connection_pool_size) + file_result_detailed_delimiter +
-                               str(benchmark_transaction_size) + file_result_detailed_delimiter +
-                               str(file_bulk_length) + file_result_detailed_delimiter +
-                               str(file_bulk_size) + file_result_detailed_delimiter +
-                               str(benchmark_batch_size) + file_result_detailed_delimiter +
-                               action + file_result_detailed_delimiter +
-                               start_date_time.strftime('%Y.%m.%d %H:%M:%S.%f000') + file_result_detailed_delimiter +
-                               end_date_time.strftime('%Y.%m.%d %H:%M:%S.%f000') + file_result_detailed_delimiter +
-                               str(round((end_date_time - start_date_time).total_seconds())) + file_result_detailed_delimiter +
-                               str(round(duration_ns)) + file_result_detailed_delimiter +
-                               '\n')
+    result_file.write(benchmark_id + file_result_delimiter +
+                      benchmark_comment + file_result_delimiter +
+                      benchmark_host_name + file_result_delimiter +
+                      benchmark_os + file_result_delimiter +
+                      benchmark_user_name + file_result_delimiter +
+                      benchmark_database + file_result_delimiter +
+                      BENCHMARK_MODULE + file_result_delimiter +
+                      BENCHMARK_DRIVER + file_result_delimiter +
+                      str(trial_number) + file_result_delimiter +
+                      sql_statement + file_result_delimiter +
+                      str(connection_pool_size) + file_result_delimiter +
+                      str(connection_fetch_size) + file_result_delimiter +
+                      str(benchmark_transaction_size) + file_result_delimiter +
+                      str(file_bulk_length) + file_result_delimiter +
+                      str(file_bulk_size) + file_result_delimiter +
+                      str(benchmark_batch_size) + file_result_delimiter +
+                      action + file_result_delimiter +
+                      start_date_time.strftime('%Y-%m-%d %H:%M:%S.%f000') + file_result_delimiter +
+                      end_date_time.strftime('%Y-%m-%d %H:%M:%S.%f000') + file_result_delimiter +
+                      str(round((end_date_time - start_date_time).total_seconds())) + file_result_delimiter +
+                      str(round(duration_ns)) + '\n')
 
 
 # ------------------------------------------------------------------------------
-# Creating the detailed result file.
+# Creating the result file.
 # ------------------------------------------------------------------------------
 
-def create_result_detailed_file():
-    global file_result_detailed_delimiter
-    global file_result_detailed_header
-    global file_result_detailed_name
+def create_result_file():
+    global file_result_delimiter
+    global file_result_header
+    global file_result_name
 
-    global result_file_detailed
+    global result_file
 
-    result_file_detailed = Path(file_result_detailed_name)
+    result_file = Path(file_result_name)
 
-    if not result_file_detailed.is_file():
-        result_file_detailed = open(os.path.abspath(file_result_detailed_name), 'w')
-        result_file_detailed.write(file_result_detailed_header.replace(';', file_result_detailed_delimiter) + '\n')
-        result_file_detailed.close()
+    if not result_file.is_file():
+        result_file = open(os.path.abspath(file_result_name), 'w')
+        result_file.write(file_result_header.replace(';', file_result_delimiter) + '\n')
+        result_file.close()
 
-    result_file_detailed = open(os.path.abspath(file_result_detailed_name), 'a')
+    result_file = open(os.path.abspath(file_result_name), 'a')
+
+
+# ------------------------------------------------------------------------------
+# Recording the results of the benchmark.
+# ------------------------------------------------------------------------------
+
+def create_result_measuring_point(action, state, trial_number, sql_statement, sql_operation=None):
+    global last_benchmark
+    global last_query
+    global last_trial
+
+    global result_file
+
+    if state == 'start':
+        if action == 'query':
+            last_query = datetime.datetime.now()
+            return
+        if action == 'trial':
+            last_trial = datetime.datetime.now()
+            return
+        if action == 'benchmark':
+            last_benchmark = datetime.datetime.now()
+            create_result_file()
+            return
+
+    if state != 'end':
+        logging.error('action="' + action + '"' + ' state="' + state + '"')
+        return
+
+    if action == 'query':
+        create_result(action, trial_number, sql_statement, last_query, sql_operation)
+        return
+    if action == 'trial':
+        create_result(action, trial_number, sql_statement, last_trial, sql_operation)
+        return
+    if action == 'benchmark':
+        create_result(action, trial_number, sql_statement, last_benchmark, sql_operation)
+        result_file.close()
+        return
+
+    logging.error('action="' + action + '"' + ' state="' + state + '"')
 
 
 # ------------------------------------------------------------------------------
@@ -224,10 +235,15 @@ def get_config():
     global benchmark_batch_size
     global benchmark_comment
     global benchmark_database
+    global benchmark_host_name
+    global benchmark_id
+    global benchmark_os
     global benchmark_transaction_size
     global benchmark_trials
+    global benchmark_user_name
     global bulk_data
 
+    global connection_fetch_size
     global connection_host
     global connection_password
     global connection_pool_size
@@ -240,9 +256,9 @@ def get_config():
     global file_bulk_name
     global file_bulk_size
     global file_configuration_name_cx_oracle_python
-    global file_result_detailed_delimiter
-    global file_result_detailed_header
-    global file_result_detailed_name
+    global file_result_delimiter
+    global file_result_header
+    global file_result_name
 
     global sql_create
     global sql_drop
@@ -255,9 +271,14 @@ def get_config():
     benchmark_batch_size = int(config['DEFAULT']['benchmark.batch.size'])
     benchmark_comment = config['DEFAULT']['benchmark.comment']
     benchmark_database = config['DEFAULT']['benchmark.database']
+    benchmark_host_name = config['DEFAULT']['benchmark.host.name']
+    benchmark_id = config['DEFAULT']['benchmark.id']
+    benchmark_os = config['DEFAULT']['benchmark.os']
     benchmark_transaction_size = int(config['DEFAULT']['benchmark.transaction.size'])
     benchmark_trials = int(config['DEFAULT']['benchmark.trials'])
+    benchmark_user_name = config['DEFAULT']['benchmark.user.name']
 
+    connection_fetch_size = int(config['DEFAULT']['connection.fetch.size'])
     connection_host = config['DEFAULT']['connection.host']
     connection_password = config['DEFAULT']['connection.password']
     connection_pool_size = int(config['DEFAULT']['connection.pool.size'])
@@ -270,9 +291,9 @@ def get_config():
     file_bulk_name = config['DEFAULT']['file.bulk.name']
     file_bulk_size = int(config['DEFAULT']['file.bulk.size'])
     file_configuration_name_cx_oracle_python = config['DEFAULT']['file.configuration.name.cx_oracle.python']
-    file_result_detailed_delimiter = str(config['DEFAULT']['file.result.detailed.delimiter']).replace('TAB', '\t')
-    file_result_detailed_header = config['DEFAULT']['file.result.detailed.header']
-    file_result_detailed_name = config['DEFAULT']['file.result.detailed.name']
+    file_result_delimiter = str(config['DEFAULT']['file.result.delimiter']).replace('TAB', '\t')
+    file_result_header = config['DEFAULT']['file.result.header']
+    file_result_name = config['DEFAULT']['file.result.name']
 
     sql_create = config['DEFAULT']['sql.create']
     sql_drop = config['DEFAULT']['sql.drop']
@@ -309,7 +330,7 @@ def run_benchmark():
     global connection_service
     global connection_user
 
-    create_result('benchmark', 'start', 0, '')
+    create_result_measuring_point('benchmark', 'start', 0, '')
 
     get_bulk_data()
 
@@ -322,7 +343,7 @@ def run_benchmark():
 
     connection.close()
 
-    create_result('benchmark', 'end', 0, '')
+    create_result_measuring_point('benchmark', 'end', 0, '')
 
 
 # ------------------------------------------------------------------------------
@@ -335,7 +356,7 @@ def run_benchmark_insert(trial_number):
     global bulk_data
     global sql_insert
 
-    create_result('query', 'start', trial_number, sql_insert)
+    create_result_measuring_point('query', 'start', trial_number, sql_insert)
 
     count = 0
     batch_data = []
@@ -360,7 +381,7 @@ def run_benchmark_insert(trial_number):
     if benchmark_transaction_size > 0 and count % benchmark_transaction_size == 0:
         connection.commit()
 
-    create_result('query', 'end', trial_number, sql_insert, 'insert')
+    create_result_measuring_point('query', 'end', trial_number, sql_insert, 'insert')
 
 
 # ------------------------------------------------------------------------------
@@ -372,19 +393,19 @@ def run_benchmark_select(trial_number):
     global bulk_data
     global sql_select
 
-    create_result('query', 'start', trial_number, sql_select)
+    create_result_measuring_point('query', 'start', trial_number, sql_select)
 
     cursor.prepare(sql_select)
 
-    for tuple in bulk_data:
-        key, data = tuple
+    for key_data_tuple in bulk_data:
+        key, data = key_data_tuple
         cursor.execute(None, key=key)
         [(result,)] = cursor.fetchall()
         if result != data:
             logging.error('expected=' + data)
             logging.error('found   =' + result)
 
-    create_result('query', 'end', trial_number, sql_select, 'select')
+    create_result_measuring_point('query', 'end', trial_number, sql_select, 'select')
 
 
 # ------------------------------------------------------------------------------
@@ -394,7 +415,7 @@ def run_benchmark_select(trial_number):
 def run_benchmark_trial(trial_number):
     global cursor
 
-    create_result('trial', 'start', trial_number, '')
+    create_result_measuring_point('trial', 'start', trial_number, '')
     logging.info('Start trial no. ' + str(trial_number))
 
     cursor = connection.cursor()
@@ -410,7 +431,7 @@ def run_benchmark_trial(trial_number):
 
     cursor.execute(sql_drop)
 
-    create_result('trial', 'end', trial_number, '')
+    create_result_measuring_point('trial', 'end', trial_number, '')
 
 
 # ------------------------------------------------------------------------------

@@ -190,11 +190,16 @@ public class OraBench {
         result.endQueryInsert(trialNumber, sqlStatement);
     }
 
-    private static void runBenchmarkSelect(Connection connection, int trialNumber, ArrayList<String[]> bulkData, String sqlStatement) {
+    private static void runBenchmarkSelect(Connection connection, int trialNumber, ArrayList<String[]> bulkData, String sqlStatement, int connectionFetchSize) {
         result.startQuery();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement.replace(":key", "?"));
+
+            if (connectionFetchSize > 0) {
+                preparedStatement.setFetchSize(connectionFetchSize);
+            }
+
             ResultSet resultSet = null;
 
             for (String[] value : bulkData) {
@@ -244,7 +249,7 @@ public class OraBench {
 
         runBenchmarkInsert(connection, trialNumber, bulkData, config.getSqlInsert(), config.getBenchmarkBatchSize(), config.getBenchmarkTransactionSize());
 
-        runBenchmarkSelect(connection, trialNumber, bulkData, config.getSqlSelect());
+        runBenchmarkSelect(connection, trialNumber, bulkData, config.getSqlSelect(), config.getConnectionFetchSize());
 
         try {
             statement.executeUpdate(config.getSqlDropTable());
