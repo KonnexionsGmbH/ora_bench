@@ -53,9 +53,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>file.result.detailed.delimiter
  * <li>file.result.detailed.header
  * <li>file.result.detailed.name
- * <li>file.result.statistical.delimiter
- * <li>file.result.statistical.header
- * <li>file.result.statistical.name
  * <li>sql.create
  * <li>sql.drop
  * <li>sql.insert
@@ -98,9 +95,6 @@ public class Config {
     private String fileResultDetailedDelimiter;
     private String fileResultDetailedHeader;
     private String fileResultDetailedName;
-    private String fileResultStatisticalDelimiter;
-    private String fileResultStatisticalHeader;
-    private String fileResultStatisticalName;
 
     private ArrayList<String> keysSorted = new ArrayList<String>();
 
@@ -499,29 +493,6 @@ public class Config {
         return fileResultDetailedName;
     }
 
-    /**
-     * @return the delimiter character of the statistical result file
-     */
-    public final String getFileResultStatisticalDelimiter() {
-        return fileResultStatisticalDelimiter;
-    }
-
-    /**
-     * @return the header line of the statistical result file
-     */
-    public final String getFileResultStatisticalHeader() {
-        return fileResultStatisticalHeader;
-    }
-
-    /**
-     * @return the name of the statistical result file containing the benchmark
-     *         results. The file name may contain the absolute or relative file
-     *         path.
-     */
-    public final String getFileResultStatisticalName() {
-        return fileResultStatisticalName;
-    }
-
     private final ArrayList<String> getKeysSorted(PropertiesConfiguration propertiesConfiguration2) {
         for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
             keysSorted.add(iterator.next());
@@ -656,9 +627,6 @@ public class Config {
         fileResultDetailedDelimiter = propertiesConfiguration.getString("file.result.detailed.delimiter");
         fileResultDetailedHeader = propertiesConfiguration.getString("file.result.detailed.header").replace(";", fileResultDetailedDelimiter);
         fileResultDetailedName = propertiesConfiguration.getString("file.result.detailed.name");
-        fileResultStatisticalDelimiter = propertiesConfiguration.getString("file.result.statistical.delimiter");
-        fileResultStatisticalHeader = propertiesConfiguration.getString("file.result.statistical.header").replace(";", fileResultStatisticalDelimiter);
-        fileResultStatisticalName = propertiesConfiguration.getString("file.result.statistical.name");
 
         sqlCreateTable = propertiesConfiguration.getString("sql.create");
         sqlDropTable = propertiesConfiguration.getString("sql.drop");
@@ -723,12 +691,6 @@ public class Config {
         if (environmentVariables.containsKey("ORA_BENCH_FILE_RESULT_DETAILED_NAME")) {
             fileResultDetailedName = environmentVariables.get("ORA_BENCH_FILE_RESULT_DETAILED_NAME");
             propertiesConfiguration.setProperty("file.result.detailed.name", fileResultDetailedName);
-            isChanged = true;
-        }
-
-        if (environmentVariables.containsKey("ORA_BENCH_FILE_RESULT_STATISTICAL_NAME")) {
-            fileResultStatisticalName = environmentVariables.get("ORA_BENCH_FILE_RESULT_STATISTICAL_NAME");
-            propertiesConfiguration.setProperty("file.result.statistical.name", fileResultStatisticalName);
             isChanged = true;
         }
 

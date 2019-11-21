@@ -145,11 +145,9 @@ The results are uploaded to the repositopry at the end.
 
 ### 2.3 Benchmark Results
 
-If the result files do not yet exist, new result files are created. Otherwise, the new current results are appended to existing results. 
-
-#### 2.3.1 Detailed Results
-
 In a file defined by the configuration parameters `file.result.detailed.delimiter`, `file.result.detailed.header` and `file.result.detailed.name`, the detailed results of the benchmark run with the actions `benchmark`, `trial` and `query` are stored.
+If the result file does not yet exist, a new result file is created. 
+Otherwise, the new current results are appended to existing results. 
 
 | Column | Format | Content |
 | :--- | :--- | :--- |
@@ -171,31 +169,6 @@ In a file defined by the configuration parameters `file.result.detailed.delimite
 | duration (sec) | integer | time difference in seconds between start time and end time of the action |
 | duration (ns) | integer | time difference in nanoseconds between start time and end time of the action |
  
-#### 2.3.2 Statistical Results
-
-In a file defined by the configuration parameters `file.result.statistical.delimiter`, `file.result.statistical.header` and `file.result.statistical.name`, the statistical results of the benchmark run with the actions `query` are stored.
-
-| Column | Format | Content |
-| :--- | :--- | :--- |
-| benchmark comment | alphanumeric  | config param `benchmark.comment` |
-| environment | alphanumeric | config param `benchmark.environment` |
-| database | alphanumeric | config param `benchmark.database` |
-| module | alphanumeric |  config param `benchmark.module` |
-| driver | alphanumeric |  config param `benchmark.driver` |
-| trials | integer | number of test runs within a benchmark run |
-| SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
-| connection pool size | integer | config param `connection.pool.size` |
-| transaction size | integer | config param `benchmark.transaction.size` |
-| bulk length | integer | config param `file.bulk.length` |
-| bulk size | integer | config param `file.bulk.size` |
-| batch size | integer | config param `benchmark.batch.size` |
-| start day time | yyyy.mm.dd hh24:mi:ss.ffffffff | current date and time at the start of the benchmark run |
-| end day time | yyyy.mm.dd hh24:mi:ss.ffffffff | current date and time at the end of the benchmark run |
-| mean duration (ns) | integer | mean time in nanoseconds to execute the SQL statement for all bulk data in a test run |
-| mean time per SQL stmnt (ns) | integer | mean time in nanoseconds to execute the SQL statement once |
-| minimum duaration (ns) | integer | minimum time in nanoseconds to execute the SQL statement for all bulk data in a test run |
-| maximum duartion (ns) | integer | maximum time in nanoseconds to execute the SQL statement for all bulk data in a test run |
-
 ### 2.4 Bulk File
 
 The bulk file in `csv` or `tsv` format is created in the `run_bench_setup.sh` script if it does not already exist. 
@@ -223,10 +196,6 @@ The data column in the bulk file is randomly generated with a unique key column 
 1. close the database connection
 1. create the benchmark entry for the detailed results
 1. close the detailed results file (config param `file.result.detailed.name`)
-1. open the statistical results file (config params `file.result.statistical. ...`)
-1. if the statistical file did not exist yet, then write a header line (config param `file.result.statistical.header`)
-1. produce the statistical results
-1. close the statistical results file (config param `file.result.statistical.name`)
 1. terminate the benchmark run
 
 ### 3.2 `Trial Routine`
@@ -245,7 +214,6 @@ The data column in the bulk file is randomly generated with a unique key column 
 1. record the current time as the start of the query
 1. execute the SQL statement in the config param `sql.insert` for each record in the bulk file whereby the following configuration parameters must be taken into account: `benchmark.batch.size`, `benchmark.transaction.size` and `connection.pool.size`.
 1. create the query entry for the detailed results
-1. save the average, maximum and minimum values for the statistical results
 1. finish the query run
 
 ### 3.2 `Select Routine`
@@ -253,7 +221,6 @@ The data column in the bulk file is randomly generated with a unique key column 
 1. record the current time as the start of the query
 1. execute the SQL statement in the config param `sql.select` for each record in the bulk file and compare the found value with the value in the bulk file for match. 
 1. create the query entry for the detailed results
-1. save the average, maximum and minimum values for the statistical results
 1. finish the query run
 
 ## 4 <a name="driver_specifica"></a> Driver Specific Features
@@ -284,7 +251,6 @@ The data column in the bulk file is randomly generated with a unique key column 
 |  prio. 1   | 2019.11.21 | wwe      | all: detailed result file -> result file |
 |  prio. 1   | 2019.11.21 | wwe      | all: new config param: benchmark.prefetch.size |
 |  prio. 1   | 2019.11.21 | wwe      | all: new config params: benchmark.hostname & benchmark.username |
-|  prio. 1   | 2019.11.21 | wwe      | all: remove statistical results file |
 |  prio. 1   | 2019.11.21 | wwe      | all: result file - date format: yyyy-mm-dd hh24:mi:ss.ffffffff |
 |  prio. 1   | 2019.11.21 | wwe      | documentation: pseudocode |
 |  prio. 2   | 2019.11.19 | wwe      | cx_oracle_python: connection pooling |
@@ -306,6 +272,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 | 2019.11.21 | 2019.11.19 | wwe      | cx_oracle_python: benchmark.transaction.size = 0 |
 | 2019.11.21 | 2019.11.19 | wwe      | jdbc_java: benchmark.batch.size = 0 |
 | 2019.11.21 | 2019.11.19 | wwe      | jdbc_java: benchmark.transaction.size = 0 |
+| 2019.11.21 | 2019.11.21 | wwe      | all: remove statistical results file |
 | rejected   | 2019.11.05 | wwe      | all: partitioned table ??? |
 
 ## 6. <a name="contributing"></a> Contributing
