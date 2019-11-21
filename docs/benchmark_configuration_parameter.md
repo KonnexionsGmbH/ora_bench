@@ -7,27 +7,27 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 
 | Parameter Name | Default Value | Env. | Description |
 | :--- | :--- | :---: | :--- |
-| benchmark.batch.size | 256 | no | If the database driver used allows batch operations, this value must be used as the upper limit for the database operations contained in a batch. |
+| benchmark.batch.size | 256 | no | If the database driver used allows batch operations, this value must be used as the upper limit for the database operations contained in a batch. Only the value 0 prevents the execution of batch operations. The specified value must not be less than zero. |
 | benchmark.comment | n/a | yes | In the result files, this comment is used to identify the benchmark run. |
 | benchmark.database | n/a | yes | The database shortcut defines the Oracle database used in the benchmark run. |
 | benchmark.driver | n/a | yes | The name and version of the database driver used in the benchmark run, for example 'JDBC (Version 19.3.0.0.0)'. This value should be determined at runtime. |
 | benchmark.environment | n/a | yes | In the result files, this comment is used to identify the operating system environment, for example 'amd64 / Linux / 4.15.0-1028-gcp'. This value should be determined at runtime. |
 | benchmark.module | n/a | yes | The name of the module and the programming language with name and version executing the benchmark run, for example 'OraBench (Java 11.0.5)'. the version of the programming language should be determined at runtime |
 | benchmark.program.name.oranif.c | OraBench.bin | no | Specifies the name of the executable C file. |
-| benchmark.transaction.size | 512 | no | The number of `INSERT` operations until a `COMMIT` is performed. | 
-| benchmark.trials | 10 | no | This determines the number of tests to be performed per database. |
+| benchmark.transaction.size | 512 | no | The number of `INSERT` operations until a `COMMIT` is performed. The value 0 means that all INSERT operations are performed in a single transaction. The value must be at least as large as the value of batch size (`benchmark.batch.size`). | 
+| benchmark.trials | 10 | no | This determines the number of tests to be performed per database. The specified value must be at least 1. |
 | connection.host | 0.0.0.0 | yes | The IP address or host name of the Oracle server to which you are connecting. |
 | connection.password | regit | no | The password corresponding to the connection user name. |
-| connection.pool.size | 0 | no | The number of simultaneous database connections. |
+| connection.pool.size | 0 | no | The number of simultaneous database connections. Only the value 0 prevents the connection pooling. The specified value must not be less than zero. |
 | connection.port | 1521 | yes | The number of the TCP port that the Oracle server uses to listen for client connections. |
 | connection.service | n/a | yes | The service name of the database to access. |
 | connection.string | (DESCRIPTION=<br>(ADDRESS_LIST=<br>(ADDRESS=<br>(PROTOCOL=TCP)<br>(HOST=127.0.0.1)<br>(PORT=1521)))<br>(CONNECT_DATA=<br>(SERVER=dedicated)<br>(SERVICE_NAME=xe))) | no | The connection string for direct access to the database. |
 | connection.user | scott | no | The user name to use to access the Oracle server. |
 | file.bulk.delimiter | ; | no | The delimiter character in the bulk file. |
 | file.bulk.header | key;<br>data | no | The header used to generate the bulk file. |
-| file.bulk.length | 1024 | no | The length of the data part in the bulk file - minimum 33 and maximum 4000. |
+| file.bulk.length | 1024 | no | The length of the data part in the bulk file - minimum 80 and maximum 4000. |
 | file.bulk.name | priv/ora_bench_bulk_data.csv | no | The relative filename of the bulk file. |
-| file.bulk.size | 100000 | no | The number of records to be generated in the bulk file. |
+| file.bulk.size | 100000 | no | The number of records to be generated in the bulk file. The specified value must be at least 1. |
 | file.configuration.name.cx_oracle.python | priv/properties/ora_bench_cx_oracle_python.ini | no | The relative filename of the cx_Oracle & Python version of the configuration file. |
 | file.configuration.name.oranif.c | scripts/run_bench_oranif_c.sh | no | The relative filename of the oranif & C version of the configuration file. |
 | file.configuration.name.oranif.erlang | priv/properties/ora_bench_oranif_erlang.properties | no | The relative filename of the oranif & Erlang version of the configuration file. |

@@ -57,8 +57,6 @@ All the file names specified here are also part of the configuration file and ca
 
 ##### 2.2.1.1 System Requirements
 
-TBD
-
 ##### 2.2.1.1.1 Windows Platform
 
 - Docker Desktop for Windows from [here](https://www.docker.com/products/docker-desktop)
@@ -69,6 +67,10 @@ TBD
 ##### 2.2.1.1.2 Linux Platform
 
 - Java SE Development Kit, e.g. `sudo apt install default-jdk`
+- Oracle Instant Client, e.g.
+    - `sudo apt-get install alien`
+    - `sudo alien priv/oracle/oracle-instantclient19.3-basiclite-19.3.0.0.0-1.x86_64.rpm`
+    - `sudo dpkg -i oracle-instantclient19.3-basiclite_19.3.0.0.0-2_amd64.deb`
 - Python 3, e.g.:
     - `sudo apt install software-properties-common`
     - `sudo add-apt-repository -y ppa:deadsnakes/ppa`
@@ -83,7 +85,6 @@ TBD
     - `python -m pip install --upgrade pip`
     - `python -m pip install --upgrade cx_Oracle`
 
-
 ##### 2.2.1.2 `run_bench.sh`
 
 This script executes the `run_bench_database.sh` script for each of the databases listed in chapter [Introduction](#introduction).
@@ -97,7 +98,7 @@ Then a Docker container is started.
 Finally the following child scripts are running:
 
 - `run_bench_setup.sh`
-- all `run_bench_jdbc_java.sh` scripts
+- all driver and programming language related scripts, like for example: `run_bench_jdbc_java.sh`
 - `run_bench_finalise.sh`
 
 ##### 2.2.1.4 `run_bench_setup.sh`
@@ -242,7 +243,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 ### 3.2 `Insert Routine`
 
 1. record the current time as the start of the query
-1. execute the SQL statement in the config param `sql.insert` for each record in the bulk file.
+1. execute the SQL statement in the config param `sql.insert` for each record in the bulk file whereby the following configuration parameters must be taken into account: `benchmark.batch.size`, `benchmark.transaction.size` and `connection.pool.size`.
 1. create the query entry for the detailed results
 1. save the average, maximum and minimum values for the statistical results
 1. finish the query run
@@ -257,12 +258,17 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 ## 4 <a name="driver_specifica"></a> Driver Specific Features
 
-### 4.1 JDBC and Java
+### 4.1 cx_Oracle and Python
+
+- the following data in the configuration parameters is determined at runtime: operating system environment (`benchmark.environment`), the Python version (`benchmark.module`) and cx_Oracle version (`benchmark.driver`)
+- Python uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
+
+### 4.2 JDBC and Java
 
 - the following data in the configuration parameters is determined at runtime: operating system environment (`benchmark.environment`), the JRE version (`benchmark.module`) and JDBC version (`benchmark.driver`)
 - the Java source code is compiled with the help of a make file
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
-- Java uses the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
+- Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
 ## 5 <a name="todo_list"></a> ToDo List
 
