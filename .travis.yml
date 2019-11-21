@@ -20,6 +20,8 @@ before_install:
 # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
 - sudo apt-get install alien
 - sudo alien priv/oracle/oracle-instantclient19.3-basiclite-19.3.0.0.0-1.x86_64.rpm
+- ls -l
+- ls -l priv/oracle
 - sudo dpkg -i priv/oracle/oracle-instantclient19.3-basiclite-19.3.0.0.0-1.x86_64.deb
 # Python -----------------------------------------------------------------------
 - sudo apt install software-properties-common
