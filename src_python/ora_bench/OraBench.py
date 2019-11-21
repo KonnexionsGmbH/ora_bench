@@ -68,9 +68,6 @@ sql_select = None
 # ------------------------------------------------------------------------------
 
 def create_result(action, state, trial_number, sql_statement, sql_operation=None):
-    """xxxx
-    """
-
     global last_benchmark
     global last_query
     global last_trial
@@ -112,9 +109,6 @@ def create_result(action, state, trial_number, sql_statement, sql_operation=None
 # ------------------------------------------------------------------------------
 
 def create_result_detailed(action, state, trial_number, sql_statement, start_date_time, sql_operation):
-    """xxxx
-    """
-
     global benchmark_batch_size
     global benchmark_comment
     global benchmark_database
@@ -195,9 +189,6 @@ def create_result_detailed(action, state, trial_number, sql_statement, start_dat
 # ------------------------------------------------------------------------------
 
 def create_result_detailed_file():
-    """xxxx
-    """
-
     global file_result_detailed_delimiter
     global file_result_detailed_header
     global file_result_detailed_name
@@ -219,9 +210,6 @@ def create_result_detailed_file():
 # ------------------------------------------------------------------------------
 
 def create_result_statistical():
-    """xxxx
-    """
-
     global benchmark_batch_size
     global benchmark_comment
     global benchmark_database
@@ -313,9 +301,6 @@ def create_result_statistical():
 # ------------------------------------------------------------------------------
 
 def get_bulk_data():
-    """xxxx
-    """
-
     global bulk_data
 
     with open(file_bulk_name) as csv_file:
@@ -329,9 +314,6 @@ def get_bulk_data():
 # ------------------------------------------------------------------------------
 
 def get_config():
-    """xxxx
-    """
-
     global benchmark_batch_size
     global benchmark_comment
     global benchmark_database
@@ -420,9 +402,6 @@ def main():
 # ------------------------------------------------------------------------------
 
 def run_benchmark():
-    """xxxx
-    """
-
     global connection
     global connection_host
     global connection_password
@@ -454,9 +433,8 @@ def run_benchmark():
 # ------------------------------------------------------------------------------
 
 def run_benchmark_insert(trial_number):
-    """xxxx
-    """
-
+    global benchmark_batch_size
+    global benchmark_transaction_size
     global bulk_data
     global sql_insert
 
@@ -466,19 +444,23 @@ def run_benchmark_insert(trial_number):
     batch_data = []
 
     for tuple in bulk_data:
-        batch_data.append(tuple)
-
         count += 1
 
-        if count % benchmark_batch_size == 0:
-            cursor.executemany(sql_insert, batch_data)
-            batch_data = []
+        if benchmark_transaction_size == 0:
+            cursor.execute(sql_insert, [tuple[1], tuple[2]])
+        else:
+            batch_data.append(tuple)
+            if count % benchmark_batch_size == 0:
+                cursor.executemany(sql_insert, batch_data)
+                batch_data = []
 
-        if count % benchmark_transaction_size == 0:
+        if benchmark_transaction_size > 0 and count % benchmark_transaction_size == 0:
             connection.commit()
 
-    if batch_data.__len__() > 0:
+    if benchmark_transaction_size > 0 and batch_data.__len__() > 0:
         cursor.executemany(sql_insert, batch_data)
+
+    if benchmark_transaction_size > 0 and count % benchmark_transaction_size == 0:
         connection.commit()
 
     create_result('query', 'end', trial_number, sql_insert, 'insert')
@@ -489,9 +471,7 @@ def run_benchmark_insert(trial_number):
 # ------------------------------------------------------------------------------
 
 def run_benchmark_select(trial_number):
-    """xxxx
-    """
-
+    global benchmark_batch_size
     global bulk_data
     global sql_select
 
@@ -499,13 +479,41 @@ def run_benchmark_select(trial_number):
 
     cursor.prepare(sql_select)
 
+    count = 0;
+    data_data = []
+    key_data = []
+
     for tuple in bulk_data:
+        count += 1
+
         key, data = tuple
-        cursor.execute(None, key=key)
-        [(result,)] = cursor.fetchall()
-        if result != data:
-            logging.error('expected=' + data)
-            logging.error('found   =' + result)
+
+        if benchmark_batch_size == 0:
+            cursor.execute(None, key=key)
+            [(result,)] = cursor.fetchall()
+            if result != data:
+                logging.error('expected=' + data)
+                logging.error('found   =' + result)
+        else:
+            key_data.append(key)
+            data_data.append(data)
+            if count % benchmark_batch_size == 0:
+                results = cursor.executemany(sql_select, key_data)
+                for i in range(1, len(key_data)):
+                    (result,) = results[i]
+                    if result != data_data[i]:
+                        logging.error('expected=' + data_data[i])
+                        logging.error('found   =' + result)
+                key_data = []
+                data_data = []
+
+    if count % benchmark_batch_size != 0:
+        results = cursor.executemany(sql_select, key_data)
+        for i in range(1, len(key_data)):
+            (result,) = results[i]
+            if result != data_data[i]:
+                logging.error('expected=' + data_data[i])
+                logging.error('found   =' + result)
 
     create_result('query', 'end', trial_number, sql_select, 'select')
 
@@ -515,9 +523,6 @@ def run_benchmark_select(trial_number):
 # ------------------------------------------------------------------------------
 
 def run_benchmark_trial(trial_number):
-    """xxxx
-    """
-
     global cursor
 
     create_result('trial', 'start', trial_number, '')
