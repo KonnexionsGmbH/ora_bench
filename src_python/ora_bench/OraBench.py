@@ -478,41 +478,13 @@ def run_benchmark_select(trial_number):
 
     cursor.prepare(sql_select)
 
-    count = 0
-    data_data = []
-    key_data = []
-
-    for key_data_tuple in bulk_data:
-        count += 1
-
-        key, data = key_data_tuple
-
-        if benchmark_batch_size == 0:
-            cursor.execute(None, key=key)
-            [(result,)] = cursor.fetchall()
-            if result != data:
-                logging.error('expected=' + data)
-                logging.error('found   =' + result)
-        else:
-            key_data.append(key)
-            data_data.append(data)
-            if count % benchmark_batch_size == 0:
-                results = cursor.executemany(sql_select, key_data)
-                for i in range(1, len(key_data)):
-                    (result,) = results[i]
-                    if result != data_data[i]:
-                        logging.error('expected=' + data_data[i])
-                        logging.error('found   =' + result)
-                key_data = []
-                data_data = []
-
-    if count % benchmark_batch_size != 0:
-        results = cursor.executemany(sql_select, key_data)
-        for i in range(1, len(key_data)):
-            (result,) = results[i]
-            if result != data_data[i]:
-                logging.error('expected=' + data_data[i])
-                logging.error('found   =' + result)
+    for tuple in bulk_data:
+        key, data = tuple
+        cursor.execute(None, key=key)
+        [(result,)] = cursor.fetchall()
+        if result != data:
+            logging.error('expected=' + data)
+            logging.error('found   =' + result)
 
     create_result('query', 'end', trial_number, sql_select, 'select')
 
