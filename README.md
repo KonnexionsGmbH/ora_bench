@@ -266,9 +266,11 @@ The data column in the bulk file is randomly generated with a unique key column 
 
         IF config param 'benchmark.batch.size' > 0 AND collection batch_collection is not empty
             execute the SQL statements in the collection batch_collection
+        ENDIF
 
         IF config param 'benchmark.transaction.size' > 0 AND NOT count modulo config param 'benchmark.transaction.size' = 0
             commit
+        ENDIF
 
         WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 ```
