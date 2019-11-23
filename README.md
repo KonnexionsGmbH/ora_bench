@@ -186,46 +186,111 @@ The following configuration parameters are taken into account:
 
 The data column in the bulk file is randomly generated with a unique key column (MD5 hash code).
 
-## 3 <a name="coding_pattern"></a> Coding Pattern
+## 3 <a name="coding_pattern"></a> Coding Patterns
 
-### 3.1 `Benchmark Routine` (main routine)
+### 3.1 `Benchmark Function` (main function)
 
-1. load the configuration parameters (config params `file.configuration. ...`)
-1. open the results file (config params `file.result. ...`)
-1. if the result file did not exist yet, then write a header line (config param `file.result.header`)
-1. record the current time as the benchmark start
-1. load the bulk data into the memory (config params `file.bulk. ...`)
-1. establish the database connection (config params `connection. ...`)
-1. execute the `Trial Routine` as often as defined in config param `benchmark.trials`
-1. close the database connection
-1. create the benchmark entry for the results
-1. close the results file (config param `file.result.name`)
-1. terminate the benchmark run
+```
+    run_benchmark()
+    
+        save the current time as the start of the 'benchmark' action
+    
+        READ the configuration parameters into the memory (config params `file.configuration.name ...`)
+        READ the bulk file data into the collection bulk_data (config param 'file.bulk.name')
+        
+        connect to the database (config params 'connection. ...')
+        switch off auto commit
+        
+        trial_no = 0
+        WHILE trial_no < config_param 'benchmark.trials'
+            DO run_benchmark_trial(trial_no)
+        ENDWHILE    
+        
+        disconnect from the database
+        
+        WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
+```
 
-### 3.2 `Trial Routine`
 
-1. record the current time as the trial start time
-1. execute the SQL statement in the config param `sql.create` 
-1. In case of error: Execute the SQL statement in the config param `sql.drop` and repeat step 2.
-1. execute the `Insert Routine`
-1. execute the `Select Routine`
-1. execute the SQL statement in the config param `sql.drop` 
-1. create the trial entry for the results
-1. terminate the trial run
+### 3.2 `Trial Function`
 
-### 3.2 `Insert Routine`
+```
+    run_benchmark_trial(trial_no)
+    INPUT: the current trial number
+    
+        save the current time as the start of the 'trial' action
+    
+        create the database table (config param 'sql.create')
+        
+        IF error
+            drop the database table (config param 'sql.drop')
+            create the database table (config param 'sql.create')
+        ENDIF    
+        
+        DO run_benchmark_insert(trial_no)
+        DO run_benchmark_select(trial_no)
+        
+        drop the database table (config param 'sql.drop')
+        
+        WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
+```
 
-1. record the current time as the start of the query
-1. execute the SQL statement in the config param `sql.insert` for each record in the bulk file whereby the following configuration parameters must be taken into account: `benchmark.batch.size`, `benchmark.transaction.size` and `connection.pool.size`.
-1. create the query entry for the results
-1. finish the query run
+### 3.2 `Insert Function`
 
-### 3.2 `Select Routine`
+```
+    run_benchmark_insert(trial_no)
+    INPUT: the current trial number
+    
+        save the current time as the start of the 'query' action
+     
+        count = 0
+        collection batch_collection = empty
+        
+        WHILE iterating through the collection bulk_data
+            count + 1
+            
+            IF config_param 'benchmark.batch.size' = 0
+                execute the SQL statement in config param 'sql.insert' with the current bulk_data entry 
+            ELSE
+                add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection 
+                IF count modulo config param 'benchmark.batch.size' = 0 
+                    execute the SQL statements in the collection batch_collection
+                    batch_collection = empty
+                ENDIF                    
+            END IF
+            
+            IF config param 'benchmark.transaction.size' > 0 AND count modulo config param 'benchmark.transaction.size' = 0
+                commit
+            ENDIF    
+        ENDWHILE
 
-1. record the current time as the start of the query
-1. execute the SQL statement in the config param `sql.select` for each record in the bulk file and compare the found value with the value in the bulk file for match. 
-1. create the query entry for the results
-1. finish the query run
+        IF config param 'benchmark.batch.size' > 0 AND collection batch_collection is not empty
+            execute the SQL statements in the collection batch_collection
+
+        IF config param 'benchmark.transaction.size' > 0 AND NOT count modulo config param 'benchmark.transaction.size' = 0
+            commit
+
+        WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
+```
+
+### 3.2 `Select Function`
+
+```
+    run_benchmark_select(trial_no)
+    INPUT: the current trial number
+    
+        save the current time as the start of the 'query' action
+     
+        WHILE iterating through the collection bulk_data
+            execute the SQL statement in config param 'sql.select' with the key column of the current bulk_data entry 
+
+            IF NOT result column of database operation = data column of the current bulk_data entry
+                display an error message            
+            ENDIF                    
+        ENDWHILE
+
+        WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
+```
 
 ## 4 <a name="driver_specifica"></a> Driver Specific Features
 
@@ -254,7 +319,6 @@ The data column in the bulk file is randomly generated with a unique key column 
 |            | 2019.11.05 | c_bik    | oranif_erlang: new |
 |  prio. 1   | 2019.11.21 | c_bik    | setup: define new c ini file format |
 |  prio. 1   | 2019.11.21 | c_bik    | upload to GitHub from Travis CI: authentication method |
-|  prio. 1   | 2019.11.21 | wwe      | documentation: pseudocode |
 |  prio. 2   | 2019.11.19 | wwe      | cx_oracle_python: connection pooling |
 |  prio. 2   | 2019.11.19 | wwe      | jdbc_java: connection pooling |
 |  prio. 2   | 2019.11.21 | wwe      | setup: c script-> new c ini file |
@@ -279,6 +343,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 | 2019.11.21 | 2019.11.21 | wwe      | all: new config params: benchmark.host.name, benchmark.id & benchmark.user.name |
 | 2019.11.21 | 2019.11.21 | wwe      | all: remove statistical results file |
 | 2019.11.21 | 2019.11.21 | wwe      | all: result file - date format: yyyy-mm-dd hh24:mi:ss.ffffffff |
+| 2019.11.23 | 2019.11.21 | wwe      | documentation: pseudocode |
 | rejected   | 2019.11.05 | wwe      | all: partitioned table ??? |
 
 ## 6. <a name="contributing"></a> Contributing
