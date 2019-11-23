@@ -172,6 +172,7 @@ Otherwise, the new current results are appended to existing results.
 | benchmark id | alphanumeric  | config param `benchmark.id` |
 | benchmark comment | alphanumeric  | config param `benchmark.comment` |
 | host name | alphanumeric | config param `benchmark.host.name` |
+| number processors | integer | config param `benchmark.number.processors` |
 | os | alphanumeric | config param `benchmark.os` |
 | user name | alphanumeric | config param `benchmark.user.name` |
 | database | alphanumeric | config param `benchmark.database` |
@@ -179,7 +180,8 @@ Otherwise, the new current results are appended to existing results.
 | driver | alphanumeric |  config param `benchmark.driver` |
 | trial no. | integer | trial no. if action equals `trial` , `0` elsewise |
 | SQL statement | alphanumeric | SQL statement if action equals `query` , empty elsewise |
-| connection pool size | integer | config param `connection.pool.size` |
+| connection pool size.minimum | integer | config param `connection.pool.size.minimum` |
+| connection pool size.maximum | integer | config param `connection.pool.size.maximum` |
 | fetch size | integer | config param `connection.fetch.size` |
 | transaction size | integer | config param `benchmark.transaction.size` |
 | bulk length | integer | config param `file.bulk.length` |

@@ -74,11 +74,12 @@ public class Result {
     private final void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime, LocalDateTime endDateTime,
             long duration) {
         try {
-            resultFile.printRecord(config.getBenchmarkId(), config.getBenchmarkComment(), config.getBenchmarkHostName(), config.getBenchmarkOs(),
-                    config.getBenchmarkUserName(), config.getBenchmarkDatabase(), config.getBenchmarkModule(), config.getBenchmarkDriver(), trialNo,
-                    sqlStatement, config.getConnectionPoolSize(), config.getConnectionFetchSize(), config.getBenchmarkTransactionSize(),
-                    config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(), action, startDateTime.format(formatter),
-                    endDateTime.format(formatter), decimalFormat.format(duration / 1000000000.0), Long.toString(duration));
+            resultFile.printRecord(config.getBenchmarkId(), config.getBenchmarkComment(), config.getBenchmarkHostName(), config.getBenchmarkNumberProcessors(),
+                    config.getBenchmarkOs(), config.getBenchmarkUserName(), config.getBenchmarkDatabase(), config.getBenchmarkModule(),
+                    config.getBenchmarkDriver(), trialNo, sqlStatement, config.getConnectionPoolSizeMin(), config.getConnectionPoolSizeMax(),
+                    config.getConnectionFetchSize(), config.getBenchmarkTransactionSize(), config.getFileBulkLength(), config.getFileBulkSize(),
+                    config.getBenchmarkBatchSize(), action, startDateTime.format(formatter), endDateTime.format(formatter),
+                    decimalFormat.format(duration / 1000000000.0), Long.toString(duration));
         } catch (IOException e) {
             log.error("file result delimiter=: " + config.getFileResultDelimiter());
             log.error("file result header   =: " + config.getFileResultHeader());
