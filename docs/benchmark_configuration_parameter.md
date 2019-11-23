@@ -14,6 +14,7 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | benchmark.host.name | n/a | no | In the result file, this value is used as a unique identifier of the current computer. This value will be determined during the setup. |
 | benchmark.id | n/a | no | In the result file, this value is used as a unique identifier of the benchmark run. This value will be determined during the setup. |
 | benchmark.module | n/a | yes | The name of the module and the programming language with name and version executing the benchmark run, for example 'OraBench (Java 11.0.5)'. The version of the programming language should be determined by the specific benchmark driver routine at runtime. |
+| benchmark.number.processors | n/a | yes | The number of processors. This value will be determined during the setup. |
 | benchmark.os | n/a | no | In the result file, this comment is used to identify the operating system environment, for example 'amd64 / Linux / 4.15.0-1028-gcp'. This value will be determined during the setup. |
 | benchmark.program.name.oranif.c | OraBench.bin | no | Specifies the name of the executable C file. |
 | benchmark.transaction.size | 512 | yes | The number of `INSERT` operations until a `COMMIT` is performed. The value 0 means that all INSERT operations are performed in a single transaction. The value must be at least as large as the value of batch size (`benchmark.batch.size`). | 
@@ -22,7 +23,8 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | connection.fetch.size | 1024 | no | The number determines how much data is pulled from the database across the network. With value 0 the default value of the driver is used. The specified value must not be less than zero. |
 | connection.host | 0.0.0.0 | yes | The IP address or host name of the Oracle server to which you are connecting. |
 | connection.password | regit | no | The password corresponding to the connection user name. |
-| connection.pool.size | 0 | no | The number of simultaneous database connections. Only the value 0 prevents the connection pooling. The specified value must not be less than zero. |
+| connection.pool.size.minimum | 0 | no | The minimal number of simultaneous database connections. Only the value 0 prevents the connection pooling. The specified value must not be less than zero and not greater than connection.pool.size.maximum. |
+| connection.pool.size.maximum | 0 | no | The maximal number of simultaneous database connections. Only the value 0 prevents the connection pooling. The specified value must not be less than zero and not less than connection.pool.size.minimum. |
 | connection.port | 1521 | yes | The number of the TCP port that the Oracle server uses to listen for client connections. |
 | connection.service | n/a | yes | The service name of the database to access. |
 | connection.string | (DESCRIPTION=<br>(ADDRESS_LIST=<br>(ADDRESS=<br>(PROTOCOL=TCP)<br>(HOST=127.0.0.1)<br>(PORT=1521)))<br>(CONNECT_DATA=<br>(SERVER=dedicated)<br>(SERVICE_NAME=xe))) | no | The connection string for direct access to the database. |

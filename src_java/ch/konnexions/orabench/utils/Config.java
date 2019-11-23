@@ -37,6 +37,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>benchmark.host.name
  * <li>benchmark.id
  * <li>benchmark.module
+ * <li>benchmark.number.processors
  * <li>benchmark.os
  * <li>benchmark.program.name.oranif.c
  * <li>benchmark.transaction.size
@@ -45,7 +46,8 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>connection.fetch.size
  * <li>connection.host
  * <li>connection.password
- * <li>connection.pool.size
+ * <li>connection.pool.size.max
+ * <li>connection.pool.size.min
  * <li>connection.port
  * <li>connection.service
  * <li>connection.string
@@ -80,6 +82,7 @@ public class Config {
     private String benchmarkHostName;
     private String benchmarkId;
     private String benchmarkModule;
+    private int benchmarkNumberProcessors;
     private String benchmarkOs;
     private String benchmarkProgramNameOranifC;
     private int benchmarkTransactionSize;
@@ -90,7 +93,8 @@ public class Config {
     private int connectionFetchSize;
     private String connectionHost;
     private String connectionPassword;
-    private int connectionPoolSize;
+    private int connectionPoolSizeMax;
+    private int connectionPoolSizeMin;
     private int connectionPort;
     private String connectionService;
     private String connectionString;
@@ -351,6 +355,13 @@ public class Config {
     }
 
     /**
+     * @return the number of processor
+     */
+    public final int getBenchmarkNumberProcessors() {
+        return benchmarkNumberProcessors;
+    }
+
+    /**
      * @return the operating system description
      */
     public final String getBenchmarkOs() {
@@ -407,10 +418,17 @@ public class Config {
     }
 
     /**
-     * @return the number of simultaneous database connections
+     * @return the number of maximum simultaneous database connections
      */
-    public final int getConnectionPoolSize() {
-        return connectionPoolSize;
+    public final int getConnectionPoolSizeMax() {
+        return connectionPoolSizeMax;
+    }
+
+    /**
+     * @return the number of minimum simultaneous database connections
+     */
+    public final int getConnectionPoolSizeMin() {
+        return connectionPoolSizeMin;
     }
 
     /**
@@ -553,6 +571,7 @@ public class Config {
         list.add("benchmark.host.name");
         list.add("benchmark.id");
         list.add("benchmark.module");
+        list.add("benchmark.number.processors");
         list.add("benchmark.os");
         list.add("benchmark.user.name");
         list.add("connection.service");
@@ -564,10 +583,12 @@ public class Config {
         List<String> list = new ArrayList<String>();
 
         list.add("benchmark.batch.size");
+        list.add("benchmark.number.processors");
         list.add("benchmark.transaction.size");
         list.add("benchmark.trials");
         list.add("connection.fetch.size");
-        list.add("connection.pool.size");
+        list.add("connection.pool.size.max");
+        list.add("connection.pool.size.min");
         list.add("connection.port");
         list.add("file.bulk.length");
         list.add("file.bulk.size");
@@ -649,6 +670,7 @@ public class Config {
         benchmarkHostName = propertiesConfiguration.getString("benchmark.host.name");
         benchmarkId = propertiesConfiguration.getString("benchmark.id");
         benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
+        benchmarkNumberProcessors = Runtime.getRuntime().availableProcessors();
         benchmarkOs = propertiesConfiguration.getString("benchmark.os");
         benchmarkProgramNameOranifC = propertiesConfiguration.getString("benchmark.program.name.oranif.c");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
@@ -658,7 +680,8 @@ public class Config {
         connectionFetchSize = propertiesConfiguration.getInt("connection.fetch.size");
         connectionHost = propertiesConfiguration.getString("connection.host");
         connectionPassword = propertiesConfiguration.getString("connection.password");
-        connectionPoolSize = propertiesConfiguration.getInt("connection.pool.size");
+        connectionPoolSizeMax = propertiesConfiguration.getInt("connection.pool.size.max");
+        connectionPoolSizeMin = propertiesConfiguration.getInt("connection.pool.size.min");
         connectionPort = propertiesConfiguration.getInt("connection.port");
         connectionService = propertiesConfiguration.getString("connection.service");
         connectionString = propertiesConfiguration.getString("connection.string");
@@ -710,6 +733,12 @@ public class Config {
         if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_DRIVER")) {
             benchmarkDriver = environmentVariables.get("ORA_BENCH_BENCHMARK_DRIVER");
             propertiesConfiguration.setProperty("benchmark.driver", benchmarkDriver);
+            isChanged = true;
+        }
+
+        if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_NUMBER_PROCESSES")) {
+            benchmarkNumberProcessors = Integer.parseInt(environmentVariables.get("ORA_BENCH_BENCHMARK_NUMBER_PROCESSES"));
+            propertiesConfiguration.setProperty("benchmark.number.processes", benchmarkNumberProcessors);
             isChanged = true;
         }
 
@@ -827,11 +856,28 @@ public class Config {
             isChanged = true;
         }
 
-        if (connectionPoolSize < 0) {
-            log.error("Attention: The value of the configuration parameter 'connection.pool.size' [" + Integer.toString(connectionPoolSize)
+        if (connectionPoolSizeMax < 0) {
+            log.error("Attention: The value of the configuration parameter 'connection.pool.size.max' [" + Integer.toString(connectionPoolSizeMax)
                     + "] must not be less than 0, the specified value is replaced by 0.");
-            connectionPoolSize = 0;
-            propertiesConfiguration.setProperty("connection.pool.size", connectionPoolSize);
+            connectionPoolSizeMax = 0;
+            propertiesConfiguration.setProperty("connection.pool.size.max", connectionPoolSizeMax);
+            isChanged = true;
+        }
+
+        if (connectionPoolSizeMin < 0) {
+            log.error("Attention: The value of the configuration parameter 'connection.pool.size.min' [" + Integer.toString(connectionPoolSizeMin)
+                    + "] must not be less than 0, the specified value is replaced by 0.");
+            connectionPoolSizeMin = 0;
+            propertiesConfiguration.setProperty("connection.pool.size.min", connectionPoolSizeMin);
+            isChanged = true;
+        }
+
+        if (connectionPoolSizeMin < connectionPoolSizeMax) {
+            log.error("Attention: The value of the configuration parameter 'connection.pool.size.min' [" + Integer.toString(connectionPoolSizeMin)
+                    + "] must not be greater than value of the configuration parameter 'connection.pool.size.max' [\" + Integer.toString(connectionPoolSizeMax)"
+                    + "], the specified value is replaced by Integer.toString(connectionPoolSizeMax).");
+            connectionPoolSizeMin = connectionPoolSizeMax;
+            propertiesConfiguration.setProperty("connection.pool.size.min", connectionPoolSizeMin);
             isChanged = true;
         }
 

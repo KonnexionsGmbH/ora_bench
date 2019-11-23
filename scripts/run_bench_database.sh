@@ -43,7 +43,7 @@ echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
 echo "CONNECTION_SERVICE      : $ORA_BENCH_CONNECTION_SERVICE"
 echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
-echo ""
+echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON    : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JDBC_JAVA           : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "--------------------------------------------------------------------------------"
@@ -60,11 +60,11 @@ while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy"
 
 { /bin/bash scripts/run_bench_setup.sh; }
 
-if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" -eq "true" ]; then
+if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
 fi
 
-if [ "$ORA_BENCH_RUN_JDBC_JAVA" -eq "true" ]; then
+if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
 fi
 

@@ -19,6 +19,7 @@ BENCHMARK_DRIVER = 'cx_Oracle (Version v' + cx_Oracle.version + ')'
 benchmark_host_name = None
 benchmark_id = None
 BENCHMARK_MODULE = 'OraBench (Python ' + platform.python_version() + ')'
+benchmark_number_processors = None
 benchmark_os = None
 benchmark_transaction_size = None
 benchmark_trials = None
@@ -29,17 +30,18 @@ connection = None
 connection_fetch_size = None
 connection_host = None
 connection_password = None
-connection_pool_size = None
+connection_pool_size_max = None
+connection_pool_size_min = None
 connection_port = None
 connection_service = None
 connection_user = None
 cursor = None
 
-duration_insert_maximum = 0
-duration_insert_minimum = 0
+duration_insert_max = 0
+duration_insert_min = 0
 duration_insert_sum = 0
-duration_select_maximum = 0
-duration_select_minimum = 0
+duration_select_max = 0
+duration_select_min = 0
 duration_select_sum = 0
 
 end_date_time = None
@@ -77,6 +79,7 @@ def create_result(action, trial_number, sql_statement, start_date_time, sql_oper
     global benchmark_host_name
     global benchmark_id
     global BENCHMARK_MODULE
+    global benchmark_number_processors
     global benchmark_os
     global benchmark_transaction_size
     global benchmark_trials
@@ -84,16 +87,17 @@ def create_result(action, trial_number, sql_statement, start_date_time, sql_oper
 
     global connection_host
     global connection_password
-    global connection_pool_size
+    global connection_pool_size_max
+    global connection_pool_size_min
     global connection_port
     global connection_service
     global connection_user
 
-    global duration_insert_maximum
-    global duration_insert_minimum
+    global duration_insert_max
+    global duration_insert_min
     global duration_insert_sum
-    global duration_select_maximum
-    global duration_select_minimum
+    global duration_select_max
+    global duration_select_min
     global duration_select_sum
 
     global end_date_time
@@ -110,28 +114,29 @@ def create_result(action, trial_number, sql_statement, start_date_time, sql_oper
 
     if sql_operation == 'insert':
         duration_insert_sum += duration_ns
-        if duration_insert_maximum == 0:
-            duration_insert_maximum = duration_ns
-            duration_insert_minimum = duration_ns
+        if duration_insert_max == 0:
+            duration_insert_max = duration_ns
+            duration_insert_min = duration_ns
         else:
-            if duration_ns < duration_insert_minimum:
-                duration_insert_minimum = duration_ns
-            if duration_ns > duration_insert_maximum:
-                duration_insert_maximum = duration_ns
+            if duration_ns < duration_insert_min:
+                duration_insert_min = duration_ns
+            if duration_ns > duration_insert_max:
+                duration_insert_max = duration_ns
     elif sql_operation == 'select':
         duration_select_sum += duration_ns
-        if duration_select_maximum == 0:
-            duration_select_maximum = duration_ns
-            duration_select_minimum = duration_ns
+        if duration_select_max == 0:
+            duration_select_max = duration_ns
+            duration_select_min = duration_ns
         else:
-            if duration_ns < duration_select_minimum:
-                duration_select_minimum = duration_ns
-            if duration_ns > duration_select_maximum:
-                duration_select_maximum = duration_ns
+            if duration_ns < duration_select_min:
+                duration_select_min = duration_ns
+            if duration_ns > duration_select_max:
+                duration_select_max = duration_ns
 
     result_file.write(benchmark_id + file_result_delimiter +
                       benchmark_comment + file_result_delimiter +
                       benchmark_host_name + file_result_delimiter +
+                      benchmark_number_processors + file_result_delimiter +
                       benchmark_os + file_result_delimiter +
                       benchmark_user_name + file_result_delimiter +
                       benchmark_database + file_result_delimiter +
@@ -139,7 +144,8 @@ def create_result(action, trial_number, sql_statement, start_date_time, sql_oper
                       BENCHMARK_DRIVER + file_result_delimiter +
                       str(trial_number) + file_result_delimiter +
                       sql_statement + file_result_delimiter +
-                      str(connection_pool_size) + file_result_delimiter +
+                      str(connection_pool_size_min) + file_result_delimiter +
+                      str(connection_pool_size_max) + file_result_delimiter +
                       str(connection_fetch_size) + file_result_delimiter +
                       str(benchmark_transaction_size) + file_result_delimiter +
                       str(file_bulk_length) + file_result_delimiter +
@@ -237,6 +243,7 @@ def get_config():
     global benchmark_database
     global benchmark_host_name
     global benchmark_id
+    global benchmark_number_processors
     global benchmark_os
     global benchmark_transaction_size
     global benchmark_trials
@@ -246,7 +253,8 @@ def get_config():
     global connection_fetch_size
     global connection_host
     global connection_password
-    global connection_pool_size
+    global connection_pool_size_max
+    global connection_pool_size_min
     global connection_port
     global connection_service
     global connection_user
@@ -273,6 +281,7 @@ def get_config():
     benchmark_database = config['DEFAULT']['benchmark.database']
     benchmark_host_name = config['DEFAULT']['benchmark.host.name']
     benchmark_id = config['DEFAULT']['benchmark.id']
+    benchmark_number_processors = config['DEFAULT']['benchmark.number.processors']
     benchmark_os = config['DEFAULT']['benchmark.os']
     benchmark_transaction_size = int(config['DEFAULT']['benchmark.transaction.size'])
     benchmark_trials = int(config['DEFAULT']['benchmark.trials'])
@@ -281,7 +290,8 @@ def get_config():
     connection_fetch_size = int(config['DEFAULT']['connection.fetch.size'])
     connection_host = config['DEFAULT']['connection.host']
     connection_password = config['DEFAULT']['connection.password']
-    connection_pool_size = int(config['DEFAULT']['connection.pool.size'])
+    connection_pool_size_max = int(config['DEFAULT']['connection.pool.size.max'])
+    connection_pool_size_min = int(config['DEFAULT']['connection.pool.size.min'])
     connection_port = int(config['DEFAULT']['connection.port'])
     connection_service = config['DEFAULT']['connection.service']
     connection_user = config['DEFAULT']['connection.user']
