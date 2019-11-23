@@ -20,15 +20,15 @@ The framework parameters for a benchmark run are stored in a central configurati
 
 The currently supported database drivers are:
 
-| Driver | Programming Language |
-| :--- | :--- |
+| Driver    | Programming Language |
+| :---      | :--- |
 | cx_Oracle | Python |
-| JDBC | Java |
+| JDBC      | Java |
 
 The following Oracle database versions are provided in a benchmark run via Docker Container:
 
-| Shortcut | Oracle Database Version |
-| :--- | :--- |
+| Shortcut   | Oracle Database Version |
+| :---       | :--- |
 | db_11_2_xe | Oracle Database 11gR2 Express Edition for Linux x64 |
 | db_12_2_ee | Oracle Database 12c Release 2 (12.2.0.1.0) - Enterprise Edition - Linux x86-64 |
 | db_18_3_ee | Oracle Database 18c 18.3 - Linux x86-64 |
@@ -88,11 +88,13 @@ All the file names specified here are also part of the configuration file and ca
 ##### 2.2.1.2 `run_bench.sh`
 
 This script executes the `run_bench_database.sh` script for each of the databases listed in chapter [Introduction](#introduction).
+At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark.
 The run log is stored in the `run_bench.log` file.
 
 ##### 2.2.1.3 `run_bench_database.sh`
 
 This script is executed for one of the databases listed in in chapter [Introduction](#introduction). 
+At the beginning of the script it is possible to exclude individual drivers from the current benchmark.
 First the corresponding Docker image is downloaded from the DockerHub, if not already available.
 Then a Docker container is started.
 Finally the following child scripts are running:
