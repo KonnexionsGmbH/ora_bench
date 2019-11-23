@@ -82,7 +82,7 @@ public class Config {
     private String benchmarkHostName;
     private String benchmarkId;
     private String benchmarkModule;
-    private int benchmarkNumberProcessors;
+    private String benchmarkNumberProcessors;
     private String benchmarkOs;
     private String benchmarkProgramNameOranifC;
     private int benchmarkTransactionSize;
@@ -357,7 +357,7 @@ public class Config {
     /**
      * @return the number of processor
      */
-    public final int getBenchmarkNumberProcessors() {
+    public final String getBenchmarkNumberProcessors() {
         return benchmarkNumberProcessors;
     }
 
@@ -670,7 +670,7 @@ public class Config {
         benchmarkHostName = propertiesConfiguration.getString("benchmark.host.name");
         benchmarkId = propertiesConfiguration.getString("benchmark.id");
         benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
-        benchmarkNumberProcessors = Runtime.getRuntime().availableProcessors();
+        benchmarkNumberProcessors = Integer.toString(Runtime.getRuntime().availableProcessors());
         benchmarkOs = propertiesConfiguration.getString("benchmark.os");
         benchmarkProgramNameOranifC = propertiesConfiguration.getString("benchmark.program.name.oranif.c");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
@@ -737,7 +737,7 @@ public class Config {
         }
 
         if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_NUMBER_PROCESSES")) {
-            benchmarkNumberProcessors = Integer.parseInt(environmentVariables.get("ORA_BENCH_BENCHMARK_NUMBER_PROCESSES"));
+            benchmarkNumberProcessors = environmentVariables.get("ORA_BENCH_BENCHMARK_NUMBER_PROCESSES");
             propertiesConfiguration.setProperty("benchmark.number.processes", benchmarkNumberProcessors);
             isChanged = true;
         }
@@ -807,6 +807,12 @@ public class Config {
                 e.printStackTrace();
             }
             propertiesConfiguration.setProperty("benchmark.host.name", benchmarkHostName);
+            isChanged = true;
+        }
+
+        if (benchmarkNumberProcessors.equals("n/a")) {
+            benchmarkNumberProcessors = Integer.toString(Runtime.getRuntime().availableProcessors());
+            propertiesConfiguration.setProperty("benchmark.number.processors", benchmarkNumberProcessors);
             isChanged = true;
         }
 

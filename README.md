@@ -111,17 +111,11 @@ The run log is stored in the `run_bench.log` file.
 
 This script is executed for one of the databases listed in in chapter [Introduction](#introduction). 
 At the beginning of the script it is possible to exclude individual drivers from the current benchmark.
+
 First the corresponding Docker image is downloaded from the DockerHub, if not already available.
 Then a Docker container is started.
-Finally the following child scripts are running:
 
-- `run_bench_setup.sh`
-- all driver and programming language related scripts, like for example: `run_bench_jdbc_java.sh`
-- `run_bench_finalise.sh`
-
-##### 2.2.1.5 `run_bench_setup.sh`
-
-This script prepares the database for the benchmark run including the following steps:
+This script also prepares the database for the benchmark run including the following steps:
 
 1. If not yet available, create the database user according to the parameters `connection.user` and `connection.password`.
 
@@ -133,7 +127,15 @@ This script prepares the database for the benchmark run including the following 
 - `CREATE TABLE`
 - `UNLIMITED TABLESPACE`
 
-OraBench.java is also used to create a bulk file (see chapter 2.4) if it does not already exist.
+Finally the following child scripts are running:
+
+- `run_bench_setup.sh`
+- all driver and programming language related scripts, like for example: `run_bench_jdbc_java.sh`
+- `run_bench_finalise.sh`
+
+##### 2.2.1.5 `run_bench_setup.sh`
+
+This scripts is used to create a bulk file (see chapter 2.4).
 
 ##### 2.2.1.6 `run_bench_<driver>_<programming language>.sh`
 
