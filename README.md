@@ -85,6 +85,22 @@ All the file names specified here are also part of the configuration file and ca
     - `python -m pip install --upgrade pip`
     - `python -m pip install --upgrade cx_Oracle`
 
+##### 2.2.1.2 `run_bench_series.sh`
+
+This script executes the following variations of the script `run_bench.sh` as a whole benchmark series:
+
+| database   | service | benchmark.batch.size | benchmark.transaction.size | 
+| :---       | :---    | :---                 | :--- | 
+| db_11_2_xe | xe      | default value        | default value | 
+| db_12_2_xe | ee      | default value        | default value | 
+| db_18_3_xe | ee      | default value        | default value | 
+| db_19_3_xe | ee      | default value        | default value | 
+| db_19_3_xe | ee      | 0                    | default value | 
+| db_19_3_xe | ee      | default value        | 0 | 
+| db_19_3_xe | ee      | 0                    | 0 | 
+
+The run log is stored in the `run_bench_series.log` file.
+
 ##### 2.2.1.2 `run_bench.sh`
 
 This script executes the `run_bench_database.sh` script for each of the databases listed in chapter [Introduction](#introduction).
