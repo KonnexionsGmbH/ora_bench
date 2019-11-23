@@ -309,8 +309,6 @@ def main():
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     logging.info('Start OraBench.py')
 
-    get_config()
-
     run_benchmark()
 
     logging.info('End   OraBench.py')
@@ -329,6 +327,8 @@ def run_benchmark():
     global connection_port
     global connection_service
     global connection_user
+
+    get_config()
 
     create_result_measuring_point('benchmark', 'start', 0, '')
 
@@ -375,10 +375,10 @@ def run_benchmark_insert(trial_number):
         if benchmark_transaction_size > 0 and count % benchmark_transaction_size == 0:
             connection.commit()
 
-    if benchmark_transaction_size > 0 and batch_data.__len__() > 0:
+    if benchmark_batch_size > 0 and batch_data.__len__() > 0:
         cursor.executemany(sql_insert, batch_data)
 
-    if benchmark_transaction_size > 0 and count % benchmark_transaction_size == 0:
+    if benchmark_transaction_size > 0 and count % benchmark_transaction_size != 0:
         connection.commit()
 
     create_result_measuring_point('query', 'end', trial_number, sql_insert, 'insert')
