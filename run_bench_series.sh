@@ -58,18 +58,33 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-{ /bin/bash scripts/run_bench.sh; }
+{ /bin/bash scripts/run_bench_setup.sh; }
 
-export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-{ /bin/bash scripts/run_bench.sh; }
+if [ "$ORA_BENCH_RUN_DB_11_2_XE" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_11_2_xe
+    export ORA_BENCH_CONNECTION_SERVICE=xe
+    { /bin/bash scripts/run_bench_database_series.sh; }
+fi
 
-export ORA_BENCH_BENCHMARK_BATCH_SIZE=
-export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-{ /bin/bash scripts/run_bench.sh; }
+if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
+    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    { /bin/bash scripts/run_bench_database_series.sh; }
+fi
 
-export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-{ /bin/bash scripts/run_bench.sh; }
+if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
+    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    { /bin/bash scripts/run_bench_database_series.sh; }
+fi
+
+if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
+    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    { /bin/bash scripts/run_bench_database_series.sh; }
+fi
+
+{ /bin/bash scripts/run_bench_finalise.sh; }
 
 EXITCODE=$?
 

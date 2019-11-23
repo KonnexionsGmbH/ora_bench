@@ -16,7 +16,7 @@ BEGIN
     DBMS_OUTPUT.put_line ('================================================================================');
     DBMS_OUTPUT.put_line ('Current user is now: ' || USER);
     DBMS_OUTPUT.put_line ('================================================================================');
-    DBMS_OUTPUT.put_line ('Start run_bench_setup.sql');
+    DBMS_OUTPUT.put_line ('Start run_bench_database.sql');
 END;
 /
 
@@ -87,7 +87,7 @@ END;
 
 BEGIN
     DBMS_OUTPUT.put_line ('--------------------------------------------------------------------------------');
-    DBMS_OUTPUT.put_line ('End   run_bench_setup.sql');
+    DBMS_OUTPUT.put_line ('End   run_bench_database.sql');
     DBMS_OUTPUT.put_line ('================================================================================');
 END;
 /
