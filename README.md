@@ -101,13 +101,13 @@ This script executes the following variations of the script `run_bench.sh` as a 
 
 The run log is stored in the `run_bench_series.log` file.
 
-##### 2.2.1.2 `run_bench.sh`
+##### 2.2.1.3 `run_bench.sh`
 
 This script executes the `run_bench_database.sh` script for each of the databases listed in chapter [Introduction](#introduction).
 At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark.
 The run log is stored in the `run_bench.log` file.
 
-##### 2.2.1.3 `run_bench_database.sh`
+##### 2.2.1.4 `run_bench_database.sh`
 
 This script is executed for one of the databases listed in in chapter [Introduction](#introduction). 
 At the beginning of the script it is possible to exclude individual drivers from the current benchmark.
@@ -119,7 +119,7 @@ Finally the following child scripts are running:
 - all driver and programming language related scripts, like for example: `run_bench_jdbc_java.sh`
 - `run_bench_finalise.sh`
 
-##### 2.2.1.4 `run_bench_setup.sh`
+##### 2.2.1.5 `run_bench_setup.sh`
 
 This script prepares the database for the benchmark run including the following steps:
 
@@ -135,12 +135,12 @@ This script prepares the database for the benchmark run including the following 
 
 OraBench.java is also used to create a bulk file (see chapter 2.4) if it does not already exist.
 
-##### 2.2.1.5 `run_bench_<driver>_<programming language>.sh`
+##### 2.2.1.6 `run_bench_<driver>_<programming language>.sh`
 
 The driver and programming language related scripts, such as `run_bench_jdbc_java.sh`, first execute the insert statements and then the select statements in each trial with the bulk file.
 The time consumed is captured and recorded in result files.
 
-##### 2.2.1.6 `run_bench_finalise.sh`
+##### 2.2.1.7 `run_bench_finalise.sh`
 
 In this script, OraBench.java is used to reset the following configuration parameters to the value 'n/a':
 
