@@ -67,8 +67,8 @@ public class Setup {
 
     /**
      * Creates a new bulk file based on the parameters in the specified
-     * configuration object. The bulk file contains all data that is written to the
-     * database and then read again.
+     * configuration object. The bulk file contains all data that is to be written
+     * to the database and then read again.
      */
     public final void createBulkFile() {
 
@@ -99,6 +99,8 @@ public class Setup {
             }
 
             bulkFile.close();
+
+            log.info("bulk file written: file name=" + config.getFileBulkName() + " size=" + fileBulkSize + " length=" + fileBulkLength);
 
         } catch (IOException e) {
             log.error("bulk file name  =: " + config.getFileBulkName());

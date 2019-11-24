@@ -670,7 +670,7 @@ public class Config {
         benchmarkHostName = propertiesConfiguration.getString("benchmark.host.name");
         benchmarkId = propertiesConfiguration.getString("benchmark.id");
         benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
-        benchmarkNumberProcessors = Integer.toString(Runtime.getRuntime().availableProcessors());
+        benchmarkNumberProcessors = propertiesConfiguration.getString("benchmark.number.processors");
         benchmarkOs = propertiesConfiguration.getString("benchmark.os");
         benchmarkProgramNameOranifC = propertiesConfiguration.getString("benchmark.program.name.oranif.c");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
@@ -733,12 +733,6 @@ public class Config {
         if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_DRIVER")) {
             benchmarkDriver = environmentVariables.get("ORA_BENCH_BENCHMARK_DRIVER");
             propertiesConfiguration.setProperty("benchmark.driver", benchmarkDriver);
-            isChanged = true;
-        }
-
-        if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_NUMBER_PROCESSES")) {
-            benchmarkNumberProcessors = environmentVariables.get("ORA_BENCH_BENCHMARK_NUMBER_PROCESSES");
-            propertiesConfiguration.setProperty("benchmark.number.processes", benchmarkNumberProcessors);
             isChanged = true;
         }
 
