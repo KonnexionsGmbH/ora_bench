@@ -16,7 +16,7 @@ if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
     export ORA_BENCH_CONNECTION_PORT=1521
 fi
 if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
-    export ORA_BENCH_CONNECTION_SERVICE=orclcdb
+    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
