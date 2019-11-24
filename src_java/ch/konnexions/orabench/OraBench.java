@@ -97,11 +97,23 @@ public class OraBench {
         if (args0.equals("setup")) {
             log.info("Start Setup Benchmark Run");
             config = new Config();
-            config.createConfigurationFileCxOraclePython();
-            config.createConfigurationFileOranifC();
-            config.createConfigurationFileOranifErlang();
             new Setup(config).createBulkFile();
             log.info("End   Setup Benchmark Run");
+        } else if (args0.equals("setup_c")) {
+            log.info("Start Setup C Benchmark Run");
+            config = new Config();
+            config.createConfigurationFileOranifC();
+            log.info("End   Setup C Benchmark Run");
+        } else if (args0.equals("setup_erlang")) {
+            log.info("Start Setup Erlang Benchmark Run");
+            config = new Config();
+            config.createConfigurationFileOranifErlang();
+            log.info("End   Setup Erlang Benchmark Run");
+        } else if (args0.equals("setup_python")) {
+            log.info("Start Setup Python Benchmark Run");
+            config = new Config();
+            config.createConfigurationFileCxOraclePython();
+            log.info("End   Setup Python Benchmark Run");
         } else if (args0.equals("runBenchmark")) {
             log.info("Start Running Benchmark");
             config = new Config();
