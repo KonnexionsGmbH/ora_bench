@@ -109,6 +109,10 @@ public class OraBench {
             config = new Config();
             config.createConfigurationFileOranifErlang();
             log.info("End   Setup Erlang Benchmark Run");
+        } else if (args0.equals("setup_java")) {
+            log.info("Start Setup Java Benchmark Run");
+            config = new Config();
+            log.info("End   Setup Java Benchmark Run");
         } else if (args0.equals("setup_python")) {
             log.info("Start Setup Python Benchmark Run");
             config = new Config();
