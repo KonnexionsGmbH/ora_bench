@@ -37,7 +37,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>benchmark.host.name
  * <li>benchmark.id
  * <li>benchmark.module
- * <li>benchmark.number.processors
+ * <li>benchmark.number.cores
  * <li>benchmark.os
  * <li>benchmark.program.name.oranif.c
  * <li>benchmark.transaction.size
@@ -82,7 +82,7 @@ public class Config {
     private String benchmarkHostName;
     private String benchmarkId;
     private String benchmarkModule;
-    private String benchmarkNumberProcessors;
+    private String benchmarkNumberCores;
     private String benchmarkOs;
     private String benchmarkProgramNameOranifC;
     private int benchmarkTransactionSize;
@@ -355,10 +355,10 @@ public class Config {
     }
 
     /**
-     * @return the number of processor
+     * @return the number of cores
      */
-    public final String getBenchmarkNumberProcessors() {
-        return benchmarkNumberProcessors;
+    public final String getBenchmarkNumberCores() {
+        return benchmarkNumberCores;
     }
 
     /**
@@ -571,7 +571,7 @@ public class Config {
         list.add("benchmark.host.name");
         list.add("benchmark.id");
         list.add("benchmark.module");
-        list.add("benchmark.number.processors");
+        list.add("benchmark.number.cores");
         list.add("benchmark.os");
         list.add("benchmark.user.name");
         list.add("connection.service");
@@ -583,7 +583,7 @@ public class Config {
         List<String> list = new ArrayList<String>();
 
         list.add("benchmark.batch.size");
-        list.add("benchmark.number.processors");
+        list.add("benchmark.number.cores");
         list.add("benchmark.transaction.size");
         list.add("benchmark.trials");
         list.add("connection.fetch.size");
@@ -670,7 +670,7 @@ public class Config {
         benchmarkHostName = propertiesConfiguration.getString("benchmark.host.name");
         benchmarkId = propertiesConfiguration.getString("benchmark.id");
         benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
-        benchmarkNumberProcessors = propertiesConfiguration.getString("benchmark.number.processors");
+        benchmarkNumberCores = propertiesConfiguration.getString("benchmark.number.cores");
         benchmarkOs = propertiesConfiguration.getString("benchmark.os");
         benchmarkProgramNameOranifC = propertiesConfiguration.getString("benchmark.program.name.oranif.c");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
@@ -804,9 +804,9 @@ public class Config {
             isChanged = true;
         }
 
-        if (benchmarkNumberProcessors.equals("n/a")) {
-            benchmarkNumberProcessors = Integer.toString(Runtime.getRuntime().availableProcessors());
-            propertiesConfiguration.setProperty("benchmark.number.processors", benchmarkNumberProcessors);
+        if (benchmarkNumberCores.equals("n/a")) {
+            benchmarkNumberCores = Integer.toString(Runtime.getRuntime().availableProcessors());
+            propertiesConfiguration.setProperty("benchmark.number.cores", benchmarkNumberCores);
             isChanged = true;
         }
 

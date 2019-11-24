@@ -174,7 +174,7 @@ Otherwise, the new current results are appended to existing results.
 | benchmark id | alphanumeric  | config param `benchmark.id` |
 | benchmark comment | alphanumeric  | config param `benchmark.comment` |
 | host name | alphanumeric | config param `benchmark.host.name` |
-| number processors | integer | config param `benchmark.number.processors` |
+| number cores | integer | config param `benchmark.number.cores` |
 | os | alphanumeric | config param `benchmark.os` |
 | user name | alphanumeric | config param `benchmark.user.name` |
 | database | alphanumeric | config param `benchmark.database` |

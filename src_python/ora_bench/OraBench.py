@@ -19,7 +19,7 @@ BENCHMARK_DRIVER = 'cx_Oracle (Version v' + cx_Oracle.version + ')'
 benchmark_host_name = None
 benchmark_id = None
 BENCHMARK_MODULE = 'OraBench (Python ' + platform.python_version() + ')'
-benchmark_number_processors = None
+benchmark_number_cores = None
 benchmark_os = None
 benchmark_transaction_size = None
 benchmark_trials = None
@@ -79,7 +79,7 @@ def create_result(action, trial_number, sql_statement, start_date_time, sql_oper
     global benchmark_host_name
     global benchmark_id
     global BENCHMARK_MODULE
-    global benchmark_number_processors
+    global benchmark_number_cores
     global benchmark_os
     global benchmark_transaction_size
     global benchmark_trials
@@ -136,7 +136,7 @@ def create_result(action, trial_number, sql_statement, start_date_time, sql_oper
     result_file.write(benchmark_id + file_result_delimiter +
                       benchmark_comment + file_result_delimiter +
                       benchmark_host_name + file_result_delimiter +
-                      benchmark_number_processors + file_result_delimiter +
+                      benchmark_number_cores + file_result_delimiter +
                       benchmark_os + file_result_delimiter +
                       benchmark_user_name + file_result_delimiter +
                       benchmark_database + file_result_delimiter +
@@ -246,7 +246,7 @@ def get_config():
     global benchmark_database
     global benchmark_host_name
     global benchmark_id
-    global benchmark_number_processors
+    global benchmark_number_cores
     global benchmark_os
     global benchmark_transaction_size
     global benchmark_trials
@@ -284,7 +284,7 @@ def get_config():
     benchmark_database = config['DEFAULT']['benchmark.database']
     benchmark_host_name = config['DEFAULT']['benchmark.host.name']
     benchmark_id = config['DEFAULT']['benchmark.id']
-    benchmark_number_processors = config['DEFAULT']['benchmark.number.processors']
+    benchmark_number_cores = config['DEFAULT']['benchmark.number.cores']
     benchmark_os = config['DEFAULT']['benchmark.os']
     benchmark_transaction_size = int(config['DEFAULT']['benchmark.transaction.size'])
     benchmark_trials = int(config['DEFAULT']['benchmark.trials'])
