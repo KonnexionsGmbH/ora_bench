@@ -52,10 +52,14 @@ echo "--------------------------------------------------------------------------
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "--------------------------------------------------------------------------------"
+echo "JAVA_HOME                  : $JAVA_HOME"
+echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
+
+{ /bin/bash scripts/run_bench_setup.sh; }
 
 if [ "$ORA_BENCH_RUN_DB_11_2_XE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_11_2_xe
@@ -80,6 +84,8 @@ if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     { /bin/bash scripts/run_bench_database.sh; }
 fi
+
+{ /bin/bash scripts/run_bench_finalise.sh; }
 
 EXITCODE=$?
 
