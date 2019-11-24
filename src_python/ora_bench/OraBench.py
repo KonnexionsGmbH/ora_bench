@@ -227,6 +227,9 @@ def create_result_measuring_point(action, state, trial_number, sql_statement, sq
 def get_bulk_data():
     global bulk_data
 
+    global file_bulk_delimiter
+    global file_bulk_name
+
     with open(os.path.abspath(file_bulk_name)) as csv_file:
         bulk_data = [tuple(line) for line in csv.reader(csv_file, delimiter=file_bulk_delimiter)]
 
@@ -401,6 +404,7 @@ def run_benchmark_insert(trial_number):
 def run_benchmark_select(trial_number):
     global benchmark_batch_size
     global bulk_data
+
     global sql_select
 
     create_result_measuring_point('query', 'start', trial_number, sql_select)
@@ -425,6 +429,9 @@ def run_benchmark_select(trial_number):
 def run_benchmark_trial(trial_number):
     global cursor
 
+    global sql_create
+    global sql_drop
+
     create_result_measuring_point('trial', 'start', trial_number, '')
     logging.info('Start trial no. ' + str(trial_number))
 
@@ -432,14 +439,17 @@ def run_benchmark_trial(trial_number):
 
     try:
         cursor.execute(sql_create)
+        logging.info('last DDL statement=' + sql_create)
     except cx_Oracle.DatabaseError:
         cursor.execute(sql_drop)
         cursor.execute(sql_create)
+        logging.info('last DDL statement after DROP=' + sql_create)
 
     run_benchmark_insert(trial_number)
     run_benchmark_select(trial_number)
 
     cursor.execute(sql_drop)
+    logging.info('last DDL statement=' + sql_drop)
 
     create_result_measuring_point('trial', 'end', trial_number, '')
 
