@@ -74,7 +74,7 @@ public class Result {
     private final void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime, LocalDateTime endDateTime,
             long duration) {
         try {
-            resultFile.printRecord(config.getBenchmarkId(), config.getBenchmarkComment(), config.getBenchmarkHostName(), config.getBenchmarkNumberProcessors(),
+            resultFile.printRecord(config.getBenchmarkId(), config.getBenchmarkComment(), config.getBenchmarkHostName(), config.getBenchmarkNumberCores(),
                     config.getBenchmarkOs(), config.getBenchmarkUserName(), config.getBenchmarkDatabase(), config.getBenchmarkModule(),
                     config.getBenchmarkDriver(), trialNo, sqlStatement, config.getConnectionPoolSizeMin(), config.getConnectionPoolSizeMax(),
                     config.getConnectionFetchSize(), config.getBenchmarkTransactionSize(), config.getFileBulkLength(), config.getFileBulkSize(),

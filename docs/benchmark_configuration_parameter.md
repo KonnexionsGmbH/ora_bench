@@ -14,7 +14,7 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | benchmark.host.name | n/a | no | In the result file, this value is used as a unique identifier of the current computer. This value will be determined during the setup. |
 | benchmark.id | n/a | no | In the result file, this value is used as a unique identifier of the benchmark run. This value will be determined during the setup. |
 | benchmark.module | n/a | yes | The name of the module and the programming language with name and version executing the benchmark run, for example 'OraBench (Java 11.0.5)'. The version of the programming language should be determined by the specific benchmark driver routine at runtime. |
-| benchmark.number.processors | n/a | yes | The number of processors. This value will be determined during the setup. |
+| benchmark.number.cores | n/a | yes | The number of cores. This value will be determined during the setup. |
 | benchmark.os | n/a | no | In the result file, this comment is used to identify the operating system environment, for example 'amd64 / Linux / 4.15.0-1028-gcp'. This value will be determined during the setup. |
 | benchmark.program.name.oranif.c | OraBench.bin | no | Specifies the name of the executable C file. |
 | benchmark.transaction.size | 512 | yes | The number of `INSERT` operations until a `COMMIT` is performed. The value 0 means that all INSERT operations are performed in a single transaction. The value must be at least as large as the value of batch size (`benchmark.batch.size`). | 
