@@ -94,7 +94,16 @@ public class OraBench {
 
         log.info("args[0]=" + args0);
 
-        if (args0.equals("setup")) {
+        if (args0.equals("finalise")) {
+            log.info("Start Finalise Benchmark Run");
+            new Config().resetNotAvailables();
+            log.info("End   Finalise Benchmark Run");
+        } else if (args0.equals("runBenchmark")) {
+            log.info("Start Running Benchmark");
+            config = new Config();
+            runBenchmark();
+            log.info("End   Running Benchmark");
+        } else if (args0.equals("setup")) {
             log.info("Start Setup Benchmark Run");
             config = new Config();
             new Setup(config).createBulkFile();
@@ -114,15 +123,6 @@ public class OraBench {
             config = new Config();
             config.createConfigurationFileCxOraclePython();
             log.info("End   Setup Python Benchmark Run");
-        } else if (args0.equals("runBenchmark")) {
-            log.info("Start Running Benchmark");
-            config = new Config();
-            runBenchmark();
-            log.info("End   Running Benchmark");
-        } else if (args0.equals("finalise")) {
-            log.info("Start Finalise Benchmark Run");
-            new Config().resetNotAvailables();
-            log.info("End   Finalise Benchmark Run");
         } else if (args0.contentEquals("")) {
             log.error("Command line argument missing");
         } else {
