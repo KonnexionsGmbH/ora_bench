@@ -69,7 +69,6 @@ if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
 fi
 
 if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
-    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_java
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
 fi
 
