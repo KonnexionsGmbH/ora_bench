@@ -712,8 +712,8 @@ public class Config {
 
         boolean isChanged = false;
 
-        if (environmentVariables.containsKey("ORA_BENCH_BATCH_SIZE")) {
-            benchmarkBatchSize = Integer.parseInt(environmentVariables.get("ORA_BENCH_BATCH_SIZE"));
+        if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_BATCH_SIZE")) {
+            benchmarkBatchSize = Integer.parseInt(environmentVariables.get("ORA_BENCH_BENCHMARK_BATCH_SIZE"));
             propertiesConfiguration.setProperty("benchmark.batch.size", benchmarkBatchSize);
             isChanged = true;
         }
@@ -736,8 +736,8 @@ public class Config {
             isChanged = true;
         }
 
-        if (environmentVariables.containsKey("ORA_BENCH_TRANSACTION_SIZE")) {
-            benchmarkTransactionSize = Integer.parseInt(environmentVariables.get("ORA_BENCH_TRANSACTION_SIZE"));
+        if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_TRANSACTION_SIZE")) {
+            benchmarkTransactionSize = Integer.parseInt(environmentVariables.get("ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"));
             propertiesConfiguration.setProperty("benchmark.transaction.size", benchmarkTransactionSize);
             isChanged = true;
         }
