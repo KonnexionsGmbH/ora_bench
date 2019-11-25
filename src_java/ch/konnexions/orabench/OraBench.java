@@ -190,7 +190,7 @@ public class OraBench {
                 preparedStatement.executeBatch();
             }
 
-            if ((transactionSize > 0) && (count % transactionSize != 0)) {
+            if ((transactionSize == 0) || (count % transactionSize != 0)) {
                 connection.commit();
             }
 
