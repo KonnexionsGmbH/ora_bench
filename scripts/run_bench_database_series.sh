@@ -38,6 +38,9 @@ while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy"
 
 priv/oracle/sqlcl/bin/sql sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_database.sql
 
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=256
+export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
+
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
     { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
@@ -58,7 +61,7 @@ if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
 fi
 
-export ORA_BENCH_BENCHMARK_BATCH_SIZE=
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=256
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
