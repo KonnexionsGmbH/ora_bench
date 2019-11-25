@@ -378,7 +378,7 @@ def run_benchmark_insert(trial_number):
         count += 1
 
         if benchmark_batch_size == 0:
-            cursor.execute(sql_insert, [key_data_tuple[1], key_data_tuple[2]])
+            cursor.execute(sql_insert, [key_data_tuple[0], key_data_tuple[1]])
         else:
             batch_data.append(key_data_tuple)
             if count % benchmark_batch_size == 0:
