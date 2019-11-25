@@ -643,16 +643,6 @@ public class Config {
 
         }
 
-        if (benchmarkBatchSize != 256) {
-            propertiesConfiguration.setProperty("benchmark.batch.size", 256);
-            isChanged = true;
-        }
-
-        if (benchmarkTransactionSize != 512) {
-            propertiesConfiguration.setProperty("benchmark.transaction.size", 512);
-            isChanged = true;
-        }
-
         if (isChanged) {
             try {
                 fileBasedConfigurationBuilder.save();

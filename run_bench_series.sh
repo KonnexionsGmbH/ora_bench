@@ -60,6 +60,9 @@ echo "==========================================================================
 
 EXITCODE="0"
 
+export ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
+export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
+
 { /bin/bash scripts/run_bench_setup.sh; }
 
 if [ "$ORA_BENCH_RUN_DB_11_2_XE" = "true" ]; then
@@ -85,6 +88,9 @@ if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     { /bin/bash scripts/run_bench_database_series.sh; }
 fi
+
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
 
 { /bin/bash scripts/run_bench_finalise.sh; }
 
