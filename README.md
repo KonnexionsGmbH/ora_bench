@@ -304,13 +304,18 @@ The data column in the bulk file is randomly generated with a unique key column 
     
         save the current time as the start of the 'query' action
      
-        WHILE iterating through the collection bulk_data
-            execute the SQL statement in config param 'sql.select' with the key column of the current bulk_data entry 
+        count = 0
 
-            IF NOT result column of database operation = data column of the current bulk_data entry
-                display an error message            
-            ENDIF                    
+        execute the SQL statement in config param 'sql.select' 
+
+        WHILE iterating through the result set
+            count + 1
         ENDWHILE
+
+        IF NOT count = config param 'file.bulk.size'
+            display an error message            
+        ENDIF                    
+
 
         WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 ```

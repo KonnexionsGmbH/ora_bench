@@ -59,7 +59,10 @@ public class OraBench {
                     .withHeader(config.getFileBulkHeader().split(config.getFileBulkDelimiter())).parse(bufferedReader);
 
             for (CSVRecord record : records) {
-                bulkData.add(new String[] { record.get("key"), record.get("data") });
+                String keyValue = record.get("key");
+                if (!(keyValue.equals("key"))) {
+                    bulkData.add(new String[] { keyValue, record.get("data") });
+                }
             }
 
             bufferedReader.close();
@@ -197,37 +200,29 @@ public class OraBench {
         result.endQueryInsert(trialNumber, sqlStatement);
     }
 
-    private static void runBenchmarkSelect(Connection connection, int trialNumber, ArrayList<String[]> bulkData, String sqlStatement, int connectionFetchSize) {
+    private static void runBenchmarkSelect(Connection connection, int trialNumber, String sqlStatement, int fileBulkSize, int connectionFetchSize) {
+        int count = 0;
         result.startQuery();
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement.replace(":key", "?"));
+            Statement statement = connection.createStatement();
 
             if (connectionFetchSize > 0) {
-                preparedStatement.setFetchSize(connectionFetchSize);
+                statement.setFetchSize(connectionFetchSize);
             }
 
-            ResultSet resultSet = null;
+            ResultSet resultSet = statement.executeQuery(sqlStatement);
 
-            for (String[] value : bulkData) {
-                preparedStatement.setString(1, value[0]);
+            while (resultSet.next()) {
+                count += 1;
+            }
 
-                resultSet = preparedStatement.executeQuery();
-
-                String foundValue = null;
-
-                while (resultSet.next()) {
-                    foundValue = resultSet.getString(1);
-                }
-
-                if (!(value[1].equals(foundValue))) {
-                    log.error("expected=" + value[1]);
-                    log.error("found   =" + foundValue);
-                }
+            if (count != fileBulkSize) {
+                log.error("Number rows: expected=" + Integer.toString(fileBulkSize) + " - found=" + Integer.toString(count));
             }
 
             resultSet.close();
-            preparedStatement.close();
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -258,7 +253,7 @@ public class OraBench {
 
         runBenchmarkInsert(connection, trialNumber, bulkData, config.getSqlInsert(), config.getBenchmarkBatchSize(), config.getBenchmarkTransactionSize());
 
-        runBenchmarkSelect(connection, trialNumber, bulkData, config.getSqlSelect(), config.getConnectionFetchSize());
+        runBenchmarkSelect(connection, trialNumber, config.getSqlSelect(), config.getFileBulkSize(), config.getConnectionFetchSize());
 
         try {
             statement.executeUpdate(config.getSqlDropTable());
