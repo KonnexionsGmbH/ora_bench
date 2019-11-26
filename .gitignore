@@ -17,5 +17,4 @@ ora_bench_cx_oracle_python.ini
 ora_bench_oranif_erlang.properties
 rebar.lock
 rel/example_project
-run_bench_oranif_c.sh
 test/bin/*

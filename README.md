@@ -46,7 +46,6 @@ A detailed description of the configuration options can be found [here](docs/ben
 For reasons of convenience the following files are generated:
 
 - the configuration file `priv/ora_bench_cx_oracle_pytzhon.ini` for cx_Oracle &amp; Python.
-- the executable script `scripts/run_bench_oranif_c.sh` with corresponding environment variables for the oranif &amp; C, and
 - the configuration file `priv/ora_bench_oranif_erlang.properties` with a corresponding map for oranif &amp; Erlang.
 
 All the file names specified here are also part of the configuration file and can be changed if necessary.
