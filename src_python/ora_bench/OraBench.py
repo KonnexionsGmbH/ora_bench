@@ -377,8 +377,8 @@ def run_benchmark_insert(trial_number):
     for key_data_tuple in bulk_data:
         count += 1
 
-        if benchmark_transaction_size == 0:
-            cursor.execute(sql_insert, [key_data_tuple[1], key_data_tuple[2]])
+        if benchmark_batch_size == 0:
+            cursor.execute(sql_insert, [key_data_tuple[0], key_data_tuple[1]])
         else:
             batch_data.append(key_data_tuple)
             if count % benchmark_batch_size == 0:
@@ -391,7 +391,7 @@ def run_benchmark_insert(trial_number):
     if benchmark_batch_size > 0 and batch_data.__len__() > 0:
         cursor.executemany(sql_insert, batch_data)
 
-    if benchmark_transaction_size > 0 and count % benchmark_transaction_size != 0:
+    if benchmark_transaction_size == 0 or count % benchmark_transaction_size != 0:
         connection.commit()
 
     create_result_measuring_point('query', 'end', trial_number, sql_insert, 'insert')
