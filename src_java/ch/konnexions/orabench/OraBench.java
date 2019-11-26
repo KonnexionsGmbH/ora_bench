@@ -108,11 +108,6 @@ public class OraBench {
             config = new Config();
             new Setup(config).createBulkFile();
             log.info("End   Setup Benchmark Run");
-        } else if (args0.equals("setup_c")) {
-            log.info("Start Setup C Benchmark Run");
-            config = new Config();
-            config.createConfigurationFileOranifC();
-            log.info("End   Setup C Benchmark Run");
         } else if (args0.equals("setup_erlang")) {
             log.info("Start Setup Erlang Benchmark Run");
             config = new Config();

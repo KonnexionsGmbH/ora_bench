@@ -39,7 +39,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>benchmark.module
  * <li>benchmark.number.cores
  * <li>benchmark.os
- * <li>benchmark.program.name.oranif.c
  * <li>benchmark.transaction.size
  * <li>benchmark.trials
  * <li>benchmark.user.name
@@ -59,7 +58,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>file.bulk.size
  * <li>file.configuration.name
  * <li>file.configuration.name.cx_oracle.python
- * <li>file.configuration.name.oranif.c
  * <li>file.configuration.name.oranif.erlang
  * <li>file.result.delimiter
  * <li>file.result.header
@@ -84,7 +82,6 @@ public class Config {
     private String benchmarkModule;
     private String benchmarkNumberCores;
     private String benchmarkOs;
-    private String benchmarkProgramNameOranifC;
     private int benchmarkTransactionSize;
     private int benchmarkTrials;
     private String benchmarkUserName;
@@ -110,15 +107,12 @@ public class Config {
     private int fileBulkSize;
     private String fileConfigurationName;
     private String fileConfigurationNameCxOraclePython;
-    private String fileConfigurationNameOranifC;
     private String fileConfigurationNameOranifErlang;
     private String fileResultDelimiter;
     private String fileResultHeader;
     private String fileResultName;
 
     private ArrayList<String> keysSorted = new ArrayList<String>();
-
-    private List<String> numericProperties = getNumericProperties();
 
     private PropertiesConfiguration propertiesConfiguration;
 
@@ -167,102 +161,6 @@ public class Config {
                 bufferedWriter.write(key + " = " + ((value.contentEquals("\t")) ? "TAB" : value));
                 bufferedWriter.newLine();
             }
-
-            bufferedWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Creates the oranif &amp; C version of the configuration file.
-     */
-    public final void createConfigurationFileOranifC() {
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOranifC(), false));
-
-            bufferedWriter.write("#!/bin/bash");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write("# ------------------------------------------------------------------------------");
-            bufferedWriter.newLine();
-            bufferedWriter.write("#");
-            bufferedWriter.newLine();
-            bufferedWriter.write("# run_bench_oranif_c.sh: Oracle Benchmark based on oranif & C.");
-            bufferedWriter.newLine();
-            bufferedWriter.write("#");
-            bufferedWriter.newLine();
-            bufferedWriter.write("# ------------------------------------------------------------------------------");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-
-            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
-                final String key = iterator.next();
-
-                final String quote = (numericProperties.contains(key.toLowerCase())) ? "" : "'";
-
-                if (key.contentEquals("benchmark.driver")) {
-                    bufferedWriter.write("ORA_BENCH_BENCHMARK_DRIVER='oranif (Version version)'");
-                } else if (key.equals("benchmark.module")) {
-                    bufferedWriter.write("ORA_BENCH_BENCHMARK_MODULE='OraBench (C version)'");
-                } else {
-                    bufferedWriter.write("ORA_BENCH_" + key.replace(".", "_").toUpperCase() + "=" + quote + propertiesConfiguration.getString(key) + quote);
-                }
-
-                bufferedWriter.newLine();
-            }
-
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"================================================================================\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"Start $0\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"--------------------------------------------------------------------------------\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"ora_bench - Oracle benchmark - oranif & C.\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"--------------------------------------------------------------------------------\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("date +\"DATE TIME : %d.%m.%Y %H:%M:%S\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"================================================================================\"");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write("EXITCODE=\"0\"");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write("./" + getBenchmarkProgramNameOranifC() + " ");
-
-            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
-                final String key = iterator.next();
-
-                bufferedWriter.write("$ORA_BENCH_" + key.replace(".", "_").toUpperCase());
-
-                if (iterator.hasNext()) {
-                    bufferedWriter.write(" ");
-                }
-            }
-
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write("EXITCODE=$?");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"--------------------------------------------------------------------------------\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("date +\"DATE TIME : %d.%m.%Y %H:%M:%S\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"--------------------------------------------------------------------------------\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"End $0\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"================================================================================\"");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write("exit $EXITCODE");
-            bufferedWriter.newLine();
 
             bufferedWriter.close();
         } catch (IOException e) {
@@ -366,13 +264,6 @@ public class Config {
      */
     public final String getBenchmarkOs() {
         return benchmarkOs;
-    }
-
-    /**
-     * @return the oranif &amp; C program name
-     */
-    public final String getBenchmarkProgramNameOranifC() {
-        return benchmarkProgramNameOranifC;
     }
 
     /**
@@ -510,15 +401,6 @@ public class Config {
      */
     public final String getFileConfigurationNameCxOraclePython() {
         return fileConfigurationNameCxOraclePython;
-    }
-
-    /**
-     * @return the name of the configuration file for the oranif &amp; C language
-     *         version. The file name may contain the absolute or relative file
-     *         path.
-     */
-    public final String getFileConfigurationNameOranifC() {
-        return fileConfigurationNameOranifC;
     }
 
     /**
@@ -672,7 +554,6 @@ public class Config {
         benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
         benchmarkNumberCores = propertiesConfiguration.getString("benchmark.number.cores");
         benchmarkOs = propertiesConfiguration.getString("benchmark.os");
-        benchmarkProgramNameOranifC = propertiesConfiguration.getString("benchmark.program.name.oranif.c");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
         benchmarkTrials = propertiesConfiguration.getInt("benchmark.trials");
         benchmarkUserName = propertiesConfiguration.getString("benchmark.user.name");
@@ -694,7 +575,6 @@ public class Config {
         fileBulkSize = propertiesConfiguration.getInt("file.bulk.size");
         fileConfigurationName = propertiesConfiguration.getString("file.configuration.name");
         fileConfigurationNameCxOraclePython = propertiesConfiguration.getString("file.configuration.name.cx_oracle.python");
-        fileConfigurationNameOranifC = propertiesConfiguration.getString("file.configuration.name.oranif.c");
         fileConfigurationNameOranifErlang = propertiesConfiguration.getString("file.configuration.name.oranif.erlang");
         fileResultDelimiter = propertiesConfiguration.getString("file.result.delimiter");
         fileResultHeader = propertiesConfiguration.getString("file.result.header").replace(";", fileResultDelimiter);
