@@ -1,12 +1,11 @@
 import configparser
 import csv
+import cx_Oracle
 import datetime
 import logging
 import os
 import platform
 from pathlib import Path
-
-import cx_Oracle
 
 # ------------------------------------------------------------------------------
 # Definition of the global variables.

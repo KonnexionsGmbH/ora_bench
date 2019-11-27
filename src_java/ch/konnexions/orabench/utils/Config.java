@@ -97,9 +97,8 @@ public class Config {
     private String connectionString;
     private String connectionUser;
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
-
     FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
+
     private String fileBulkDelimiter;
     private String fileBulkHeader;
     private int fileBulkLength;
@@ -111,13 +110,18 @@ public class Config {
     private String fileResultDelimiter;
     private String fileResultHeader;
     private String fileResultName;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
 
     private ArrayList<String> keysSorted = new ArrayList<String>();
 
     private PropertiesConfiguration propertiesConfiguration;
 
-    private String sqlCreateTable;
-    private String sqlDropTable;
+    private String sqlCreate;
+    private String sqlCreateDefault = "BEGIN EXECUTE IMMEDIATE 'CREATE TABLE ora_bench_table (key VARCHAR2(32) PRIMARY KEY, data VARCHAR2(4000), "
+            + "cores NUMBER DEFAULT C...C, partition_key NUMBER(3)) PARTITION BY RANGE (partition_key) (PARTITION p000 VALUES LESS THAN (1)P...P)'; "
+            + "EXECUTE IMMEDIATE 'CREATE TRIGGER ora_bench_table_before_insert BEFORE INSERT ON ora_bench_table FOR EACH ROW "
+            + "BEGIN :new.partition_key := MOD (ASCII (SUBSTR (:new.key, 1, 1)), :new.cores); END ora_bench_table_before_insert;'; END;";
+    private String sqlDrop;
     private String sqlInsert;
     private String sqlSelect;
 
@@ -457,6 +461,7 @@ public class Config {
         list.add("benchmark.os");
         list.add("benchmark.user.name");
         list.add("connection.service");
+        list.add("sql.create");
 
         return list;
     }
@@ -478,18 +483,28 @@ public class Config {
         return list;
     }
 
+    private final CharSequence getPartionString() {
+        StringBuffer stringBuffer = new StringBuffer();
+
+        for (int i = 2; i <= Integer.parseInt(benchmarkNumberCores); i++) {
+            stringBuffer.append(", PARTITION p" + String.format("%03d", i - 1) + " VALUES LESS THAN (" + Integer.toString(i) + ")");
+        }
+
+        return stringBuffer.toString();
+    }
+
     /**
      * @return the CREATE TABLE statement
      */
-    public final String getSqlCreateTable() {
-        return sqlCreateTable;
+    public final String getSqlCreate() {
+        return sqlCreate;
     }
 
     /**
      * @return the DROP TABLE statement
      */
-    public final String getSqlDropTable() {
-        return sqlDropTable;
+    public final String getSqlDrop() {
+        return sqlDrop;
     }
 
     /**
@@ -580,8 +595,8 @@ public class Config {
         fileResultHeader = propertiesConfiguration.getString("file.result.header").replace(";", fileResultDelimiter);
         fileResultName = propertiesConfiguration.getString("file.result.name");
 
-        sqlCreateTable = propertiesConfiguration.getString("sql.create");
-        sqlDropTable = propertiesConfiguration.getString("sql.drop");
+        sqlCreate = propertiesConfiguration.getString("sql.create");
+        sqlDrop = propertiesConfiguration.getString("sql.drop");
         sqlInsert = propertiesConfiguration.getString("sql.insert");
         sqlSelect = propertiesConfiguration.getString("sql.select");
     }
@@ -728,6 +743,12 @@ public class Config {
             isChanged = true;
         }
 
+        if (benchmarkId.equals("n/a")) {
+            benchmarkId = DigestUtils.md5Hex(LocalDateTime.now().format(formatter) + benchmarkHostName + benchmarkOs + benchmarkUserName);
+            propertiesConfiguration.setProperty("benchmark.id", benchmarkId);
+            isChanged = true;
+        }
+
         if (connectionFetchSize < 0) {
             log.error("Attention: The value of the configuration parameter 'connection.fetch.size' [" + Integer.toString(connectionFetchSize)
                     + "] must not be less than 0, the specified value is replaced by 0.");
@@ -783,9 +804,9 @@ public class Config {
             isChanged = true;
         }
 
-        if (benchmarkId.equals("n/a")) {
-            benchmarkId = DigestUtils.md5Hex(LocalDateTime.now().format(formatter) + benchmarkHostName + benchmarkOs + benchmarkUserName);
-            propertiesConfiguration.setProperty("benchmark.id", benchmarkId);
+        if (sqlCreate.equals("n/a")) {
+            sqlCreate = sqlCreateDefault.replace("C...C", benchmarkNumberCores).replace("P...P", getPartionString());
+            propertiesConfiguration.setProperty("sql.create", sqlCreate);
             isChanged = true;
         }
 

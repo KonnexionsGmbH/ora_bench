@@ -39,7 +39,7 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | file.result.delimiter | \t | no | The delimiter character in the result file. Here the semicolon must be used as separator. |
 | file.result.header | benchmark comment;<br>environment;<br>database;<br>module;<br>driver;<br>trial no.;<br>SQL statement;<br>connection pool size;<br>transaction size;<br>bulk length;<br>bulk size;<br>batch size;<br>action;<br>start day time;<br>end day time;<br>duration (sec);<br>duration (ns) | no | The header used to generate the result file. At runtime, this is replaced by the character specified in parameter `file.result.delimiter`. |
 | file.result.name | priv/ora_bench_result.tsv | yes | The relative filename of the result file. |
-| sql.create | CREATE TABLE ora_bench_table<br>(key VARCHAR2(32) PRIMARY KEY,<br>data VARCHAR2(4000)) | no | The SQL statement to create the test table. |
+| sql.create | n/a | no | The SQL statement to create the test table. |
 | sql.drop | DROP TABLE ora_bench_table | no | The SQL statement to delete the test table. |
 | sql.insert | INSERT INTO ora_bench_table<br>(key, data)<br>VALUES<br>(:key, :data) | no | The SQL statement to insert the data from the bulk file into the test table. |
 | sql.select | SELECT data<br>FROM ora_bench_table<br>WHERE key = :key | no | The SQL statement to retrieve the previously inserted data. |
