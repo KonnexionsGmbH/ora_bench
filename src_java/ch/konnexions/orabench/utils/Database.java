@@ -79,23 +79,4 @@ public class Database {
 
         return connection;
     }
-
-    /**
-     * Executes the DROP TABLE statement in the configuration file, releases the
-     * allocated database resources and closes the database connection.
-     */
-    public final void disconnect() {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException ec) {
-
-                log.error("close connection");
-                ec.printStackTrace();
-            }
-
-            connection = null;
-        }
-    }
-
 }
