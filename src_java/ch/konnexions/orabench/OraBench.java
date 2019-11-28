@@ -59,7 +59,10 @@ public class OraBench {
                     .withHeader(config.getFileBulkHeader().split(config.getFileBulkDelimiter())).parse(bufferedReader);
 
             for (CSVRecord record : records) {
-                bulkData.add(new String[] { record.get("key"), record.get("data") });
+                String keyValue = record.get("key");
+                if (!(keyValue.equals("key"))) {
+                    bulkData.add(new String[] { keyValue, record.get("data") });
+                }
             }
 
             bufferedReader.close();
@@ -108,11 +111,6 @@ public class OraBench {
             config = new Config();
             new Setup(config).createBulkFile();
             log.info("End   Setup Benchmark Run");
-        } else if (args0.equals("setup_c")) {
-            log.info("Start Setup C Benchmark Run");
-            config = new Config();
-            config.createConfigurationFileOranifC();
-            log.info("End   Setup C Benchmark Run");
         } else if (args0.equals("setup_erlang")) {
             log.info("Start Setup Erlang Benchmark Run");
             config = new Config();
@@ -202,37 +200,29 @@ public class OraBench {
         result.endQueryInsert(trialNumber, sqlStatement);
     }
 
-    private static void runBenchmarkSelect(Connection connection, int trialNumber, ArrayList<String[]> bulkData, String sqlStatement, int connectionFetchSize) {
+    private static void runBenchmarkSelect(Connection connection, int trialNumber, String sqlStatement, int fileBulkSize, int connectionFetchSize) {
+        int count = 0;
         result.startQuery();
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement.replace(":key", "?"));
+            Statement statement = connection.createStatement();
 
             if (connectionFetchSize > 0) {
-                preparedStatement.setFetchSize(connectionFetchSize);
+                statement.setFetchSize(connectionFetchSize);
             }
 
-            ResultSet resultSet = null;
+            ResultSet resultSet = statement.executeQuery(sqlStatement);
 
-            for (String[] value : bulkData) {
-                preparedStatement.setString(1, value[0]);
+            while (resultSet.next()) {
+                count += 1;
+            }
 
-                resultSet = preparedStatement.executeQuery();
-
-                String foundValue = null;
-
-                while (resultSet.next()) {
-                    foundValue = resultSet.getString(1);
-                }
-
-                if (!(value[1].equals(foundValue))) {
-                    log.error("expected=" + value[1]);
-                    log.error("found   =" + foundValue);
-                }
+            if (count != fileBulkSize) {
+                log.error("Number rows: expected=" + Integer.toString(fileBulkSize) + " - found=" + Integer.toString(count));
             }
 
             resultSet.close();
-            preparedStatement.close();
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -249,13 +239,13 @@ public class OraBench {
 
         try {
             statement = connection.createStatement();
-            statement.executeUpdate(config.getSqlCreateTable());
-            log.info("last DDL statement=" + config.getSqlCreateTable());
+            statement.executeUpdate(config.getSqlCreate());
+            log.info("last DDL statement=" + config.getSqlCreate());
         } catch (SQLException es1) {
             try {
-                statement.executeUpdate(config.getSqlDropTable());
-                statement.executeUpdate(config.getSqlCreateTable());
-                log.info("last DDL statement after DROP=" + config.getSqlCreateTable());
+                statement.executeUpdate(config.getSqlDrop());
+                statement.executeUpdate(config.getSqlCreate());
+                log.info("last DDL statement after DROP=" + config.getSqlCreate());
             } catch (SQLException es2) {
                 es2.printStackTrace();
             }
@@ -263,11 +253,11 @@ public class OraBench {
 
         runBenchmarkInsert(connection, trialNumber, bulkData, config.getSqlInsert(), config.getBenchmarkBatchSize(), config.getBenchmarkTransactionSize());
 
-        runBenchmarkSelect(connection, trialNumber, bulkData, config.getSqlSelect(), config.getConnectionFetchSize());
+        runBenchmarkSelect(connection, trialNumber, config.getSqlSelect(), config.getFileBulkSize(), config.getConnectionFetchSize());
 
         try {
-            statement.executeUpdate(config.getSqlDropTable());
-            log.info("last DDL statement=" + config.getSqlDropTable());
+            statement.executeUpdate(config.getSqlDrop());
+            log.info("last DDL statement=" + config.getSqlDrop());
             statement.close();
         } catch (SQLException es) {
             es.printStackTrace();

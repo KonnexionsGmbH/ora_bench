@@ -1,12 +1,11 @@
 import configparser
 import csv
+import cx_Oracle
 import datetime
 import logging
 import os
 import platform
 from pathlib import Path
-
-import cx_Oracle
 
 # ------------------------------------------------------------------------------
 # Definition of the global variables.
@@ -367,6 +366,9 @@ def run_benchmark_insert(trial_number):
     global benchmark_batch_size
     global benchmark_transaction_size
     global bulk_data
+
+    global cursor
+
     global sql_insert
 
     create_result_measuring_point('query', 'start', trial_number, sql_insert)
@@ -405,19 +407,23 @@ def run_benchmark_select(trial_number):
     global benchmark_batch_size
     global bulk_data
 
+    global cursor
+
+    global file_bulk_size
+
     global sql_select
 
     create_result_measuring_point('query', 'start', trial_number, sql_select)
 
-    cursor.prepare(sql_select)
+    count = 0
 
-    for key_data_tuple in bulk_data:
-        key, data = key_data_tuple
-        cursor.execute(None, key=key)
-        [(result,)] = cursor.fetchall()
-        if result != data:
-            logging.error('expected=' + data)
-            logging.error('found   =' + result)
+    cursor.execute(sql_select)
+
+    for key, data in cursor:
+        count += 1
+
+    if count != file_bulk_size:
+        logging.error('Number rows: expected=' + str(file_bulk_size) + ' - found=' + str(count))
 
     create_result_measuring_point('query', 'end', trial_number, sql_select, 'select')
 
@@ -450,6 +456,8 @@ def run_benchmark_trial(trial_number):
 
     cursor.execute(sql_drop)
     logging.info('last DDL statement=' + sql_drop)
+
+    cursor.close()
 
     create_result_measuring_point('trial', 'end', trial_number, '')
 
