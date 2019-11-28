@@ -32,12 +32,14 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <ul>
  * <li>benchmark.batch.size
  * <li>benchmark.comment
+ * <li>benchmark.core.multiplier
  * <li>benchmark.database
  * <li>benchmark.driver
  * <li>benchmark.host.name
  * <li>benchmark.id
  * <li>benchmark.module
  * <li>benchmark.number.cores
+ * <li>benchmark.number.partitions
  * <li>benchmark.os
  * <li>benchmark.transaction.size
  * <li>benchmark.trials
@@ -45,8 +47,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>connection.fetch.size
  * <li>connection.host
  * <li>connection.password
- * <li>benchmark.core.multiplier
- * <li>connection.pool.size.min
  * <li>connection.port
  * <li>connection.service
  * <li>connection.string
@@ -82,7 +82,7 @@ public class Config {
     private String benchmarkId;
     private String benchmarkModule;
     private String benchmarkNumberCores;
-    private int benchmarkNumberCoresNum;
+    private int benchmarkNumberPartitions;
     private String benchmarkOs;
     private int benchmarkTransactionSize;
     private int benchmarkTrials;
@@ -118,9 +118,9 @@ public class Config {
 
     private String sqlCreate;
     private String sqlCreateDefault = "BEGIN EXECUTE IMMEDIATE 'CREATE TABLE ora_bench_table (key VARCHAR2(32) PRIMARY KEY, data VARCHAR2(4000), "
-            + "cores NUMBER DEFAULT C...C, partition_key NUMBER(3)) PARTITION BY RANGE (partition_key) (PARTITION p000 VALUES LESS THAN (1)P...P)'; "
+            + "no_partitions NUMBER DEFAULT C...C, partition_key NUMBER(5)) PARTITION BY RANGE (partition_key) (PARTITION p00000 VALUES LESS THAN (1)P...P)'; "
             + "EXECUTE IMMEDIATE 'CREATE TRIGGER ora_bench_table_before_insert BEFORE INSERT ON ora_bench_table FOR EACH ROW "
-            + "BEGIN :new.partition_key := MOD (ASCII (SUBSTR (:new.key, 1, 1)) * 256 + ASCII (SUBSTR (:new.key, 2, 1)), :new.cores); "
+            + "BEGIN :new.partition_key := MOD (ASCII (SUBSTR (:new.key, 1, 1)) * 256 + ASCII (SUBSTR (:new.key, 2, 1)), :new.no_partitions); "
             + "END ora_bench_table_before_insert;'; END;";
     private String sqlDrop;
     private String sqlInsert;
@@ -265,10 +265,10 @@ public class Config {
     }
 
     /**
-     * @return the number of cores
+     * @return the number of partitions
      */
-    public final int getBenchmarkNumberCoresNum() {
-        return benchmarkNumberCoresNum;
+    public final int getBenchmarkNumberPartitions() {
+        return benchmarkNumberPartitions;
     }
 
     /**
@@ -472,6 +472,7 @@ public class Config {
 
         list.add("benchmark.batch.size");
         list.add("benchmark.number.cores");
+        list.add("benchmark.number.partitions");
         list.add("benchmark.transaction.size");
         list.add("benchmark.trials");
         list.add("connection.fetch.size");
@@ -487,8 +488,8 @@ public class Config {
     private final CharSequence getPartionString() {
         StringBuffer stringBuffer = new StringBuffer();
 
-        for (int i = 2; i <= benchmarkNumberCoresNum; i++) {
-            stringBuffer.append(", PARTITION p" + String.format("%03d", i - 1) + " VALUES LESS THAN (" + Integer.toString(i) + ")");
+        for (int i = 2; i <= benchmarkNumberPartitions; i++) {
+            stringBuffer.append(", PARTITION p" + String.format("%05d", i - 1) + " VALUES LESS THAN (" + Integer.toString(i) + ")");
         }
 
         return stringBuffer.toString();
@@ -541,6 +542,11 @@ public class Config {
 
         }
 
+        if (propertiesConfiguration.getInt("benchmark.number.partitions") != 0) {
+            propertiesConfiguration.setProperty("benchmark.number.partitions", 0);
+            isChanged = true;
+        }
+
         if (isChanged) {
             try {
                 fileBasedConfigurationBuilder.save();
@@ -568,9 +574,7 @@ public class Config {
         benchmarkDriver = propertiesConfiguration.getString("benchmark.driver");
         benchmarkHostName = propertiesConfiguration.getString("benchmark.host.name");
         benchmarkId = propertiesConfiguration.getString("benchmark.id");
-        benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
         benchmarkNumberCores = propertiesConfiguration.getString("benchmark.number.cores");
-        benchmarkNumberCoresNum = Integer.parseInt(benchmarkNumberCores);
         benchmarkOs = propertiesConfiguration.getString("benchmark.os");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
         benchmarkTrials = propertiesConfiguration.getInt("benchmark.trials");
@@ -600,6 +604,10 @@ public class Config {
         sqlDrop = propertiesConfiguration.getString("sql.drop");
         sqlInsert = propertiesConfiguration.getString("sql.insert");
         sqlSelect = propertiesConfiguration.getString("sql.select");
+
+        benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
+        benchmarkNumberPartitions = (benchmarkCoreMultiplier == 0) ? Integer.parseInt(benchmarkNumberCores)
+                : Integer.parseInt(benchmarkNumberCores) * benchmarkCoreMultiplier;
     }
 
     private final void updatePropertiesFromOs() {
@@ -709,8 +717,7 @@ public class Config {
         }
 
         if (benchmarkNumberCores.equals("n/a")) {
-            benchmarkNumberCoresNum = Runtime.getRuntime().availableProcessors();
-            benchmarkNumberCores = Integer.toString(benchmarkNumberCoresNum);
+            benchmarkNumberCores = Integer.toString(Runtime.getRuntime().availableProcessors());
             propertiesConfiguration.setProperty("benchmark.number.cores", benchmarkNumberCores);
             isChanged = true;
         }
@@ -790,9 +797,7 @@ public class Config {
         }
 
         if (sqlCreate.equals("n/a")) {
-            sqlCreate = sqlCreateDefault
-                    .replace("C...C", Integer.toString(benchmarkNumberCoresNum * ((benchmarkCoreMultiplier == 0) ? 1 : benchmarkCoreMultiplier)))
-                    .replace("P...P", getPartionString());
+            sqlCreate = sqlCreateDefault.replace("C...C", Integer.toString(benchmarkNumberPartitions)).replace("P...P", getPartionString());
             propertiesConfiguration.setProperty("sql.create", sqlCreate);
             isChanged = true;
         }

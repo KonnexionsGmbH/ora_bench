@@ -72,11 +72,9 @@ public class OraBench {
      * @return the database connections
      */
     private static ArrayList<Connection> getConnections(Database database) {
-        int numberConnections = (CONFIG.getBenchmarkCoreMultiplier() == 0) ? 1 : CONFIG.getBenchmarkNumberCoresNum();
+        ArrayList<Connection> connections = new ArrayList<Connection>(CONFIG.getBenchmarkNumberPartitions());
 
-        ArrayList<Connection> connections = new ArrayList<Connection>(numberConnections);
-
-        for (int i = 0; i < numberConnections; i++) {
+        for (int i = 0; i < CONFIG.getBenchmarkNumberPartitions(); i++) {
             Connection connection = database.connect();
 
             try {
@@ -279,7 +277,7 @@ public class OraBench {
         int count = 0;
         result.startQuery();
 
-        for (int i = 0; i < CONFIG.getBenchmarkNumberCoresNum(); i++) {
+        for (int i = 0; i < CONFIG.getBenchmarkNumberPartitions(); i++) {
             count += runBenchmarkSelectThread(connections.get(i), trialNumber, i, result);
         }
 
