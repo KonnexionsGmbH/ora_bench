@@ -45,7 +45,7 @@ public class Result {
     private long lastQueryNano;
     private LocalDateTime lastTrial;
     private long lastTrialNano;
-    private Logger log = new Logger(Result.class);
+    private final Logger log = new Logger(Result.class);
 
     private CSVPrinter resultFile;
 
@@ -76,10 +76,9 @@ public class Result {
         try {
             resultFile.printRecord(config.getBenchmarkId(), config.getBenchmarkComment(), config.getBenchmarkHostName(), config.getBenchmarkNumberCores(),
                     config.getBenchmarkOs(), config.getBenchmarkUserName(), config.getBenchmarkDatabase(), config.getBenchmarkModule(),
-                    config.getBenchmarkDriver(), trialNo, sqlStatement, config.getConnectionPoolSizeMin(), config.getConnectionPoolSizeMax(),
-                    config.getConnectionFetchSize(), config.getBenchmarkTransactionSize(), config.getFileBulkLength(), config.getFileBulkSize(),
-                    config.getBenchmarkBatchSize(), action, startDateTime.format(formatter), endDateTime.format(formatter),
-                    decimalFormat.format(duration / 1000000000.0), Long.toString(duration));
+                    config.getBenchmarkDriver(), trialNo, sqlStatement, config.getBenchmarkCoreMultiplier(), config.getConnectionFetchSize(),
+                    config.getBenchmarkTransactionSize(), config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(), action,
+                    startDateTime.format(formatter), endDateTime.format(formatter), decimalFormat.format(duration / 1000000000.0), Long.toString(duration));
         } catch (IOException e) {
             log.error("file result delimiter=: " + config.getFileResultDelimiter());
             log.error("file result header   =: " + config.getFileResultHeader());

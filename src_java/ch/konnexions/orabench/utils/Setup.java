@@ -54,7 +54,7 @@ public class Setup {
 
     private Config config;
 
-    private Logger log = new Logger(Setup.class);
+    private final Logger log = new Logger(Setup.class);
 
     /**
      * Constructs a Setup object using the given {@link Config} object.

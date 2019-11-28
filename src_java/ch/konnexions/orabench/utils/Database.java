@@ -39,7 +39,7 @@ public class Database {
     private String connectionService;
     private String connectionUser;
 
-    private static Logger log = new Logger(Database.class);
+    private final Logger log = new Logger(Database.class);
 
     /**
      * Constructs a Database object using the given {@link Config} object.

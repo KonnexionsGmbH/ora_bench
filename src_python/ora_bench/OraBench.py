@@ -445,17 +445,17 @@ def run_benchmark_trial(trial_number):
 
     try:
         cursor.execute(sql_create)
-        logging.info('last DDL statement=' + sql_create)
+        logging.debug('last DDL statement=' + sql_create)
     except cx_Oracle.DatabaseError:
         cursor.execute(sql_drop)
         cursor.execute(sql_create)
-        logging.info('last DDL statement after DROP=' + sql_create)
+        logging.debug('last DDL statement after DROP=' + sql_create)
 
     run_benchmark_insert(trial_number)
     run_benchmark_select(trial_number)
 
     cursor.execute(sql_drop)
-    logging.info('last DDL statement=' + sql_drop)
+    logging.debug('last DDL statement=' + sql_drop)
 
     cursor.close()
 
