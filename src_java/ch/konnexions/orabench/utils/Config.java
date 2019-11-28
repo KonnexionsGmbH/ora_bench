@@ -575,6 +575,7 @@ public class Config {
         benchmarkHostName = propertiesConfiguration.getString("benchmark.host.name");
         benchmarkId = propertiesConfiguration.getString("benchmark.id");
         benchmarkNumberCores = propertiesConfiguration.getString("benchmark.number.cores");
+        benchmarkNumberPartitions = propertiesConfiguration.getInt("benchmark.number.partitions");
         benchmarkOs = propertiesConfiguration.getString("benchmark.os");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
         benchmarkTrials = propertiesConfiguration.getInt("benchmark.trials");
@@ -606,8 +607,6 @@ public class Config {
         sqlSelect = propertiesConfiguration.getString("sql.select");
 
         benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
-        benchmarkNumberPartitions = (benchmarkCoreMultiplier == 0) ? Integer.parseInt(benchmarkNumberCores)
-                : Integer.parseInt(benchmarkNumberCores) * benchmarkCoreMultiplier;
     }
 
     private final void updatePropertiesFromOs() {
@@ -719,6 +718,11 @@ public class Config {
         if (benchmarkNumberCores.equals("n/a")) {
             benchmarkNumberCores = Integer.toString(Runtime.getRuntime().availableProcessors());
             propertiesConfiguration.setProperty("benchmark.number.cores", benchmarkNumberCores);
+
+            benchmarkNumberPartitions = (benchmarkCoreMultiplier == 0) ? Integer.parseInt(benchmarkNumberCores)
+                    : Integer.parseInt(benchmarkNumberCores) * benchmarkCoreMultiplier;
+            propertiesConfiguration.setProperty("benchmark.number.partitions", benchmarkNumberPartitions);
+
             isChanged = true;
         }
 

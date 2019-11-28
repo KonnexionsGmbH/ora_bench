@@ -13,12 +13,14 @@ from pathlib import Path
 
 benchmark_batch_size = None
 benchmark_comment = None
+benchmark_core_multiplier = None
 benchmark_database = None
 BENCHMARK_DRIVER = 'cx_Oracle (Version v' + cx_Oracle.version + ')'
 benchmark_host_name = None
 benchmark_id = None
 BENCHMARK_MODULE = 'OraBench (Python ' + platform.python_version() + ')'
 benchmark_number_cores = None
+benchmark_number_partitions = None
 benchmark_os = None
 benchmark_transaction_size = None
 benchmark_trials = None
@@ -29,8 +31,6 @@ connection = None
 connection_fetch_size = None
 connection_host = None
 connection_password = None
-connection_pool_size_max = None
-connection_pool_size_min = None
 connection_port = None
 connection_service = None
 connection_user = None
@@ -74,6 +74,7 @@ def create_result(action, trial_number, sql_statement, start_date_time, sql_oper
     global benchmark_batch_size
     global benchmark_comment
     global benchmark_database
+    global benchmark_core_multiplier
     global BENCHMARK_DRIVER
     global benchmark_host_name
     global benchmark_id
@@ -86,8 +87,6 @@ def create_result(action, trial_number, sql_statement, start_date_time, sql_oper
 
     global connection_host
     global connection_password
-    global connection_pool_size_max
-    global connection_pool_size_min
     global connection_port
     global connection_service
     global connection_user
@@ -143,8 +142,7 @@ def create_result(action, trial_number, sql_statement, start_date_time, sql_oper
                       BENCHMARK_DRIVER + file_result_delimiter +
                       str(trial_number) + file_result_delimiter +
                       sql_statement + file_result_delimiter +
-                      str(connection_pool_size_min) + file_result_delimiter +
-                      str(connection_pool_size_max) + file_result_delimiter +
+                      str(benchmark_core_multiplier) + file_result_delimiter +
                       str(connection_fetch_size) + file_result_delimiter +
                       str(benchmark_transaction_size) + file_result_delimiter +
                       str(file_bulk_length) + file_result_delimiter +
@@ -242,6 +240,8 @@ def get_bulk_data():
 def get_config():
     global benchmark_batch_size
     global benchmark_comment
+    global benchmark_batch_size
+    global benchmark_core_multiplier
     global benchmark_database
     global benchmark_host_name
     global benchmark_id
@@ -255,8 +255,6 @@ def get_config():
     global connection_fetch_size
     global connection_host
     global connection_password
-    global connection_pool_size_max
-    global connection_pool_size_min
     global connection_port
     global connection_service
     global connection_user
@@ -280,6 +278,7 @@ def get_config():
 
     benchmark_batch_size = int(config['DEFAULT']['benchmark.batch.size'])
     benchmark_comment = config['DEFAULT']['benchmark.comment']
+    benchmark_core_multiplier = config['DEFAULT']['benchmark.core.multiplier']
     benchmark_database = config['DEFAULT']['benchmark.database']
     benchmark_host_name = config['DEFAULT']['benchmark.host.name']
     benchmark_id = config['DEFAULT']['benchmark.id']
@@ -292,8 +291,6 @@ def get_config():
     connection_fetch_size = int(config['DEFAULT']['connection.fetch.size'])
     connection_host = config['DEFAULT']['connection.host']
     connection_password = config['DEFAULT']['connection.password']
-    connection_pool_size_max = int(config['DEFAULT']['connection.pool.size.max'])
-    connection_pool_size_min = int(config['DEFAULT']['connection.pool.size.min'])
     connection_port = int(config['DEFAULT']['connection.port'])
     connection_service = config['DEFAULT']['connection.service']
     connection_user = config['DEFAULT']['connection.user']
@@ -419,7 +416,7 @@ def run_benchmark_select(trial_number):
 
     cursor.execute(sql_select)
 
-    for key, data in cursor:
+    for _unused in cursor:
         count += 1
 
     if count != file_bulk_size:
