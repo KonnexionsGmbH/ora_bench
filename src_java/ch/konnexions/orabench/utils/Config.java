@@ -72,7 +72,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  */
 public class Config {
 
-    private final Logger log = new Logger(Config.class);
     private int benchmarkBatchSize;
     private String benchmarkComment;
     private int benchmarkCoreMultiplier;
@@ -87,8 +86,8 @@ public class Config {
     private int benchmarkTransactionSize;
     private int benchmarkTrials;
     private String benchmarkUserName;
-
     private final File configFile = new File(System.getenv("ORA_BENCH_FILE_CONFIGURATION_NAME"));
+
     private int connectionFetchSize;
     private String connectionHost;
     private String connectionPassword;
@@ -96,10 +95,10 @@ public class Config {
     private String connectionService;
     private String connectionString;
     private String connectionUser;
-
     FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
 
     private String fileBulkDelimiter;
+
     private String fileBulkHeader;
     private int fileBulkLength;
     private String fileBulkName;
@@ -111,8 +110,9 @@ public class Config {
     private String fileResultHeader;
     private String fileResultName;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
-
     private ArrayList<String> keysSorted = new ArrayList<String>();
+
+    private final Logger log = new Logger(Config.class);
 
     private PropertiesConfiguration propertiesConfiguration;
 
@@ -222,6 +222,13 @@ public class Config {
     }
 
     /**
+     * @return the core multiplier for parallel processing
+     */
+    public final int getBenchmarkCoreMultiplier() {
+        return benchmarkCoreMultiplier;
+    }
+
+    /**
      * @return the database description
      */
     public final String getBenchmarkDatabase() {
@@ -318,13 +325,6 @@ public class Config {
      */
     public final String getConnectionPassword() {
         return connectionPassword;
-    }
-
-    /**
-     * @return the core multiplier for parallel processing
-     */
-    public final int getBenchmarkCoreMultiplier() {
-        return benchmarkCoreMultiplier;
     }
 
     /**
@@ -542,6 +542,11 @@ public class Config {
 
         }
 
+        if (propertiesConfiguration.getInt("benchmark.core.multiplier") != 0) {
+            propertiesConfiguration.setProperty("benchmark.core.multiplier", 0);
+            isChanged = true;
+        }
+
         if (propertiesConfiguration.getInt("benchmark.number.partitions") != 0) {
             propertiesConfiguration.setProperty("benchmark.number.partitions", 0);
             isChanged = true;
@@ -624,6 +629,12 @@ public class Config {
         if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_COMMENT")) {
             benchmarkComment = environmentVariables.get("ORA_BENCH_BENCHMARK_COMMENT");
             propertiesConfiguration.setProperty("benchmark.comment", benchmarkComment);
+            isChanged = true;
+        }
+
+        if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_CORE_MULTIPLIER")) {
+            benchmarkCoreMultiplier = Integer.parseInt(environmentVariables.get("ORA_BENCH_BENCHMARK_CORE_MULTIPLIER"));
+            propertiesConfiguration.setProperty("benchmark.core.multiplier", benchmarkCoreMultiplier);
             isChanged = true;
         }
 
