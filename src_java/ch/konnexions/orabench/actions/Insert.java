@@ -35,10 +35,10 @@ public class Insert implements Runnable {
     }
 
     /**
-     * Run.
+     * Runs the thread implementer.
      */
     @Override
-    public void run() {
+    public final void run() {
         int count = 0;
 
         try {

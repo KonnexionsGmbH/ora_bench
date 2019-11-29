@@ -27,7 +27,7 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.RandomStringUtils;
 
 /**
- * The class with setup support for the Oracle JDBC benchmark tests.
+ * This class provides setup support for the Oracle JDBC benchmark runs.
  */
 public class Setup {
 

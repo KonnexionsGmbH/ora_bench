@@ -1,3 +1,7 @@
+/*
+ * 
+ */
+
 package ch.konnexions.orabench;
 
 import java.io.BufferedReader;
@@ -34,12 +38,12 @@ public class OraBench {
      * <li>finalise - resets the configuration file to its initial state
      * <li>runBenchmark - executes all database and driver-related activities of the
      * benchmark run
-     * <li>setup - prepares the database and creates the bulk file
+     * <li>setup - creates the bulk file
      * <li>setup_erlang - creates a configuration parameter file suited for Erlang
      * <li>setup_python - creates a configuration parameter file suited for Python
      * </ul>
      * 
-     * @param args finalise / runBenchmark / setup
+     * @param args finalise / runBenchmark / setup / setup_erlang / setup_python
      */
     public static void main(String[] args) {
 
@@ -93,7 +97,8 @@ public class OraBench {
      * Creates the database objects of type Connection, PreparedStatement, ResultSet
      * and Statement.
      *
-     * @return the array list containing the database objects
+     * @return the array list containing the database objects of the classes
+     *         Connection, PreparedStatement and Statement
      */
     private final ArrayList<Object> createDatabaseObjects() {
         ArrayList<Connection> connections = new ArrayList<Connection>(config.getBenchmarkNumberPartitions());
@@ -214,7 +219,7 @@ public class OraBench {
     }
 
     /**
-     * Run benchmark.
+     * Run a benchmark.
      */
     public final void runBenchmark() {
         int benchmarkTrials = config.getBenchmarkTrials();
@@ -250,7 +255,7 @@ public class OraBench {
     }
 
     /**
-     * Run INSERT: multiple connections and threads.
+     * Run INSERT: multiple connections and eventually multiple threads.
      *
      * @param connections        the database connections
      * @param preparedStatements the prepared statements
@@ -290,7 +295,7 @@ public class OraBench {
     }
 
     /**
-     * Run SELECT: multiple connections and threads.
+     * Run SELECT: multiple connections and eventually multiple threads.
      *
      * @param connections        the database connections
      * @param statements         the statements
@@ -330,7 +335,7 @@ public class OraBench {
     }
 
     /**
-     * Run trial.
+     * Run a trial.
      *
      * @param connections        the database connections
      * @param statements         the statements
