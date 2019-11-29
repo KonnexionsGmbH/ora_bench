@@ -30,7 +30,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 /**
- * The class to record the results of the Oracle JDBC benchmark.
+ * This class is used to record the results of the Oracle JDBC benchmark.
  */
 public class Result {
     Config config;
@@ -88,7 +88,7 @@ public class Result {
     }
 
     /**
-     * End the benchmark.
+     * End of the whole benchmark run.
      */
     public final void endBenchmark() {
         LocalDateTime endDateTime = LocalDateTime.now();
@@ -107,7 +107,7 @@ public class Result {
     }
 
     /**
-     * End the current insert statement.
+     * End of the current insert statement.
      *
      * @param trialNo      the current trial number
      * @param sqlStatement the SQL statement to be applied
@@ -120,7 +120,7 @@ public class Result {
     }
 
     /**
-     * End the current select.
+     * End of the current select.
      *
      * @param trialNo      the current trial number
      * @param sqlStatement the SQL statement to be applied
@@ -133,7 +133,7 @@ public class Result {
     }
 
     /**
-     * End the current trial.
+     * End of the current trial.
      *
      * @param trialNo the current trial number
      */

@@ -152,6 +152,7 @@ public class Config {
      * Creates the cx_Oracle &amp; Python version of the configuration file.
      */
     public final void createConfigurationFileCxOraclePython() {
+
         try {
 
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameCxOraclePython(), false));
@@ -177,6 +178,7 @@ public class Config {
      * Creates the oranif &amp; Erlang version of the configuration file.
      */
     public final void createConfigurationFileOranifErlang() {
+
         try {
             List<String> list = getNumericProperties();
 
@@ -440,6 +442,7 @@ public class Config {
     }
 
     private final ArrayList<String> getKeysSorted(PropertiesConfiguration propertiesConfiguration2) {
+
         for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
             keysSorted.add(iterator.next());
         }
@@ -450,6 +453,7 @@ public class Config {
     }
 
     private final List<String> getNotAvailables() {
+
         List<String> list = new ArrayList<String>();
 
         list.add("benchmark.comment");
@@ -468,6 +472,7 @@ public class Config {
     }
 
     private final List<String> getNumericProperties() {
+
         List<String> list = new ArrayList<String>();
 
         list.add("benchmark.batch.size");
@@ -486,6 +491,7 @@ public class Config {
     }
 
     private final CharSequence getPartionString() {
+
         StringBuffer stringBuffer = new StringBuffer();
 
         for (int i = 2; i <= benchmarkNumberPartitions; i++) {
@@ -524,7 +530,8 @@ public class Config {
     }
 
     /**
-     * Resets the runtime configuration parameters to "n/a".
+     * Resets selected runtime configuration parameters to the original default
+     * value.
      */
     public final void resetNotAvailables() {
 
@@ -570,6 +577,7 @@ public class Config {
     }
 
     private final void storeConfiguration() {
+
         propertiesConfiguration.setThrowExceptionOnMissing(true);
 
         benchmarkBatchSize = propertiesConfiguration.getInt("benchmark.batch.size");

@@ -23,11 +23,8 @@ import java.sql.SQLException;
 
 /**
  * The database support class for the Oracle JDBC benchmark tests. This creates
- * a database connection or terminates an existing database connection. The
- * database parameters must be provided via an {@link Config} object. When the
- * database connection is established, the <code>CREATE TABLE</code> statement
- * is executed, and when the database connection is terminated, the
- * <code>DROP TABLE</code> statement is executed in the same way.
+ * a database connection. The database parameters must be provided via an
+ * {@link Config} object.
  */
 public class Database {
 
@@ -56,8 +53,7 @@ public class Database {
     }
 
     /**
-     * Creates a database connection and executes the <code>CREATE TABLE</code>
-     * statement in the configuration file.
+     * Creates a database connection.
      *
      * @return the database connection
      */
