@@ -165,7 +165,7 @@ In this script, OraBench.java is used to reset the following configuration param
 
 #### 2.2.2 Travis CI
 
-In Travis CI, the following two environment variables are defined per build for each of the databases listed in chapter [Introduction](#introduction):
+In Travis CI, the following two environment variables are defined per build for each of the databases listed in chapter [Introduction](#introduction) except for Oracle Database 11gR2 Express Edition for Linux x64 (db_11_2_xe):
 
 - `ORA_BENCH_BENCHMARK_DATABASE`
 - `ORA_BENCH_CONNECTION_SERVICE`
