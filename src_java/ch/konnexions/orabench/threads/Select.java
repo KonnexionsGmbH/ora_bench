@@ -2,7 +2,7 @@
  * 
  */
 
-package ch.konnexions.orabench.actions;
+package ch.konnexions.orabench.threads;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
-import ch.konnexions.orabench.actions.Insert;
-import ch.konnexions.orabench.actions.Select;
+import ch.konnexions.orabench.threads.Insert;
+import ch.konnexions.orabench.threads.Select;
 import ch.konnexions.orabench.utils.Config;
 import ch.konnexions.orabench.utils.Database;
 import ch.konnexions.orabench.utils.Logger;
