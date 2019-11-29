@@ -172,12 +172,14 @@ In Travis CI, the following two environment variables are defined per build for 
 
 The following environment variables are used to perform additional tests for the `db_19_3_xe` database: 
 
-- `                                                                       ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0`
-- `                                 ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1 ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0`
-- `ORA_BENCH_BENCHMARK_BATCH_SIZE=0                                                                             `
-- `ORA_BENCH_BENCHMARK_BATCH_SIZE=0                                       ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0`
-- `ORA_BENCH_BENCHMARK_BATCH_SIZE=0 ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1                                       `
-- `ORA_BENCH_BENCHMARK_BATCH_SIZE=0 ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1 ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0`
+|                                    |                                         |                                          |
+| :---                               | :---                                    | :---                                     |
+| `                                ` | `                                     ` | `ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0` |
+| `                                ` | `ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1` | `ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0` |
+| `ORA_BENCH_BENCHMARK_BATCH_SIZE=0` | `                                     ` |                                          |
+| `ORA_BENCH_BENCHMARK_BATCH_SIZE=0` | `                                     ` | `ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0` |
+| `ORA_BENCH_BENCHMARK_BATCH_SIZE=0` | `ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1` |                                          |
+| `ORA_BENCH_BENCHMARK_BATCH_SIZE=0` | `ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1` | `ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0` |
 
 In each build the script `run_bench_database.sh` will be executed.
 The results are uploaded to the repositopry at the end.
