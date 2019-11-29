@@ -91,6 +91,8 @@ public class OraBench {
 
     private final Config config = new Config();
 
+    private ExecutorService executorService = null;
+
     private final Logger log = new Logger(OraBench.class);
 
     /**
@@ -267,8 +269,6 @@ public class OraBench {
             ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
         result.startQuery();
 
-        ExecutorService executorService = null;
-
         if (config.getBenchmarkCoreMultiplier() != 0) {
             executorService = Executors.newFixedThreadPool(config.getBenchmarkNumberPartitions());
         }
@@ -306,8 +306,6 @@ public class OraBench {
     private final void runSelect(ArrayList<Connection> connections, ArrayList<Statement> statements, int trialNumber,
             ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
         result.startQuery();
-
-        ExecutorService executorService = null;
 
         if (config.getBenchmarkCoreMultiplier() != 0) {
             executorService = Executors.newFixedThreadPool(config.getBenchmarkNumberPartitions());
