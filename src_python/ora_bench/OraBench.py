@@ -276,7 +276,7 @@ def main():
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
     logging.info('Start OraBench.py')
 
-    locale.setlocale(locale.LC_ALL, 'de_DE')
+    locale.setlocale(locale.LC_ALL, 'de_DE.utf8')
 
     run_benchmark()
 
