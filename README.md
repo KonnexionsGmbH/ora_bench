@@ -421,10 +421,6 @@ The data column in the bulk file is randomly generated with a unique key column 
 |            | 2019.11.05 | c_bik    | odbc_erlang: new |
 |            | 2019.11.05 | c_bik    | odpi-c_c: new |
 |            | 2019.11.05 | c_bik    | oranif_erlang: new |
-|  prio. 1   | 2019.11.21 | c_bik    | setup: define new c ini file format |
-|  prio. 1   | 2019.11.21 | c_bik    | upload to GitHub from Travis CI: authentication method |
-|  prio. 2   | 2019.11.19 | wwe      | cx_oracle_python: connection pooling |
-|  prio. 3   | 2019.11.19 | wwe      | cx_oracle_python: multithreading |
 |  prio. 4   | 2019.11.21 | wwe      | ecto_elixir: new |
 | 2019.11.05 | 2019.11.05 | wwe      | jdbc_java: dynamic batchsize | 
 | 2019.11.06 | 2019.11.05 | wwe      | all: separating key column and data column |
@@ -447,7 +443,11 @@ The data column in the bulk file is randomly generated with a unique key column 
 | 2019.11.21 | 2019.11.21 | wwe      | all: remove statistical results file |
 | 2019.11.21 | 2019.11.21 | wwe      | all: result file - date format: yyyy-mm-dd hh24:mi:ss.ffffffff |
 | 2019.11.23 | 2019.11.21 | wwe      | documentation: pseudocode |
+| 2019.11.30 | 2019.11.19 | wwe      | cx_oracle_python: connection pooling |
+| 2019.11.30 | 2019.11.19 | wwe      | cx_oracle_python: multithreading |
 | rejected   | 2019.11.05 | wwe      | all: partitioned table ??? |
+| rejected   | 2019.11.21 | c_bik    | setup: define new c ini file format |
+| rejected   | 2019.11.21 | c_bik    | upload to GitHub from Travis CI: authentication method |
 | rejected   | 2019.11.21 | wwe      | setup: c script-> new c ini file |
 
 ## 6. <a name="contributing"></a> Contributing
