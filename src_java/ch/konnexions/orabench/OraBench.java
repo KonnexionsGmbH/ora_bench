@@ -350,12 +350,12 @@ public class OraBench {
 
         try {
             statements.get(0).executeUpdate(config.getSqlCreate());
-            log.info("last DDL statement=" + config.getSqlCreate());
+            log.debug("last DDL statement=" + config.getSqlCreate());
         } catch (SQLException es1) {
             try {
                 statements.get(0).executeUpdate(config.getSqlDrop());
                 statements.get(0).executeUpdate(config.getSqlCreate());
-                log.info("last DDL statement after DROP=" + config.getSqlCreate());
+                log.debug("last DDL statement after DROP=" + config.getSqlCreate());
             } catch (SQLException es2) {
                 es2.printStackTrace();
             }
@@ -367,7 +367,7 @@ public class OraBench {
 
         try {
             statements.get(0).executeUpdate(config.getSqlDrop());
-            log.info("last DDL statement=" + config.getSqlDrop());
+            log.debug("last DDL statement=" + config.getSqlDrop());
         } catch (SQLException es) {
             es.printStackTrace();
         }

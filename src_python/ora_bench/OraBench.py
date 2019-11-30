@@ -170,7 +170,7 @@ def get_bulk_data_partitions(config):
 
     del bulk_data[0]
 
-    bulk_data_partitions = [[] for _ in range(config['benchmark.number.partitions'])]
+    bulk_data_partitions = [[] for _ in range(0, config['benchmark.number.partitions'])]
 
     for key_data_tuple in bulk_data:
         key = key_data_tuple[0]
@@ -182,7 +182,7 @@ def get_bulk_data_partitions(config):
 
     logging.info('Start Distribution of the data in the partitions')
 
-    for partition_key in range(0, config['benchmark.number.partitions'] - 1):
+    for partition_key in range(0, config['benchmark.number.partitions']):
         logging.info('Partition p' + '{:0>5d}'.format(partition_key) + ' contains ' + '{0:n}'.format(len(bulk_data_partitions[partition_key])) + ' rows')
 
     logging.info('End   Distribution of the data in the partitions')
@@ -302,7 +302,7 @@ def run_benchmark():
     connections = connections_cursors[0]
     cursors = connections_cursors[1]
 
-    for trial_number in range(1, config['benchmark.trials']):
+    for trial_number in range(1, config['benchmark.trials']+1):
         run_trial(config, connections, cursors, bulk_data_partitions, measurement_data, result_file, trial_number)
 
     for cursor in cursors:
@@ -323,7 +323,7 @@ def run_insert(config, connections, cursors, bulk_data_partitions, result_file, 
 
     threads = list()
 
-    for partition_key in range(0, config['benchmark.number.partitions'] - 1):
+    for partition_key in range(0, config['benchmark.number.partitions']):
         if config['benchmark.core.multiplier'] == 0:
             insert(config, connections[partition_key], cursors[partition_key], bulk_data_partitions[partition_key])
         else:
@@ -349,7 +349,7 @@ def run_select(config, cursors, bulk_data_partitions, result_file, measurement_d
 
     threads = list()
 
-    for partition_key in range(0, config['benchmark.number.partitions'] - 1):
+    for partition_key in range(0, config['benchmark.number.partitions']):
         if config['benchmark.core.multiplier'] == 0:
             select(cursors[partition_key], bulk_data_partitions[partition_key], partition_key, config['sql.select'])
         else:
@@ -377,18 +377,18 @@ def run_trial(config, connections, cursors, bulk_data_partitions, measurement_da
 
     try:
         cursors[0].execute(config['sql.create'])
-        logging.info('last DDL statement=' + config['sql.create'])
+        logging.debug('last DDL statement=' + config['sql.create'])
     except cx_Oracle.DatabaseError:
         cursors[0].execute(config['sql.drop'])
         cursors[0].execute(config['sql.create'])
-        logging.info('last DDL statement after DROP=' + config['sql.create'])
+        logging.debug('last DDL statement after DROP=' + config['sql.create'])
 
     run_insert(config, connections, cursors, bulk_data_partitions, result_file, measurement_data, trial_number)
 
     run_select(config, cursors, bulk_data_partitions, result_file, measurement_data, trial_number)
 
     cursors[0].execute(config['sql.drop'])
-    logging.info('last DDL statement=' + config['sql.drop'])
+    logging.debug('last DDL statement=' + config['sql.drop'])
 
     create_result_measuring_point_end(config, result_file, measurement_data, 'trial', trial_number)
 
