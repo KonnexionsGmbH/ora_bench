@@ -29,7 +29,6 @@ The following Oracle database versions are provided in a benchmark run via Docke
 
 | Shortcut   | Oracle Database Version |
 | :---       | :--- |
-| db_11_2_xe | Oracle Database 11gR2 Express Edition for Linux x64 |
 | db_12_2_ee | Oracle Database 12c Release 2 (12.2.0.1.0) - Enterprise Edition - Linux x86-64 |
 | db_18_3_ee | Oracle Database 18c 18.3 - Linux x86-64 |
 | db_19_3_ee | Oracle Database 19c 19.3 - Linux x86-64 |
@@ -90,8 +89,6 @@ This script executes the following variations of the script `run_bench.sh` as a 
 
 | database   | service | batch.size    | core.multiplier | transaction.size | 
 | :---       | :---    | :---          | :---            | :---             | 
-| db_11_2_xe | xe      | default value | 1               | default value    |
-| db_11_2_xe | xe      | default value | default value   | default value    |
 | db_12_2_xe | ee      | default value | 1               | default value    |
 | db_12_2_xe | ee      | default value | default value   | default value    |
 | db_18_3_xe | ee      | default value | 1               | default value    |

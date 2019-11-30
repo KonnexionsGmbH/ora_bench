@@ -377,18 +377,18 @@ def run_trial(config, connections, cursors, bulk_data_partitions, measurement_da
 
     try:
         cursors[0].execute(config['sql.create'])
-        logging.debug('last DDL statement=' + config['sql.create'])
+        logging.info('last DDL statement=' + config['sql.create'])
     except cx_Oracle.DatabaseError:
         cursors[0].execute(config['sql.drop'])
         cursors[0].execute(config['sql.create'])
-        logging.debug('last DDL statement after DROP=' + config['sql.create'])
+        logging.info('last DDL statement after DROP=' + config['sql.create'])
 
     run_insert(config, connections, cursors, bulk_data_partitions, result_file, measurement_data, trial_number)
 
     run_select(config, cursors, bulk_data_partitions, result_file, measurement_data, trial_number)
 
     cursors[0].execute(config['sql.drop'])
-    logging.debug('last DDL statement=' + config['sql.drop'])
+    logging.info('last DDL statement=' + config['sql.drop'])
 
     create_result_measuring_point_end(config, result_file, measurement_data, 'trial', trial_number)
 
