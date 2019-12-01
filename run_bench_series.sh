@@ -18,7 +18,6 @@ export ORA_BENCH_CONNECTION_PORT=1521
 
 export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 
-export ORA_BENCH_RUN_DB_11_2_XE=true
 export ORA_BENCH_RUN_DB_12_2_EE=true
 export ORA_BENCH_RUN_DB_18_3_EE=true
 export ORA_BENCH_RUN_DB_19_3_EE=true
@@ -45,7 +44,6 @@ echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
 echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
-echo "RUN_DB_11_2_XE          : $ORA_BENCH_RUN_DB_11_2_XE"
 echo "RUN_DB_12_2_EE          : $ORA_BENCH_RUN_DB_12_2_EE"
 echo "RUN_DB_18_3_EE          : $ORA_BENCH_RUN_DB_18_3_EE"
 echo "RUN_DB_19_3_EE          : $ORA_BENCH_RUN_DB_19_3_EE"
@@ -61,15 +59,10 @@ echo "==========================================================================
 EXITCODE="0"
 
 export ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
+export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
 
 { /bin/bash scripts/run_bench_setup.sh; }
-
-if [ "$ORA_BENCH_RUN_DB_11_2_XE" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_11_2_xe
-    export ORA_BENCH_CONNECTION_SERVICE=xe
-    { /bin/bash scripts/run_bench_database_series.sh; }
-fi
 
 if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
@@ -90,6 +83,7 @@ if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
 fi
 
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
 
 { /bin/bash scripts/run_bench_finalise.sh; }
@@ -102,5 +96,7 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
+
+start scripts/end_of_series.mp3
 
 exit $EXITCODE
