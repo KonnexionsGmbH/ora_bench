@@ -35,7 +35,7 @@ import org.apache.commons.csv.CSVPrinter;
 public class Result {
     Config config;
 
-    private final DecimalFormat decimalFormat = new DecimalFormat("##");
+    private final DecimalFormat decimalFormat = new DecimalFormat("#########");
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
 
@@ -78,7 +78,8 @@ public class Result {
                     config.getBenchmarkOs(), config.getBenchmarkUserName(), config.getBenchmarkDatabase(), config.getBenchmarkModule(),
                     config.getBenchmarkDriver(), trialNo, sqlStatement, config.getBenchmarkCoreMultiplier(), config.getConnectionFetchSize(),
                     config.getBenchmarkTransactionSize(), config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(), action,
-                    startDateTime.format(formatter), endDateTime.format(formatter), decimalFormat.format(duration / 1000000000.0), Long.toString(duration));
+                    startDateTime.format(formatter), endDateTime.format(formatter), decimalFormat.format(Math.round(duration / 1000000000.0)),
+                    Long.toString(duration));
         } catch (IOException e) {
             log.error("file result delimiter=: " + config.getFileResultDelimiter());
             log.error("file result header   =: " + config.getFileResultHeader());

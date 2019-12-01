@@ -58,7 +58,7 @@ def create_result(config, result_file, measurement_data, action, trial_number, s
 
     end_date_time = datetime.datetime.now()
 
-    duration_ns = (end_date_time - start_date_time).total_seconds() * 100000000
+    duration_ns = (end_date_time - start_date_time).total_seconds() * 1000000000
 
     if sql_operation == 'insert':
         measurement_data[IX_DURATION_INSERT_SUM] += duration_ns
