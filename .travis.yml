@@ -43,6 +43,7 @@ script:
 - git pull
 - ./scripts/run_bench_setup.sh
 - ./scripts/run_bench_database.sh
+- ./scripts/run_bench_finalise.sh
 
 after_success:
 - "./scripts/run_bench_travis_push.sh"
