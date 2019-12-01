@@ -302,8 +302,8 @@ def run_benchmark():
     connections = connections_cursors[0]
     cursors = connections_cursors[1]
 
-    for trial_number in range(1, config['benchmark.trials']+1):
-        run_trial(config, connections, cursors, bulk_data_partitions, measurement_data, result_file, trial_number)
+    for trial_number in range(0, config['benchmark.trials']):
+        run_trial(config, connections, cursors, bulk_data_partitions, measurement_data, result_file, trial_number + 1)
 
     for cursor in cursors:
         cursor.close()
