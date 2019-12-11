@@ -31,7 +31,7 @@ upload_files() {
   git remote rm origin
   # Add new "origin" with access token in the git URL for authentication
   git remote add origin https://KonnexionsGmbH:${ORA_BENCH_TOKEN}@github.com/KonnexionsGmbH/ora_bench.git > /dev/null 2>&1
-  git push origin master
+  git push origin travis_git_push_fix
 }
 
 setup_git
