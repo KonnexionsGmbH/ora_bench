@@ -46,4 +46,5 @@ script:
 - ./scripts/run_bench_finalise.sh
 
 after_success:
+- echo "ORA_BENCH_TOKEN = $ORA_BENCH_TOKEN"
 - "./scripts/run_bench_travis_push.sh"
