@@ -176,7 +176,6 @@ def get_bulk_data_partitions(config):
         key = key_data_tuple[0]
         partition_key = (ord(key[0]) * 256 + ord(key[1])) % config['benchmark.number.partitions']
         bulk_data_partition = bulk_data_partitions[partition_key]
-        # noinspection PyTypeChecker
         bulk_data_partition.append(key_data_tuple)
         bulk_data_partitions[partition_key] = bulk_data_partition
 

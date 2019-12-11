@@ -72,6 +72,14 @@ public class OraBench {
             log.info("Start Setup OraBench Run");
             new Setup(config).createBulkFile();
             log.info("End   Setup OraBench Run");
+        } else if (args0.equals("setup_c")) {
+            log.info("Start Setup Elixir OraBench Run");
+            new Config();
+            log.info("End   Setup Elixir OraBench Run");
+        } else if (args0.equals("setup_elixir")) {
+            log.info("Start Setup Elixir OraBench Run");
+            new Config();
+            log.info("End   Setup Elixir OraBench Run");
         } else if (args0.equals("setup_erlang")) {
             log.info("Start Setup Erlang OraBench Run");
             config.createConfigurationFileOranifErlang();
