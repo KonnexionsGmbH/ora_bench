@@ -40,6 +40,15 @@ priv/oracle/sqlcl/bin/sql sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIF
 
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
+    { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
+fi
+
+if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
     java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
     { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
@@ -47,12 +56,29 @@ fi
 
 if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+    { /bin/bash scripts/run_bench_jdbc_java.sh; }
+fi
+
+if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
 fi
 
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
+    { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
+fi
+
+if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
     java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
     { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
@@ -60,12 +86,29 @@ fi
 
 if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER==$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+    { /bin/bash scripts/run_bench_jdbc_java.sh; }
+fi
+
+if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
 fi
 
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
+    { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
+fi
+
+if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
     java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
     { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
@@ -73,19 +116,43 @@ fi
 
 if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_jdbc_java.sh; }
+fi
+
+if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
 fi
 
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
     export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
     java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
     { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
 fi
 
+if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
+    { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
+fi
 if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_jdbc_java.sh; }
+fi
+
+if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
 fi

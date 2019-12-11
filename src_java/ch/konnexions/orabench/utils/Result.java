@@ -30,12 +30,12 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 /**
- * The class to record the results of the Oracle JDBC benchmark.
+ * This class is used to record the results of the Oracle JDBC benchmark.
  */
 public class Result {
     Config config;
 
-    private final DecimalFormat decimalFormat = new DecimalFormat("##");
+    private final DecimalFormat decimalFormat = new DecimalFormat("#########");
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
 
@@ -45,7 +45,7 @@ public class Result {
     private long lastQueryNano;
     private LocalDateTime lastTrial;
     private long lastTrialNano;
-    private Logger log = new Logger(Result.class);
+    private final Logger log = new Logger(Result.class);
 
     private CSVPrinter resultFile;
 
@@ -76,10 +76,10 @@ public class Result {
         try {
             resultFile.printRecord(config.getBenchmarkId(), config.getBenchmarkComment(), config.getBenchmarkHostName(), config.getBenchmarkNumberCores(),
                     config.getBenchmarkOs(), config.getBenchmarkUserName(), config.getBenchmarkDatabase(), config.getBenchmarkModule(),
-                    config.getBenchmarkDriver(), trialNo, sqlStatement, config.getConnectionPoolSizeMin(), config.getConnectionPoolSizeMax(),
-                    config.getConnectionFetchSize(), config.getBenchmarkTransactionSize(), config.getFileBulkLength(), config.getFileBulkSize(),
-                    config.getBenchmarkBatchSize(), action, startDateTime.format(formatter), endDateTime.format(formatter),
-                    decimalFormat.format(duration / 1000000000.0), Long.toString(duration));
+                    config.getBenchmarkDriver(), trialNo, sqlStatement, config.getBenchmarkCoreMultiplier(), config.getConnectionFetchSize(),
+                    config.getBenchmarkTransactionSize(), config.getFileBulkLength(), config.getFileBulkSize(), config.getBenchmarkBatchSize(), action,
+                    startDateTime.format(formatter), endDateTime.format(formatter), decimalFormat.format(Math.round(duration / 1000000000.0)),
+                    Long.toString(duration));
         } catch (IOException e) {
             log.error("file result delimiter=: " + config.getFileResultDelimiter());
             log.error("file result header   =: " + config.getFileResultHeader());
@@ -89,7 +89,7 @@ public class Result {
     }
 
     /**
-     * End the benchmark.
+     * End of the whole benchmark run.
      */
     public final void endBenchmark() {
         LocalDateTime endDateTime = LocalDateTime.now();
@@ -108,7 +108,7 @@ public class Result {
     }
 
     /**
-     * End the current insert statement.
+     * End of the current insert statement.
      *
      * @param trialNo      the current trial number
      * @param sqlStatement the SQL statement to be applied
@@ -121,7 +121,7 @@ public class Result {
     }
 
     /**
-     * End the current select.
+     * End of the current select.
      *
      * @param trialNo      the current trial number
      * @param sqlStatement the SQL statement to be applied
@@ -134,7 +134,7 @@ public class Result {
     }
 
     /**
-     * End the current trial.
+     * End of the current trial.
      *
      * @param trialNo the current trial number
      */

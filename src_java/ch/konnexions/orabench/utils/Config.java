@@ -32,22 +32,21 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <ul>
  * <li>benchmark.batch.size
  * <li>benchmark.comment
+ * <li>benchmark.core.multiplier
  * <li>benchmark.database
  * <li>benchmark.driver
  * <li>benchmark.host.name
  * <li>benchmark.id
  * <li>benchmark.module
  * <li>benchmark.number.cores
+ * <li>benchmark.number.partitions
  * <li>benchmark.os
- * <li>benchmark.program.name.oranif.c
  * <li>benchmark.transaction.size
  * <li>benchmark.trials
  * <li>benchmark.user.name
  * <li>connection.fetch.size
  * <li>connection.host
  * <li>connection.password
- * <li>connection.pool.size.max
- * <li>connection.pool.size.min
  * <li>connection.port
  * <li>connection.service
  * <li>connection.string
@@ -59,7 +58,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>file.bulk.size
  * <li>file.configuration.name
  * <li>file.configuration.name.cx_oracle.python
- * <li>file.configuration.name.oranif.c
  * <li>file.configuration.name.oranif.erlang
  * <li>file.result.delimiter
  * <li>file.result.header
@@ -74,56 +72,57 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  */
 public class Config {
 
-    private static Logger log = new Logger(Config.class);
     private int benchmarkBatchSize;
     private String benchmarkComment;
+    private int benchmarkCoreMultiplier;
     private String benchmarkDatabase;
     private String benchmarkDriver;
     private String benchmarkHostName;
     private String benchmarkId;
     private String benchmarkModule;
     private String benchmarkNumberCores;
+    private int benchmarkNumberPartitions;
     private String benchmarkOs;
-    private String benchmarkProgramNameOranifC;
     private int benchmarkTransactionSize;
     private int benchmarkTrials;
     private String benchmarkUserName;
-
     private final File configFile = new File(System.getenv("ORA_BENCH_FILE_CONFIGURATION_NAME"));
+
     private int connectionFetchSize;
     private String connectionHost;
     private String connectionPassword;
-    private int connectionPoolSizeMax;
-    private int connectionPoolSizeMin;
     private int connectionPort;
     private String connectionService;
     private String connectionString;
     private String connectionUser;
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
-
     FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
+
     private String fileBulkDelimiter;
+
     private String fileBulkHeader;
     private int fileBulkLength;
     private String fileBulkName;
     private int fileBulkSize;
     private String fileConfigurationName;
     private String fileConfigurationNameCxOraclePython;
-    private String fileConfigurationNameOranifC;
     private String fileConfigurationNameOranifErlang;
     private String fileResultDelimiter;
     private String fileResultHeader;
     private String fileResultName;
-
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
     private ArrayList<String> keysSorted = new ArrayList<String>();
 
-    private List<String> numericProperties = getNumericProperties();
+    private final Logger log = new Logger(Config.class);
 
     private PropertiesConfiguration propertiesConfiguration;
 
-    private String sqlCreateTable;
-    private String sqlDropTable;
+    private String sqlCreate;
+    private String sqlCreateDefault = "BEGIN EXECUTE IMMEDIATE 'CREATE TABLE ora_bench_table (key VARCHAR2(32) PRIMARY KEY, data VARCHAR2(4000), "
+            + "no_partitions NUMBER DEFAULT C...C, partition_key NUMBER(5)) PARTITION BY RANGE (partition_key) (PARTITION p00000 VALUES LESS THAN (1)P...P)'; "
+            + "EXECUTE IMMEDIATE 'CREATE TRIGGER ora_bench_table_before_insert BEFORE INSERT ON ora_bench_table FOR EACH ROW "
+            + "BEGIN :new.partition_key := MOD (ASCII (SUBSTR (:new.key, 1, 1)) * 256 + ASCII (SUBSTR (:new.key, 2, 1)), :new.no_partitions); "
+            + "END ora_bench_table_before_insert;'; END;";
+    private String sqlDrop;
     private String sqlInsert;
     private String sqlSelect;
 
@@ -153,6 +152,7 @@ public class Config {
      * Creates the cx_Oracle &amp; Python version of the configuration file.
      */
     public final void createConfigurationFileCxOraclePython() {
+
         try {
 
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameCxOraclePython(), false));
@@ -175,105 +175,10 @@ public class Config {
     }
 
     /**
-     * Creates the oranif &amp; C version of the configuration file.
-     */
-    public final void createConfigurationFileOranifC() {
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOranifC(), false));
-
-            bufferedWriter.write("#!/bin/bash");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write("# ------------------------------------------------------------------------------");
-            bufferedWriter.newLine();
-            bufferedWriter.write("#");
-            bufferedWriter.newLine();
-            bufferedWriter.write("# run_bench_oranif_c.sh: Oracle Benchmark based on oranif & C.");
-            bufferedWriter.newLine();
-            bufferedWriter.write("#");
-            bufferedWriter.newLine();
-            bufferedWriter.write("# ------------------------------------------------------------------------------");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-
-            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
-                final String key = iterator.next();
-
-                final String quote = (numericProperties.contains(key.toLowerCase())) ? "" : "'";
-
-                if (key.contentEquals("benchmark.driver")) {
-                    bufferedWriter.write("ORA_BENCH_BENCHMARK_DRIVER='oranif (Version version)'");
-                } else if (key.equals("benchmark.module")) {
-                    bufferedWriter.write("ORA_BENCH_BENCHMARK_MODULE='OraBench (C version)'");
-                } else {
-                    bufferedWriter.write("ORA_BENCH_" + key.replace(".", "_").toUpperCase() + "=" + quote + propertiesConfiguration.getString(key) + quote);
-                }
-
-                bufferedWriter.newLine();
-            }
-
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"================================================================================\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"Start $0\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"--------------------------------------------------------------------------------\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"ora_bench - Oracle benchmark - oranif & C.\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"--------------------------------------------------------------------------------\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("date +\"DATE TIME : %d.%m.%Y %H:%M:%S\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"================================================================================\"");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write("EXITCODE=\"0\"");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write("./" + getBenchmarkProgramNameOranifC() + " ");
-
-            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
-                final String key = iterator.next();
-
-                bufferedWriter.write("$ORA_BENCH_" + key.replace(".", "_").toUpperCase());
-
-                if (iterator.hasNext()) {
-                    bufferedWriter.write(" ");
-                }
-            }
-
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write("EXITCODE=$?");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"--------------------------------------------------------------------------------\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("date +\"DATE TIME : %d.%m.%Y %H:%M:%S\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"--------------------------------------------------------------------------------\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"End $0\"");
-            bufferedWriter.newLine();
-            bufferedWriter.write("echo \"================================================================================\"");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write("exit $EXITCODE");
-            bufferedWriter.newLine();
-
-            bufferedWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Creates the oranif &amp; Erlang version of the configuration file.
      */
     public final void createConfigurationFileOranifErlang() {
+
         try {
             List<String> list = getNumericProperties();
 
@@ -316,6 +221,13 @@ public class Config {
      */
     public final String getBenchmarkComment() {
         return benchmarkComment;
+    }
+
+    /**
+     * @return the core multiplier for parallel processing
+     */
+    public final int getBenchmarkCoreMultiplier() {
+        return benchmarkCoreMultiplier;
     }
 
     /**
@@ -362,17 +274,17 @@ public class Config {
     }
 
     /**
+     * @return the number of partitions
+     */
+    public final int getBenchmarkNumberPartitions() {
+        return benchmarkNumberPartitions;
+    }
+
+    /**
      * @return the operating system description
      */
     public final String getBenchmarkOs() {
         return benchmarkOs;
-    }
-
-    /**
-     * @return the oranif &amp; C program name
-     */
-    public final String getBenchmarkProgramNameOranifC() {
-        return benchmarkProgramNameOranifC;
     }
 
     /**
@@ -415,20 +327,6 @@ public class Config {
      */
     public final String getConnectionPassword() {
         return connectionPassword;
-    }
-
-    /**
-     * @return the number of maximum simultaneous database connections
-     */
-    public final int getConnectionPoolSizeMax() {
-        return connectionPoolSizeMax;
-    }
-
-    /**
-     * @return the number of minimum simultaneous database connections
-     */
-    public final int getConnectionPoolSizeMin() {
-        return connectionPoolSizeMin;
     }
 
     /**
@@ -513,15 +411,6 @@ public class Config {
     }
 
     /**
-     * @return the name of the configuration file for the oranif &amp; C language
-     *         version. The file name may contain the absolute or relative file
-     *         path.
-     */
-    public final String getFileConfigurationNameOranifC() {
-        return fileConfigurationNameOranifC;
-    }
-
-    /**
      * @return the name of the configuration file for the oranif &amp; Erlang
      *         language version. The file name may contain the absolute or relative
      *         file path.
@@ -553,6 +442,7 @@ public class Config {
     }
 
     private final ArrayList<String> getKeysSorted(PropertiesConfiguration propertiesConfiguration2) {
+
         for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
             keysSorted.add(iterator.next());
         }
@@ -563,6 +453,7 @@ public class Config {
     }
 
     private final List<String> getNotAvailables() {
+
         List<String> list = new ArrayList<String>();
 
         list.add("benchmark.comment");
@@ -575,19 +466,22 @@ public class Config {
         list.add("benchmark.os");
         list.add("benchmark.user.name");
         list.add("connection.service");
+        list.add("sql.create");
 
         return list;
     }
 
     private final List<String> getNumericProperties() {
+
         List<String> list = new ArrayList<String>();
 
         list.add("benchmark.batch.size");
         list.add("benchmark.number.cores");
+        list.add("benchmark.number.partitions");
         list.add("benchmark.transaction.size");
         list.add("benchmark.trials");
         list.add("connection.fetch.size");
-        list.add("connection.pool.size.max");
+        list.add("benchmark.core.multiplier");
         list.add("connection.pool.size.min");
         list.add("connection.port");
         list.add("file.bulk.length");
@@ -596,18 +490,29 @@ public class Config {
         return list;
     }
 
+    private final CharSequence getPartionString() {
+
+        StringBuffer stringBuffer = new StringBuffer();
+
+        for (int i = 2; i <= benchmarkNumberPartitions; i++) {
+            stringBuffer.append(", PARTITION p" + String.format("%05d", i - 1) + " VALUES LESS THAN (" + Integer.toString(i) + ")");
+        }
+
+        return stringBuffer.toString();
+    }
+
     /**
      * @return the CREATE TABLE statement
      */
-    public final String getSqlCreateTable() {
-        return sqlCreateTable;
+    public final String getSqlCreate() {
+        return sqlCreate;
     }
 
     /**
      * @return the DROP TABLE statement
      */
-    public final String getSqlDropTable() {
-        return sqlDropTable;
+    public final String getSqlDrop() {
+        return sqlDrop;
     }
 
     /**
@@ -625,7 +530,8 @@ public class Config {
     }
 
     /**
-     * Resets the runtime configuration parameters to "n/a".
+     * Resets selected runtime configuration parameters to the original default
+     * value.
      */
     public final void resetNotAvailables() {
 
@@ -641,6 +547,16 @@ public class Config {
                 isChanged = true;
             }
 
+        }
+
+        if (propertiesConfiguration.getInt("benchmark.core.multiplier") != 0) {
+            propertiesConfiguration.setProperty("benchmark.core.multiplier", 0);
+            isChanged = true;
+        }
+
+        if (propertiesConfiguration.getInt("benchmark.number.partitions") != 0) {
+            propertiesConfiguration.setProperty("benchmark.number.partitions", 0);
+            isChanged = true;
         }
 
         if (isChanged) {
@@ -661,18 +577,19 @@ public class Config {
     }
 
     private final void storeConfiguration() {
+
         propertiesConfiguration.setThrowExceptionOnMissing(true);
 
         benchmarkBatchSize = propertiesConfiguration.getInt("benchmark.batch.size");
         benchmarkComment = propertiesConfiguration.getString("benchmark.comment");
+        benchmarkCoreMultiplier = propertiesConfiguration.getInt("benchmark.core.multiplier");
         benchmarkDatabase = propertiesConfiguration.getString("benchmark.database");
         benchmarkDriver = propertiesConfiguration.getString("benchmark.driver");
         benchmarkHostName = propertiesConfiguration.getString("benchmark.host.name");
         benchmarkId = propertiesConfiguration.getString("benchmark.id");
-        benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
         benchmarkNumberCores = propertiesConfiguration.getString("benchmark.number.cores");
+        benchmarkNumberPartitions = propertiesConfiguration.getInt("benchmark.number.partitions");
         benchmarkOs = propertiesConfiguration.getString("benchmark.os");
-        benchmarkProgramNameOranifC = propertiesConfiguration.getString("benchmark.program.name.oranif.c");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
         benchmarkTrials = propertiesConfiguration.getInt("benchmark.trials");
         benchmarkUserName = propertiesConfiguration.getString("benchmark.user.name");
@@ -680,8 +597,6 @@ public class Config {
         connectionFetchSize = propertiesConfiguration.getInt("connection.fetch.size");
         connectionHost = propertiesConfiguration.getString("connection.host");
         connectionPassword = propertiesConfiguration.getString("connection.password");
-        connectionPoolSizeMax = propertiesConfiguration.getInt("connection.pool.size.max");
-        connectionPoolSizeMin = propertiesConfiguration.getInt("connection.pool.size.min");
         connectionPort = propertiesConfiguration.getInt("connection.port");
         connectionService = propertiesConfiguration.getString("connection.service");
         connectionString = propertiesConfiguration.getString("connection.string");
@@ -694,16 +609,17 @@ public class Config {
         fileBulkSize = propertiesConfiguration.getInt("file.bulk.size");
         fileConfigurationName = propertiesConfiguration.getString("file.configuration.name");
         fileConfigurationNameCxOraclePython = propertiesConfiguration.getString("file.configuration.name.cx_oracle.python");
-        fileConfigurationNameOranifC = propertiesConfiguration.getString("file.configuration.name.oranif.c");
         fileConfigurationNameOranifErlang = propertiesConfiguration.getString("file.configuration.name.oranif.erlang");
         fileResultDelimiter = propertiesConfiguration.getString("file.result.delimiter");
         fileResultHeader = propertiesConfiguration.getString("file.result.header").replace(";", fileResultDelimiter);
         fileResultName = propertiesConfiguration.getString("file.result.name");
 
-        sqlCreateTable = propertiesConfiguration.getString("sql.create");
-        sqlDropTable = propertiesConfiguration.getString("sql.drop");
+        sqlCreate = propertiesConfiguration.getString("sql.create");
+        sqlDrop = propertiesConfiguration.getString("sql.drop");
         sqlInsert = propertiesConfiguration.getString("sql.insert");
         sqlSelect = propertiesConfiguration.getString("sql.select");
+
+        benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
     }
 
     private final void updatePropertiesFromOs() {
@@ -721,6 +637,12 @@ public class Config {
         if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_COMMENT")) {
             benchmarkComment = environmentVariables.get("ORA_BENCH_BENCHMARK_COMMENT");
             propertiesConfiguration.setProperty("benchmark.comment", benchmarkComment);
+            isChanged = true;
+        }
+
+        if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_CORE_MULTIPLIER")) {
+            benchmarkCoreMultiplier = Integer.parseInt(environmentVariables.get("ORA_BENCH_BENCHMARK_CORE_MULTIPLIER"));
+            propertiesConfiguration.setProperty("benchmark.core.multiplier", benchmarkCoreMultiplier);
             isChanged = true;
         }
 
@@ -794,6 +716,14 @@ public class Config {
             isChanged = true;
         }
 
+        if (benchmarkCoreMultiplier < 0) {
+            log.error("Attention: The value of the core multiplier parameter 'benchmark.core.multiplier' [" + Integer.toString(benchmarkCoreMultiplier)
+                    + "] must not be less than 0, the specified value is replaced by 0.");
+            benchmarkCoreMultiplier = 0;
+            propertiesConfiguration.setProperty("benchmark.core.multiplier", benchmarkCoreMultiplier);
+            isChanged = true;
+        }
+
         if (benchmarkHostName.equals("n/a")) {
             try {
                 benchmarkHostName = InetAddress.getLocalHost().getHostName();
@@ -807,6 +737,11 @@ public class Config {
         if (benchmarkNumberCores.equals("n/a")) {
             benchmarkNumberCores = Integer.toString(Runtime.getRuntime().availableProcessors());
             propertiesConfiguration.setProperty("benchmark.number.cores", benchmarkNumberCores);
+
+            benchmarkNumberPartitions = (benchmarkCoreMultiplier == 0) ? Integer.parseInt(benchmarkNumberCores)
+                    : Integer.parseInt(benchmarkNumberCores) * benchmarkCoreMultiplier;
+            propertiesConfiguration.setProperty("benchmark.number.partitions", benchmarkNumberPartitions);
+
             isChanged = true;
         }
 
@@ -848,36 +783,17 @@ public class Config {
             isChanged = true;
         }
 
+        if (benchmarkId.equals("n/a")) {
+            benchmarkId = DigestUtils.md5Hex(LocalDateTime.now().format(formatter) + benchmarkHostName + benchmarkOs + benchmarkUserName);
+            propertiesConfiguration.setProperty("benchmark.id", benchmarkId);
+            isChanged = true;
+        }
+
         if (connectionFetchSize < 0) {
             log.error("Attention: The value of the configuration parameter 'connection.fetch.size' [" + Integer.toString(connectionFetchSize)
                     + "] must not be less than 0, the specified value is replaced by 0.");
             connectionFetchSize = 0;
             propertiesConfiguration.setProperty("connection.fetch.size", connectionFetchSize);
-            isChanged = true;
-        }
-
-        if (connectionPoolSizeMax < 0) {
-            log.error("Attention: The value of the configuration parameter 'connection.pool.size.max' [" + Integer.toString(connectionPoolSizeMax)
-                    + "] must not be less than 0, the specified value is replaced by 0.");
-            connectionPoolSizeMax = 0;
-            propertiesConfiguration.setProperty("connection.pool.size.max", connectionPoolSizeMax);
-            isChanged = true;
-        }
-
-        if (connectionPoolSizeMin < 0) {
-            log.error("Attention: The value of the configuration parameter 'connection.pool.size.min' [" + Integer.toString(connectionPoolSizeMin)
-                    + "] must not be less than 0, the specified value is replaced by 0.");
-            connectionPoolSizeMin = 0;
-            propertiesConfiguration.setProperty("connection.pool.size.min", connectionPoolSizeMin);
-            isChanged = true;
-        }
-
-        if (connectionPoolSizeMin < connectionPoolSizeMax) {
-            log.error("Attention: The value of the configuration parameter 'connection.pool.size.min' [" + Integer.toString(connectionPoolSizeMin)
-                    + "] must not be greater than value of the configuration parameter 'connection.pool.size.max' [\" + Integer.toString(connectionPoolSizeMax)"
-                    + "], the specified value is replaced by Integer.toString(connectionPoolSizeMax).");
-            connectionPoolSizeMin = connectionPoolSizeMax;
-            propertiesConfiguration.setProperty("connection.pool.size.min", connectionPoolSizeMin);
             isChanged = true;
         }
 
@@ -903,9 +819,9 @@ public class Config {
             isChanged = true;
         }
 
-        if (benchmarkId.equals("n/a")) {
-            benchmarkId = DigestUtils.md5Hex(LocalDateTime.now().format(formatter) + benchmarkHostName + benchmarkOs + benchmarkUserName);
-            propertiesConfiguration.setProperty("benchmark.id", benchmarkId);
+        if (sqlCreate.equals("n/a")) {
+            sqlCreate = sqlCreateDefault.replace("C...C", Integer.toString(benchmarkNumberPartitions)).replace("P...P", getPartionString());
+            propertiesConfiguration.setProperty("sql.create", sqlCreate);
             isChanged = true;
         }
 
