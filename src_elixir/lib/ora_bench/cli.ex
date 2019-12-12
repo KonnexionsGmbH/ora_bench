@@ -7,9 +7,9 @@ defmodule OraBench.CLI do
     Logger.info('Start OraBench.ex - args: #{args}')
     case args do
       ["jamdb_oracle"] ->
-        OraBench.run_benchmark_jamdb_oracle()
-#      ["oranif"] ->
-#        OraBench.run_benchmark_oranif()
+        OraBench.run_benchmark(:jamdb_oracle)
+      ["oralixir"] ->
+        OraBench.run_benchmark(:oralixir)
       [unknown] ->
         raise("[Error in main] unknown database driver #{unknown} was chosen")
       [] ->

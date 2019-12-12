@@ -32,6 +32,7 @@ defmodule OraBench.MixProject do
     [
       {:ecto_sql, "~> 3.2.2"},
       {:jamdb_oracle, "~> 0.3.6"}
+#     {:oralixir, git: "https://github.com/c-bik/OraLixir"}
     ]
   end
 

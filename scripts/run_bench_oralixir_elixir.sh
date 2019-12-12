@@ -28,7 +28,7 @@ fi
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - JamDB Oracle & Elixir."
+echo "ora_bench - Oracle benchmark - OraLixir & Elixir."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
@@ -45,7 +45,7 @@ java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
 cd src_elixir
 mix deps.get
 mix escript.build
-./ora_bench jamdb_oracle
+./ora_bench oralixir
 
 EXITCODE=$?
 

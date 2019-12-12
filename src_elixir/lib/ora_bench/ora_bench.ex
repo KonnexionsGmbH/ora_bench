@@ -2,7 +2,8 @@ defmodule OraBench do
   require Logger
 
   # @benchmark_driver  "jamdb_oracle (Version v#{Jamdb.Oracle.version_info()}})"
-  @benchmark_driver  "jamdb_oracle (Version v0.3.6})"
+  @benchmark_driver_jamdb_oracle  "JamDB Oracle (Version v0.3.6})"
+  @benchmark_driver_oralixir  "OraLixir (Version v0.3.6})"
   @benchmark_module "OraBench (Elixir #{System.version()})"
 
   @file_configuration_name  "priv/properties/ora_bench.properties"
@@ -54,6 +55,7 @@ defmodule OraBench do
   defp create_result(
          action,
          config,
+         driver,
          measurement_data,
          result_file,
          sql_operation,
@@ -85,6 +87,11 @@ defmodule OraBench do
     end
     #    IO.inspect(measurement_data_end, label: "measurement_data_end")
 
+    benchmark_driver = case driver do
+      :jamdb_oracle -> @benchmark_driver_jamdb_oracle
+      :oralixir -> @benchmark_driver_oralixir
+    end
+
     :ok = IO.puts(
       result_file,
       [
@@ -104,7 +111,7 @@ defmodule OraBench do
         config["file.result.delimiter"],
         @benchmark_module,
         config["file.result.delimiter"],
-        @benchmark_driver,
+        benchmark_driver,
         config["file.result.delimiter"],
         Integer.to_string(trial_number),
         config["file.result.delimiter"],
@@ -177,7 +184,7 @@ defmodule OraBench do
     Logger.debug("Start ==========> <==========")
 
     result_file_name = Path.expand(
-                         ~s(../../#{config["file.result.name"]})
+                         ~s(../#{config["file.result.name"]})
                        )
                        |> Path.absname
 
@@ -206,6 +213,7 @@ defmodule OraBench do
   defp create_result_measuring_point_end(
          action,
          config,
+         driver,
          measurement_data,
          result_file,
          sql_operation,
@@ -219,6 +227,7 @@ defmodule OraBench do
         create_result(
           action,
           config,
+          driver,
           measurement_data,
           result_file,
           sql_operation,
@@ -230,6 +239,7 @@ defmodule OraBench do
         create_result(
           action,
           config,
+          driver,
           measurement_data,
           result_file,
           sql_operation,
@@ -241,6 +251,7 @@ defmodule OraBench do
         create_result(
           action,
           config,
+          driver,
           measurement_data,
           result_file,
           sql_operation,
@@ -292,7 +303,7 @@ defmodule OraBench do
   defp get_bulk_data_partitions(config) do
     Logger.debug("Start ==========> <==========")
 
-    Path.expand(~s(../../#{config["file.bulk.name"]}))
+    Path.expand(~s(../#{config["file.bulk.name"]}))
     |> Path.absname
     |> File.stream!()
     |> Stream.map(&(String.replace(&1, "\n", "")))
@@ -347,7 +358,7 @@ defmodule OraBench do
   defp get_config do
     Logger.debug("Start ==========> <==========")
 
-    config = Path.expand("../../#{@file_configuration_name}")
+    config = Path.expand("../#{@file_configuration_name}")
              |> Path.absname
              |> File.stream!()
              |> Stream.map(&(String.replace(&1, "\n", "")))
@@ -462,11 +473,11 @@ defmodule OraBench do
   end
 
   # ----------------------------------------------------------------------------------------------
-  # Performing the benchmark run - jamdb_oracle.
+  # Performing the benchmark run.
   # ----------------------------------------------------------------------------------------------
 
-  def run_benchmark_jamdb_oracle do
-    Logger.debug("Start ==========> <==========")
+  def run_benchmark(driver) do
+    Logger.debug("Start ==========> #{driver} <==========")
 
     config = get_config()
     #    IO.inspect(config, label: "config")
@@ -493,6 +504,7 @@ defmodule OraBench do
       bulk_data_partitions,
       config,
       connections,
+      driver,
       measurement_data,
       result_file,
       String.to_integer(config["benchmark.trials"]),
@@ -510,6 +522,7 @@ defmodule OraBench do
     create_result_measuring_point_end(
       "benchmark",
       config,
+      driver,
       measurement_data_run_trial,
       result_file,
       "",
@@ -526,6 +539,7 @@ defmodule OraBench do
          _bulk_data_partitions,
          _config,
          _connections,
+         _driver,
          measurement_data,
          0,
          _partition_key_current,
@@ -542,6 +556,7 @@ defmodule OraBench do
          bulk_data_partitions,
          config,
          connections,
+         driver,
          measurement_data,
          partition_key,
          partition_key_current,
@@ -584,6 +599,7 @@ defmodule OraBench do
     measurement_data_end = create_result_measuring_point_end(
       "query",
       config,
+      driver,
       measurement_data_start,
       result_file,
       "insert",
@@ -596,6 +612,7 @@ defmodule OraBench do
       bulk_data_partitions,
       config,
       connections,
+      driver,
       measurement_data_end,
       partition_key - 1,
       partition_key_current + 1,
@@ -608,6 +625,7 @@ defmodule OraBench do
          _bulk_data_partitions,
          _config,
          _connections,
+         _driver,
          measurement_data,
          0,
          _partition_key_current,
@@ -624,6 +642,7 @@ defmodule OraBench do
          bulk_data_partitions,
          config,
          connections,
+         driver,
          measurement_data,
          partition_key,
          partition_key_current,
@@ -660,6 +679,7 @@ defmodule OraBench do
     measurement_data_end = create_result_measuring_point_end(
       "query",
       config,
+      driver,
       measurement_data_start,
       result_file,
       "select",
@@ -672,6 +692,7 @@ defmodule OraBench do
       bulk_data_partitions,
       config,
       connections,
+      driver,
       measurement_data_end,
       partition_key - 1,
       partition_key_current + 1,
@@ -688,6 +709,7 @@ defmodule OraBench do
          _bulk_data_partitions,
          _config,
          _connections,
+         _driver,
          measurement_data,
          _result_file,
          0,
@@ -703,6 +725,7 @@ defmodule OraBench do
          bulk_data_partitions,
          config,
          connections,
+         driver,
          measurement_data,
          result_file,
          trial_number,
@@ -753,6 +776,7 @@ defmodule OraBench do
       bulk_data_partitions,
       config,
       connections,
+      driver,
       measurement_data_start,
       String.to_integer(config["benchmark.number.partitions"]),
       1,
@@ -765,6 +789,7 @@ defmodule OraBench do
       bulk_data_partitions,
       config,
       connections,
+      driver,
       measurement_data_insert,
       String.to_integer(config["benchmark.number.partitions"]),
       1,
@@ -784,6 +809,7 @@ defmodule OraBench do
     measurement_data_end = create_result_measuring_point_end(
       "trial",
       config,
+      driver,
       measurement_data_select,
       result_file,
       "",
@@ -796,6 +822,7 @@ defmodule OraBench do
       bulk_data_partitions,
       config,
       connections,
+      driver,
       measurement_data_end,
       result_file,
       trial_number - 1,
