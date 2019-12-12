@@ -42,7 +42,7 @@ EXITCODE="0"
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
 
-python src_python/ora_bench/OraBench.py
+python src_python/OraBench.py
 
 EXITCODE=$?
 

@@ -36,9 +36,17 @@ def create_database_objects(config):
     cursors = list()
 
     for i in range(0, config['benchmark.number.partitions']):
-        connection = cx_Oracle.connect(config['connection.user'], config['connection.password'],
-                                       config['connection.host'] + ':' + str(config['connection.port']) + '/' + config['connection.service'])
-        connection.autocommit = False
+        try:
+            connection = cx_Oracle.connect(config['connection.user'], config['connection.password'],
+                                           config['connection.host'] + ':' + str(config['connection.port']) + '/' + config['connection.service'])
+            connection.autocommit = False
+        except cx_Oracle.DatabaseError as reason:
+            logging.info('connection.host    =' + config['connection.host'])
+            logging.info('connection.port    =' + str(config['connection.port']))
+            logging.info('connection.service =' + config['connection.service'])
+            logging.info('connection.user    =' + config['connection.user'])
+            logging.info('connection.password=' + config['connection.password'])
+            sys.exit('database connect error: '+str(reason))
 
         connections.append(connection)
         cursors.append(connection.cursor())
