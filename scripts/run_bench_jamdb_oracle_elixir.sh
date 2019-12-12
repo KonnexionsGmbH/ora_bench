@@ -45,7 +45,7 @@ java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
 cd src_elixir
 mix deps.get
 mix escript.build
-./ora_bench jamdb_oracle
+./ora_bench Jamdb.Oracle
 
 EXITCODE=$?
 
