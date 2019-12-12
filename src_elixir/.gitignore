@@ -24,3 +24,4 @@ mix.lock
 # Ignore package tarball (built via "mix hex.build").
 ora_bench-*.tar
 
+/ora_bench

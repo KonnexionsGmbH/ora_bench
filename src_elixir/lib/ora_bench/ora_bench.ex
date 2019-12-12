@@ -511,16 +511,16 @@ defmodule OraBench do
                         String.to_integer(config["benchmark.trials"]),
                         1
                       )
-      OraLixir -> run_trial_oralixir(
-                    bulk_data_partitions,
-                    config,
-                    connections,
-                    driver,
-                    measurement_data,
-                    result_file,
-                    String.to_integer(config["benchmark.trials"]),
-                    1
-                  )
+#      OraLixir -> run_trial_oralixir(
+#                    bulk_data_partitions,
+#                    config,
+#                    connections,
+#                    driver,
+#                    measurement_data,
+#                    result_file,
+#                    String.to_integer(config["benchmark.trials"]),
+#                    1
+#                  )
     end
     #    IO.inspect(measurement_data_run_trial, label: "measurement_data_run_trial")
 
@@ -755,8 +755,8 @@ defmodule OraBench do
 
     Logger.info("Start ==========> trial no. #{trial_number_current}")
 
-    _sql_create = %Jamdb.Oracle.Query{statement: config["sql.create"]}
-    _sql_drop = %Jamdb.Oracle.Query{statement: config["sql.drop"]}
+    sql_create = %Jamdb.Oracle.Query{statement: config["sql.create"]}
+    sql_drop = %Jamdb.Oracle.Query{statement: config["sql.drop"]}
 
     case DBConnection.prepare_execute(connections[1], sql_create, []) do
       {:ok, Result} ->
