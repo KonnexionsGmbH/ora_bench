@@ -9,9 +9,11 @@
 
 struct
 {
-    char user[256];
-    char password[256];
-    char string[1024];
+    char user[128];
+    char password[128];
+    char service[128];
+    char host[128];
+    char port[8];
 } connection;
 
 struct
@@ -42,6 +44,8 @@ dpiContext *gContext;
             _m, _i.messageLength, _i.message, _i.fnName, _i.action); \
     }
 
+#define CONF_CP(_field) (strcmp(#_field, key) == 0) strcpy(_field, val)
+
 int main(const int argc, const char *argv[])
 {
     if (argc < 2)
@@ -64,7 +68,7 @@ int main(const int argc, const char *argv[])
 
     while (ch != EOF)
     {
-        if (ch == ' ')
+        if (ch == ' ' && !valp)
         {
             // skip white spaces
         }
@@ -92,21 +96,42 @@ int main(const int argc, const char *argv[])
             keyp = key;
             *valp = '\0';
             valp = NULL;
-            if (strcmp("connection.string", key) == 0)
-                strcpy(connection.string, val);
-            else if (strcmp("connection.user", key) == 0)
-                strcpy(connection.user, val);
-            else if (strcmp("connection.password", key) == 0)
-                strcpy(connection.password, val);
-            //L("key %s, value %s\n", key, val);
+            if
+                CONF_CP(connection.host);
+            else if
+                CONF_CP(connection.port);
+            else if
+                CONF_CP(connection.user);
+            else if
+                CONF_CP(connection.password);
+            else if
+                CONF_CP(connection.service);
+            else if
+                CONF_CP(sql.create);
+            else if
+                CONF_CP(sql.drop);
+            else if
+                CONF_CP(sql.insert);
+            else if
+                CONF_CP(sql.select);
         }
         ch = getc(fp);
     }
 
-    L("connection.string (connStr) %s (%s, %s)\n", connection.string, connection.user, connection.string);
+    L("connection.user %s\n", connection.user);
+    L("connection.password %s\n", connection.password);
+    L("connection.service %s\n", connection.service);
+    L("sql.create %s\n", sql.create);
+    L("sql.drop %s\n", sql.drop);
+    L("sql.insert %s\n", sql.insert);
+    L("sql.select %s\n", sql.select);
 
     fclose(fp);
 
+    char connectString[1024];
+    sprintf(connectString,
+            "%s:%s/%s", connection.host, connection.port, connection.service);
+    L("connectString %s\n", connectString);
     dpiErrorInfo errorInfo;
     if (dpiContext_create(DPI_MAJOR_VERSION, DPI_MINOR_VERSION, &gContext,
                           &errorInfo) < 0)
@@ -114,14 +139,11 @@ int main(const int argc, const char *argv[])
 
     L("context created\n");
 
-    const char userName[] = "scott";
-    const char password[] = "regit";
-    const char connectString[] = "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521)))(CONNECT_DATA=(SERVER=dedicated)(SERVICE_NAME=orclpdb1)))";
     dpiConn *conn;
     if (dpiConn_create(
             gContext,
-            userName, strlen(userName),
-            password, strlen(password),
+            connection.user, strlen(connection.user),
+            connection.password, strlen(connection.password),
             connectString, strlen(connectString),
             NULL, NULL, &conn) < 0)
     {
