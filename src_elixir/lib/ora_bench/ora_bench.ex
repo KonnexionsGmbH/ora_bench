@@ -24,7 +24,9 @@ defmodule OraBench do
             Map.new([{1, conn}])
           _ = other_reason ->
             raise(
-              "[Error in create_database_objects] #{driver}.start_list: reason=#{
+              "[Error in create_database_objects] #{
+                driver
+              }.start_list: reason=#{
                 other_reason
               }"
             )
@@ -38,7 +40,9 @@ defmodule OraBench do
               {:ok, conn} -> Map.put(connections, i, conn)
               _ = other_reason ->
                 raise(
-                  "[Error in create_database_objects] #{driver}.start_list: reason=#{
+                  "[Error in create_database_objects] #{
+                    driver
+                  }.start_list: reason=#{
                     other_reason
                   }"
                 )
@@ -279,7 +283,7 @@ defmodule OraBench do
   defp create_result_measuring_point_start(action, measurement_data) do
     Logger.debug("Start ==========> action: #{action} <==========")
 
-    measurement_data_end = case action do
+    case action do
       "query" ->
         Map.put(measurement_data, :last_query, DateTime.utc_now())
       "trial" ->
@@ -291,9 +295,6 @@ defmodule OraBench do
           }'"
         )
     end
-    #    IO.inspect(measurement_data_end, label: "measurement_data_end")
-
-    measurement_data_end
   end
 
   # ----------------------------------------------------------------------------------------------
@@ -498,7 +499,7 @@ defmodule OraBench do
     #   IO.inspect(bulk_data_partitions, label: "bulk_data_partitions")
 
     connections = create_database_objects(config, driver)
-    #    IO.inspect(connections, label: "connections")
+        IO.inspect(connections, label: "connections")
 
     measurement_data_run_trial = case driver do
       Jamdb.Oracle -> run_trial_jamdb_oracle(
@@ -511,16 +512,16 @@ defmodule OraBench do
                         String.to_integer(config["benchmark.trials"]),
                         1
                       )
-#      OraLixir -> run_trial_oralixir(
-#                    bulk_data_partitions,
-#                    config,
-#                    connections,
-#                    driver,
-#                    measurement_data,
-#                    result_file,
-#                    String.to_integer(config["benchmark.trials"]),
-#                    1
-#                  )
+      OraLixir -> run_trial_oralixir(
+                    bulk_data_partitions,
+                    config,
+                    connections,
+                    driver,
+                    measurement_data,
+                    result_file,
+                    String.to_integer(config["benchmark.trials"]),
+                    1
+                  )
     end
     #    IO.inspect(measurement_data_run_trial, label: "measurement_data_run_trial")
 
@@ -714,7 +715,7 @@ defmodule OraBench do
   end
 
   # ----------------------------------------------------------------------------------------------
-  # Performing the trials.
+  # Performing the trials - JamDB Oracle.
   # ----------------------------------------------------------------------------------------------
 
   defp run_trial_jamdb_oracle(
@@ -757,9 +758,16 @@ defmodule OraBench do
 
     sql_create = %Jamdb.Oracle.Query{statement: config["sql.create"]}
     sql_drop = %Jamdb.Oracle.Query{statement: config["sql.drop"]}
+    IO.inspect(connections[1], label: "connections[1]")
+    Logger.info("wwe_017")
+    IO.inspect(sql_create, label: "sql_create")
+    Logger.info("wwe_018")
 
-    case DBConnection.prepare_execute(connections[1], sql_create, []) do
+    try do
+      Logger.info("wwe_019")
+      case DBConnection.prepare_execute(connections[1], sql_create, []) do
       {:ok, Result} ->
+        Logger.info("wwe_020")
         DBConnection.close(connections[1], sql_create)
       _ ->
         Logger.info("wwe_021")
@@ -777,7 +785,11 @@ defmodule OraBench do
         DBConnection.close(connections[1], sql_create)
         Logger.debug(~s(Last DDL statement after DROP=#{config["sql.create"]}))
     end
-
+    catch
+      e  ->       IO.inspect e
+    end
+    IO.inspect(:ok, label: "created")
+    
     measurement_data_insert = run_insert(
       bulk_data_partitions,
       config,
@@ -825,6 +837,134 @@ defmodule OraBench do
     #    IO.inspect(measurement_data_end, label: "measurement_data_end - trial no.: #{trial_number_current}")
 
     run_trial_jamdb_oracle(
+      bulk_data_partitions,
+      config,
+      connections,
+      driver,
+      measurement_data_end,
+      result_file,
+      trial_number - 1,
+      trial_number_current + 1
+    )
+  end
+
+  # ----------------------------------------------------------------------------------------------
+  # Performing the trials - OraLixir.
+  # ----------------------------------------------------------------------------------------------
+
+  defp run_trial_oralixir(
+         _bulk_data_partitions,
+         _config,
+         _connections,
+         _driver,
+         measurement_data,
+         _result_file,
+         0,
+         _trial_number_current
+       ) do
+    Logger.debug("Start ==========> final <==========")
+
+    #    IO.inspect(measurement_data, label: "measurement_data - final")
+    measurement_data
+  end
+
+  defp run_trial_oralixir(
+         bulk_data_partitions,
+         config,
+         connections,
+         driver,
+         measurement_data,
+         result_file,
+         trial_number,
+         trial_number_current
+       ) do
+    Logger.debug(
+      "Start ==========> trial no.: #{trial_number_current} <=========="
+    )
+
+    measurement_data_start = create_result_measuring_point_start(
+      "trial",
+      measurement_data
+    )
+    #    IO.inspect(measurement_data_start, label: "measurement_data_start - trial no.: #{trial_number_current}")
+
+    Logger.info("Start ==========> trial no. #{trial_number_current}")
+
+    sql_create = config["sql.create"]
+    sql_drop = config["sql.drop"]
+
+    case OraLixir.prepare_execute(connections[1], "", sql_create, [], []) do
+      {:ok, Result} -> nil
+      #        OraLixir.close(connections[1], sql_create)
+      _ ->
+        {:ok, Result} = OraLixir.prepare_execute(
+          connections[1],
+          "",
+          sql_drop,
+          [],
+          []
+        )
+        #        OraLixir.close(connections[1], sql_drop)
+        {:ok, Result} = OraLixir.prepare_execute(
+          connections[1],
+          "",
+          sql_create,
+          [],
+          []
+        )
+        #        OraLixir.close(connections[1], sql_create)
+        Logger.debug(~s(Last DDL statement after DROP=#{config["sql.create"]}))
+    end
+
+    measurement_data_insert = run_insert(
+      bulk_data_partitions,
+      config,
+      connections,
+      driver,
+      measurement_data_start,
+      String.to_integer(config["benchmark.number.partitions"]),
+      1,
+      result_file,
+      trial_number_current
+    )
+    #    IO.inspect(measurement_data_insert, label: "measurement_data_insert - trial no.: #{trial_number_current}")
+
+    measurement_data_select = run_select(
+      bulk_data_partitions,
+      config,
+      connections,
+      driver,
+      measurement_data_insert,
+      String.to_integer(config["benchmark.number.partitions"]),
+      1,
+      result_file,
+      trial_number_current
+    )
+    #    IO.inspect(measurement_data_select, label: "measurement_data_select - trial no.: #{trial_number_current}")
+
+    {:ok, Result} = OraLixir.prepare_execute(
+      connections[1],
+      "",
+      sql_drop,
+      [],
+      []
+    )
+    #    OraLixir.close(connections[1], sql_drop)
+    Logger.debug(~s(last DDL statement=#{config["sql.drop"]}))
+
+    measurement_data_end = create_result_measuring_point_end(
+      "trial",
+      config,
+      driver,
+      measurement_data_select,
+      result_file,
+      "",
+      "",
+      trial_number_current
+    )
+    #    IO.inspect(measurement_data_end, label: "measurement_data_end - trial no.: #{trial_number_current}")
+
+    run_trial_oralixir(
       bulk_data_partitions,
       config,
       connections,
