@@ -12,10 +12,11 @@ setup_git() {
 }
 
 commit_result_files() {
+  cp priv/ora_bench_result.tsv /tmp
   git stash
   git checkout gh-pages
-  git stash apply
-  git stash clear
+  git pull
+  mv /tmp/ora_bench_result.tsv results/
   # Current month and year, e.g: Apr 2018
   dateAndMonth=`date "+%b %Y"`
   # Stage the modified files in dist/output
