@@ -13,10 +13,10 @@ setup_git() {
 
 commit_result_files() {
   cp priv/ora_bench_result.tsv /tmp
-  git stash
-  git checkout gh-pages
-  git pull
-  mv /tmp/ora_bench_result.tsv results/
+  cd /tmp
+  git clone --branch=gh-pages https://github.com/KonnexionsGmbH/ora_bench.git
+  mv /tmp/ora_bench_result.tsv ora_bench/results/
+  cd ora_bench
   # Current month and year, e.g: Apr 2018
   dateAndMonth=`date "+%b %Y"`
   # Stage the modified files in dist/output
