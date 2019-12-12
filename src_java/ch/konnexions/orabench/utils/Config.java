@@ -466,6 +466,7 @@ public class Config {
         list.add("benchmark.os");
         list.add("benchmark.user.name");
         list.add("connection.service");
+        list.add("connection.string");
         list.add("sql.create");
 
         return list;
@@ -794,6 +795,13 @@ public class Config {
                     + "] must not be less than 0, the specified value is replaced by 0.");
             connectionFetchSize = 0;
             propertiesConfiguration.setProperty("connection.fetch.size", connectionFetchSize);
+            isChanged = true;
+        }
+
+        if (connectionString.equals("n/a")) {
+            connectionString = "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=" + connectionHost + ")(PORT=" + Integer.toString(connectionPort)
+                    + ")))(CONNECT_DATA=(SERVER=dedicated)(SERVICE_NAME=" + connectionService + ")))";
+            propertiesConfiguration.setProperty("connection.string", connectionString);
             isChanged = true;
         }
 
