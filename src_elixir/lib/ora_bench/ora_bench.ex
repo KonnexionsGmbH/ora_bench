@@ -14,17 +14,17 @@ defmodule OraBench do
   # Creating the database objects of type connection.
   # ----------------------------------------------------------------------------------------------
 
-  defp create_database_objects(config) do
-    Logger.debug("Start ==========> <==========")
+  defp create_database_objects(config, driver) do
+    Logger.debug("Start ==========> driver: #{driver} }<==========")
 
     case config["benchmark.core.multiplier"] do
       "0" ->
-        case Jamdb.Oracle.start_link(jamdb_oracle_config(config)) do
+        case driver.start_link(driver_config(config)) do
           {:ok, conn} ->
             Map.new([{1, conn}])
           _ = other_reason ->
             raise(
-              "[Error in create_database_objects] Jamdb.Oracle.start_list: reason=#{
+              "[Error in create_database_objects] #{driver}.start_list: reason=#{
                 other_reason
               }"
             )
@@ -34,11 +34,11 @@ defmodule OraBench do
           1..String.to_integer(config["benchmark.number.partitions"]),
           %{},
           fn (i, connections) ->
-            case Jamdb.Oracle.start_link(jamdb_oracle_config(config)) do
+            case driver.start_link(driver_config(config)) do
               {:ok, conn} -> Map.put(connections, i, conn)
               _ = other_reason ->
                 raise(
-                  "[Error in create_database_objects] Jamdb.Oracle.start_list: reason=#{
+                  "[Error in create_database_objects] #{driver}.start_list: reason=#{
                     other_reason
                   }"
                 )
@@ -88,8 +88,8 @@ defmodule OraBench do
     #    IO.inspect(measurement_data_end, label: "measurement_data_end")
 
     benchmark_driver = case driver do
-      :jamdb_oracle -> @benchmark_driver_jamdb_oracle
-      :oralixir -> @benchmark_driver_oralixir
+      Jamdb.Oracle -> @benchmark_driver_jamdb_oracle
+      OraLixir -> @benchmark_driver_oralixir
     end
 
     :ok = IO.puts(
@@ -297,6 +297,32 @@ defmodule OraBench do
   end
 
   # ----------------------------------------------------------------------------------------------
+  # Database driver configuration.
+  # ----------------------------------------------------------------------------------------------
+
+  defp driver_config(config)  do
+    Logger.debug("Start ==========> <==========")
+
+    [
+      database: config["connection.service"],
+      hostname: config["connection.host"],
+      idle_interval: 1000000,
+      parameters: [
+        autocommit: false,
+        fetch: String.to_integer(config["connection.fetch.size"])
+      ],
+      password: config["connection.password"],
+      pool_size: case config["benchmark.core.multiplier"] do
+        "0" -> String.to_integer(config["benchmark.number.partitions"])
+        _ -> 1
+      end,
+      port: String.to_integer(config["connection.port"]),
+      timeout: :infinity,
+      username: config["connection.user"]
+    ]
+  end
+
+  # ----------------------------------------------------------------------------------------------
   # Loading the bulk file into memory.
   # ----------------------------------------------------------------------------------------------
 
@@ -447,37 +473,11 @@ defmodule OraBench do
   end
 
   # ----------------------------------------------------------------------------------------------
-  # Database configuration.
-  # ----------------------------------------------------------------------------------------------
-
-  defp jamdb_oracle_config(config)  do
-    Logger.debug("Start ==========> <==========")
-
-    [
-      database: config["connection.service"],
-      hostname: config["connection.host"],
-      idle_interval: 1000000,
-      parameters: [
-        autocommit: false,
-        fetch: String.to_integer(config["connection.fetch.size"])
-      ],
-      password: config["connection.password"],
-      pool_size: case config["benchmark.core.multiplier"] do
-        "0" -> String.to_integer(config["benchmark.number.partitions"])
-        _ -> 1
-      end,
-      port: String.to_integer(config["connection.port"]),
-      timeout: :infinity,
-      username: config["connection.user"]
-    ]
-  end
-
-  # ----------------------------------------------------------------------------------------------
   # Performing the benchmark run.
   # ----------------------------------------------------------------------------------------------
 
   def run_benchmark(driver) do
-    Logger.debug("Start ==========> #{driver} <==========")
+    Logger.debug("Start ==========> driver: #{driver} <==========")
 
     config = get_config()
     #    IO.inspect(config, label: "config")
@@ -497,19 +497,31 @@ defmodule OraBench do
     bulk_data_partitions = get_bulk_data_partitions(config)
     #   IO.inspect(bulk_data_partitions, label: "bulk_data_partitions")
 
-    connections = create_database_objects(config)
+    connections = create_database_objects(config, driver)
     #    IO.inspect(connections, label: "connections")
 
-    measurement_data_run_trial = run_trial(
-      bulk_data_partitions,
-      config,
-      connections,
-      driver,
-      measurement_data,
-      result_file,
-      String.to_integer(config["benchmark.trials"]),
-      1
-    )
+    measurement_data_run_trial = case driver do
+      Jamdb.Oracle -> run_trial_jamdb_oracle(
+                        bulk_data_partitions,
+                        config,
+                        connections,
+                        driver,
+                        measurement_data,
+                        result_file,
+                        String.to_integer(config["benchmark.trials"]),
+                        1
+                      )
+      OraLixir -> run_trial_oralixir(
+                    bulk_data_partitions,
+                    config,
+                    connections,
+                    driver,
+                    measurement_data,
+                    result_file,
+                    String.to_integer(config["benchmark.trials"]),
+                    1
+                  )
+    end
     #    IO.inspect(measurement_data_run_trial, label: "measurement_data_run_trial")
 
     Enum.each(
@@ -705,7 +717,7 @@ defmodule OraBench do
   # Performing the trials.
   # ----------------------------------------------------------------------------------------------
 
-  defp run_trial(
+  defp run_trial_jamdb_oracle(
          _bulk_data_partitions,
          _config,
          _connections,
@@ -721,7 +733,7 @@ defmodule OraBench do
     measurement_data
   end
 
-  defp run_trial(
+  defp run_trial_jamdb_oracle(
          bulk_data_partitions,
          config,
          connections,
@@ -746,31 +758,25 @@ defmodule OraBench do
     _sql_create = %Jamdb.Oracle.Query{statement: config["sql.create"]}
     _sql_drop = %Jamdb.Oracle.Query{statement: config["sql.drop"]}
 
-    #    IO.inspect(connections, label: "connections")
-    #    DBConnection.prepare_execute(connections[1], sql_create, [])
-    #    |> IO.inspect()
-
-    #    case DBConnection.prepare_execute(connections[1], sql_create, []) do
-    #      {:ok, Result} ->
-    #        Logger.info("wwe_011")
-    #        DBConnection.close(connections[1], sql_create)
-    #        Logger.debug(~s(last DDL statement=#{config["sql.create"]}))
-    #      _ ->
-    #        Logger.info("wwe_021")
-    #        {:ok, Result} = DBConnection.prepare_execute(
-    #          connections[1],
-    #          sql_drop,
-    #          []
-    #        )
-    #        DBConnection.close(connections[1], sql_drop)
-    #        {:ok, Result} = DBConnection.prepare_execute(
-    #          connections[1],
-    #          sql_create,
-    #          []
-    #        )
-    #        DBConnection.close(connections[1], sql_create)
-    #        Logger.debug(~s(Last DDL statement after DROP=#{config["sql.create"]}))
-    #    end
+    case DBConnection.prepare_execute(connections[1], sql_create, []) do
+      {:ok, Result} ->
+        DBConnection.close(connections[1], sql_create)
+      _ ->
+        Logger.info("wwe_021")
+        {:ok, Result} = DBConnection.prepare_execute(
+          connections[1],
+          sql_drop,
+          []
+        )
+        DBConnection.close(connections[1], sql_drop)
+        {:ok, Result} = DBConnection.prepare_execute(
+          connections[1],
+          sql_create,
+          []
+        )
+        DBConnection.close(connections[1], sql_create)
+        Logger.debug(~s(Last DDL statement after DROP=#{config["sql.create"]}))
+    end
 
     measurement_data_insert = run_insert(
       bulk_data_partitions,
@@ -798,11 +804,11 @@ defmodule OraBench do
     )
     #    IO.inspect(measurement_data_select, label: "measurement_data_select - trial no.: #{trial_number_current}")
 
-    #    {:ok, Result} = DBConnection.prepare_execute(
-    #      connections[1],
-    #      sql_drop,
-    #      []
-    #    )
+    {:ok, Result} = DBConnection.prepare_execute(
+      connections[1],
+      sql_drop,
+      []
+    )
     #    DBConnection.close(connections[1], sql_drop)
     Logger.debug(~s(last DDL statement=#{config["sql.drop"]}))
 
@@ -818,7 +824,7 @@ defmodule OraBench do
     )
     #    IO.inspect(measurement_data_end, label: "measurement_data_end - trial no.: #{trial_number_current}")
 
-    run_trial(
+    run_trial_jamdb_oracle(
       bulk_data_partitions,
       config,
       connections,

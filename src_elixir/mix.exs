@@ -31,8 +31,8 @@ defmodule OraBench.MixProject do
   defp deps do
     [
       {:ecto_sql, "~> 3.2.2"},
-      {:jamdb_oracle, "~> 0.3.6"}
-#     {:oralixir, git: "https://github.com/c-bik/OraLixir"}
+      {:jamdb_oracle, "~> 0.3.6"},
+      {:oralixir, git: "https://github.com/c-bik/OraLixir"}
     ]
   end
 

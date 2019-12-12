@@ -10,12 +10,10 @@ config :ora_bench,
        adapter: Ecto.Adapters.Jamdb.Oracle
 
 # Configures Elixir's Logger
+config :logger, level: :info
 config :logger,
        :console,
        backends: [:console],
-       compile_time_purge_matching: [
-         [level_lower_than: :info]
-       ],
        format: "$time $metadata\n[$level] $message\n",
        metadata: [
          :module,
