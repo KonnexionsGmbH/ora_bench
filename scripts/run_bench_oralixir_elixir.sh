@@ -44,8 +44,8 @@ java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
 
 cd src_elixir
 mix deps.get
-# mix deps.compile
-mix run -e "OraBench.CLI.main(['OraLixir'])"
+mix deps.compile
+mix run -e "OraBench.CLI.main([\"OraLixir\"])"
 
 EXITCODE=$?
 
