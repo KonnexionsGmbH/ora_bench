@@ -49,7 +49,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>connection.password
  * <li>connection.port
  * <li>connection.service
- * <li>connection.string
  * <li>connection.user
  * <li>file.bulk.delimiter
  * <li>file.bulk.header
@@ -93,7 +92,6 @@ public class Config {
     private String connectionPassword;
     private int connectionPort;
     private String connectionService;
-    private String connectionString;
     private String connectionUser;
     FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
 
@@ -341,13 +339,6 @@ public class Config {
      */
     public final String getConnectionService() {
         return connectionService;
-    }
-
-    /**
-     * @return the connection string
-     */
-    public final String getConnectionString() {
-        return connectionString;
     }
 
     /**
@@ -599,7 +590,6 @@ public class Config {
         connectionPassword = propertiesConfiguration.getString("connection.password");
         connectionPort = propertiesConfiguration.getInt("connection.port");
         connectionService = propertiesConfiguration.getString("connection.service");
-        connectionString = propertiesConfiguration.getString("connection.string");
         connectionUser = propertiesConfiguration.getString("connection.user");
 
         fileBulkDelimiter = propertiesConfiguration.getString("file.bulk.delimiter");

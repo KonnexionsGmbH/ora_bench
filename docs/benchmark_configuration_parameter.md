@@ -26,7 +26,6 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | connection.password | regit | no | The password corresponding to the connection user name. |
 | connection.port | 1521 | yes | The number of the TCP port that the Oracle server uses to listen for client connections. |
 | connection.service | n/a | yes | The service name of the database to access. |
-| connection.string | (DESCRIPTION=<br>(ADDRESS_LIST=<br>(ADDRESS=<br>(PROTOCOL=TCP)<br>(HOST=127.0.0.1)<br>(PORT=1521)))<br>(CONNECT_DATA=<br>(SERVER=dedicated)<br>(SERVICE_NAME=xe))) | no | The connection string for direct access to the database. |
 | connection.user | scott | no | The user name to use to access the Oracle server. |
 | file.bulk.delimiter | ; | no | The delimiter character in the bulk file. |
 | file.bulk.header | key;<br>data | no | The header used to generate the bulk file. |
