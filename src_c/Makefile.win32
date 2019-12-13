@@ -3,7 +3,7 @@ S = .
 L = .\odpi\lib\odpic.lib
 ODPIREPO=https://github.com/oracle/odpi/
 
-OBJS = $O\OraBench.obj
+OBJS = $O\OraBench.obj $O\config.obj
 TARGETS = $O\OraBench.exe
 
 CFLAGS = /nologo /c /MT
