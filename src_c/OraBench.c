@@ -29,8 +29,9 @@ int main(const int argc, const char *argv[])
     L("connectString %s\n", connectString);
 
     dpiErrorInfo errorInfo;
-    if (dpiContext_create(DPI_MAJOR_VERSION, DPI_MINOR_VERSION, &gContext,
-                          &errorInfo) < 0)
+    if (dpiContext_create(
+            DPI_MAJOR_VERSION, DPI_MINOR_VERSION, &gContext,
+            &errorInfo) != DPI_SUCCESS)
         FE("Cannot create DPI context", errorInfo);
 
     L("context created\n");
@@ -41,15 +42,51 @@ int main(const int argc, const char *argv[])
             gConnUser, strlen(gConnUser),
             gConnPaswd, strlen(gConnPaswd),
             connectString, strlen(connectString),
-            NULL, NULL, &conn) < 0)
+            NULL, NULL, &conn) != DPI_SUCCESS)
     {
         E("Unable to create connection");
         exit(1);
     }
     L("connected!\n");
 
-    L("sql.create %s\n", gSqlCreate);
+    dpiStmt *stmt = NULL;
+
     L("sql.drop %s\n", gSqlDrop);
+    if (dpiConn_prepareStmt(
+            conn, 0, gSqlDrop, strlen(gSqlDrop), NULL, 0, &stmt) != DPI_SUCCESS)
+    {
+        E("Unable to prepare drop stmt");
+        exit(-1);
+    }
+    if (dpiStmt_execute(
+            stmt, DPI_MODE_EXEC_COMMIT_ON_SUCCESS, NULL) != DPI_SUCCESS)
+        E("Unable to execute drop stmt");
+    if (dpiStmt_close(stmt, NULL, 0) != DPI_SUCCESS)
+    {
+        E("Unable to close drop stmt");
+        exit(-1);
+    }
+
+    L("sql.create %s\n", gSqlCreate);
+    stmt = NULL;
+    if (dpiConn_prepareStmt(
+            conn, 0, gSqlCreate, strlen(gSqlCreate), NULL, 0, &stmt) != DPI_SUCCESS)
+    {
+        E("Unable to prepare create stmt");
+        exit(-1);
+    }
+    if (dpiStmt_execute(
+            stmt, DPI_MODE_EXEC_COMMIT_ON_SUCCESS, NULL) != DPI_SUCCESS)
+    {
+        E("Unable to execute create stmt");
+        exit(-1);
+    }
+    if (dpiStmt_close(stmt, NULL, 0) != DPI_SUCCESS)
+    {
+        E("Unable to close create stmt");
+        exit(-1);
+    }
+
     L("sql.insert %s\n", gSqlInsert);
     L("sql.select %s\n", gSqlSelect);
 
