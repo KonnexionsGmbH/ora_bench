@@ -1,25 +1,16 @@
 #ifndef _CONFIG_H_
 #pragma once
 
-typedef struct config_t
-{
-    struct
-    {
-        char user[128];
-        char password[128];
-        char service[128];
-        char host[128];
-        char port[8];
-    } connection;
-    struct
-    {
-        char create[1024];
-        char drop[1024];
-        char insert[1024];
-        char select[1024];
-    } sql;
-} config;
+extern char gConnHost[1024];
+extern char gConnPort[1024];
+extern char gConnUser[1024];
+extern char gConnPaswd[1024];
+extern char gConnService[1024];
+extern char gSqlCreate[1024];
+extern char gSqlDrop[1024];
+extern char gSqlInsert[1024];
+extern char gSqlSelect[1024];
 
-extern const config get_config(const char *);
+extern void load_config(const char *);
 
 #endif // _CONFIG_H_

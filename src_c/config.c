@@ -2,8 +2,18 @@
 #include "global.h"
 #include "config.h"
 
-#define CONF_CP(_field) (strcmp(#_field, key) == 0) strcpy(c._field, val)
-const config get_config(const char *file)
+char gConnHost[1024];
+char gConnPort[1024];
+char gConnUser[1024];
+char gConnPaswd[1024];
+char gConnService[1024];
+char gSqlCreate[1024];
+char gSqlDrop[1024];
+char gSqlInsert[1024];
+char gSqlSelect[1024];
+
+#define CONF_CP(_field, _var) (strcmp(#_field, key) == 0) strcpy(_var, val)
+void load_config(const char *file)
 {
     FILE *fp = fopen(file, "r");
     if (fp == NULL)
@@ -17,9 +27,6 @@ const config get_config(const char *file)
     char val[1024];
     char *keyp = key;
     char *valp = NULL;
-
-    config c;
-    memset(&c, 0, sizeof(config));
 
     while (ch != EOF)
     {
@@ -52,36 +59,26 @@ const config get_config(const char *file)
             *valp = '\0';
             valp = NULL;
             if
-                CONF_CP(connection.host);
+                CONF_CP(connection.host, gConnHost);
             else if
-                CONF_CP(connection.port);
+                CONF_CP(connection.port, gConnPort);
             else if
-                CONF_CP(connection.user);
+                CONF_CP(connection.user, gConnUser);
             else if
-                CONF_CP(connection.password);
+                CONF_CP(connection.password, gConnPaswd);
             else if
-                CONF_CP(connection.service);
+                CONF_CP(connection.service, gConnService);
             else if
-                CONF_CP(sql.create);
+                CONF_CP(sql.create, gSqlCreate);
             else if
-                CONF_CP(sql.drop);
+                CONF_CP(sql.drop, gSqlDrop);
             else if
-                CONF_CP(sql.insert);
+                CONF_CP(sql.insert, gSqlInsert);
             else if
-                CONF_CP(sql.select);
+                CONF_CP(sql.select, gSqlSelect);
         }
         ch = getc(fp);
     }
 
-    L("connection.user %s\n", c.connection.user);
-    L("connection.password %s\n", c.connection.password);
-    L("connection.service %s\n", c.connection.service);
-    L("sql.create %s\n", c.sql.create);
-    L("sql.drop %s\n", c.sql.drop);
-    L("sql.insert %s\n", c.sql.insert);
-    L("sql.select %s\n", c.sql.select);
-
     fclose(fp);
-
-    return c;
 }

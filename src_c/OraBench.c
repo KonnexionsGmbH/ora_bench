@@ -18,12 +18,16 @@ int main(const int argc, const char *argv[])
         return -1;
     }
 
-    config c = get_config(argv[1]);
+    load_config(argv[1]);
 
     char connectString[1024];
     sprintf(connectString,
-            "%s:%s/%s", c.connection.host, c.connection.port, c.connection.service);
+            "%s:%s/%s", gConnHost, gConnPort, gConnService);
+
+    L("connection.user %s\n", gConnUser);
+    L("connection.password %s\n", gConnPaswd);
     L("connectString %s\n", connectString);
+
     dpiErrorInfo errorInfo;
     if (dpiContext_create(DPI_MAJOR_VERSION, DPI_MINOR_VERSION, &gContext,
                           &errorInfo) < 0)
@@ -34,8 +38,8 @@ int main(const int argc, const char *argv[])
     dpiConn *conn;
     if (dpiConn_create(
             gContext,
-            c.connection.user, strlen(c.connection.user),
-            c.connection.password, strlen(c.connection.password),
+            gConnUser, strlen(gConnUser),
+            gConnPaswd, strlen(gConnPaswd),
             connectString, strlen(connectString),
             NULL, NULL, &conn) < 0)
     {
@@ -43,6 +47,11 @@ int main(const int argc, const char *argv[])
         exit(1);
     }
     L("connected!\n");
+
+    L("sql.create %s\n", gSqlCreate);
+    L("sql.drop %s\n", gSqlDrop);
+    L("sql.insert %s\n", gSqlInsert);
+    L("sql.select %s\n", gSqlSelect);
 
     return 0;
 }
