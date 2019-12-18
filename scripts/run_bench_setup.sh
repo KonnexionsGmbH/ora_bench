@@ -31,7 +31,7 @@ PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 make -f src_java/Makefile clean
 make -f src_java/Makefile
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup
+java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup
 
 EXITCODE=$?
 

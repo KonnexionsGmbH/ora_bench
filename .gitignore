@@ -18,3 +18,4 @@ ora_bench_oranif_erlang.properties
 rebar.lock
 rel/example_project
 test/bin/*
+tmp/

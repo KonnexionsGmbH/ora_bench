@@ -128,8 +128,7 @@ public class OraBench {
 
                 preparedStatements.add(connection.prepareStatement(config.getSqlInsert().replace(":key", "?").replace(":data", "?")));
 
-                statement = connection.createStatement();
-                statements.add(statement);
+                statements.add(connection.createStatement());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
