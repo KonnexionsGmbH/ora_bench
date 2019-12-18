@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "global.h"
 #include "config.h"
 
@@ -11,6 +13,10 @@ char gSqlCreate[1024];
 char gSqlDrop[1024];
 char gSqlInsert[1024];
 char gSqlSelect[1024];
+char gBulkDelim[1024];
+char gBulkHeader[1024];
+char gBulkName[1024];
+char gBenchPartitions[1024];
 
 #define CONF_CP(_field, _var) (strcmp(#_field, key) == 0) strcpy(_var, val)
 void load_config(const char *file)
@@ -76,6 +82,14 @@ void load_config(const char *file)
                 CONF_CP(sql.insert, gSqlInsert);
             else if
                 CONF_CP(sql.select, gSqlSelect);
+            else if
+                CONF_CP(file.bulk.delimiter, gBulkDelim);
+            else if
+                CONF_CP(file.bulk.header, gBulkHeader);
+            else if
+                CONF_CP(file.bulk.name, gBulkName);
+            else if
+                CONF_CP(benchmark.number.partitions, gBenchPartitions);
         }
         ch = getc(fp);
     }

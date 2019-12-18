@@ -10,6 +10,10 @@ extern char gSqlCreate[1024];
 extern char gSqlDrop[1024];
 extern char gSqlInsert[1024];
 extern char gSqlSelect[1024];
+extern char gBulkDelim[1024];
+extern char gBulkHeader[1024];
+extern char gBulkName[1024];
+extern char gBenchPartitions[1024];
 
 extern void load_config(const char *);
 
