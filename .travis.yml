@@ -22,7 +22,7 @@ before_install:
 - sudo apt install default-jdk
 - java -version
 # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
-- sudo yum install libaio
+- sudo apt-get install libaio1
 - export LD_LIBRARY_PATH=priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH
 # Python -----------------------------------------------------------------------
 - sudo apt install software-properties-common
