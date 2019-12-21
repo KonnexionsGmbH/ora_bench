@@ -10,7 +10,11 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    if [ "$OSTYPE" = "msys" ]; then
+        export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    else
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+    fi
 fi
 
 echo "================================================================================"

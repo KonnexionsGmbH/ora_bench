@@ -40,7 +40,7 @@ echo ===========================================================================
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
 
-python src_python/OraBench.py
+python3 src_python/OraBench.py
 
 echo 
 echo --------------------------------------------------------------------------------
