@@ -201,7 +201,7 @@ public class Config {
                 bufferedWriter.newLine();
             }
 
-            bufferedWriter.write("}");
+            bufferedWriter.write("}.");
 
             bufferedWriter.close();
         } catch (IOException e) {
