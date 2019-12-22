@@ -45,9 +45,10 @@ main([ConfigFile]) ->
   {ok, Fd} = file:open(BulkFile, [read, raw, binary, {read_ahead, 1024 * 1024}]),
   Rows = load_data(Fd, Header, BulkDelimiter, Partitions, []),
   ok = file:close(Fd),
-  StartDateTime = ts(),
-  %R = run_trials(Trials, Rows, Config),
-  EndDateTime = ts(),
+  #{
+    startTime := StartTs,
+    endTime := EndTs
+  } = Results = run_trials(Trials, Rows, Config),
   RowFmt = string:join(
     [
       BMId, BMComment, BMHost, integer_to_list(BMCores), BMOs, BMUser, BMDB,
@@ -61,30 +62,65 @@ main([ConfigFile]) ->
       "~s", % start day time (yyyy-mm-dd hh24:mi:ss.fffffffff)
       "~s", % end day time (yyyy-mm-dd hh24:mi:ss.fffffffff)
       "~p", % duration second
-      "~p" % duration nano second
+      "~p~n" % duration nano second
     ],
     ResultDelim
   ),
   case filelib:is_regular(ResultFile) of
-    false ->      
-      ok = file:write_file(
-        ResultFile,
-        string:replace(ResultHeader, ";", BulkDelimiter)
-      );
+    false -> ok = file:write_file(ResultFile, ResultHeader ++ "\n");
     _ -> ok
   end,
   {ok, RFd} = file:open(ResultFile, [append, binary]),
-  ok = io:format(RFd, "~s~n", ["test"]),
+  DurationMicros = timer:now_diff(EndTs, StartTs),
+  ok = io:format(
+    RFd, RowFmt,
+    [0, "", benchmark, ts_str(StartTs), ts_str(EndTs),
+    round(DurationMicros / 1000000), DurationMicros * 1000]
+  ),
+  maps:map(
+    fun(
+      Trial,
+      #{startTime := STs, endTime := ETs, insert := Insrts, select := Slcts}
+    ) ->
+      DMs = timer:now_diff(ETs, STs),
+      ok = io:format(
+        RFd, RowFmt,
+        [Trial, "", trial, ts_str(STs), ts_str(ETs),
+        round(DMs / 1000000), DMs * 1000]
+      ),
+      maps:map(
+        fun(_Pid, {Sql, ISts, IETs}) ->
+          IDMs = timer:now_diff(IETs, ISts),
+          ok = io:format(
+            RFd, RowFmt,
+            [0, Sql, 'query', ts_str(ISts), ts_str(IETs),
+            round(IDMs / 1000000), IDMs * 1000]
+          )
+        end,
+        maps:without([startTime, endTime], Insrts)
+      ),
+      maps:map(
+        fun(_Pid, {Sql, ISts, IETs}) ->
+          IDMs = timer:now_diff(IETs, ISts),
+          ok = io:format(
+            RFd, RowFmt,
+            [0, Sql, 'query', ts_str(ISts), ts_str(IETs),
+            round(IDMs / 1000000), IDMs * 1000]
+          )
+        end,
+        maps:without([startTime, endTime], Slcts)
+      )
+    end,
+    maps:without([startTime, endTime], Results)
+  ),
   ok = file:close(RFd),
-  %io:format("run_trials(Trials, Config) ~p~n", [R]),  
   halt(0).
 
 %%====================================================================
 %% Internal functions
 %%====================================================================
-ts() ->
-  {_, _, Micro} = os:timestamp(),
-  {{Y, M , D}, {H, Mi, S}} = calendar:local_time(),
+ts_str({_, _, Micro} = Timestamp) ->
+  {{Y, M , D}, {H, Mi, S}} = calendar:now_to_local_time(Timestamp),
   list_to_binary(
     io_lib:format(
       "~4..0B-~2..0B-~2..0B ~2..0B:~2..0B:~2..0B.~-9..0B",
@@ -112,7 +148,7 @@ run_trials(
         io_lib:format("~s:~p/~s", [Host, Port, Service])
       )
     },
-    #{start => os:timestamp()}
+    #{startTime => os:timestamp()}
   ).
 run_trials(0, _, Ctx, _, Stats) ->
   ok = dpi:context_destroy(Ctx),
