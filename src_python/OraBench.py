@@ -106,7 +106,7 @@ def create_result_file(config):
 
     if not result_file.is_file():
         result_file = open(os.path.abspath(config['file.result.name']), 'w')
-        result_file.write(config['file.result.header'].replace(';', config['file.result.delimiter']) + '\n')
+        result_file.write(config['file.result.header'] + '\n')
         result_file.close()
 
     result_file = open(os.path.abspath(config['file.result.name']), 'a')

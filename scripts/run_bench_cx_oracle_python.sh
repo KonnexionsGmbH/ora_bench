@@ -46,7 +46,11 @@ EXITCODE="0"
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
 
-python3 src_python/OraBench.py
+if [ "$OSTYPE" = "msys" ]; then
+    python src_python/OraBench.py
+else
+    python3 src_python/OraBench.py
+fi
 
 EXITCODE=$?
 
