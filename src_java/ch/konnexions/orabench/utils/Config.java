@@ -158,9 +158,16 @@ public class Config {
             bufferedWriter.write("[DEFAULT]");
             bufferedWriter.newLine();
 
+            String value;
+
             for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
-                final String value = propertiesConfiguration.getString(key);
+
+                if ("file.result.header".contentEquals(key)) {
+                    value = propertiesConfiguration.getString(key).replace(";", fileResultDelimiter);
+                } else {
+                    value = propertiesConfiguration.getString(key);
+                }
 
                 bufferedWriter.write(key + " = " + ((value.contentEquals("\t")) ? "TAB" : value));
                 bufferedWriter.newLine();
@@ -185,12 +192,20 @@ public class Config {
             bufferedWriter.write("#{");
             bufferedWriter.newLine();
 
+            String value;
+
             for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
 
+                if ("file.result.header".contentEquals(key)) {
+                    value = propertiesConfiguration.getString(key).replace(";", fileResultDelimiter);
+                } else {
+                    value = propertiesConfiguration.getString(key);
+                }
+
                 final String quote = (list.contains(key.toLowerCase())) ? "" : "\"";
 
-                bufferedWriter.write("    " + key.replace(".", "_") + " => " + quote + propertiesConfiguration.getString(key) + quote);
+                bufferedWriter.write("    " + key.replace(".", "_") + " => " + quote + value + quote);
 
                 if (iterator.hasNext()) {
                     bufferedWriter.write(",");
@@ -199,7 +214,7 @@ public class Config {
                 bufferedWriter.newLine();
             }
 
-            bufferedWriter.write("}");
+            bufferedWriter.write("}.");
 
             bufferedWriter.close();
         } catch (IOException e) {
