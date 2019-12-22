@@ -25,7 +25,11 @@ export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 export ORA_BENCH_RUN_JDBC_JAVA=true
 
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    if [ "$OSTYPE" = "msys" ]; then
+        export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    else
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+    fi
 fi
 
 export ORA_BENCH_PASSWORD_SYS=oracle
