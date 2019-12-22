@@ -7,13 +7,6 @@ The Linux distribution Ubuntu 18.04 LTS can be installed via the Microsoft Store
 
 ## `ora_bench` specific installation work
 
-Matrix for the dependency between driver & programming language and their specific installation steps.
-The installation steps not mentioned here are always required.
-
-| Driver & Programming Language | Specific Installation Steps |
-| ---                           | ---                         |
-| cx_Oracle & Python            | no. 4 and 5                 |
-
 ### 1 Update of the Linux distribution Ubuntu
 
 After starting WSL 2 you should change to the root directory of your local ora_bench repository:
@@ -42,6 +35,8 @@ Next the Linux distribution Ubuntu must be updated:
 
 ### 4 Installing Python
 
+**Only needed with `cx_Oracle` and `Python`**
+
     sudo apt-get install software-properties-common
     sudo add-apt-repository -y ppa:deadsnakes/ppa
     
@@ -52,6 +47,8 @@ Next the Linux distribution Ubuntu must be updated:
     source _build/ora_bench-env/bin/activate
 
 ### 5 Installing cx_Oracle
+
+**Only needed with `cx_Oracle` and `Python`**
 
     sudo apt-get install python3-pip
     python3 -m pip install --upgrade cx_Oracle
@@ -68,9 +65,9 @@ Next the Linux distribution Ubuntu must be updated:
 
     sudo apt-get install build-essential
 
-### Fixing Possible Issues
+## Fixing Possible Issues
 
-#### Python compile error 'locale.Error: unsupported locale setting'
+### Python compile error 'locale.Error: unsupported locale setting'
 
 The missing locale is `de_DE.utf8`.
 
