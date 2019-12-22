@@ -62,7 +62,11 @@ All the file names specified here are also part of the configuration file and ca
 - Make for Windows from [here](http://gnuwin32.sourceforge.net/packages/make.htm)
 - Python 3 from [here](https://www.python.org/downloads/)
 
-##### 2.2.1.1.2 Linux Platform
+##### 2.2.1.1.2 Windows Subsystem for Linux (WSL 2 and Ubuntu 18.04 LTS)
+
+See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
+
+##### 2.2.1.1.3 Linux Platform
 
 - Java SE Development Kit, e.g. `sudo apt install default-jdk`
 - Oracle Instant Client, e.g.
@@ -77,7 +81,7 @@ All the file names specified here are also part of the configuration file and ca
     - `python3 -m venv my-project-env`
     - `source my-project-env/bin/activate`
 
-##### 2.2.1.1.3 Platform-independent Installation
+##### 2.2.1.1.4 Platform-independent Installation
 
 - Install [cx_Oracle](https://oracle.github.io/python-cx_Oracle/):
     - `python -m pip install --upgrade pip`
