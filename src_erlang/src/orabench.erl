@@ -20,18 +20,76 @@ main([ConfigFile]) ->
     file_bulk_name := BulkFile,
     file_bulk_header := Header,
     file_bulk_delimiter := BulkDelimiter,
-    benchmark_number_partitions := Partitions
+    benchmark_number_partitions := Partitions,
+
+    file_result_delimiter := ResultDelim,
+    file_result_header := ResultHeader,
+    file_result_name := ResultFile,
+
+    benchmark_id := BMId,
+    benchmark_comment := BMComment,
+    benchmark_host_name := BMHost,
+    benchmark_number_cores := BMCores,
+    benchmark_os := BMOs,
+    benchmark_user_name := BMUser,
+    benchmark_database := BMDB,
+    benchmark_module := BMMod,
+    benchmark_driver := BMDrv,
+    benchmark_core_multiplier := BMCoreMul,
+    connection_fetch_size := ConnFetchSz,
+    benchmark_transaction_size := BMTransSz,
+    file_bulk_length := FBulkLen,
+    file_bulk_size := FBulkSz,
+    benchmark_batch_size := BMBatchSz
   } = Config,
   {ok, Fd} = file:open(BulkFile, [read, raw, binary, {read_ahead, 1024 * 1024}]),
   Rows = load_data(Fd, Header, BulkDelimiter, Partitions, []),
-  R = run_trials(Trials, Rows, Config),
-  io:format("run_trials(Trials, Config) ~p~n", [R]),
   ok = file:close(Fd),
+  StartDateTime = ts(),
+  %R = run_trials(Trials, Rows, Config),
+  EndDateTime = ts(),
+  RowFmt = string:join(
+    [
+      BMId, BMComment, BMHost, integer_to_list(BMCores), BMOs, BMUser, BMDB,
+      BMMod, BMDrv,
+      "~p", %trial_no
+      "~s", % sql
+      integer_to_list(BMCoreMul), integer_to_list(ConnFetchSz),
+      integer_to_list(BMTransSz), integer_to_list(FBulkLen),
+      integer_to_list(FBulkSz), integer_to_list(BMBatchSz),
+      "~p", % action
+      "~s", % start day time (yyyy-mm-dd hh24:mi:ss.fffffffff)
+      "~s", % end day time (yyyy-mm-dd hh24:mi:ss.fffffffff)
+      "~p", % duration second
+      "~p" % duration nano second
+    ],
+    ResultDelim
+  ),
+  case filelib:is_regular(ResultFile) of
+    false ->      
+      ok = file:write_file(
+        ResultFile,
+        string:replace(ResultHeader, ";", BulkDelimiter)
+      );
+    _ -> ok
+  end,
+  {ok, RFd} = file:open(ResultFile, [append, binary]),
+  ok = io:format(RFd, "~s~n", ["test"]),
+  ok = file:close(RFd),
+  %io:format("run_trials(Trials, Config) ~p~n", [R]),  
   halt(0).
 
 %%====================================================================
 %% Internal functions
 %%====================================================================
+ts() ->
+  {_, _, Micro} = os:timestamp(),
+  {{Y, M , D}, {H, Mi, S}} = calendar:local_time(),
+  list_to_binary(
+    io_lib:format(
+      "~4..0B-~2..0B-~2..0B ~2..0B:~2..0B:~2..0B.~-9..0B",
+      [Y,M,D,H,Mi,S,Micro])
+  ).
 
 run_trials(
   Trials, Rows,
@@ -54,11 +112,11 @@ run_trials(
         io_lib:format("~s:~p/~s", [Host, Port, Service])
       )
     },
-    #{total_duration => os:timestamp()}
+    #{start => os:timestamp()}
   ).
-run_trials(0, _, Ctx, _, #{total_duration := Start} = Stats) ->
+run_trials(0, _, Ctx, _, Stats) ->
   ok = dpi:context_destroy(Ctx),
-  Stats#{total_duration => timer:now_diff(os:timestamp(), Start)};
+  Stats#{endTime => os:timestamp()};
 run_trials(
   Trial, Rows, Ctx,
   #{
@@ -96,7 +154,8 @@ run_trials(
   run_trials(
     Trial - 1, Rows, Ctx, Config,
     Stats#{Trial => #{
-      duration => timer:now_diff(os:timestamp(), StartTime),
+      startTime => StartTime,
+      endTime => os:timestamp(),
       insert => InsertStat,
       select => SelectStat
     }}
@@ -140,10 +199,9 @@ select_partition(
       #{found := false} -> done
     end
   end)(),
-  Duration = timer:now_diff(os:timestamp(), Start),
   ok = dpi:stmt_close(SelectStmt, <<>>),
   ok = dpi:conn_close(Conn, [], <<>>),
-  Master ! {result, self(), Duration}.
+  Master ! {result, self(), {SelectSql, Start, os:timestamp()}}.
 
 run_insert(Ctx, Rows, #{benchmark_number_partitions := Partitions} = Config) ->
   Master = self(),
@@ -201,12 +259,11 @@ insert_partition(
     end,
     {0, 0}
   ),
-  Duration = timer:now_diff(os:timestamp(), Start),
   ok = dpi:var_release(KeyVar),
   ok = dpi:var_release(DataVar),
   ok = dpi:stmt_close(InsertStmt, <<>>),
   ok = dpi:conn_close(Conn, [], <<>>),
-  Master ! {result, self(), Duration}.
+  Master ! {result, self(), {Insert, Start, os:timestamp()}}.
 
 load_data(Fd, Header, BulkDelimiter, Partitions, Rows) ->
   case file:read_line(Fd) of
