@@ -65,7 +65,11 @@ docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-si
 docker start ora_bench_db
 while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
 
-priv/oracle/sqlcl/bin/sql sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_database.sql
+if [ "$OSTYPE" = "msys" ]; then
+  priv/oracle/instantclient-windows.x64/instantclient_19_5/sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_database.sql
+else
+  priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_database.sql
+fi  
 
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
