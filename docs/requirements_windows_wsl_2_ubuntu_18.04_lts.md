@@ -63,7 +63,7 @@ Next the Linux distribution Ubuntu must be updated:
 
 ### Python compile error 'locale.Error: unsupported locale setting'
 
-Missing locale: `de_DE.utf8`
+The missing locale is `de_DE.utf8`.
 
     export LC_ALL=C
     sudo dpkg-reconfigure locales
