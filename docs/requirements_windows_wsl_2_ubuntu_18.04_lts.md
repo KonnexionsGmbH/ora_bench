@@ -5,7 +5,7 @@ The documentation for installing WSL 2 can be found [here](https://docs.microsof
 
 The Linux distribution Ubuntu 18.04 LTS can be installed via the Microsoft Store.
 
-## `ora_bench` specific installation work
+## Specific installation work for `ora_bench` 
 
 ### 1 Update of the Linux distribution Ubuntu
 
@@ -67,7 +67,7 @@ Next the Linux distribution Ubuntu must be updated:
 
 ## Fixing Possible Issues
 
-### Python compile error 'locale.Error: unsupported locale setting'
+### Python compile error `locale.Error: unsupported locale setting`
 
 The missing locale is `de_DE.utf8`.
 
