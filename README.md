@@ -64,7 +64,7 @@ All the file names specified here are also part of the configuration file and ca
 
 ##### 2.2.1.1.2 Windows Subsystem for Linux (WSL 2 and Ubuntu 18.04 LTS)
 
-See [here](docs/requirements_windows_wsl 2_ubuntu 18.04 lts.md).
+See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
 
 ##### 2.2.1.1.3 Linux Platform
 
