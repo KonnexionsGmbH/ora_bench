@@ -1,10 +1,11 @@
-{application, ora_bench,
- [{description, "An OTP library"},
+{application, orabench,
+ [{description, "An escript"},
   {vsn, "0.1.0"},
   {registered, []},
   {applications,
    [kernel,
-    stdlib
+    stdlib,
+    oranif
    ]},
   {env,[]},
   {modules, []},

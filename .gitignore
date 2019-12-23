@@ -1,3 +1,4 @@
+*.exe
 *.beam
 *.class
 *.log
