@@ -33,8 +33,6 @@ main([ConfigFile]) ->
     benchmark_os := BMOs,
     benchmark_user_name := BMUser,
     benchmark_database := BMDB,
-    benchmark_module := BMMod,
-    benchmark_driver := BMDrv,
     benchmark_core_multiplier := BMCoreMul,
     connection_fetch_size := ConnFetchSz,
     benchmark_transaction_size := BMTransSz,
@@ -43,12 +41,26 @@ main([ConfigFile]) ->
     benchmark_batch_size := BMBatchSz
   } = Config,
   {ok, Fd} = file:open(BulkFile, [read, raw, binary, {read_ahead, 1024 * 1024}]),
-  Rows = load_data(Fd, Header, BulkDelimiter, Partitions, []),
+  Rows = load_data(Fd, list_to_binary(Header), BulkDelimiter, Partitions, []),
+  if length(Rows) /= FBulkSz ->
+      io:format("First = ~pñLast = ~p~n", [hd(Rows), lists:last(Rows)]),
+      error({loaded_rows, length(Rows), 'of', FBulkSz});
+    true -> ok
+  end,
   ok = file:close(Fd),
   #{
     startTime := StartTs,
     endTime := EndTs
   } = Results = run_trials(Trials, Rows, Config),
+  ok = application:load(oranif),
+  {ok, OranifVsn} = application:get_key(oranif, vsn),
+  BMDrv = lists:flatten(io_lib:format("oranif (Version ~s)",[OranifVsn])),
+  BMMod = lists:flatten(
+    io_lib:format(
+      "~p (~s)",
+      [?MODULE, string:trim(erlang:system_info(system_version), both, "\n")]
+    )
+  ),
   RowFmt = string:join(
     [
       BMId, BMComment, BMHost, integer_to_list(BMCores), BMOs, BMUser, BMDB,
@@ -88,28 +100,39 @@ main([ConfigFile]) ->
         [Trial, "", trial, ts_str(STs), ts_str(ETs),
         round(DMs / 1000000), DMs * 1000]
       ),
-      maps:map(
-        fun(_Pid, {Sql, ISts, IETs}) ->
+      TotalInserted = maps:fold(
+        fun(_Pid, {Sql, ISts, IETs, Inserted}, Count) ->
           IDMs = timer:now_diff(IETs, ISts),
           ok = io:format(
             RFd, RowFmt,
             [0, Sql, 'query', ts_str(ISts), ts_str(IETs),
             round(IDMs / 1000000), IDMs * 1000]
-          )
+          ),
+          Count + Inserted
         end,
-        maps:without([startTime, endTime], Insrts)
+        0, maps:without([startTime, endTime], Insrts)
       ),
-      maps:map(
-        fun(_Pid, {Sql, ISts, IETs}) ->
+      TotalSelected = maps:fold(
+        fun(_Pid, {Sql, ISts, IETs, Selected}, Count) ->
           IDMs = timer:now_diff(IETs, ISts),
           ok = io:format(
             RFd, RowFmt,
             [0, Sql, 'query', ts_str(ISts), ts_str(IETs),
             round(IDMs / 1000000), IDMs * 1000]
-          )
+          ),
+          Count + Selected
         end,
-        maps:without([startTime, endTime], Slcts)
-      )
+        0, maps:without([startTime, endTime], Slcts)
+      ),
+      if TotalInserted /= TotalSelected orelse FBulkSz /= TotalInserted ->
+        io:format(
+          "Trial ~p, Inserted ~p, Selected ~p, Missed ~p, Total ~p~n",
+          [
+            Trial, TotalInserted, TotalSelected, TotalInserted - TotalSelected,
+            FBulkSz
+          ]
+        );
+      true -> ok end
     end,
     maps:without([startTime, endTime], Results)
   ),
@@ -224,20 +247,20 @@ select_partition(
   2 = dpi:stmt_execute(SelectStmt, []),
   ok = dpi:stmt_setFetchArraySize(SelectStmt, FetchSize),
   Start = os:timestamp(),
-  (fun Fetch() ->
+  Selected = (fun Fetch(Count) ->
     case dpi:stmt_fetch(SelectStmt) of
       #{found := true} ->
         #{data := Key} = dpi:stmt_getQueryValue(SelectStmt, 1),
         #{data := Data} = dpi:stmt_getQueryValue(SelectStmt, 2),
         true = byte_size(dpi:data_getBytes(Key)) > 0,
         true = byte_size(dpi:data_getBytes(Data)) > 0,
-        Fetch();
-      #{found := false} -> done
+        Fetch(Count+1);
+      #{found := false} -> Count
     end
-  end)(),
+  end)(0),
   ok = dpi:stmt_close(SelectStmt, <<>>),
   ok = dpi:conn_close(Conn, [], <<>>),
-  Master ! {result, self(), {SelectSql, Start, os:timestamp()}}.
+  Master ! {result, self(), {SelectSql, Start, os:timestamp(), Selected}}.
 
 run_insert(Ctx, Rows, #{benchmark_number_partitions := Partitions} = Config) ->
   Master = self(),
@@ -274,37 +297,43 @@ insert_partition(
   ok = dpi:stmt_bindByName(InsertStmt, <<"key">>, KeyVar),
   ok = dpi:stmt_bindByName(InsertStmt, <<"data">>, DataVar),
   Start = os:timestamp(),
-  exec(
+  {Inserted, {NIE, _}} = exec(
     Partition, Rows,
     fun(Key, Data, {NIE, NIC}) ->
-      NewNIE = if NIE == NumItersExec ->
-          ok = dpi:stmt_executeMany(InsertStmt, [], NumItersExec),
-          ok = dpi:var_setFromBytes(KeyVar, 0, Key),
-          ok = dpi:var_setFromBytes(DataVar, 0, Data),
-          1;
-        true ->
-          ok = dpi:var_setFromBytes(KeyVar, NIE, Key),
-          ok = dpi:var_setFromBytes(DataVar, NIE, Data),
-          NIE + 1
-      end,
-      if NIC == NumItersCommit ->
+      {NewNIE, NewNIC} =
+        if NIE < NumItersExec ->
+            ok = dpi:var_setFromBytes(KeyVar, NIE, Key),
+            ok = dpi:var_setFromBytes(DataVar, NIE, Data),
+            {NIE + 1, NIC + 1};
+          true ->
+            ok = dpi:stmt_executeMany(InsertStmt, [], NumItersExec),
+            ok = dpi:var_setFromBytes(KeyVar, 0, Key),
+            ok = dpi:var_setFromBytes(DataVar, 0, Data),
+            {1, NIC + 1}
+        end,
+      if NewNIC < NumItersCommit ->
+          {NewNIE, NewNIC};
+        true -> 
           ok = dpi:conn_commit(Conn),
-          {NewNIE, 0};
-        true -> {NewNIE, NIC + 1}
+          {NewNIE, 0}
       end
     end,
     {0, 0}
   ),
+  if NIE > 0 -> ok = dpi:stmt_executeMany(InsertStmt, [], NIE);
+  true -> ok end,
+  ok = dpi:conn_commit(Conn),
   ok = dpi:var_release(KeyVar),
   ok = dpi:var_release(DataVar),
   ok = dpi:stmt_close(InsertStmt, <<>>),
   ok = dpi:conn_close(Conn, [], <<>>),
-  Master ! {result, self(), {Insert, Start, os:timestamp()}}.
+  Master ! {result, self(), {Insert, Start, os:timestamp(), Inserted}}.
 
 load_data(Fd, Header, BulkDelimiter, Partitions, Rows) ->
   case file:read_line(Fd) of
     eof -> lists:reverse(Rows);
     {ok, Line0} ->
+      %io:format("Header = ~p\tLine = ~p~n", [Header, Line0]),
       case string:trim(Line0, both, "\r\n") of
         Header ->
           load_data(Fd, Header, BulkDelimiter, Partitions, Rows);
@@ -321,7 +350,7 @@ load_data(Fd, Header, BulkDelimiter, Partitions, Rows) ->
   end.
 
 exec(Partition, Rows, Fun, Acc) -> exec(Partition, Rows, Fun, Acc, 0).
-exec(_Partition, [], _Fun, _Acc, Count) -> Count;
+exec(_Partition, [], _Fun, Acc, Count) -> {Count, Acc};
 exec(Partition, [{Partition, Key, Data} | Rows], Fun, Acc, Count) ->
   NewAcc = Fun(Key, Data, Acc),
   exec(Partition, Rows, Fun, NewAcc, Count + 1);
