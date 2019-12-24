@@ -31,6 +31,9 @@ fi
 if [ -z "$ORA_BENCH_RUN_JDBC_JAVA" ]; then
     export ORA_BENCH_RUN_JDBC_JAVA=true
 fi
+if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
+    export ORA_BENCH_RUN_ORANIF_ERLANG=true
+fi
 
 export ORA_BENCH_CONNECT_IDENTIFIER=//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE
 
@@ -51,6 +54,7 @@ echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
+echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
 echo "CONNECT_IDENTIFIER         : $ORA_BENCH_CONNECT_IDENTIFIER"
 echo "--------------------------------------------------------------------------------"
@@ -65,7 +69,11 @@ docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-si
 docker start ora_bench_db
 while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
 
-priv/oracle/sqlcl/bin/sql sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_database.sql
+if [ "$OSTYPE" = "msys" ]; then
+  priv/oracle/instantclient-windows.x64/instantclient_19_5/sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_database.sql
+else
+  priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_database.sql
+fi  
 
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
@@ -74,6 +82,10 @@ fi
 
 if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
+fi
+
+if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
+    { /bin/bash scripts/run_bench_oranif_erlang.sh; }
 fi
 
 EXITCODE=$?

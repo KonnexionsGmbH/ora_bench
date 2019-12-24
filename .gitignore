@@ -20,3 +20,4 @@ rebar.lock
 rel/example_project
 test/bin/*
 odpi/
+tmp/

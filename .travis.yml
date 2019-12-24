@@ -18,22 +18,21 @@ env:
 
 before_install:
 - sudo apt update
+- sudo apt install software-properties-common
 # Java -------------------------------------------------------------------------
 - sudo apt install default-jdk
 - java -version
 # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
-- sudo apt-get install alien
-- sudo alien priv/oracle/oracle-instantclient19.3-basiclite-19.3.0.0.0-1.x86_64.rpm
-- sudo dpkg -i oracle-instantclient19.3-basiclite_19.3.0.0.0-2_amd64.deb
+- sudo apt-get install libaio1
+- export LD_LIBRARY_PATH=priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH
+- sudo chmod +x priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus
 # Python -----------------------------------------------------------------------
-- sudo apt install software-properties-common
 - sudo add-apt-repository -y ppa:deadsnakes/ppa
 - sudo apt install python3
 - python3 --version
 - sudo apt install python3-venv
-- python3 -m venv my-project-env
-- source my-project-env/bin/activate
-- python -V
+- python3 -m venv _build/ora_bench-env
+- source _build/ora_bench-env/bin/activate
 - python -m pip install --upgrade pip
 - python -m pip install --upgrade cx_Oracle
 

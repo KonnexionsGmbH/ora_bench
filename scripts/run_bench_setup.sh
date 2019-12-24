@@ -10,7 +10,11 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    if [ "$OSTYPE" = "msys" ]; then
+        export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    else
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+    fi
 fi
 
 echo "================================================================================"
@@ -31,7 +35,7 @@ PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 make -f src_java/Makefile clean
 make -f src_java/Makefile
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup
+java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup
 
 EXITCODE=$?
 

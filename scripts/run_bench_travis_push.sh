@@ -12,14 +12,15 @@ setup_git() {
 }
 
 commit_result_files() {
-  git stash
-  git checkout master
-  git stash apply
-  git stash clear
+  cp priv/ora_bench_result.tsv /tmp
+  cd /tmp
+  git clone --branch=gh-pages https://github.com/KonnexionsGmbH/ora_bench.git
+  mv /tmp/ora_bench_result.tsv ora_bench/results/
+  cd ora_bench
   # Current month and year, e.g: Apr 2018
   dateAndMonth=`date "+%b %Y"`
   # Stage the modified files in dist/output
-  git add -f priv/ora_bench_result.tsv
+  git add -f results/ora_bench_result.tsv
   # Create a new commit with a custom build message
   # with "[skip ci]" to avoid a build loop
   # and Travis build number for reference
@@ -31,7 +32,7 @@ upload_files() {
   git remote rm origin
   # Add new "origin" with access token in the git URL for authentication
   git remote add origin https://KonnexionsGmbH:${ORA_BENCH_TOKEN}@github.com/KonnexionsGmbH/ora_bench.git > /dev/null 2>&1
-  git push origin master
+  git push origin gh-pages
 }
 
 setup_git
