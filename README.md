@@ -21,9 +21,10 @@ The framework parameters for a benchmark run are stored in a central configurati
 The currently supported database drivers are:
 
 | Driver    | Programming Language |
-| :---      | :--- |
+| :---      | :---   |
 | cx_Oracle | Python |
-| JDBC      | Java |
+| JDBC      | Java   |
+| oranif    | Erlang |
 
 The following Oracle database versions are provided in a benchmark run via Docker Container:
 

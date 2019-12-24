@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_oranif_erlang.sh: Oracle Benchmark based on Python.
+# run_bench_oranif_erlang.sh: Oracle Benchmark based on Erlang.
 #
 # ------------------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ fi
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - cx_Oracle & Python."
+echo "ora_bench - Oracle benchmark - oranif and Erlang."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"

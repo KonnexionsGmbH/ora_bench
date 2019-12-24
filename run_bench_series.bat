@@ -21,9 +21,10 @@ set ORA_BENCH_RUN_DB_19_3_EE=true
 
 set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 set ORA_BENCH_RUN_JDBC_JAVA=true
+set ORA_BENCH_RUN_ORANIF_ERLANG=true
 
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
-    set ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    set ORA_BENCH_JAVA_CLASSPATH=.;priv\java_jar\*
 )
 
 set ORA_BENCH_PASSWORD_SYS=oracle
@@ -57,6 +58,7 @@ echo.
     echo --------------------------------------------------------------------------------
     echo RUN_CX_ORACLE_PYTHON    : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
     echo RUN_JDBC_JAVA           : %ORA_BENCH_RUN_JDBC_JAVA%
+    echo RUN_ORANIF_ERLANG       : %ORA_BENCH_RUN_ORANIF_ERLANG%
     echo --------------------------------------------------------------------------------
     echo JAVA_HOME               : %JAVA_HOME%
     echo --------------------------------------------------------------------------------

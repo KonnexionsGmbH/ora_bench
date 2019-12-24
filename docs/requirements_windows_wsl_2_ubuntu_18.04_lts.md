@@ -29,13 +29,32 @@ Next the Linux distribution Ubuntu must be updated:
     sudo gpasswd -a $USER docker
     newgrp docker 
 
-### 3 Installing Java
+### 3 Installing Oracle Instant Client for Linux x86-64 (64-bit)
+
+    sudo apt-get install libaio1
+    sudo sh -c "echo /opt/oracle/instantclient_19_3 > /etc/ld.so.conf.d/oracle-instantclient.conf"
+    sudo ldconfig
+    echo "export LD_LIBRARY_PATH=priv/oracle/instantclient-linux.x64/instantclient_19_5" >> ~/.bashrc && source ~/.bashrc
+    sudo chmod +x priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus
+
+### 4 Installing the Build Essentials
+
+    sudo apt-get install build-essential
+
+### 5 Installing Programming Languages
+
+#### 5.1 Installing Erlang (optional)
+
+    wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb
+	sudo dpkg -i erlang-solutions_2.0_all.deb
+	sudo apt-get update
+	sudo apt-get install erlang
+
+#### 5.2 Installing Java
 
     sudo apt install default-jdk
 
-### 4 Installing Python
-
-**Only needed with `cx_Oracle` and `Python`**
+#### 5.3 Installing Python (optional)
 
     sudo apt-get install software-properties-common
     sudo add-apt-repository -y ppa:deadsnakes/ppa
@@ -46,24 +65,12 @@ Next the Linux distribution Ubuntu must be updated:
     python3 -m venv _build/ora_bench-env
     source _build/ora_bench-env/bin/activate
 
-### 5 Installing cx_Oracle
+### 6 Installing Database Drivers (optional)
 
-**Only needed with `cx_Oracle` and `Python`**
+#### 6.1 Installing cx_Oracle
 
     sudo apt-get install python3-pip
     python3 -m pip install --upgrade cx_Oracle
-
-### 6 Installing Oracle Instant Client for Linux x86-64 (64-bit)
-
-    sudo apt-get install libaio1
-    sudo sh -c "echo /opt/oracle/instantclient_19_3 > /etc/ld.so.conf.d/oracle-instantclient.conf"
-    sudo ldconfig
-    echo "export LD_LIBRARY_PATH=priv/oracle/instantclient-linux.x64/instantclient_19_5" >> ~/.bashrc && source ~/.bashrc
-    sudo chmod +x priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus
-
-### 7 Installing the Build Essentials
-
-    sudo apt-get install build-essential
 
 ## Fixing Possible Issues
 
