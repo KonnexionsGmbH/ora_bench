@@ -45,7 +45,15 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-./OraBench.exe $ORA_BENCH_FILE_CONFIGURATION_NAME
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup
+
+if [ "$OSTYPE" = "msys" ]; then
+    nmake -f src_c/Makefile.win32 clean
+    nmake -f src_c/Makefile.win32
+    ./OraBench.exe $ORA_BENCH_FILE_CONFIGURATION_NAME
+else
+    echo "Unimplemented"
+fi
 
 EXITCODE=$?
 
