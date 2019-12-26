@@ -19,7 +19,7 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
     set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 )
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
-    set ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    set ORA_BENCH_JAVA_CLASSPATH=.;priv\java_jar\*
 )
 
 if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
@@ -31,7 +31,7 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - JDBC & Java.
+echo ora_bench - Oracle benchmark - JDBC and Java.
 echo --------------------------------------------------------------------------------
 echo BENCHMARK_DATABASE      : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST         : %ORA_BENCH_CONNECTION_HOST%

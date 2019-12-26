@@ -31,6 +31,9 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU [""] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
 )
+if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
+    set ORA_BENCH_RUN_ORANIF_ERLANG=true
+)
 
 set ORA_BENCH_CONNECT_IDENTIFIER=//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE%
 
@@ -51,6 +54,7 @@ echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
+echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------
 echo CONNECT_IDENTIFIER         : %ORA_BENCH_CONNECT_IDENTIFIER%
 echo --------------------------------------------------------------------------------
@@ -75,7 +79,6 @@ if NOT ["%DOCKER_HEALTH_STATUS%"] == ["healthy"] (
 priv\oracle\instantclient-windows.x64\instantclient_19_5\sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@%ORA_BENCH_CONNECT_IDENTIFIER% AS SYSDBA @scripts/run_bench_database.sql
 
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
-    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
     call scripts\run_bench_cx_oracle_python.bat
 )
 
@@ -83,7 +86,11 @@ if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
     call scripts\run_bench_jdbc_java.bat
 )
 
-echo 
+if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
+    call scripts\run_bench_oranif_erlang.bat
+)
+
+echo
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

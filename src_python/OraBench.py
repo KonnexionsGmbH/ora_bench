@@ -46,7 +46,7 @@ def create_database_objects(config):
             logging.info('connection.service =' + config['connection.service'])
             logging.info('connection.user    =' + config['connection.user'])
             logging.info('connection.password=' + config['connection.password'])
-            sys.exit('database connect error: '+str(reason))
+            sys.exit('database connect error: ' + str(reason))
 
         connections.append(connection)
         cursors.append(connection.cursor())

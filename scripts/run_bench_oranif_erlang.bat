@@ -2,7 +2,7 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_cx_oracle_python.bat: Oracle Benchmark based on Python.
+rem run_bench_oranif_erlang.bat: Oracle Benchmark based on Erlang.
 rem
 rem ------------------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - cx_Oracle and Python.
+echo ora_bench - Oracle benchmark - oranif and Erlang.
 echo --------------------------------------------------------------------------------
 echo BENCHMARK_DATABASE      : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST         : %ORA_BENCH_CONNECTION_HOST%
@@ -38,9 +38,12 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
 
-python src_python/OraBench.py
+cd src_erlang
+call rebar3 escriptize
+cd ..
+src_erlang\_build\default\bin\orabench priv\properties\ora_bench_oranif_erlang.properties
 
 echo 
 echo --------------------------------------------------------------------------------
