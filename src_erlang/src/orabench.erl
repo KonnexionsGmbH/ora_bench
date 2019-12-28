@@ -38,7 +38,10 @@ main([ConfigFile]) ->
     benchmark_transaction_size := BMTransSz,
     file_bulk_length := FBulkLen,
     file_bulk_size := FBulkSz,
-    benchmark_batch_size := BMBatchSz
+    benchmark_batch_size := BMBatchSz,
+  
+    sql_insert := SqlInsert,
+    sql_select := SqlSelect
   } = Config,
   {ok, Fd} = file:open(BulkFile, [read, raw, binary, {read_ahead, 1024 * 1024}]),
   Rows = load_data(Fd, list_to_binary(Header), BulkDelimiter, Partitions, []),
@@ -84,45 +87,44 @@ main([ConfigFile]) ->
   end,
   {ok, RFd} = file:open(ResultFile, [append, binary]),
   DurationMicros = timer:now_diff(EndTs, StartTs),
-  ok = io:format(
-    RFd, RowFmt,
-    [0, "", benchmark, ts_str(StartTs), ts_str(EndTs),
-    round(DurationMicros / 1000000), DurationMicros * 1000]
-  ),
   maps:map(
     fun(
       Trial,
       #{startTime := STs, endTime := ETs, insert := Insrts, select := Slcts}
     ) ->
+      {InsSTs, InsETs, TotalInserted} = maps:fold(
+        fun(_Pid, {ISTs, IETs, Inserted}, {IISTs, IIETs, Count}) ->
+          {[ISTs | IISTs], [IETs | IIETs], Count + Inserted}
+        end,
+        {[], [], 0}, maps:without([startTime, endTime], Insrts)
+      ),
+      InsMaxET = lists:max(InsETs),
+      InsMinST = lists:min(InsSTs),
+      InsDur = timer:now_diff(InsMaxET, InsMinST),
+      ok = io:format(
+        RFd, RowFmt,
+        [0, SqlInsert, 'query', ts_str(InsMinST), ts_str(InsMaxET),
+        round(InsDur / 1000000), InsDur * 1000]
+      ),
+      {SelSTs, SelETs, TotalSelected} = maps:fold(
+        fun(_Pid, {ISTs, IETs, Selected}, {IISTs, IIETs, Count}) ->
+          {[ISTs | IISTs], [IETs | IIETs], Count + Selected}
+        end,
+        {[], [], 0}, maps:without([startTime, endTime], Slcts)
+      ),
+      SelMaxET = lists:max(SelETs),
+      SelMinST = lists:min(SelSTs),
+      SelDur = timer:now_diff(SelMaxET, SelMinST),
+      ok = io:format(
+        RFd, RowFmt,
+        [0, SqlSelect, 'query', ts_str(SelMinST), ts_str(SelMaxET),
+        round(SelDur / 1000000), SelDur * 1000]
+      ),
       DMs = timer:now_diff(ETs, STs),
       ok = io:format(
         RFd, RowFmt,
         [Trial, "", trial, ts_str(STs), ts_str(ETs),
         round(DMs / 1000000), DMs * 1000]
-      ),
-      TotalInserted = maps:fold(
-        fun(_Pid, {Sql, ISts, IETs, Inserted}, Count) ->
-          IDMs = timer:now_diff(IETs, ISts),
-          ok = io:format(
-            RFd, RowFmt,
-            [0, Sql, 'query', ts_str(ISts), ts_str(IETs),
-            round(IDMs / 1000000), IDMs * 1000]
-          ),
-          Count + Inserted
-        end,
-        0, maps:without([startTime, endTime], Insrts)
-      ),
-      TotalSelected = maps:fold(
-        fun(_Pid, {Sql, ISts, IETs, Selected}, Count) ->
-          IDMs = timer:now_diff(IETs, ISts),
-          ok = io:format(
-            RFd, RowFmt,
-            [0, Sql, 'query', ts_str(ISts), ts_str(IETs),
-            round(IDMs / 1000000), IDMs * 1000]
-          ),
-          Count + Selected
-        end,
-        0, maps:without([startTime, endTime], Slcts)
       ),
       if TotalInserted /= TotalSelected orelse FBulkSz /= TotalInserted ->
         io:format(
@@ -135,6 +137,11 @@ main([ConfigFile]) ->
       true -> ok end
     end,
     maps:without([startTime, endTime], Results)
+  ),
+    ok = io:format(
+    RFd, RowFmt,
+    [0, "", benchmark, ts_str(StartTs), ts_str(EndTs),
+    round(DurationMicros / 1000000), DurationMicros * 1000]
   ),
   ok = file:close(RFd),
   halt(0).
@@ -260,7 +267,7 @@ select_partition(
   end)(0),
   ok = dpi:stmt_close(SelectStmt, <<>>),
   ok = dpi:conn_close(Conn, [], <<>>),
-  Master ! {result, self(), {SelectSql, Start, os:timestamp(), Selected}}.
+  Master ! {result, self(), {Start, os:timestamp(), Selected}}.
 
 run_insert(Ctx, Rows, #{benchmark_number_partitions := Partitions} = Config) ->
   Master = self(),
@@ -327,7 +334,7 @@ insert_partition(
   ok = dpi:var_release(DataVar),
   ok = dpi:stmt_close(InsertStmt, <<>>),
   ok = dpi:conn_close(Conn, [], <<>>),
-  Master ! {result, self(), {Insert, Start, os:timestamp(), Inserted}}.
+  Master ! {result, self(), {Start, os:timestamp(), Inserted}}.
 
 load_data(Fd, Header, BulkDelimiter, Partitions, Rows) ->
   case file:read_line(Fd) of
