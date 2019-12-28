@@ -103,7 +103,7 @@ main([ConfigFile]) ->
       InsDur = timer:now_diff(InsMaxET, InsMinST),
       ok = io:format(
         RFd, RowFmt,
-        [0, SqlInsert, 'query', ts_str(InsMinST), ts_str(InsMaxET),
+        [Trial, SqlInsert, 'query', ts_str(InsMinST), ts_str(InsMaxET),
         round(InsDur / 1000000), InsDur * 1000]
       ),
       {SelSTs, SelETs, TotalSelected} = maps:fold(
@@ -117,7 +117,7 @@ main([ConfigFile]) ->
       SelDur = timer:now_diff(SelMaxET, SelMinST),
       ok = io:format(
         RFd, RowFmt,
-        [0, SqlSelect, 'query', ts_str(SelMinST), ts_str(SelMaxET),
+        [Trial, SqlSelect, 'query', ts_str(SelMinST), ts_str(SelMaxET),
         round(SelDur / 1000000), SelDur * 1000]
       ),
       DMs = timer:now_diff(ETs, STs),
