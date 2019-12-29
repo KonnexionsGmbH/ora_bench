@@ -31,7 +31,7 @@ fi
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - JDBC & Java."
+echo "ora_bench - Oracle benchmark - ODPI-C."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
@@ -47,13 +47,13 @@ EXITCODE="0"
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_odpic
 
-#if [ "$OSTYPE" = "msys" ]; then
-#    nmake -f src_c/Makefile.win32 clean
-#    nmake -f src_c/Makefile.win32
-#    ./OraBench.exe $ORA_BENCH_FILE_CONFIGURATION_NAME
-#else
-#    echo "Unimplemented"
-#fi
+if [ "$OSTYPE" = "msys" ]; then
+    nmake -f src_c/Makefile.win32 clean
+    nmake -f src_c/Makefile.win32
+    ./OraBench.exe priv/properties/ora_bench_odpi_c.properties
+else
+    echo "Unimplemented"
+fi
 
 EXITCODE=$?
 

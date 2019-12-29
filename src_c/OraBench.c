@@ -22,9 +22,7 @@ dpiContext *gContext;
 
 typedef struct threadArg
 {
-    unsigned int partitions;
     unsigned int partition;
-    char bulk_file[256];
 } threadArg;
 
 #ifdef W32
@@ -42,44 +40,20 @@ void *doThread(void *arg)
 
     L("[%u] %lu thread processing\n", targ->partition, id);
 
-    FILE *fp = fopen(targ->bulk_file, "r");
-    if (fp == NULL)
-    {
-        L("ERROR: Unable to open bulk file %s\n", targ->bulk_file);
-#ifdef W32
-        return 0;
-#else
-        return NULL;
-#endif
-    }
-
-    char key[1024], data[1024];
-    memset(key, '\0', sizeof(key));
-    memset(data, '\0', sizeof(data));
     unsigned int row = 0, processed = 0;
-    unsigned int partition;
     do
     {
-        if (fscanf(fp, "%[^;];%[^\r\n]\r\n", key, data) < 2)
-        {
-            if (row == 0)
-                L("error reading %s file\n", targ->bulk_file);
-            break;
-        };
-
         if (row > 0)
         {
-            partition = (key[0] * 256 + key[1]) % targ->partitions;
-            if (partition == targ->partition)
+            if (gBulk[row].partition == targ->partition)
             {
                 processed++;
-                L("[%lu] key = %s, partition %d, row %d\n", id, key, partition, row);
+                L("[%lu] key = %s, partition %d, row %d\n", id, key, targ->partition, row);
                 //L("[%lu] data = %s\n", id, data);
             }
         }
     } while (row++ < 50);
 
-    fclose(fp);
     L("[%u] %lu thread end, total %d processed %d rows\n", targ->partition, id, row, processed);
 
 #ifdef W32
@@ -98,14 +72,12 @@ int main(const int argc, const char *argv[])
     }
 
     load_config(argv[1]);
+    load_bulk(fileBulkName);
 
     char connectString[1024];
-    sprintf(connectString,
-            "%s:%s/%s", gConnHost, gConnPort, gConnService);
-
-    L("connection.user %s\n", gConnUser);
-    L("connection.password %s\n", gConnPaswd);
-    L("connectString %s\n", connectString);
+    sprintf(
+        connectString, "%s:%d/%s", connectionHost, connectionPort,
+        connectionService);
 
     dpiErrorInfo errorInfo;
     if (dpiContext_create(
@@ -166,21 +138,19 @@ int main(const int argc, const char *argv[])
         exit(-1);
     }*/
 
-    unsigned int partitions = strtod(gBenchPartitions, NULL);
-
 #ifdef W32
     DWORD err;
-    HANDLE *tid = (HANDLE *)malloc(partitions * sizeof(HANDLE));
+    HANDLE *tid = (HANDLE *)malloc(benchmarkNumberPartitions * sizeof(HANDLE));
 #else
     int err;
-    pthread_t *tid = (pthread_t *)malloc(partitions * sizeof(pthread_t));
+    pthread_t *tid = (pthread_t *)malloc(benchmarkNumberPartitions * sizeof(pthread_t));
 #endif
-    threadArg *ta = (threadArg *)malloc(partitions * sizeof(threadArg));
-    for (int i = 0; i < partitions; ++i)
+    threadArg *ta = (threadArg *)malloc(benchmarkNumberPartitions * sizeof(threadArg));
+    for (int i = 0; i < benchmarkNumberPartitions; ++i)
     {
         ta[i].partition = i;
-        ta[i].partitions = partitions;
-        strcpy(ta[i].bulk_file, gBulkName);
+        ta[i].partitions = benchmarkNumberPartitions;
+        strcpy(ta[i].bulk_file, fileBulkName);
 #ifdef W32
         tid[i] = CreateThread(NULL, 0, doThread, &(ta[i]), 0, NULL);
         if (tid[i] == NULL)
@@ -194,10 +164,10 @@ int main(const int argc, const char *argv[])
 
 #ifdef W32
     L("WaitForMultipleObjects...\n");
-    err = WaitForMultipleObjects(partitions, tid, TRUE, INFINITE);
+    err = WaitForMultipleObjects(benchmarkNumberPartitions, tid, TRUE, INFINITE);
     L("WaitForMultipleObjects %d\n", err);
 #endif
-    for (int i = 0; i < partitions; ++i)
+    for (int i = 0; i < benchmarkNumberPartitions; ++i)
     {
 #ifdef W32
         CloseHandle(tid[i]);
@@ -210,8 +180,8 @@ int main(const int argc, const char *argv[])
     free(tid);
     free(ta);
 
-    //L("sql.insert %s\n", gSqlInsert);
-    //L("sql.select %s\n", gSqlSelect);
+    if (dpiContext_destroy(gContext) != DPI_SUCCESS)
+        L("ERROR Cannot destroy DPI context");
 
     L("exit main!\n");
     return 0;

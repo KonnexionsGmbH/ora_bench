@@ -38,5 +38,14 @@ extern char *sqlInsert;
 extern char *sqlSelect;
 
 extern void load_config(const char *);
+extern void load_bulk(const char *);
+
+struct
+{
+  char key[1024];
+  char data[1024];
+  int partition;
+} row;
+extern struct row *gBulk;
 
 #endif // _CONFIG_H_

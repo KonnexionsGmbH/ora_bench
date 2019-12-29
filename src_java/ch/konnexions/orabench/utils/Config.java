@@ -248,7 +248,17 @@ public class Config {
                     value = propertiesConfiguration.getString(key);
                 }
 
-                bufferedWriter.write("    " + key.replace(".", "_") + " = " + value);
+                String camelKey = "";
+                for (int i = 0; i < key.length(); ++i) {
+                    if (key.charAt(i) == '.') {
+                        camelKey += Character.toUpperCase(key.charAt(i + 1));
+                        ++i;
+                    } else {
+                        camelKey += key.charAt(i);
+                    }
+                }
+
+                bufferedWriter.write(camelKey + "=" + value);
 
                 bufferedWriter.newLine();
             }
