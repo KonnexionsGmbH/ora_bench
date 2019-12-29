@@ -31,6 +31,9 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU [""] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
 )
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU [""] (
+    set ORA_BENCH_RUN_ORANIF_ELIXIR=true
+)
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
@@ -54,6 +57,7 @@ echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
+echo RUN_ORANIF_ELIXIR          : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------
 echo CONNECT_IDENTIFIER         : %ORA_BENCH_CONNECT_IDENTIFIER%
@@ -86,11 +90,14 @@ if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
     call scripts\run_bench_jdbc_java.bat
 )
 
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
+    call scripts\run_bench_oranif_elixir.bat
+)
+
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
     call scripts\run_bench_oranif_erlang.bat
 )
 
-echo
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

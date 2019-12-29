@@ -19,6 +19,7 @@ set ORA_BENCH_RUN_DB_19_3_EE=true
 
 set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 set ORA_BENCH_RUN_JDBC_JAVA=true
+set ORA_BENCH_RUN_ORANIF_ELIXIR=true
 set ORA_BENCH_RUN_ORANIF_ERLANG=true
 
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
@@ -56,6 +57,7 @@ echo.
     echo --------------------------------------------------------------------------------
     echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
     echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
+    echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ELIXIR%
     echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
     echo --------------------------------------------------------------------------------
     echo JAVA_HOME                  : %JAVA_HOME%
@@ -84,8 +86,7 @@ echo.
     )
     
     call scripts\run_bench_finalise.bat
-    
-    echo 
+
     echo --------------------------------------------------------------------------------
     echo:| TIME
     echo --------------------------------------------------------------------------------

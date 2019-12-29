@@ -47,7 +47,6 @@ set PATH=%PATH%;\u01\app\oracle\product\12.2\db_1\jdbc\lib
 
 java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench runBenchmark
 
-echo 
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

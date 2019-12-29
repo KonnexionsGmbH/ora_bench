@@ -45,7 +45,6 @@ call rebar3 escriptize
 cd ..
 src_erlang\_build\default\bin\orabench priv\properties\ora_bench_oranif_erlang.properties
 
-echo 
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

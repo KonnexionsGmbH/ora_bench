@@ -31,6 +31,9 @@ fi
 if [ -z "$ORA_BENCH_RUN_JDBC_JAVA" ]; then
     export ORA_BENCH_RUN_JDBC_JAVA=true
 fi
+if [ -z "$ORA_BENCH_RUN_ORANIF_ELIXIR" ]; then
+    export ORA_BENCH_RUN_ORANIF_ELIXIR=true
+fi
 if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 fi
@@ -54,6 +57,7 @@ echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
+echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
 echo "CONNECT_IDENTIFIER         : $ORA_BENCH_CONNECT_IDENTIFIER"
@@ -82,6 +86,10 @@ fi
 
 if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
+fi
+
+if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
+    { /bin/bash scripts/run_bench_oranif_elixir.sh; }
 fi
 
 if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then

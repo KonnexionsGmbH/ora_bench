@@ -42,7 +42,6 @@ java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
 
 python src_python/OraBench.py
 
-echo 
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

@@ -20,11 +20,11 @@ The framework parameters for a benchmark run are stored in a central configurati
 
 The currently supported database drivers are:
 
-| Driver    | Programming Language |
-| :---      | :---   |
-| cx_Oracle | Python |
-| JDBC      | Java   |
-| oranif    | Erlang |
+| Driver    | Programming Languages |
+| :---      | :---                  |
+| cx_Oracle | Python                |
+| JDBC      | Java                  |
+| oranif    | Elixir &amp; Erlang   |
 
 The following Oracle database versions are provided in a benchmark run via Docker Container:
 
@@ -441,7 +441,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 | 2019.11.21 | 2019.11.19 | wwe      | jdbc_java: benchmark.transaction.size = 0 |
 | 2019.11.21 | 2019.11.21 | wwe      | all: detailed result file -> result file |
 | 2019.11.21 | 2019.11.21 | wwe      | all: new config param: connection.fetch.size |
-| 2019.11.21 | 2019.11.21 | wwe      | all: new config params: benchmark.host.name, benchmark.id & benchmark.user.name |
+| 2019.11.21 | 2019.11.21 | wwe      | all: new config params: benchmark.host.name, benchmark.id &amp; benchmark.user.name |
 | 2019.11.21 | 2019.11.21 | wwe      | all: remove statistical results file |
 | 2019.11.21 | 2019.11.21 | wwe      | all: result file - date format: yyyy-mm-dd hh24:mi:ss.ffffffff |
 | 2019.11.23 | 2019.11.21 | wwe      | documentation: pseudocode |

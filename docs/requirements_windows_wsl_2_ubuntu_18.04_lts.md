@@ -43,18 +43,32 @@ Next the Linux distribution Ubuntu must be updated:
 
 ### 5 Installing Programming Languages
 
-#### 5.1 Installing Erlang (optional)
+#### 5.1 Installing Elixir (optional)
+
+#### 5.1.1 without previous Erlang installation
+
+    wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb
+	sudo dpkg -i erlang-solutions_2.0_all.deb
+	sudo apt-get update
+	sudo apt-get install esl-erlang
+	sudo apt-get install elixir
+
+#### 5.1.2 with previous Erlang installation
+
+    sudo apt-get install elixir
+
+#### 5.2 Installing Erlang (optional)
 
     wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb
 	sudo dpkg -i erlang-solutions_2.0_all.deb
 	sudo apt-get update
 	sudo apt-get install erlang
 
-#### 5.2 Installing Java
+#### 5.3 Installing Java
 
     sudo apt install default-jdk
 
-#### 5.3 Installing Python (optional)
+#### 5.4 Installing Python (optional)
 
     sudo apt-get install software-properties-common
     sudo add-apt-repository -y ppa:deadsnakes/ppa
