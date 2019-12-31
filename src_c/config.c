@@ -180,23 +180,18 @@ void load_bulk(const char *file)
     exit(-1);
   }
 
-  if (gBulk) free(gBulk);
-  gBulk = (struct row *)malloc(fileBulkSize * sizeof(struct row));
+  if (gBulk)
+    free(gBulk);
+  gBulk = (struct row *)calloc(fileBulkSize, sizeof(struct row));
 
   unsigned int row = 0;
-  do
+  while (
+      row < fileBulkSize &&
+      fscanf(fp, "%[^;];%[^\r\n]\r\n", gBulk[row].key, gBulk[row].data) != EOF)
   {
-    memset(gBulk[row].key, '\0', sizeof(gBulk[row].key));
-    memset(gBulk[row].data, '\0', sizeof(gBulk[row].data));
-    if (fscanf(fp, "%[^;];%[^\r\n]\r\n", gBulk[row].key, gBulk[row].data) < 2)
-    {
-      if (row == 0) {
-        L("ERROR reading %s file\n", file);
-        exit(-1);
-      }
-      gBulk[row].partition = (gBulk[row].gBulk[0] * 256 + gBulk[row].gBulk[1]) % benchmarkNumberPartitions;
-    };
-  } while (row++ < fileBulkSize);
+    gBulk[row].partition = (gBulk[row].key[0] * 256 + gBulk[row].key[1]) % benchmarkNumberPartitions;
+    row++;
+  }
 
   fclose(fp);
 }

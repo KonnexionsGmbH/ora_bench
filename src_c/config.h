@@ -1,7 +1,6 @@
 #ifndef _CONFIG_H_
 #pragma once
 
-
 extern int benchmarkBatchSize;
 extern char *benchmarkComment;
 extern int benchmarkCoreMultiplier;
@@ -40,12 +39,12 @@ extern char *sqlSelect;
 extern void load_config(const char *);
 extern void load_bulk(const char *);
 
-struct
+struct row
 {
-  char key[1024];
-  char data[1024];
-  int partition;
-} row;
+    char key[1024];
+    char data[1024];
+    int partition;
+};
 extern struct row *gBulk;
 
 #endif // _CONFIG_H_

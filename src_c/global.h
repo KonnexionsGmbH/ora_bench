@@ -4,6 +4,10 @@
 #define L(_fmt, ...) \
     printf("[%s:%s:%d] "_fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
+#define D(_fmt, ...)                 \
+    L("DEBUG: "_fmt"\n", ##__VA_ARGS__); \
+    fflush(stdout);
+
 // error logging
 #define FE(_m, _e)                                                   \
     {                                                                \

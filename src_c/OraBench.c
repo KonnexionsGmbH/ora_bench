@@ -48,7 +48,7 @@ void *doThread(void *arg)
             if (gBulk[row].partition == targ->partition)
             {
                 processed++;
-                L("[%lu] key = %s, partition %d, row %d\n", id, key, targ->partition, row);
+                L("[%lu] key = %s, partition %d, row %d\n", id, gBulk[row].key, targ->partition, row);
                 //L("[%lu] data = %s\n", id, data);
             }
         }
@@ -70,7 +70,6 @@ int main(const int argc, const char *argv[])
         printf("Usage: OraBench.exe config_file\n");
         return -1;
     }
-
     load_config(argv[1]);
     load_bulk(fileBulkName);
 
@@ -149,8 +148,6 @@ int main(const int argc, const char *argv[])
     for (int i = 0; i < benchmarkNumberPartitions; ++i)
     {
         ta[i].partition = i;
-        ta[i].partitions = benchmarkNumberPartitions;
-        strcpy(ta[i].bulk_file, fileBulkName);
 #ifdef W32
         tid[i] = CreateThread(NULL, 0, doThread, &(ta[i]), 0, NULL);
         if (tid[i] == NULL)
