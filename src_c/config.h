@@ -41,7 +41,7 @@ extern void load_bulk(const char *);
 
 struct row
 {
-    char key[1024];
+    char key[32];
     char data[1024];
     int partition;
 };
