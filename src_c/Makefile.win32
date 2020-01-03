@@ -3,7 +3,7 @@ S = .\src_c
 L = .\odpi\lib\odpic.lib
 ODPIREPO=https://github.com/oracle/odpi/
 
-OBJS = $O\OraBench.obj $O\config.obj $O\threads.obj
+OBJS = $O\OraBench.obj $O\config.obj $O\odpis.obj
 TARGETS = $O\OraBench.exe
 
 CFLAGS = /nologo /c /MT /DW32
