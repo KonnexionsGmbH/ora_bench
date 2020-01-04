@@ -9,7 +9,7 @@ ODPI_LIB_DIR = $(S)/odpi/lib
 TARGET = $(O)/OraBench
 
 INCLUDEDIRS = -I$(S) -I"$(S)/odpi/include"
-CFLAGS = $(INCLUDEDIRS) -O2 -ggdb -Wall -fPIC -std=c11
+CFLAGS = $(INCLUDEDIRS) -O2 -ggdb -Wall -fPIC -std=gnu11
 LDFLAGS = -lpthread
 
 ifdef LINKODPI
@@ -34,7 +34,7 @@ priv:
 
 odpi:
 	@if [ ! -d "$(ODPIROOT)" ]; then \
-		cd $(S) && (git clone -b v3.0.0 --single-branch $(ODPI_REPO)) \
+		cd $(S) && (git clone -b v3.2.2 --single-branch $(ODPI_REPO)) \
 	fi
 	@if [ ! -z "${LINKODPI}" -a ! -d "$(ODPI_LIB_DIR)" ]; then \
 		cd $(ODPIROOT) && (make) \

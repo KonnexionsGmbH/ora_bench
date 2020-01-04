@@ -1,5 +1,3 @@
-#include <windows.h>
-
 #include "global.h"
 #include "config.h"
 #include "odpis.h"
@@ -12,10 +10,18 @@
 dpiContext *gContext;
 extern char connectString[1024];
 
+#ifdef W32
 DWORD WINAPI doInsert(LPVOID arg)
+#else
+void *doInsert(void *arg)
+#endif
 {
   threadArg *targ = (threadArg *)arg;
+#ifdef W32
   DWORD id = GetCurrentThreadId();
+#else
+  pthread_t id = pthread_self();
+#endif
 
   //L("{%d} [%u] %lu thread processing\n", targ->trial, targ->partition, id);
   dpiConn *conn;
@@ -70,15 +76,21 @@ DWORD WINAPI doInsert(LPVOID arg)
     exit(-1);
   }
 
+#ifdef W32
   GetSystemTimeAsFileTime(&targ->start);
   if (!QueryPerformanceCounter(&targ->qpcStart))
     L(
         "{%d} [%u] %lu ERROR QueryPerformanceCounter(&qpcStart)\n",
         targ->trial, targ->partition, id);
+#else
+  if (!clock_gettime(CLOCK_REALTIME, &targ->start))
+    L(
+        "{%d} [%u] %lu ERROR clock_gettime(CLOCK_REALTIME, start)\n",
+        targ->trial, targ->partition, id);
+#endif
   unsigned int row = 0;
   int bbs = 0;
   int bts = 0;
-  benchmarkTransactionSize;
   do
   {
     if (gBulk[row].partition == targ->partition)
@@ -143,11 +155,18 @@ DWORD WINAPI doInsert(LPVOID arg)
     E("Unable to set commit insert stmt");
     exit(-1);
   }
+#ifdef W32
   GetSystemTimeAsFileTime(&targ->end);
   if (!QueryPerformanceCounter(&targ->qpcEnd))
     L(
         "{%d} [%u] %lu ERROR QueryPerformanceCounter(&qpcEnd)\n",
         targ->trial, targ->partition, id);
+#else
+  if (!clock_gettime(CLOCK_REALTIME, &targ->end))
+    L(
+        "{%d} [%u] %lu ERROR clock_gettime(CLOCK_REALTIME, end)\n",
+        targ->trial, targ->partition, id);
+#endif
 
   if (dpiStmt_close(stmt, NULL, 0) != DPI_SUCCESS)
   {
@@ -180,10 +199,18 @@ DWORD WINAPI doInsert(LPVOID arg)
   return 0;
 }
 
+#ifdef W32
 DWORD WINAPI doSelect(LPVOID arg)
+#else
+void *doSelect(void *arg)
+#endif
 {
   threadArg *targ = (threadArg *)arg;
+#ifdef W32
   DWORD id = GetCurrentThreadId();
+#else
+  pthread_t id = pthread_self();
+#endif
 
   //L("{%d} [%u] %lu thread processing\n", targ->trial, targ->partition, id);
   dpiConn *conn;
@@ -239,9 +266,16 @@ DWORD WINAPI doSelect(LPVOID arg)
   dpiData *key, *data;
   dpiBytes *keyBytes, *dataBytes;
 
+#ifdef W32
   GetSystemTimeAsFileTime(&targ->start);
   if (!QueryPerformanceCounter(&targ->qpcStart))
     L("ERROR QueryPerformanceCounter(&qpcStart)\n");
+#else
+  if (!clock_gettime(CLOCK_REALTIME, &targ->start))
+    L(
+        "{%d} [%u] %lu ERROR clock_gettime(CLOCK_REALTIME, start)\n",
+        targ->trial, targ->partition, id);
+#endif
   while (
       (err = dpiStmt_fetch(stmt, &found, &bufferRowIndex)) == DPI_SUCCESS && found > 0)
   {
@@ -267,9 +301,16 @@ DWORD WINAPI doSelect(LPVOID arg)
 
     targ->processed++;
   }
+#ifdef W32
   GetSystemTimeAsFileTime(&targ->end);
   if (!QueryPerformanceCounter(&targ->qpcEnd))
     L("ERROR QueryPerformanceCounter(&qpcEnd)\n");
+#else
+  if (!clock_gettime(CLOCK_REALTIME, &targ->end))
+    L(
+        "{%d} [%u] %lu ERROR clock_gettime(CLOCK_REALTIME, end)\n",
+        targ->trial, targ->partition, id);
+#endif
 
   if (dpiStmt_close(stmt, NULL, 0) != DPI_SUCCESS)
   {
