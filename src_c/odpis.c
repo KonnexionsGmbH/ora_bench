@@ -83,7 +83,7 @@ void *doInsert(void *arg)
         "{%d} [%u] %lu ERROR QueryPerformanceCounter(&qpcStart)\n",
         targ->trial, targ->partition, id);
 #else
-  if (!clock_gettime(CLOCK_REALTIME, &targ->start))
+  if (clock_gettime(CLOCK_REALTIME, &targ->start))
     L(
         "{%d} [%u] %lu ERROR clock_gettime(CLOCK_REALTIME, start)\n",
         targ->trial, targ->partition, id);
@@ -162,7 +162,7 @@ void *doInsert(void *arg)
         "{%d} [%u] %lu ERROR QueryPerformanceCounter(&qpcEnd)\n",
         targ->trial, targ->partition, id);
 #else
-  if (!clock_gettime(CLOCK_REALTIME, &targ->end))
+  if (clock_gettime(CLOCK_REALTIME, &targ->end))
     L(
         "{%d} [%u] %lu ERROR clock_gettime(CLOCK_REALTIME, end)\n",
         targ->trial, targ->partition, id);
@@ -271,7 +271,7 @@ void *doSelect(void *arg)
   if (!QueryPerformanceCounter(&targ->qpcStart))
     L("ERROR QueryPerformanceCounter(&qpcStart)\n");
 #else
-  if (!clock_gettime(CLOCK_REALTIME, &targ->start))
+  if (clock_gettime(CLOCK_REALTIME, &targ->start))
     L(
         "{%d} [%u] %lu ERROR clock_gettime(CLOCK_REALTIME, start)\n",
         targ->trial, targ->partition, id);
@@ -306,7 +306,7 @@ void *doSelect(void *arg)
   if (!QueryPerformanceCounter(&targ->qpcEnd))
     L("ERROR QueryPerformanceCounter(&qpcEnd)\n");
 #else
-  if (!clock_gettime(CLOCK_REALTIME, &targ->end))
+  if (clock_gettime(CLOCK_REALTIME, &targ->end))
     L(
         "{%d} [%u] %lu ERROR clock_gettime(CLOCK_REALTIME, end)\n",
         targ->trial, targ->partition, id);
