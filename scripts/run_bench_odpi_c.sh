@@ -30,7 +30,8 @@ if [ "$OSTYPE" = "msys" ]; then
     nmake -f src_c/Makefile.win32 clean
     nmake -f src_c/Makefile.win32
 else
-    echo "Unimplemented"
+    make -f src_c/Makefile clean
+    make -f src_c/Makefile
 fi
 
 echo "================================================================================"
@@ -55,7 +56,7 @@ java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_odpic
 if [ "$OSTYPE" = "msys" ]; then
     ./OraBench.exe priv/properties/ora_bench_odpi_c.properties
 else
-    echo "Unimplemented"
+   ./OraBench priv/properties/ora_bench_odpi_c.properties
 fi
 
 EXITCODE=$?
