@@ -1,6 +1,6 @@
 O = .
 S = src_c
-ODPI_REPO = https://github.com/K2InformaticsGmbH/odpi
+ODPI_REPO = https://github.com/oracle/odpi
 
 SRCS = $(wildcard $(S)/*.c)
 ODPIROOT = $(S)/odpi
