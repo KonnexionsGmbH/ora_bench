@@ -9,8 +9,14 @@ rem ----------------------------------------------------------------------------
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 )
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU [""] (
+    set ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
+)
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU [""] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
+)
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU [""] (
+    set ORA_BENCH_RUN_ORANIF_ELIXIR=true
 )
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
@@ -23,14 +29,16 @@ echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - speci)c database.
 echo --------------------------------------------------------------------------------
-echo BENCHMARK_DATABASE   : %ORA_BENCH_BENCHMARK_DATABASE%
-echo CONNECTION_SERVICE   : %ORA_BENCH_CONNECTION_SERVICE%
+echo BENCHMARK_DATABASE      : %ORA_BENCH_BENCHMARK_DATABASE%
+echo CONNECTION_SERVICE      : %ORA_BENCH_CONNECTION_SERVICE%
 echo --------------------------------------------------------------------------------
-echo RUN_CX_ORACLE_PYTHON : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
-echo RUN_JDBC_JAVA        : %ORA_BENCH_RUN_JDBC_JAVA%
-echo RUN_ORANIF_ERLANG    : %ORA_BENCH_RUN_ORANIF_ERLANG%
+echo RUN_CX_ORACLE_PYTHON    : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
+echo RUN_JAMDB_ORACLE_ELIXIR : %ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%
+echo RUN_JDBC_JAVA           : %ORA_BENCH_RUN_JDBC_JAVA%
+echo RUN_ORANIF_ELIXIR       : %ORA_BENCH_RUN_ORANIF_ELIXIR%
+echo RUN_ORANIF_ERLANG       : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------
-echo CONNECT_IDENTIFIER   : %ORA_BENCH_CONNECT_IDENTIFIER%
+echo CONNECT_IDENTIFIER      : %ORA_BENCH_CONNECT_IDENTIFIER%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
@@ -56,6 +64,19 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%" = "true"] EQU [""] (
     { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
 )
 
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+    { /bin/bash scripts/run_bench_jamdb_oracle_elixir.sh; }
+)
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+    { /bin/bash scripts/run_bench_jamdb_oracle_elixir.sh; }
+)
+
 if ["%ORA_BENCH_RUN_JDBC_JAVA%" = "true"] EQU [""] (
     set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
@@ -67,6 +88,19 @@ if ["%ORA_BENCH_RUN_JDBC_JAVA%" = "true"] EQU [""] (
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
+)
+
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+    { /bin/bash scripts/run_bench_oranif_elixir.sh; }
+)
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+    { /bin/bash scripts/run_bench_oranif_elixir.sh; }
 )
 
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%" = "true"] EQU [""] (
@@ -93,6 +127,19 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%" = "true"] EQU [""] (
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
     { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
+)
+
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+    { /bin/bash scripts/run_bench_jamdb_oracle_elixir.sh; }
+)
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+    { /bin/bash scripts/run_bench_jamdb_oracle_elixir.sh; }
 )
 
 if ["%ORA_BENCH_RUN_JDBC_JAVA%" = "true"] EQU [""] (
@@ -106,6 +153,19 @@ if ["%ORA_BENCH_RUN_JDBC_JAVA%" = "true"] EQU [""] (
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
+)
+
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+    { /bin/bash scripts/run_bench_oranif_elixir.sh; }
+)
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+    { /bin/bash scripts/run_bench_oranif_elixir.sh; }
 )
 
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%" = "true"] EQU [""] (
@@ -134,6 +194,19 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%" = "true"] EQU [""] (
    { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
 )
 
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_jamdb_oracle_elixir.sh; }
+)
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_jamdb_oracle_elixir.sh; }
+)
+
 if ["%ORA_BENCH_RUN_JDBC_JAVA%" = "true"] EQU [""] (
     set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
@@ -145,6 +218,19 @@ if ["%ORA_BENCH_RUN_JDBC_JAVA%" = "true"] EQU [""] (
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
+)
+
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_oranif_elixir.sh; }
+)
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_oranif_elixir.sh; }
 )
 
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%" = "true"] EQU [""] (
@@ -173,6 +259,19 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%" = "true"] EQU [""] (
     { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
 )
 
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_jamdb_oracle_elixir.sh; }
+)
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_jamdb_oracle_elixir.sh; }
+)
+
 if ["%ORA_BENCH_RUN_JDBC_JAVA%" = "true"] EQU [""] (
     set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
@@ -184,6 +283,19 @@ if ["%ORA_BENCH_RUN_JDBC_JAVA%" = "true"] EQU [""] (
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
+)
+
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_oranif_elixir.sh; }
+)
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_oranif_elixir.sh; }
 )
 
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%" = "true"] EQU [""] (

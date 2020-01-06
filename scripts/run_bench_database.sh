@@ -28,6 +28,9 @@ fi
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
+if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" ]; then
+    export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
+fi
 if [ -z "$ORA_BENCH_RUN_JDBC_JAVA" ]; then
     export ORA_BENCH_RUN_JDBC_JAVA=true
 fi
@@ -56,6 +59,7 @@ echo "BENCHMARK_CORE_MULTIPLIER  : $ORA_BENCH_BENCHMARK_CORE_MULTIPLIER"
 echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
+echo "RUN_JAMDB_ORACLE_ELIXIR    : $ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
@@ -82,6 +86,10 @@ fi
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
     { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
+fi
+
+if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" = "true" ]; then
+    { /bin/bash scripts/run_bench_jamdb_oracle_elixir.sh; }
 fi
 
 if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then

@@ -257,16 +257,15 @@ defmodule OraBench do
     [
       database: config["connection.service"],
       hostname: config["connection.host"],
-      idle_interval: 1000000,
-      parameters: [
-        autocommit: false,
-        fetch: String.to_integer(config["connection.fetch.size"])
-      ],
+#      parameters: [
+#        autocommit: false,
+#        fetch: String.to_integer(config["connection.fetch.size"])
+#      ],
       password: config["connection.password"],
-      pool_size: case config["benchmark.core.multiplier"] do
-        "0" -> String.to_integer(config["benchmark.number.partitions"])
-        _ -> 1
-      end,
+#      pool_size: case config["benchmark.core.multiplier"] do
+#        "0" -> String.to_integer(config["benchmark.number.partitions"])
+#        _ -> 1
+#      end,
       port: String.to_integer(config["connection.port"]),
       timeout: :infinity,
       username: config["connection.user"]

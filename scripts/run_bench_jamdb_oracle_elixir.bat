@@ -38,17 +38,13 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-EXITCODE="0"
-
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
 
 cd src_elixir
 call mix deps.get
 call mix deps.compile
-call mix run -e "OraBench.CLI.main([\"Jamdb.Oracle\"])"
+call mix run -e "OraBench.CLI.main(["Jamdb.Oracle"])"
 cd ..
-
-EXITCODE=$?
 
 echo --------------------------------------------------------------------------------
 echo:| TIME

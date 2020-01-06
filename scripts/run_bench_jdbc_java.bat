@@ -18,6 +18,9 @@ if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
 if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
     set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 )
+if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
+    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
+)
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
     set ORA_BENCH_JAVA_CLASSPATH=.;priv\java_jar\*
 )

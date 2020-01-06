@@ -23,6 +23,7 @@ export ORA_BENCH_RUN_DB_18_3_EE=true
 export ORA_BENCH_RUN_DB_19_3_EE=true
 
 export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
+export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
 export ORA_BENCH_RUN_JDBC_JAVA=true
 export ORA_BENCH_RUN_ORANIF_ELIXIR=true
 export ORA_BENCH_RUN_ORANIF_ERLANG=true
@@ -55,6 +56,7 @@ echo "RUN_DB_18_3_EE          : $ORA_BENCH_RUN_DB_18_3_EE"
 echo "RUN_DB_19_3_EE          : $ORA_BENCH_RUN_DB_19_3_EE"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON    : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
+echo "RUN_JAMDB_ORACLE_ELIXIR : $ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR"
 echo "RUN_JDBC_JAVA           : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "RUN_ORANIF_ELIXIR       : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG       : $ORA_BENCH_RUN_ORANIF_ERLANG"
@@ -105,6 +107,6 @@ echo "--------------------------------------------------------------------------
 echo "End   $0"
 echo "================================================================================"
 
-start scripts/end_of_series.mp3
+start priv/audio/end_of_series.mp3
 
 exit $EXITCODE

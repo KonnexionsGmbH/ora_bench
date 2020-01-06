@@ -28,6 +28,9 @@ if ["%ORA_BENCH_PASSWORD_SYS%"] EQU [""] (
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 )
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU [""] (
+    set ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
+)
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU [""] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
 )
@@ -56,6 +59,7 @@ echo BENCHMARK_CORE_MULTIPLIER  : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
 echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
+echo RUN_JAMDB_ORACLE_ELIXIR    : %ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%
 echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_ORANIF_ELIXIR          : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
@@ -84,6 +88,10 @@ priv\oracle\instantclient-windows.x64\instantclient_19_5\sqlplus.exe sys/%ORA_BE
 
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
     call scripts\run_bench_cx_oracle_python.bat
+)
+
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU ["true"] (
+    call scripts\run_bench_jamdb_oracle_elixir.bat
 )
 
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
