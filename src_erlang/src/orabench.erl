@@ -51,11 +51,13 @@ main([ConfigFile]) ->
     true -> ok
   end,
   ok = file:close(Fd),
+  io:format("[~p:~p] Start ~p~n", [?FUNCTION_NAME, ?LINE, ?MODULE]),
   #{
     startTime := StartTs,
     endTime := EndTs
   } = Results = run_trials(Trials, Rows, Config),
   ok = application:load(oranif),
+  io:format("[~p:~p] End ~p~n", [?FUNCTION_NAME, ?LINE, ?MODULE]),
   {ok, OranifVsn} = application:get_key(oranif, vsn),
   BMDrv = lists:flatten(io_lib:format("oranif (Version ~s)",[OranifVsn])),
   BMMod = lists:flatten(
@@ -195,6 +197,7 @@ run_trials(
   } = Config,
   Stats
 ) ->
+  io:format("[~p:~p:~p] Start trial no ~p~n", [?MODULE, ?FUNCTION_NAME, ?LINE, Trial]),
   StartTime = os:timestamp(),
   Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
   CreateStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Create), <<>>),
@@ -257,10 +260,10 @@ select_partition(
   Selected = (fun Fetch(Count) ->
     case dpi:stmt_fetch(SelectStmt) of
       #{found := true} ->
-        #{data := Key} = dpi:stmt_getQueryValue(SelectStmt, 1),
-        #{data := Data} = dpi:stmt_getQueryValue(SelectStmt, 2),
-        true = byte_size(dpi:data_getBytes(Key)) > 0,
-        true = byte_size(dpi:data_getBytes(Data)) > 0,
+        %#{data := Key} = dpi:stmt_getQueryValue(SelectStmt, 1),
+        %#{data := Data} = dpi:stmt_getQueryValue(SelectStmt, 2),
+        %true = byte_size(dpi:data_getBytes(Key)) > 0,
+        %true = byte_size(dpi:data_getBytes(Data)) > 0,
         Fetch(Count+1);
       #{found := false} -> Count
     end
