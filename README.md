@@ -203,8 +203,8 @@ Otherwise, the new current results are appended to existing results.
 | database          | alphanumeric                    | config param `benchmark.database` |
 | module            | alphanumeric                    | config param `benchmark.module` |
 | driver            | alphanumeric                    | config param `benchmark.driver` |
-| trial no.         | integer                         | trial no. if action equals `trial` , `0` elsewise |
-| SQL statement     | alphanumeric                    | SQL statement if action equals `query` , empty elsewise |
+| trial no.         | integer                         | `0` if action equals `benchmark`, trial no. otherwise |
+| SQL statement     | alphanumeric                    | SQL statement if action equals `query`, empty otherwise |
 | core multiplier   | integer                         | config param `benchmark.core.multiplier` |
 | fetch size        | integer                         | config param `connection.fetch.size` |
 | transaction size  | integer                         | config param `benchmark.transaction.size` |
@@ -422,7 +422,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 |            | 2019.11.05 | c_bik    | occi_c++: new |
 |            | 2019.11.05 | c_bik    | odbc_erlang: new |
 |            | 2019.11.05 | c_bik    | odpi-c_c: new |
-|            | 2019.11.05 | c_bik    | oranif_erlang: new |
+| 2019.12.23 | 2019.11.05 | c_bik    | oranif_erlang: new |
 |  prio. 4   | 2019.11.21 | wwe      | ecto_elixir: new |
 | 2019.11.05 | 2019.11.05 | wwe      | jdbc_java: dynamic batchsize | 
 | 2019.11.06 | 2019.11.05 | wwe      | all: separating key column and data column |
