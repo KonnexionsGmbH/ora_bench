@@ -259,7 +259,7 @@ defmodule OraBenchOranif do
     case config["benchmark.core.multiplier"] do
       "0" ->
         IO.inspect(connections[1], label: "connections[1]")
-        key_var = :dpi.conn_newVar(
+        %{:var => key_var} = :dpi.conn_newVar(
           connections[1],
           :DPI_ORACLE_TYPE_VARCHAR,
           :DPI_NATIVE_TYPE_BYTES,
@@ -270,7 +270,7 @@ defmodule OraBenchOranif do
           :null
         )
         IO.inspect(key_var, label: "key_var")
-        data_var = :dpi.conn_newVar(
+        %{:var => data_var} = :dpi.conn_newVar(
           connections[1],
           :DPI_ORACLE_TYPE_VARCHAR,
           :DPI_NATIVE_TYPE_BYTES,
@@ -305,7 +305,7 @@ defmodule OraBenchOranif do
         )
         :ok = :dpi.stmt_close(sql_insert, <<>>)
       _ ->
-        key_var = :dpi.conn_newVar(
+        %{:var => key_var} = :dpi.conn_newVar(
           connections[partition_key],
           :DPI_ORACLE_TYPE_VARCHAR,
           :DPI_NATIVE_TYPE_BYTES,
@@ -315,7 +315,7 @@ defmodule OraBenchOranif do
           false,
           :null
         )
-        data_var = :dpi.conn_newVar(
+        %{:var => data_var} = :dpi.conn_newVar(
           connections[partition_key],
           :DPI_ORACLE_TYPE_VARCHAR,
           :DPI_NATIVE_TYPE_BYTES,
