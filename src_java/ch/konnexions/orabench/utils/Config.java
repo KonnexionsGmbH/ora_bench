@@ -58,6 +58,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>file.configuration.name
  * <li>file.configuration.name.cx_oracle.python
  * <li>file.configuration.name.oranif.erlang
+ * <li>file.configuration.name.odpi.c
  * <li>file.result.delimiter
  * <li>file.result.header
  * <li>file.result.name
@@ -104,6 +105,7 @@ public class Config {
     private String fileConfigurationName;
     private String fileConfigurationNameCxOraclePython;
     private String fileConfigurationNameOranifErlang;
+    private String fileConfigurationNameOdpiC;
     private String fileResultDelimiter;
     private String fileResultHeader;
     private String fileResultName;
@@ -130,7 +132,8 @@ public class Config {
     public Config() {
         super();
 
-        fileBasedConfigurationBuilder = new FileBasedConfigurationBuilder<PropertiesConfiguration>(PropertiesConfiguration.class);
+        fileBasedConfigurationBuilder = new FileBasedConfigurationBuilder<PropertiesConfiguration>(
+                PropertiesConfiguration.class);
 
         fileBasedConfigurationBuilder.configure(new Parameters().properties().setFile(configFile));
 
@@ -153,7 +156,8 @@ public class Config {
 
         try {
 
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameCxOraclePython(), false));
+            BufferedWriter bufferedWriter = new BufferedWriter(
+                    new FileWriter(getFileConfigurationNameCxOraclePython(), false));
 
             bufferedWriter.write("[DEFAULT]");
             bufferedWriter.newLine();
@@ -187,7 +191,8 @@ public class Config {
         try {
             List<String> list = getNumericProperties();
 
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOranifErlang(), false));
+            BufferedWriter bufferedWriter = new BufferedWriter(
+                    new FileWriter(getFileConfigurationNameOranifErlang(), false));
 
             bufferedWriter.write("#{");
             bufferedWriter.newLine();
@@ -223,6 +228,48 @@ public class Config {
     }
 
     /**
+     * Creates the oranif &amp; Erlang version of the configuration file.
+     */
+    public final void createConfigurationFileOdpiC() {
+
+        try {
+            List<String> list = getNumericProperties();
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOdpiC(), false));
+
+            String value;
+
+            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
+                final String key = iterator.next();
+
+                if ("file.result.header".contentEquals(key)) {
+                    value = propertiesConfiguration.getString(key).replace(";", fileResultDelimiter);
+                } else {
+                    value = propertiesConfiguration.getString(key);
+                }
+
+                String camelKey = "";
+                for (int i = 0; i < key.length(); ++i) {
+                    if (key.charAt(i) == '.') {
+                        camelKey += Character.toUpperCase(key.charAt(i + 1));
+                        ++i;
+                    } else {
+                        camelKey += key.charAt(i);
+                    }
+                }
+
+                bufferedWriter.write(camelKey + "=" + value);
+
+                bufferedWriter.newLine();
+            }
+
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * @return the batch size of the INSERT operation
      */
     public final int getBenchmarkBatchSize() {
@@ -233,6 +280,7 @@ public class Config {
      * @return the benchmark specific comment
      */
     public final String getBenchmarkComment() {
+
         return benchmarkComment;
     }
 
@@ -426,6 +474,14 @@ public class Config {
     }
 
     /**
+     * @return the name of the configuration file for the ODPI-C version. The file
+     *         name may contain the absolute or relative file path.
+     */
+    public final String getFileConfigurationNameOdpiC() {
+        return fileConfigurationNameOdpiC;
+    }
+
+    /**
      * @return the delimiter character of the result file
      */
     public final String getFileResultDelimiter() {
@@ -501,7 +557,8 @@ public class Config {
         StringBuffer stringBuffer = new StringBuffer();
 
         for (int i = 2; i <= benchmarkNumberPartitions; i++) {
-            stringBuffer.append(", PARTITION p" + String.format("%05d", i - 1) + " VALUES LESS THAN (" + Integer.toString(i) + ")");
+            stringBuffer.append(
+                    ", PARTITION p" + String.format("%05d", i - 1) + " VALUES LESS THAN (" + Integer.toString(i) + ")");
         }
 
         return stringBuffer.toString();
@@ -613,8 +670,10 @@ public class Config {
         fileBulkName = propertiesConfiguration.getString("file.bulk.name");
         fileBulkSize = propertiesConfiguration.getInt("file.bulk.size");
         fileConfigurationName = propertiesConfiguration.getString("file.configuration.name");
-        fileConfigurationNameCxOraclePython = propertiesConfiguration.getString("file.configuration.name.cx_oracle.python");
+        fileConfigurationNameCxOraclePython = propertiesConfiguration
+                .getString("file.configuration.name.cx_oracle.python");
         fileConfigurationNameOranifErlang = propertiesConfiguration.getString("file.configuration.name.oranif.erlang");
+        fileConfigurationNameOdpiC = propertiesConfiguration.getString("file.configuration.name.odpi.c");
         fileResultDelimiter = propertiesConfiguration.getString("file.result.delimiter");
         fileResultHeader = propertiesConfiguration.getString("file.result.header").replace(";", fileResultDelimiter);
         fileResultName = propertiesConfiguration.getString("file.result.name");
@@ -664,7 +723,8 @@ public class Config {
         }
 
         if (environmentVariables.containsKey("ORA_BENCH_BENCHMARK_TRANSACTION_SIZE")) {
-            benchmarkTransactionSize = Integer.parseInt(environmentVariables.get("ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"));
+            benchmarkTransactionSize = Integer
+                    .parseInt(environmentVariables.get("ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"));
             propertiesConfiguration.setProperty("benchmark.transaction.size", benchmarkTransactionSize);
             isChanged = true;
         }
@@ -714,7 +774,8 @@ public class Config {
         boolean isChanged = false;
 
         if (benchmarkBatchSize < 0) {
-            log.error("Attention: The value of the configuration parameter 'benchmark.batch.size' [" + Integer.toString(benchmarkBatchSize)
+            log.error("Attention: The value of the configuration parameter 'benchmark.batch.size' ["
+                    + Integer.toString(benchmarkBatchSize)
                     + "] must not be less than 0, the specified value is replaced by 0.");
             benchmarkBatchSize = 0;
             propertiesConfiguration.setProperty("benchmark.batch.size", benchmarkBatchSize);
@@ -722,7 +783,8 @@ public class Config {
         }
 
         if (benchmarkCoreMultiplier < 0) {
-            log.error("Attention: The value of the core multiplier parameter 'benchmark.core.multiplier' [" + Integer.toString(benchmarkCoreMultiplier)
+            log.error("Attention: The value of the core multiplier parameter 'benchmark.core.multiplier' ["
+                    + Integer.toString(benchmarkCoreMultiplier)
                     + "] must not be less than 0, the specified value is replaced by 0.");
             benchmarkCoreMultiplier = 0;
             propertiesConfiguration.setProperty("benchmark.core.multiplier", benchmarkCoreMultiplier);
@@ -751,34 +813,43 @@ public class Config {
         }
 
         if (benchmarkOs.equals("n/a")) {
-            benchmarkOs = System.getProperty("os.arch") + " / " + System.getProperty("os.name") + " / " + System.getProperty("os.version");
+            benchmarkOs = System.getProperty("os.arch") + " / " + System.getProperty("os.name") + " / "
+                    + System.getProperty("os.version");
             propertiesConfiguration.setProperty("benchmark.os", benchmarkOs);
             isChanged = true;
         }
 
         if (benchmarkTransactionSize < benchmarkBatchSize) {
-            log.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' [" + Integer.toString(benchmarkTransactionSize)
-                    + "] must not be less than value of the configuration parameter 'benchmark.batch.size' [" + Integer.toString(benchmarkBatchSize)
+            log.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' ["
+                    + Integer.toString(benchmarkTransactionSize)
+                    + "] must not be less than value of the configuration parameter 'benchmark.batch.size' ["
+                    + Integer.toString(benchmarkBatchSize)
                     + "], the specified value of the configuration parameter 'benchmark.transaction.size' is replaced by "
                     + Integer.toString(benchmarkBatchSize) + ".");
             benchmarkTransactionSize = benchmarkBatchSize;
             propertiesConfiguration.setProperty("benchmark.batch.size", benchmarkTransactionSize);
+
             isChanged = true;
         }
 
         if (benchmarkTransactionSize < 0) {
-            log.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' [" + Integer.toString(benchmarkTransactionSize)
+            log.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' ["
+                    + Integer.toString(benchmarkTransactionSize)
                     + "] must not be less than 0, the specified value is replaced by 0.");
+
             benchmarkTransactionSize = 0;
+
             propertiesConfiguration.setProperty("benchmark.batch.size", benchmarkTransactionSize);
             isChanged = true;
         }
 
         if (benchmarkTrials < 1) {
-            log.error("Attention: The value of the configuration parameter 'benchmark.trials' [" + Integer.toString(benchmarkTrials)
+            log.error("Attention: The value of the configuration parameter 'benchmark.trials' ["
+                    + Integer.toString(benchmarkTrials)
                     + "] must not be less than 1, the specified value is replaced by 1.");
             benchmarkTrials = 1;
             propertiesConfiguration.setProperty("benchmark.trials", benchmarkTrials);
+
             isChanged = true;
         }
 
@@ -789,13 +860,15 @@ public class Config {
         }
 
         if (benchmarkId.equals("n/a")) {
-            benchmarkId = DigestUtils.md5Hex(LocalDateTime.now().format(formatter) + benchmarkHostName + benchmarkOs + benchmarkUserName);
+            benchmarkId = DigestUtils.md5Hex(
+                    LocalDateTime.now().format(formatter) + benchmarkHostName + benchmarkOs + benchmarkUserName);
             propertiesConfiguration.setProperty("benchmark.id", benchmarkId);
             isChanged = true;
         }
 
         if (connectionFetchSize < 0) {
-            log.error("Attention: The value of the configuration parameter 'connection.fetch.size' [" + Integer.toString(connectionFetchSize)
+            log.error("Attention: The value of the configuration parameter 'connection.fetch.size' ["
+                    + Integer.toString(connectionFetchSize)
                     + "] must not be less than 0, the specified value is replaced by 0.");
             connectionFetchSize = 0;
             propertiesConfiguration.setProperty("connection.fetch.size", connectionFetchSize);
@@ -803,13 +876,16 @@ public class Config {
         }
 
         if (fileBulkLength < 80) {
-            log.error("Attention: The value of the configuration parameter 'file.bulk.length' [" + Integer.toString(fileBulkLength)
+            log.error("Attention: The value of the configuration parameter 'file.bulk.length' ["
+                    + Integer.toString(fileBulkLength)
                     + "] must not be less than 80, the specified value is replaced by 80.");
             fileBulkLength = 80;
             propertiesConfiguration.setProperty("file.bulk.length", fileBulkLength);
+
             isChanged = true;
         } else if (fileBulkLength > 4000) {
-            log.error("Attention: The value of the configuration parameter 'file.bulk.length' [" + Integer.toString(fileBulkLength)
+            log.error("Attention: The value of the configuration parameter 'file.bulk.length' ["
+                    + Integer.toString(fileBulkLength)
                     + "] must not be greater than 4000, the specified value is replaced by 4000.");
             fileBulkLength = 80;
             propertiesConfiguration.setProperty("file.bulk.length", fileBulkLength);
@@ -817,15 +893,18 @@ public class Config {
         }
 
         if (fileBulkSize < 1) {
-            log.error("Attention: The value of the configuration parameter 'file.bulk.size' [" + Integer.toString(fileBulkSize)
+            log.error("Attention: The value of the configuration parameter 'file.bulk.size' ["
+                    + Integer.toString(fileBulkSize)
                     + "] must not be less than 1, the specified value is replaced by 1.");
             fileBulkSize = 1;
             propertiesConfiguration.setProperty("file.bulk.size", fileBulkSize);
+
             isChanged = true;
         }
 
         if (sqlCreate.equals("n/a")) {
-            sqlCreate = sqlCreateDefault.replace("C...C", Integer.toString(benchmarkNumberPartitions)).replace("P...P", getPartionString());
+            sqlCreate = sqlCreateDefault.replace("C...C", Integer.toString(benchmarkNumberPartitions)).replace("P...P",
+                    getPartionString());
             propertiesConfiguration.setProperty("sql.create", sqlCreate);
             isChanged = true;
         }
@@ -837,6 +916,7 @@ public class Config {
             } catch (ConfigurationException e) {
                 e.printStackTrace();
             }
+
         }
     }
 
