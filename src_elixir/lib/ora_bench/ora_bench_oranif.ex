@@ -94,7 +94,7 @@ defmodule OraBenchOranif do
          statement,
          transaction_size
        ) do
-        IO.inspect(key, label: "key")
+    IO.inspect(key, label: "key")
     :ok = :dpi.var_setFromBytes(KeyVar, count, key)
     :ok = :dpi.var_setFromBytes(DataVar, count, data)
 
@@ -111,7 +111,10 @@ defmodule OraBenchOranif do
       tail,
       config,
       connection,
-      count + 1,
+      case tail do
+        [] -> count
+        _ -> count + 1
+      end,
       case batch_size == 0 or count_batch == batch_size do
         true -> 1
         _ -> count_batch + 1
@@ -313,7 +316,7 @@ defmodule OraBenchOranif do
           bulk_data_partitions[partition_key - 1],
           config,
           connections[1],
-          0,
+          1,
           1,
           sql_insert,
           String.to_integer(config["benchmark.transaction.size"])
@@ -361,7 +364,7 @@ defmodule OraBenchOranif do
           bulk_data_partitions[partition_key - 1],
           config,
           connections[partition_key],
-          0,
+          1,
           1,
           sql_insert,
           String.to_integer(config["benchmark.transaction.size"])
