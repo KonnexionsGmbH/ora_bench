@@ -263,8 +263,8 @@ void *doSelect(void *arg)
   int found, err;
   uint32_t bufferRowIndex;
   dpiNativeTypeNum nativeTypeNumKey, nativeTypeNumData;
-  dpiData *key, *data;
-  dpiBytes *keyBytes, *dataBytes;
+  /*dpiData *key, *data;
+  dpiBytes *keyBytes, *dataBytes;*/
 
 #ifdef W32
   GetSystemTimeAsFileTime(&targ->start);
@@ -279,7 +279,7 @@ void *doSelect(void *arg)
   while (
       (err = dpiStmt_fetch(stmt, &found, &bufferRowIndex)) == DPI_SUCCESS && found > 0)
   {
-    if (dpiStmt_getQueryValue(stmt, 1, &nativeTypeNumKey, &key) != DPI_SUCCESS)
+    /*if (dpiStmt_getQueryValue(stmt, 1, &nativeTypeNumKey, &key) != DPI_SUCCESS)
     {
       E("Unable to get key from select query");
       D("%s", patchedSqlSelect);
@@ -297,7 +297,7 @@ void *doSelect(void *arg)
     if (keyBytes->length <= 0 || dataBytes->length <= 0)
       L(
           "{%d} [%u] %lu ERROR key/data select retrieve failed",
-          targ->trial, targ->partition, id);
+          targ->trial, targ->partition, id);*/
 
     targ->processed++;
   }
@@ -341,7 +341,6 @@ void init_db(void)
             DPI_MAJOR_VERSION, DPI_MINOR_VERSION, &gContext,
             &errorInfo) != DPI_SUCCESS)
       FE("Cannot create DPI context", errorInfo);
-    L("context created\n");
   }
 
   dpiConn *conn;
@@ -366,8 +365,13 @@ void init_db(void)
   if (dpiStmt_execute(
           stmt, DPI_MODE_EXEC_COMMIT_ON_SUCCESS, NULL) != DPI_SUCCESS)
   {
-    E("Unable to execute drop stmt");
-    D("%s", sqlDrop);
+    dpiErrorInfo e;
+    dpiContext_getError(gContext, &e);
+    if (e.code != 942 /*ORA-00942 : table or view doesn't exists*/)
+    {
+      D("%s", sqlDrop);
+      FE("Unable to execute drop stmt", e);
+    }
   }
   if (dpiStmt_close(stmt, NULL, 0) != DPI_SUCCESS)
   {

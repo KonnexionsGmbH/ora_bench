@@ -80,24 +80,24 @@ int main(const int argc, const char *argv[])
   char resultFmt[1024];
   sprintf(
       resultFmt,
-      "%s%s"                  // benchmark id
-      "%s%s"                  // benchmark comment
-      "%s%s"                  //	host name
-      "%d%s"                  //	no. cores
-      "%s%s"                  //	os
-      "%s%s"                  //	user name
-      "%s%s"                  //	database
-      "OraBench.exe (v0.1)%s" //	module
-      "OCPI-C (v3.2.2)%s"     //	driver
-      "%%d%s"                 //	trial no.
-      "%%s%s"                 //	SQL statement
-      "%d%s"                  //	core multiplier
-      "%d%s"                  //	fetch size
-      "%d%s"                  //	transaction size
-      "%d%s"                  //	bulk length
-      "%d%s"                  //	bulk size
-      "%d%s"                  //	batch size
-      "%%s%s"                 //	action
+      "%s%s"              // benchmark id
+      "%s%s"              // benchmark comment
+      "%s%s"              //	host name
+      "%d%s"              //	no. cores
+      "%s%s"              //	os
+      "%s%s"              //	user name
+      "%s%s"              //	database
+      "OraBench (C)%s"    //	module
+      "OCPI-C (v3.2.2)%s" //	driver
+      "%%d%s"             //	trial no.
+      "%%s%s"             //	SQL statement
+      "%d%s"              //	core multiplier
+      "%d%s"              //	fetch size
+      "%d%s"              //	transaction size
+      "%d%s"              //	bulk length
+      "%d%s"              //	bulk size
+      "%d%s"              //	batch size
+      "%%s%s"             //	action
 #ifdef W32
       "%%04d-%%02d-%%02d %%02d:%%02d:%%02d.%%09d%s" //	start day time
       "%%04d-%%02d-%%02d %%02d:%%02d:%%02d.%%09d%s" //	end day time
@@ -133,6 +133,7 @@ int main(const int argc, const char *argv[])
       /*duration (sec), */ fileResultDelimiter
       /*,	duration (ns)*/);
 
+  L("Start %s\n", __FILE__);
 #ifdef W32
   GetSystemTimeAsFileTime(&benchmarkStart);
   if (!QueryPerformanceCounter(&benchmarkQpcStart))
@@ -142,8 +143,10 @@ int main(const int argc, const char *argv[])
     L("ERROR clock_gettime(CLOCK_REALTIME, &benchmarkStart)\n");
 #endif
 
-  for (int t = 0; t < benchmarkTrials; ++t)
+  for (int t = 1; t <= benchmarkTrials; ++t)
   {
+    L("Trial: %d\n", t);
+
     init_db();
     for (int i = 0; i < benchmarkNumberPartitions; ++i)
     {
@@ -233,7 +236,7 @@ int main(const int argc, const char *argv[])
     strftime(strEnd, 32, "%Y-%m-%d %H:%M:%S", &maxEndTm);
 #endif
     fprintf(
-        rfp, resultFmt, 0, sqlInsert, "query",
+        rfp, resultFmt, t, sqlInsert, "query",
 #ifdef W32
         minStartSys.wYear, minStartSys.wMonth, minStartSys.wDay,
         minStartSys.wHour, minStartSys.wMinute, minStartSys.wSecond,
@@ -328,7 +331,7 @@ int main(const int argc, const char *argv[])
     strftime(strEnd, 32, "%Y-%m-%d %H:%M:%S", &maxEndTm);
 #endif
     fprintf(
-        rfp, resultFmt, 0, sqlSelect, "query",
+        rfp, resultFmt, t, sqlSelect, "query",
 #ifdef W32
         minStartSys.wYear, minStartSys.wMonth, minStartSys.wDay,
         minStartSys.wHour, minStartSys.wMinute, minStartSys.wSecond,
@@ -406,6 +409,7 @@ int main(const int argc, const char *argv[])
       elapsed.tv_sec, elapsed.tv_nsec
 #endif
   );
+  L("End %s\n", __FILE__);
 
   fclose(rfp);
 

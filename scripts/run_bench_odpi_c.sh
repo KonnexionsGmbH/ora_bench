@@ -24,6 +24,14 @@ fi
 
 if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+    if [ "$OSTYPE" = "msys" ]; then
+        nmake -f src_c/Makefile.win32 clean
+        nmake -f src_c/Makefile.win32
+    else
+        make -f src_c/Makefile clean
+        make -f src_c/Makefile
+    fi
+    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_odpic
 fi
 
 echo "================================================================================"
@@ -43,15 +51,10 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_odpic
 
 if [ "$OSTYPE" = "msys" ]; then
-    nmake -f src_c/Makefile.win32 clean
-    nmake -f src_c/Makefile.win32
     ./OraBench.exe priv/properties/ora_bench_odpi_c.properties
 else
-    make -f src_c/Makefile clean
-    make -f src_c/Makefile
    ./OraBench priv/properties/ora_bench_odpi_c.properties
 fi
 

@@ -202,8 +202,8 @@ Otherwise, the new current results are appended to existing results.
 | database          | alphanumeric                    | config param `benchmark.database` |
 | module            | alphanumeric                    | config param `benchmark.module` |
 | driver            | alphanumeric                    | config param `benchmark.driver` |
-| trial no.         | integer                         | trial no. if action equals `trial` , `0` elsewise |
-| SQL statement     | alphanumeric                    | SQL statement if action equals `query` , empty elsewise |
+| trial no.         | integer                         | `0` if action equals `benchmark`, trial no. otherwise |
+| SQL statement     | alphanumeric                    | SQL statement if action equals `query`, empty otherwise |
 | core multiplier   | integer                         | config param `benchmark.core.multiplier` |
 | fetch size        | integer                         | config param `connection.fetch.size` |
 | transaction size  | integer                         | config param `benchmark.transaction.size` |
