@@ -14,19 +14,48 @@ defmodule OraBenchOranif do
   defp create_database_objects(config, driver) do
     Logger.debug("Start ==========> <==========")
 
-    connection_string = :erlang.iolist_to_binary(config["connection.host"] <> ":" <> config["connection.port"] <> "/" <> config["connection.service"])
+    connection_string = :erlang.iolist_to_binary(
+      config["connection.host"] <> ":" <> config["connection.port"] <> "/" <> config["connection.service"]
+    )
     password = :erlang.iolist_to_binary(config["connection.password"])
     user = :erlang.iolist_to_binary(config["connection.user"])
 
     case config["benchmark.core.multiplier"] do
-      "0" -> Map.new([{1, :dpi.conn_create(driver, user, password, connection_string, %{}, %{})}])
-      _ -> Enum.reduce(
-             1..String.to_integer(config["benchmark.number.partitions"]),
-             %{},
-             fn (i, connections) ->
-               Map.put(connections, i, :dpi.conn_create(driver, user, password, connection_string, %{}, %{}))
-             end
-           )
+      "0" ->
+        Map.new(
+          [
+            {
+              1,
+              :dpi.conn_create(
+                driver,
+                user,
+                password,
+                connection_string,
+                %{},
+                %{}
+              )
+            }
+          ]
+        )
+      _ ->
+        Enum.reduce(
+          1..String.to_integer(config["benchmark.number.partitions"]),
+          %{},
+          fn (i, connections) ->
+            Map.put(
+              connections,
+              i,
+              :dpi.conn_create(
+                driver,
+                user,
+                password,
+                connection_string,
+                %{},
+                %{}
+              )
+            )
+          end
+        )
     end
   end
 
@@ -35,19 +64,20 @@ defmodule OraBenchOranif do
   # ----------------------------------------------------------------------------------------------
 
   defp insert(
-         _batch_data,
          _batch_size,
          [],
          _config,
          connection,
          count,
+         count_batch,
          _statement,
          transaction_size
        ) do
     Logger.debug("Start ==========> final <==========")
 
-    #    if batch_size > 0 and batch_data.__len__() > 0 do
-    #      cursor.executemany(config["sql.insert"], batch_data)
+    if count_batch > 0 do
+      :ok = :dpi.stmt_executeMany(InsertStmt, [], count_batch)
+    end
 
     if transaction_size == 0 or rem(count, transaction_size) != 0 do
       :dpi.conn_commit(connection)
@@ -55,42 +85,21 @@ defmodule OraBenchOranif do
   end
 
   defp insert(
-         batch_data,
-         0,
-         [_key_data_tuple | tail] = _bulk_data_partition,
-         config,
-         connection,
-         count,
-         statement,
-         transaction_size
-       ) do
-    #    cursor.execute(config["sql.insert"], [key_data_tuple[0], key_data_tuple[1]])
-
-    if transaction_size == 0 or rem(count, transaction_size) != 0 do
-      :dpi.conn_commit(connection)
-    end
-
-    insert(batch_data, 0, tail, config, connection, count + 1, statement, transaction_size)
-  end
-
-  defp insert(
-         batch_data,
          batch_size,
-         [key_data_tuple | tail] = _bulk_data_partition,
+         [{key, data} | tail] = _bulk_data_partition,
          config,
          connection,
          count,
+         count_batch,
          statement,
          transaction_size
        ) do
-    IO.inspect(key_data_tuple, label: "key_data_tuple")
-    batch_data_start = batch_data ++ [statement]
-    batch_data_end = case rem(count + 1, batch_size)  do
-      0 -> []
-      _ -> batch_data_start
-      #    if count % config["benchmark.batch.size"] == 0:
-      #      cursor.executemany(config["sql.insert"], batch_data)
-      #      batch_data = list()
+        IO.inspect(key, label: "key")
+    :ok = :dpi.var_setFromBytes(KeyVar, count, key)
+    :ok = :dpi.var_setFromBytes(DataVar, count, data)
+
+    if batch_size == 0 or count_batch == batch_size do
+      :ok = :dpi.stmt_executeMany(InsertStmt, [], count_batch)
     end
 
     if transaction_size == 0 or rem(count, transaction_size) != 0 do
@@ -98,12 +107,15 @@ defmodule OraBenchOranif do
     end
 
     insert(
-      batch_data_end,
       batch_size,
       tail,
       config,
       connection,
       count + 1,
+      case batch_size == 0 or count_batch == batch_size do
+        true -> 1
+        _ -> count_batch + 1
+      end,
       statement,
       transaction_size
     )
@@ -135,7 +147,9 @@ defmodule OraBenchOranif do
     #   IO.inspect(bulk_data_partitions, label: "bulk_data_partitions")
 
     {:ok, oranif_vsn} = :application.get_key(:oranif, :vsn)
-    benchmark_driver = :lists.flatten(:io_lib.format("oranif (Version ~s)", [oranif_vsn]))
+    benchmark_driver = :lists.flatten(
+      :io_lib.format("oranif (Version ~s)", [oranif_vsn])
+    )
     #   IO.inspect(benchmark_driver, label: "benchmark_driver")
 
     :ok = :dpi.load_unsafe()
@@ -258,7 +272,6 @@ defmodule OraBenchOranif do
 
     case config["benchmark.core.multiplier"] do
       "0" ->
-        IO.inspect(connections[1], label: "connections[1]")
         %{:var => key_var} = :dpi.conn_newVar(
           connections[1],
           :DPI_ORACLE_TYPE_VARCHAR,
@@ -269,7 +282,6 @@ defmodule OraBenchOranif do
           false,
           :null
         )
-        IO.inspect(key_var, label: "key_var")
         %{:var => data_var} = :dpi.conn_newVar(
           connections[1],
           :DPI_ORACLE_TYPE_VARCHAR,
@@ -280,9 +292,12 @@ defmodule OraBenchOranif do
           false,
           :null
         )
-        IO.inspect(data_var, label: "data_var")
-        sql_insert = :dpi.conn_prepareStmt(connections[1], false, :erlang.iolist_to_binary(config["sql.insert"]), <<>>)
-        IO.inspect(sql_insert, label: "sql_insert")
+        sql_insert = :dpi.conn_prepareStmt(
+          connections[1],
+          false,
+          :erlang.iolist_to_binary(config["sql.insert"]),
+          <<>>
+        )
         :ok = :dpi.stmt_bindByName(
           sql_insert,
           <<"key">>,
@@ -294,12 +309,12 @@ defmodule OraBenchOranif do
           data_var
         )
         insert(
-          [],
           String.to_integer(config["benchmark.batch.size"]),
           bulk_data_partitions[partition_key - 1],
           config,
           connections[1],
           0,
+          1,
           sql_insert,
           String.to_integer(config["benchmark.transaction.size"])
         )
@@ -325,7 +340,12 @@ defmodule OraBenchOranif do
           false,
           :null
         )
-        sql_insert = :dpi.conn_prepareStmt(connections[partition_key], false, :erlang.iolist_to_binary(config["sql.insert"]), <<>>)
+        sql_insert = :dpi.conn_prepareStmt(
+          connections[partition_key],
+          false,
+          :erlang.iolist_to_binary(config["sql.insert"]),
+          <<>>
+        )
         :ok = :dpi.stmt_bindByName(
           sql_insert,
           <<"key">>,
@@ -337,12 +357,12 @@ defmodule OraBenchOranif do
           data_var
         )
         insert(
-          [],
           String.to_integer(config["benchmark.batch.size"]),
           bulk_data_partitions[partition_key - 1],
           config,
           connections[partition_key],
           0,
+          1,
           sql_insert,
           String.to_integer(config["benchmark.transaction.size"])
         )
@@ -437,38 +457,31 @@ defmodule OraBenchOranif do
       "Start ==========> partition key: #{partition_key_current} <=========="
     )
 
-    case config["benchmark.core.multiplier"] do
-      "0" ->
-        sql_select = :dpi.conn_prepareStmt(
-          connections[1],
-          false,
-          :erlang.iolist_to_binary(config["sql.select"] <> " where partition_key = " <> Integer.to_string(partition_key)),
-          <<>>
-        )
-        select(
-          bulk_data_partitions[partition_key - 1],
-          config,
-          connections[1],
-          partition_key,
-          sql_select
-        )
-        :ok = :dpi.stmt_close(sql_select, <<>>)
-      _ ->
-        sql_select = :dpi.conn_prepareStmt(
-          connections[partition_key],
-          false,
-          :erlang.iolist_to_binary(config["sql.select"] <> " where partition_key = " <> Integer.to_string(partition_key)),
-          <<>>
-        )
-        select(
-          bulk_data_partitions[partition_key - 1],
-          config,
-          connections[partition_key],
-          partition_key,
-          sql_select
-        )
-        :ok = :dpi.stmt_close(sql_select, <<>>)
+    curr_key = case config["benchmark.core.multiplier"] do
+      "0" -> 1
+      _ -> partition_key
     end
+
+    sql_select = :dpi.conn_prepareStmt(
+      connections[curr_key],
+      false,
+      :erlang.iolist_to_binary(
+        config["sql.select"] <> " where partition_key = " <> Integer.to_string(
+          partition_key
+                                )
+      ),
+      <<>>
+    )
+
+    select(
+      bulk_data_partitions[partition_key - 1],
+      config,
+      connections[partition_key],
+      partition_key,
+      sql_select
+    )
+
+    :ok = :dpi.stmt_close(sql_select, <<>>)
 
     run_select_partitions(
       benchmark_driver,
@@ -527,9 +540,19 @@ defmodule OraBenchOranif do
 
     Logger.info("Start ==========> trial no. #{trial_number_current}")
 
-    sql_create = :dpi.conn_prepareStmt(connections[1], false, :erlang.iolist_to_binary(config["sql.create"]), <<>>)
+    sql_create = :dpi.conn_prepareStmt(
+      connections[1],
+      false,
+      :erlang.iolist_to_binary(config["sql.create"]),
+      <<>>
+    )
     #   IO.inspect(sql_create, label: "sql_create")
-    sql_drop = :dpi.conn_prepareStmt(connections[1], false, :erlang.iolist_to_binary(config["sql.drop"]), <<>>)
+    sql_drop = :dpi.conn_prepareStmt(
+      connections[1],
+      false,
+      :erlang.iolist_to_binary(config["sql.drop"]),
+      <<>>
+    )
     #   IO.inspect(sql_drop, label: "sql_drop")
 
     try do
@@ -538,7 +561,9 @@ defmodule OraBenchOranif do
     rescue
       _ -> 0 = :dpi.stmt_execute(sql_drop, [])
            0 = :dpi.stmt_execute(sql_create, [])
-           Logger.debug(~s(Last DDL statement after DROP=#{config["sql.create"]}))
+           Logger.debug(
+             ~s(Last DDL statement after DROP=#{config["sql.create"]})
+           )
     end
 
     :ok = :dpi.stmt_close(sql_create, <<>>)
@@ -612,7 +637,10 @@ defmodule OraBenchOranif do
     )
 
     2 = :dpi.stmt_execute(statement, [])
-    :ok = :dpi.stmt_setFetchArraySize(statement, String.to_integer(config["connection.fetch.size"]))
+    :ok = :dpi.stmt_setFetchArraySize(
+      statement,
+      String.to_integer(config["connection.fetch.size"])
+    )
 
     count = select_fetch(statement, 0)
 
