@@ -100,8 +100,8 @@ defmodule OraBenchOranif do
     count_curr = count + 1
     count_batch_curr = count_batch + 1
 
-    count_batch_new = case batch_size > 0 and count_batch_curr == batch_size do
-      true -> :ok = :dpi.stmt_executeMany(statement, [], count_batch)
+    count_batch_new = case count_batch_curr == batch_size do
+      true -> :ok = :dpi.stmt_executeMany(statement, [], count_batch_curr)
               0
       _ -> count_batch_curr
     end
@@ -279,11 +279,16 @@ defmodule OraBenchOranif do
       _ -> partition_key
     end
 
+    batch_size = case String.to_integer(config["benchmark.batch.size"]) do
+      0 -> String.to_integer(config["file.bulk.size"])
+      _ = other_value -> other_value
+    end
+
     %{:var => key_var} = :dpi.conn_newVar(
       connections[curr_key],
       :DPI_ORACLE_TYPE_VARCHAR,
       :DPI_NATIVE_TYPE_BYTES,
-      String.to_integer(config["benchmark.batch.size"]),
+      batch_size,
       String.to_integer(config["file.bulk.length"]),
       false,
       false,
@@ -293,7 +298,7 @@ defmodule OraBenchOranif do
       connections[curr_key],
       :DPI_ORACLE_TYPE_VARCHAR,
       :DPI_NATIVE_TYPE_BYTES,
-      String.to_integer(config["benchmark.batch.size"]),
+      batch_size,
       String.to_integer(config["file.bulk.length"]),
       false,
       false,
@@ -318,7 +323,7 @@ defmodule OraBenchOranif do
     )
 
     insert(
-      String.to_integer(config["benchmark.batch.size"]),
+      batch_size,
       bulk_data_partitions[partition_key - 1],
       config,
       connections[curr_key],
@@ -373,7 +378,7 @@ defmodule OraBenchOranif do
       driver,
       String.to_integer(config["connection.fetch.size"]),
       String.to_integer(config["benchmark.number.partitions"]),
-      1,
+      0,
       result_file,
       trial_number
     )
@@ -423,7 +428,7 @@ defmodule OraBenchOranif do
 
     curr_key = case config["benchmark.core.multiplier"] do
       "0" -> 1
-      _ -> partition_key
+      _ -> partition_key_current + 1
     end
 
     sql_select = :dpi.conn_prepareStmt(
@@ -431,7 +436,7 @@ defmodule OraBenchOranif do
       false,
       :erlang.iolist_to_binary(
         config["sql.select"] <> " where partition_key = " <> Integer.to_string(
-          partition_key - 1
+          partition_key_current
                                 )
       ),
       <<>>
@@ -447,14 +452,14 @@ defmodule OraBenchOranif do
       return_var
     )
 
-    if count != length(bulk_data_partitions[partition_key - 1]) do
+    if count != length(bulk_data_partitions[partition_key_current]) do
       Logger.error(
         "Partition p#{
-          partition_key - 1
+          partition_key_current
           |> Integer.to_string
           |> String.pad_leading(5, "0")
         } number rows: expected=#{
-          length(bulk_data_partitions[partition_key - 1])
+          length(bulk_data_partitions[partition_key_current])
           |> Integer.to_string
         } - found=#{
           count
