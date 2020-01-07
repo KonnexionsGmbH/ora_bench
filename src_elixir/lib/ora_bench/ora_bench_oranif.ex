@@ -431,7 +431,7 @@ defmodule OraBenchOranif do
       false,
       :erlang.iolist_to_binary(
         config["sql.select"] <> " where partition_key = " <> Integer.to_string(
-          partition_key
+          partition_key - 1
                                 )
       ),
       <<>>
@@ -449,7 +449,11 @@ defmodule OraBenchOranif do
 
     if count != length(bulk_data_partitions[partition_key - 1]) do
       Logger.error(
-        "Number rows: expected=#{
+        "Partition p#{
+          partition_key - 1
+          |> Integer.to_string
+          |> String.pad_leading(5, "0")
+        } number rows: expected=#{
           length(bulk_data_partitions[partition_key - 1])
           |> Integer.to_string
         } - found=#{
@@ -457,7 +461,7 @@ defmodule OraBenchOranif do
           |> Integer.to_string
         }"
       )
-      Process.exit(self(), "fatal error: program abort")
+      #      Process.exit(self(), "fatal error: program abort")
     end
 
     :ok = :dpi.stmt_close(sql_select, <<>>)

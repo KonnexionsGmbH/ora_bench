@@ -17,6 +17,6 @@ config :logger,
 #      format: "$time $metadata\n[$level] $message\n",
        metadata: [
          :module,
-         :function,
+#        :function,
          :line
        ]

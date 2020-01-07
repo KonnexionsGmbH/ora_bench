@@ -291,8 +291,7 @@ defmodule OraBench do
                                             (String.at(key, 0)
                                              |> String.to_charlist()
                                              |> hd) * 256 + (String.at(key, 1)
-                                                             |> String.to_charlist
-                                                                  ()
+                                                             |> String.to_charlist()
                                                              |> hd),
                                             String.to_integer(
                                               config["benchmark.number.partitions"]
