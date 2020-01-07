@@ -14,9 +14,8 @@ config :logger, level: :info
 config :logger,
        :console,
        backends: [:console],
-#      format: "$time $metadata\n[$level] $message\n",
+       format: "$time $metadata [$level] $message\n",
        metadata: [
          :module,
-#        :function,
          :line
        ]
