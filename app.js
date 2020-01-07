@@ -19,15 +19,35 @@ function show_tsv(name, url) {
             lines[i] = lines[i].split("\t");
         var columns = [];
         for (var i = 0; i < lines[0].length; ++i)
-            columns.push({ title: lines[0][i] });
-        console.log(columns);
+            columns.push({ title: lines[0][i], visible: i > 6 });
+        console.debug('columns', columns);
         lines.shift();
-        console.log(lines);
-        $('#result').DataTable({
+        console.debug('data', lines);
+
+        var table = $('#result').DataTable({
+            dom: 'Blfrtip',
+            orderCellsTop: true,
+            fixedHeader: true,
+            buttons: ['colvis'],
             data: lines,
             columns: columns
         });
 
+        $('#result thead tr').clone(true).appendTo('#result thead');
+        $('#result thead tr:eq(1) th').each(function (i) {
+            var title = $(this).text();
+            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+
+            $('input', this).on('keyup change', function () {
+                if (table.column(i).search() !== this.value) {
+                    console.log("here");
+                    table
+                        .column(i)
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
     });
 }
 
