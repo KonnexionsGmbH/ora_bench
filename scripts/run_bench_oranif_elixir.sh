@@ -32,7 +32,7 @@ fi
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - OraLixir and Elixir."
+echo "ora_bench - Oracle benchmark - oranif and Elixir."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
@@ -49,7 +49,7 @@ java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
 cd src_elixir
 mix deps.get
 mix deps.compile
-mix run -e "OraBench.CLI.main([\"OraLixir\"])"
+mix run -e "OraBench.CLI.main([\"oranif\"])"
 
 EXITCODE=$?
 
