@@ -19,6 +19,9 @@ env:
 before_install:
 - sudo apt update
 - sudo apt install software-properties-common
+# Elixir -----------------------------------------------------------------------
+- sudo apt install elixir
+- elixir -v
 # Java -------------------------------------------------------------------------
 - sudo apt install default-jdk
 - java -version
