@@ -63,8 +63,8 @@ main([ConfigFile]) ->
   BMDrv = lists:flatten(io_lib:format("oranif (Version ~s)",[OranifVsn])),
   BMMod = lists:flatten(
     io_lib:format(
-      "~p (~s)",
-      [?MODULE, string:trim(erlang:system_info(system_version), both, "\n")]
+      "~p (OTP ~s, erts-~s)",
+      [?MODULE, erlang:system_info(otp_release), erlang:system_info(version)]
     )
   ),
   RowFmt = string:join(
