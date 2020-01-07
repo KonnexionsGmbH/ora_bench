@@ -257,15 +257,7 @@ defmodule OraBench do
     [
       database: config["connection.service"],
       hostname: config["connection.host"],
-#      parameters: [
-#        autocommit: false,
-#        fetch: String.to_integer(config["connection.fetch.size"])
-#      ],
       password: config["connection.password"],
-#      pool_size: case config["benchmark.core.multiplier"] do
-#        "0" -> String.to_integer(config["benchmark.number.partitions"])
-#        _ -> 1
-#      end,
       port: String.to_integer(config["connection.port"]),
       timeout: :infinity,
       username: config["connection.user"]
@@ -290,15 +282,21 @@ defmodule OraBench do
                                     true ->
                                       bulk_data_partitions
                                     _ ->
-                                      case String.split(line, config["file.bulk.delimiter"]) do
+                                      case String.split(
+                                             line,
+                                             config["file.bulk.delimiter"]
+                                           ) do
                                         [key, data] ->
                                           partition_key = rem(
                                             (String.at(key, 0)
                                              |> String.to_charlist()
                                              |> hd) * 256 + (String.at(key, 1)
-                                                             |> String.to_charlist()
+                                                             |> String.to_charlist
+                                                                  ()
                                                              |> hd),
-                                            String.to_integer(config["benchmark.number.partitions"])
+                                            String.to_integer(
+                                              config["benchmark.number.partitions"]
+                                            )
                                           )
                                           case Map.has_key?(
                                                  bulk_data_partitions,
@@ -309,7 +307,10 @@ defmodule OraBench do
                                                 bulk_data_partitions,
                                                 partition_key,
                                                 [
-                                                  {key, data} | bulk_data_partitions[partition_key]
+                                                  {
+                                                    key,
+                                                    data
+                                                  } | bulk_data_partitions[partition_key]
                                                 ]
                                               )
                                             _ ->
