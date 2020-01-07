@@ -301,6 +301,7 @@ insert_partition(
   }
 ) ->
   Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
+  Start = os:timestamp(),
   #{var := KeyVar} = dpi:conn_newVar(
     Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES', NumItersExec,
     Size, false, false, null
@@ -312,7 +313,6 @@ insert_partition(
   InsertStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Insert), <<>>),
   ok = dpi:stmt_bindByName(InsertStmt, <<"key">>, KeyVar),
   ok = dpi:stmt_bindByName(InsertStmt, <<"data">>, DataVar),
-  Start = os:timestamp(),
   {NIE, _} = lists:foldl(
     fun({Key, Data}, {NIE, NIC}) ->
       {NewNIE, NewNIC} =
@@ -365,10 +365,10 @@ select_partition(
   SelectSql = list_to_binary(
     io_lib:format("~s WHERE partition_key = ~p", [Select, Partition])
   ),
+  Start = os:timestamp(),
   SelectStmt = dpi:conn_prepareStmt(Conn, false, SelectSql, <<>>),
   2 = dpi:stmt_execute(SelectStmt, []),
   ok = dpi:stmt_setFetchArraySize(SelectStmt, FetchSize),
-  Start = os:timestamp(),
   Selected = (fun Fetch(Count) ->
     case dpi:stmt_fetch(SelectStmt) of
       #{found := true} ->
