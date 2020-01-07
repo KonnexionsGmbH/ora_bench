@@ -59,8 +59,16 @@ All the file names specified here are also part of the configuration file and ca
 ##### 2.2.1.1.1 Windows Platform
 
 - Docker Desktop for Windows from [here](https://www.docker.com/products/docker-desktop)
-- Java SE Development Kit, e.g. Version 11 from [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
+
 - Make for Windows from [here](http://gnuwin32.sourceforge.net/packages/make.htm)
+
+- Oracle Instant Client from [here](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
+
+- Erlang from [here](https://www.erlang.org/downloads/)
+- Elixir from [here](https://elixir-lang.org/install.html#windows)
+
+- Java SE Development Kit, e.g. Version 11 from [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
+
 - Python 3 from [here](https://www.python.org/downloads/)
 
 ##### 2.2.1.1.2 Windows Subsystem for Linux (WSL 2 and Ubuntu 18.04 LTS)
@@ -69,11 +77,20 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
 
 ##### 2.2.1.1.3 Linux Platform
 
-- Java SE Development Kit, e.g. `sudo apt install default-jdk`
 - Oracle Instant Client, e.g.
     - `sudo apt-get install alien`
     - `sudo alien priv/oracle/oracle-instantclient19.3-basiclite-19.3.0.0.0-1.x86_64.rpm`
     - `sudo dpkg -i oracle-instantclient19.3-basiclite_19.3.0.0.0-2_amd64.deb`
+
+- Erlang
+    - `sudo apt -y install erlang`
+- Elixir
+    - `sudo apt install elixir`
+    - `mix local.hex`
+
+- Java SE Development Kit, e.g.
+    - `sudo apt install default-jdk`
+
 - Python 3, e.g.:
     - `sudo apt install software-properties-common`
     - `sudo add-apt-repository -y ppa:deadsnakes/ppa`
