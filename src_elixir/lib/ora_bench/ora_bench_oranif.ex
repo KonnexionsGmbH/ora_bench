@@ -68,21 +68,19 @@ defmodule OraBenchOranif do
          [],
          _config,
          connection,
-         count,
+         _count,
          count_batch,
-         _statement,
+         statement,
          {_key_var, _data_var},
-         transaction_size
+         _transaction_size
        ) do
     Logger.debug("Start ==========> final <==========")
 
     if count_batch > 0 do
-      :ok = :dpi.stmt_executeMany(InsertStmt, [], count_batch)
+      :ok = :dpi.stmt_executeMany(statement, [], count_batch)
     end
 
-    if transaction_size == 0 or rem(count, transaction_size) != 0 do
-      :dpi.conn_commit(connection)
-    end
+    :dpi.conn_commit(connection)
   end
 
   defp insert(
@@ -99,15 +97,19 @@ defmodule OraBenchOranif do
     :ok = :dpi.var_setFromBytes(key_var, count_batch, key)
     :ok = :dpi.var_setFromBytes(data_var, count_batch, data)
 
-    if batch_size == 0 or count_batch + 1 == batch_size do
-      :ok = :dpi.stmt_executeMany(InsertStmt, [], count_batch)
+    count_curr = count + 1
+    count_batch_curr = count_batch + 1
+
+    count_batch_new = case batch_size > 0 and count_batch_curr == batch_size do
+      true -> :ok = :dpi.stmt_executeMany(statement, [], count_batch)
+              count_batch_new = 0
+      _ -> count_batch_curr
     end
 
-    if transaction_size == 0 or count > 0 and rem(
-      count,
-      transaction_size
-    ) == 0 do
-      :dpi.conn_commit(connection)
+    if transaction_size > 0  do
+      if rem(count_curr, transaction_size) == 0 do
+        :dpi.conn_commit(connection)
+      end
     end
 
     insert(
@@ -115,14 +117,8 @@ defmodule OraBenchOranif do
       tail,
       config,
       connection,
-      case tail do
-        [] -> count
-        _ -> count + 1
-      end,
-      case batch_size == 0 or count_batch + 1 == batch_size do
-        true -> 0
-        _ -> count_batch + 1
-      end,
+      count_curr,
+      count_batch_new,
       statement,
       {key_var, data_var},
       transaction_size
@@ -276,6 +272,10 @@ defmodule OraBenchOranif do
        ) do
     Logger.debug(
       "Start ==========> partition key: #{partition_key_current} <=========="
+    )
+
+    Logger.info(
+      "Start ==========> wwe partition_key_current no. #{partition_key_current}"
     )
 
     curr_key = case config["benchmark.core.multiplier"] do
@@ -607,7 +607,11 @@ defmodule OraBenchOranif do
       String.to_integer(config["connection.fetch.size"])
     )
 
+    wwe = :dpi.stmt_fetch(statement)
+    IO.inspect(wwe, label: "wwe")
+
     count = select_fetch(statement, 0)
+    IO.inspect(count, label: "count")
 
     if count != length(bulk_data_partition) do
       Logger.error(
