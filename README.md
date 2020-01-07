@@ -422,8 +422,6 @@ The data column in the bulk file is randomly generated with a unique key column 
 |            | 2019.11.05 | c_bik    | occi_c++: new |
 |            | 2019.11.05 | c_bik    | odbc_erlang: new |
 |            | 2019.11.05 | c_bik    | odpi-c_c: new |
-| 2019.12.23 | 2019.11.05 | c_bik    | oranif_erlang: new |
-|  prio. 4   | 2019.11.21 | wwe      | ecto_elixir: new |
 | 2019.11.05 | 2019.11.05 | wwe      | jdbc_java: dynamic batchsize | 
 | 2019.11.06 | 2019.11.05 | wwe      | all: separating key column and data column |
 | 2019.11.06 | 2019.11.05 | wwe      | jdbc_java: finishing with summary report |
@@ -447,6 +445,8 @@ The data column in the bulk file is randomly generated with a unique key column 
 | 2019.11.23 | 2019.11.21 | wwe      | documentation: pseudocode |
 | 2019.11.30 | 2019.11.19 | wwe      | cx_oracle_python: connection pooling |
 | 2019.11.30 | 2019.11.19 | wwe      | cx_oracle_python: multithreading |
+| 2019.12.23 | 2019.11.05 | c_bik    | oranif_erlang: new |
+| 2020.01.07 | 2019.11.21 | wwe      | oranif_elixir: new |
 | rejected   | 2019.11.05 | wwe      | all: partitioned table ??? |
 | rejected   | 2019.11.21 | c_bik    | setup: define new c ini file format |
 | rejected   | 2019.11.21 | c_bik    | upload to GitHub from Travis CI: authentication method |
