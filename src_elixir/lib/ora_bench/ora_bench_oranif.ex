@@ -102,7 +102,7 @@ defmodule OraBenchOranif do
 
     count_batch_new = case batch_size > 0 and count_batch_curr == batch_size do
       true -> :ok = :dpi.stmt_executeMany(statement, [], count_batch)
-              count_batch_new = 0
+              0
       _ -> count_batch_curr
     end
 
@@ -274,10 +274,6 @@ defmodule OraBenchOranif do
       "Start ==========> partition key: #{partition_key_current} <=========="
     )
 
-    Logger.info(
-      "Start ==========> wwe partition_key_current no. #{partition_key_current}"
-    )
-
     curr_key = case config["benchmark.core.multiplier"] do
       "0" -> 1
       _ -> partition_key
@@ -375,6 +371,7 @@ defmodule OraBenchOranif do
       config,
       connections,
       driver,
+      String.to_integer(config["connection.fetch.size"]),
       String.to_integer(config["benchmark.number.partitions"]),
       1,
       result_file,
@@ -399,6 +396,7 @@ defmodule OraBenchOranif do
          _config,
          _connections,
          _driver,
+         _fetch_size,
          0,
          _partition_key_current,
          _result_file,
@@ -413,6 +411,7 @@ defmodule OraBenchOranif do
          config,
          connections,
          driver,
+         fetch_size,
          partition_key,
          partition_key_current,
          result_file,
@@ -438,13 +437,28 @@ defmodule OraBenchOranif do
       <<>>
     )
 
-    select(
-      bulk_data_partitions[partition_key - 1],
-      config,
-      connections[partition_key],
-      partition_key,
-      sql_select
+    2 = :dpi.stmt_execute(sql_select, [])
+    :ok = :dpi.stmt_setFetchArraySize(sql_select, fetch_size)
+    %{:found => return_var} = :dpi.stmt_fetch(sql_select)
+
+    count = select(
+      0,
+      sql_select,
+      return_var
     )
+
+    if count != length(bulk_data_partitions[partition_key - 1]) do
+      Logger.error(
+        "Number rows: expected=#{
+          length(bulk_data_partitions[partition_key - 1])
+          |> Integer.to_string
+        } - found=#{
+          count
+          |> Integer.to_string
+        }"
+      )
+      Process.exit(self(), "fatal error: program abort")
+    end
 
     :ok = :dpi.stmt_close(sql_select, <<>>)
 
@@ -454,6 +468,7 @@ defmodule OraBenchOranif do
       config,
       connections,
       driver,
+      fetch_size,
       partition_key - 1,
       partition_key_current + 1,
       result_file,
@@ -591,48 +606,30 @@ defmodule OraBenchOranif do
   # ----------------------------------------------------------------------------------------------
 
   defp select(
-         bulk_data_partition,
-         config,
-         _connection,
-         partition_key,
-         statement
+         count,
+         _statement,
+         false
        ) do
     Logger.debug(
-      "Start ==========> partition key: #{partition_key} <=========="
+      "Start ==========> <=========="
     )
-
-    2 = :dpi.stmt_execute(statement, [])
-    :ok = :dpi.stmt_setFetchArraySize(
-      statement,
-      String.to_integer(config["connection.fetch.size"])
-    )
-
-    wwe = :dpi.stmt_fetch(statement)
-    IO.inspect(wwe, label: "wwe")
-
-    count = select_fetch(statement, 0)
-    IO.inspect(count, label: "count")
-
-    if count != length(bulk_data_partition) do
-      Logger.error(
-        "Number rows: expected=#{
-          length(bulk_data_partition)
-          |> Integer.to_string
-        } - found=#{
-          count
-          |> Integer.to_string
-        }"
-      )
-      Process.exit(self(), "fatal error: program abort")
-    end
+    count
   end
 
-  defp select_fetch(statement, count) do
-    result = :dpi.stmt_fetch(statement)
-    case result[:found] do
-      false -> count
-      true -> IO.inspect(result, label: "result")
-              select_fetch(statement, count + 1)
-    end
+  defp select(
+         count,
+         statement,
+         true
+       ) do
+    Logger.debug(
+      "Start ==========> <=========="
+    )
+    %{:found => return_var} = :dpi.stmt_fetch(statement)
+
+    select(
+      count + 1,
+      statement,
+      return_var
+    )
   end
 end
