@@ -44,8 +44,9 @@ main([ConfigFile]) ->
     sql_select := SqlSelect
   } = Config,
   {ok, Fd} = file:open(BulkFile, [read, raw, binary, {read_ahead, 1024 * 1024}]),
-  Rows = load_data(Fd, list_to_binary(Header), BulkDelimiter, Partitions, []),
-  if length(Rows) /= FBulkSz ->
+  Rows = load_data(Fd, list_to_binary(Header), BulkDelimiter, Partitions, #{}),
+  RowCount = length(lists:merge(maps:values(Rows))),
+  if RowCount /= FBulkSz ->
       io:format("First = ~pñLast = ~p~n", [hd(Rows), lists:last(Rows)]),
       error({loaded_rows, length(Rows), 'of', FBulkSz});
     true -> ok
@@ -95,7 +96,11 @@ main([ConfigFile]) ->
       #{startTime := STs, endTime := ETs, insert := Insrts, select := Slcts}
     ) ->
       {InsSTs, InsETs, TotalInserted} = maps:fold(
-        fun(_Pid, {ISTs, IETs, Inserted}, {IISTs, IIETs, Count}) ->
+        fun(
+          _Pid,
+          #{start := ISTs, 'end' := IETs, rows := Inserted},
+          {IISTs, IIETs, Count}
+        ) ->
           {[ISTs | IISTs], [IETs | IIETs], Count + Inserted}
         end,
         {[], [], 0}, maps:without([startTime, endTime], Insrts)
@@ -109,7 +114,11 @@ main([ConfigFile]) ->
         round(InsDur / 1000000), InsDur * 1000]
       ),
       {SelSTs, SelETs, TotalSelected} = maps:fold(
-        fun(_Pid, {ISTs, IETs, Selected}, {IISTs, IIETs, Count}) ->
+        fun(
+          _Pid,
+          #{start := ISTs, 'end' := IETs, rows := Selected},
+          {IISTs, IIETs, Count}
+        ) ->
           {[ISTs | IISTs], [IETs | IIETs], Count + Selected}
         end,
         {[], [], 0}, maps:without([startTime, endTime], Slcts)
@@ -171,6 +180,16 @@ run_trials(
 ) ->
   ok = dpi:load_unsafe(),
   Ctx = dpi:context_create(?DPI_MAJOR_VERSION, ?DPI_MINOR_VERSION),
+  _ = maps:map(
+    fun(Partition, PartitionRows) ->
+      io:format(
+        "[~p:~p:~p] Partition ~p contains ~p rows~n",
+      [?MODULE, ?FUNCTION_NAME, ?LINE, Partition, length(PartitionRows)]
+      ),
+      PartitionRows
+    end,
+    Rows
+  ),
   run_trials(
     1, Trials, Rows, Ctx,
     Config#{
@@ -220,6 +239,25 @@ run_trials(
   ok = dpi:conn_close(Conn, [], <<>>),
   InsertStat = run_insert(Ctx, Rows, Config),
   SelectStat = run_select(Ctx, Config),
+  InsertPR = maps:fold(
+    fun(_Pid, #{partition := P, rows := R}, Map) -> Map#{P => R} end,
+    #{},
+    InsertStat
+  ),
+  SelectPR = maps:fold(
+    fun(_Pid, #{partition := P, rows := R}, Map) -> Map#{P => R} end,
+    #{},
+    SelectStat
+  ),
+  if SelectPR /= InsertPR ->
+      io:format(
+        "[~p:~p:~p] ERROR insert/select by partition missmatch"
+        "~nInsert : ~p~nSelect : ~p~n",
+        [?MODULE, ?FUNCTION_NAME, ?LINE, InsertPR, SelectPR]
+      ),
+      exit(bad_partitioncount);
+    true -> ok
+  end,
   run_trials(
     Trial + 1, Trials, Rows, Ctx, Config,
     Stats#{Trial => #{
@@ -230,6 +268,16 @@ run_trials(
     }}
   ).
 
+run_insert(Ctx, Rows, #{benchmark_number_partitions := Partitions} = Config) ->
+  Master = self(),
+  Threads = [
+    spawn_link(
+      ?MODULE, insert_partition,
+      [Partition, maps:get(Partition, Rows), Ctx, Master, Config]
+    ) || Partition <- lists:seq(0, Partitions - 1)
+  ],
+  thread_join(Threads).
+
 run_select(Ctx, #{benchmark_number_partitions := Partitions} = Config) ->
   Master = self(),
   Threads = [
@@ -238,6 +286,70 @@ run_select(Ctx, #{benchmark_number_partitions := Partitions} = Config) ->
     ) || Partition <- lists:seq(0, Partitions - 1)
   ],
   thread_join(Threads).
+
+insert_partition(
+  Partition, Rows, Ctx, Master,
+  #{
+    connection_string := ConnectString,
+    connection_user := User,
+    connection_password := Password,
+    sql_insert := Insert,
+
+    benchmark_batch_size := NumItersExec,
+    benchmark_transaction_size := NumItersCommit,
+    file_bulk_length := Size
+  }
+) ->
+  Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
+  #{var := KeyVar} = dpi:conn_newVar(
+    Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES', NumItersExec,
+    Size, false, false, null
+  ),
+  #{var := DataVar} = dpi:conn_newVar(
+    Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES', NumItersExec,
+    Size, false, false, null
+  ),
+  InsertStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Insert), <<>>),
+  ok = dpi:stmt_bindByName(InsertStmt, <<"key">>, KeyVar),
+  ok = dpi:stmt_bindByName(InsertStmt, <<"data">>, DataVar),
+  Start = os:timestamp(),
+  {NIE, _} = lists:foldl(
+    fun({Key, Data}, {NIE, NIC}) ->
+      {NewNIE, NewNIC} =
+        if NIE < NumItersExec ->
+            ok = dpi:var_setFromBytes(KeyVar, NIE, Key),
+            ok = dpi:var_setFromBytes(DataVar, NIE, Data),
+            {NIE + 1, NIC + 1};
+          true ->
+            ok = dpi:stmt_executeMany(InsertStmt, [], NumItersExec),
+            ok = dpi:var_setFromBytes(KeyVar, 0, Key),
+            ok = dpi:var_setFromBytes(DataVar, 0, Data),
+            {1, NIC + 1}
+        end,
+      if NewNIC < NumItersCommit ->
+          {NewNIE, NewNIC};
+        true -> 
+          ok = dpi:conn_commit(Conn),
+          {NewNIE, 0}
+      end
+    end,
+    {0, 0},
+    Rows
+  ),
+  if NIE > 0 -> ok = dpi:stmt_executeMany(InsertStmt, [], NIE);
+  true -> ok end,
+  ok = dpi:conn_commit(Conn),
+  ok = dpi:var_release(KeyVar),
+  ok = dpi:var_release(DataVar),
+  ok = dpi:stmt_close(InsertStmt, <<>>),
+  ok = dpi:conn_close(Conn, [], <<>>),
+  Master ! {
+    result, self(),
+    #{
+      start => Start, 'end' => os:timestamp(), rows => length(Rows),
+      partition => Partition
+    }
+  }.
 
 select_partition(
   Partition, Ctx, Master,
@@ -270,78 +382,19 @@ select_partition(
   end)(0),
   ok = dpi:stmt_close(SelectStmt, <<>>),
   ok = dpi:conn_close(Conn, [], <<>>),
-  Master ! {result, self(), {Start, os:timestamp(), Selected}}.
-
-run_insert(Ctx, Rows, #{benchmark_number_partitions := Partitions} = Config) ->
-  Master = self(),
-  Threads = [
-    spawn_link(
-      ?MODULE, insert_partition, [Partition, Rows, Ctx, Master, Config]
-    ) || Partition <- lists:seq(0, Partitions - 1)
-  ],
-  thread_join(Threads).
-
-insert_partition(
-  Partition, Rows, Ctx, Master,
-  #{
-    connection_string := ConnectString,
-    connection_user := User,
-    connection_password := Password,
-    sql_insert := Insert,
-
-    benchmark_batch_size := NumItersExec,
-    benchmark_transaction_size := NumItersCommit,
-    file_bulk_length := Size
-  }
-) ->
-  Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
-  #{var := KeyVar} = dpi:conn_newVar(
-    Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES', NumItersExec,
-    Size, false, false, null
-  ),
-  #{var := DataVar} = dpi:conn_newVar(
-    Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES', NumItersExec,
-    Size, false, false, null
-  ),
-  InsertStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Insert), <<>>),
-  ok = dpi:stmt_bindByName(InsertStmt, <<"key">>, KeyVar),
-  ok = dpi:stmt_bindByName(InsertStmt, <<"data">>, DataVar),
-  Start = os:timestamp(),
-  {Inserted, {NIE, _}} = exec(
-    Partition, Rows,
-    fun(Key, Data, {NIE, NIC}) ->
-      {NewNIE, NewNIC} =
-        if NIE < NumItersExec ->
-            ok = dpi:var_setFromBytes(KeyVar, NIE, Key),
-            ok = dpi:var_setFromBytes(DataVar, NIE, Data),
-            {NIE + 1, NIC + 1};
-          true ->
-            ok = dpi:stmt_executeMany(InsertStmt, [], NumItersExec),
-            ok = dpi:var_setFromBytes(KeyVar, 0, Key),
-            ok = dpi:var_setFromBytes(DataVar, 0, Data),
-            {1, NIC + 1}
-        end,
-      if NewNIC < NumItersCommit ->
-          {NewNIE, NewNIC};
-        true -> 
-          ok = dpi:conn_commit(Conn),
-          {NewNIE, 0}
-      end
-    end,
-    {0, 0}
-  ),
-  if NIE > 0 -> ok = dpi:stmt_executeMany(InsertStmt, [], NIE);
-  true -> ok end,
-  ok = dpi:conn_commit(Conn),
-  ok = dpi:var_release(KeyVar),
-  ok = dpi:var_release(DataVar),
-  ok = dpi:stmt_close(InsertStmt, <<>>),
-  ok = dpi:conn_close(Conn, [], <<>>),
-  Master ! {result, self(), {Start, os:timestamp(), Inserted}}.
+  Master ! {
+    result, self(),
+    #{
+      start => Start,
+      'end' => os:timestamp(),
+      rows => Selected,
+      partition => Partition
+    }
+  }.
 
 load_data(Fd, Header, BulkDelimiter, Partitions, Rows) ->
   case file:read_line(Fd) of
-    eof -> lists:reverse(Rows);
+    eof -> Rows;
     {ok, Line0} ->
       %io:format("Header = ~p\tLine = ~p~n", [Header, Line0]),
       case string:trim(Line0, both, "\r\n") of
@@ -352,20 +405,13 @@ load_data(Fd, Header, BulkDelimiter, Partitions, Rows) ->
             Line, BulkDelimiter, all
           ),
           Partition = (KeyByte1 * 256 + KeyByte2) rem Partitions,
+          OldData = maps:get(Partition, Rows, []),
           load_data(
             Fd, Header, BulkDelimiter, Partitions,
-            [{Partition, Key, Data} | Rows]
+            Rows#{Partition => [{Key, Data} | OldData]}
           )
       end
   end.
-
-exec(Partition, Rows, Fun, Acc) -> exec(Partition, Rows, Fun, Acc, 0).
-exec(_Partition, [], _Fun, Acc, Count) -> {Count, Acc};
-exec(Partition, [{Partition, Key, Data} | Rows], Fun, Acc, Count) ->
-  NewAcc = Fun(Key, Data, Acc),
-  exec(Partition, Rows, Fun, NewAcc, Count + 1);
-exec(Partition, [_ | Rows], Fun, Acc, Count) ->
-  exec(Partition, Rows, Fun, Acc, Count).
 
 thread_join(Threads) -> thread_join(Threads, #{}).
 thread_join([], Results) -> Results;
