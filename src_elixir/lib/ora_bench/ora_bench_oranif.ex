@@ -71,6 +71,7 @@ defmodule OraBenchOranif do
          count,
          count_batch,
          _statement,
+         {_key_var, _data_var},
          transaction_size
        ) do
     Logger.debug("Start ==========> final <==========")
@@ -92,17 +93,20 @@ defmodule OraBenchOranif do
          count,
          count_batch,
          statement,
+         {key_var, data_var},
          transaction_size
        ) do
-    IO.inspect(key, label: "key")
-    :ok = :dpi.var_setFromBytes(KeyVar, count, key)
-    :ok = :dpi.var_setFromBytes(DataVar, count, data)
+    :ok = :dpi.var_setFromBytes(key_var, count_batch, key)
+    :ok = :dpi.var_setFromBytes(data_var, count_batch, data)
 
-    if batch_size == 0 or count_batch == batch_size do
+    if batch_size == 0 or count_batch + 1 == batch_size do
       :ok = :dpi.stmt_executeMany(InsertStmt, [], count_batch)
     end
 
-    if transaction_size == 0 or rem(count, transaction_size) != 0 do
+    if transaction_size == 0 or count > 0 and rem(
+      count,
+      transaction_size
+    ) == 0 do
       :dpi.conn_commit(connection)
     end
 
@@ -115,11 +119,12 @@ defmodule OraBenchOranif do
         [] -> count
         _ -> count + 1
       end,
-      case batch_size == 0 or count_batch == batch_size do
-        true -> 1
+      case batch_size == 0 or count_batch + 1 == batch_size do
+        true -> 0
         _ -> count_batch + 1
       end,
       statement,
+      {key_var, data_var},
       transaction_size
     )
   end
@@ -273,104 +278,61 @@ defmodule OraBenchOranif do
       "Start ==========> partition key: #{partition_key_current} <=========="
     )
 
-    case config["benchmark.core.multiplier"] do
-      "0" ->
-        %{:var => key_var} = :dpi.conn_newVar(
-          connections[1],
-          :DPI_ORACLE_TYPE_VARCHAR,
-          :DPI_NATIVE_TYPE_BYTES,
-          String.to_integer(config["benchmark.batch.size"]),
-          String.to_integer(config["file.bulk.length"]),
-          false,
-          false,
-          :null
-        )
-        %{:var => data_var} = :dpi.conn_newVar(
-          connections[1],
-          :DPI_ORACLE_TYPE_VARCHAR,
-          :DPI_NATIVE_TYPE_BYTES,
-          String.to_integer(config["benchmark.batch.size"]),
-          String.to_integer(config["file.bulk.length"]),
-          false,
-          false,
-          :null
-        )
-        sql_insert = :dpi.conn_prepareStmt(
-          connections[1],
-          false,
-          :erlang.iolist_to_binary(config["sql.insert"]),
-          <<>>
-        )
-        :ok = :dpi.stmt_bindByName(
-          sql_insert,
-          <<"key">>,
-          key_var
-        )
-        :ok = :dpi.stmt_bindByName(
-          sql_insert,
-          <<"data">>,
-          data_var
-        )
-        insert(
-          String.to_integer(config["benchmark.batch.size"]),
-          bulk_data_partitions[partition_key - 1],
-          config,
-          connections[1],
-          1,
-          1,
-          sql_insert,
-          String.to_integer(config["benchmark.transaction.size"])
-        )
-        :ok = :dpi.stmt_close(sql_insert, <<>>)
-      _ ->
-        %{:var => key_var} = :dpi.conn_newVar(
-          connections[partition_key],
-          :DPI_ORACLE_TYPE_VARCHAR,
-          :DPI_NATIVE_TYPE_BYTES,
-          String.to_integer(config["benchmark.batch.size"]),
-          String.to_integer(config["file.bulk.length"]),
-          false,
-          false,
-          :null
-        )
-        %{:var => data_var} = :dpi.conn_newVar(
-          connections[partition_key],
-          :DPI_ORACLE_TYPE_VARCHAR,
-          :DPI_NATIVE_TYPE_BYTES,
-          String.to_integer(config["benchmark.batch.size"]),
-          String.to_integer(config["file.bulk.length"]),
-          false,
-          false,
-          :null
-        )
-        sql_insert = :dpi.conn_prepareStmt(
-          connections[partition_key],
-          false,
-          :erlang.iolist_to_binary(config["sql.insert"]),
-          <<>>
-        )
-        :ok = :dpi.stmt_bindByName(
-          sql_insert,
-          <<"key">>,
-          key_var
-        )
-        :ok = :dpi.stmt_bindByName(
-          sql_insert,
-          <<"data">>,
-          data_var
-        )
-        insert(
-          String.to_integer(config["benchmark.batch.size"]),
-          bulk_data_partitions[partition_key - 1],
-          config,
-          connections[partition_key],
-          1,
-          1,
-          sql_insert,
-          String.to_integer(config["benchmark.transaction.size"])
-        )
-        :ok = :dpi.stmt_close(sql_insert, <<>>)
+    curr_key = case config["benchmark.core.multiplier"] do
+      "0" -> 1
+      _ -> partition_key
     end
+
+    %{:var => key_var} = :dpi.conn_newVar(
+      connections[curr_key],
+      :DPI_ORACLE_TYPE_VARCHAR,
+      :DPI_NATIVE_TYPE_BYTES,
+      String.to_integer(config["benchmark.batch.size"]),
+      String.to_integer(config["file.bulk.length"]),
+      false,
+      false,
+      :null
+    )
+    %{:var => data_var} = :dpi.conn_newVar(
+      connections[curr_key],
+      :DPI_ORACLE_TYPE_VARCHAR,
+      :DPI_NATIVE_TYPE_BYTES,
+      String.to_integer(config["benchmark.batch.size"]),
+      String.to_integer(config["file.bulk.length"]),
+      false,
+      false,
+      :null
+    )
+
+    sql_insert = :dpi.conn_prepareStmt(
+      connections[curr_key],
+      false,
+      :erlang.iolist_to_binary(config["sql.insert"]),
+      <<>>
+    )
+    :ok = :dpi.stmt_bindByName(
+      sql_insert,
+      <<"key">>,
+      key_var
+    )
+    :ok = :dpi.stmt_bindByName(
+      sql_insert,
+      <<"data">>,
+      data_var
+    )
+
+    insert(
+      String.to_integer(config["benchmark.batch.size"]),
+      bulk_data_partitions[partition_key - 1],
+      config,
+      connections[curr_key],
+      0,
+      0,
+      sql_insert,
+      {key_var, data_var},
+      String.to_integer(config["benchmark.transaction.size"])
+    )
+    :ok = :dpi.stmt_close(sql_insert, <<>>)
 
     run_insert_partitions(
       benchmark_driver,
