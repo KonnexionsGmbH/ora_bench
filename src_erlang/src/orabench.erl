@@ -172,7 +172,7 @@ run_trials(
   ok = dpi:load_unsafe(),
   Ctx = dpi:context_create(?DPI_MAJOR_VERSION, ?DPI_MINOR_VERSION),
   run_trials(
-    Trials, Rows, Ctx,
+    1, Trials, Rows, Ctx,
     Config#{
       connection_user => list_to_binary(UserStr),
       connection_password =>  list_to_binary(PasswordStr),
@@ -182,11 +182,11 @@ run_trials(
     },
     #{startTime => os:timestamp()}
   ).
-run_trials(0, _, Ctx, _, Stats) ->
+run_trials(Trial, Trials, _, Ctx, _, Stats) when Trial > Trials ->
   ok = dpi:context_destroy(Ctx),
   Stats#{endTime => os:timestamp()};
 run_trials(
-  Trial, Rows, Ctx,
+  Trial, Trials, Rows, Ctx,
   #{
     connection_string := ConnectString,
     connection_user := User,
@@ -221,7 +221,7 @@ run_trials(
   InsertStat = run_insert(Ctx, Rows, Config),
   SelectStat = run_select(Ctx, Config),
   run_trials(
-    Trial - 1, Rows, Ctx, Config,
+    Trial + 1, Trials, Rows, Ctx, Config,
     Stats#{Trial => #{
       startTime => StartTime,
       endTime => os:timestamp(),
