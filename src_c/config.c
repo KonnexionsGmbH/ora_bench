@@ -170,7 +170,7 @@ void load_config(const char *file)
   fclose(fp);
 }
 
-struct row *gBulk = NULL;
+struct partition *gBulk = NULL;
 void load_bulk(const char *file)
 {
   FILE *fp = fopen(file, "r");
@@ -182,16 +182,41 @@ void load_bulk(const char *file)
 
   if (gBulk)
     free(gBulk);
-  gBulk = (struct row *)calloc(fileBulkSize, sizeof(struct row));
+  gBulk = (struct partition *)calloc(
+      benchmarkNumberPartitions, sizeof(struct partition));
 
-  unsigned int row = 0;
-  while (
-      row < fileBulkSize &&
-      fscanf(fp, "%[^;];%[^\r\n]\r\n", gBulk[row].key, gBulk[row].data) != EOF)
+  struct row *rows = (struct row *)calloc(
+      fileBulkSize, sizeof(struct row));
+  struct row r, *row;
+  fscanf(fp, "%[^;];%[^\r\n]\r\n", r.key, r.data);
+  row = rows;
+  L("Loading(%%).");
+  while (fscanf(fp, "%[^;];%[^\r\n]\r\n", row->key, row->data) != EOF)
   {
-    gBulk[row].partition = (gBulk[row].key[0] * 256 + gBulk[row].key[1]) % benchmarkNumberPartitions;
+    row->partition = (row->key[0] * 256 + row->key[1]) % benchmarkNumberPartitions;
+    gBulk[row->partition].count++;
     row++;
   }
+  for (int i = 0; i < benchmarkNumberPartitions; ++i)
+    gBulk[i].rows = (struct row *)malloc(
+        gBulk[i].count * sizeof(struct row));
+  int rowIdx = 0;
+  struct partition *p;
+  while (rowIdx < fileBulkSize)
+  {
+    row = rows + rowIdx;
+    p = &gBulk[row->partition];
+    memcpy(p->rows + p->rowIdx, row, sizeof(struct row));
+    p->rowIdx++;
+    rowIdx++;
+    if (rowIdx % 5000 == 0)
+      printf("..%d", rowIdx * 100 / fileBulkSize);
+  }
+  printf("...finished\n");
+  free(rows);
+
+  for (int i = 0; i < benchmarkNumberPartitions; ++i)
+    L("Partition %d contains %d rows\n", i + 1, gBulk[i].count);
 
   fclose(fp);
 }
