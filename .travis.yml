@@ -23,13 +23,12 @@ env:
 before_install:
   - sudo apt update
   - sudo apt install software-properties-common
-  # rebar3 -----------------------------------------------------------------------
-  - wget https://s3.amazonaws.com/rebar3/rebar3 && chmod +x rebar3
-  - rebar3 version
   # Elixir -----------------------------------------------------------------------
   - sudo apt install elixir
   - elixir -v
   - mix local.hex --force
+  - mix local.rebar --force
+  - rebar3 version
   # Java -------------------------------------------------------------------------
   - sudo apt install default-jdk
   - java -version
