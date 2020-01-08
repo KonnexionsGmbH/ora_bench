@@ -51,9 +51,10 @@ void *doInsert(void *arg)
 #endif
   dpiVar *varKey, *varData;
   dpiData *dataKey, *dataData;
+  uint32_t maxArraySize = benchmarkBatchSize ? benchmarkBatchSize : fileBulkSize;
   if (dpiConn_newVar(
           conn, DPI_ORACLE_TYPE_VARCHAR, DPI_NATIVE_TYPE_BYTES,
-          benchmarkBatchSize, 32, 0, 0, NULL, &varKey,
+          maxArraySize, 32, 0, 0, NULL, &varKey,
           &dataKey) != DPI_SUCCESS)
   {
     E("Unable to create new var key");
@@ -62,7 +63,7 @@ void *doInsert(void *arg)
   }
   if (dpiConn_newVar(
           conn, DPI_ORACLE_TYPE_VARCHAR, DPI_NATIVE_TYPE_BYTES,
-          benchmarkBatchSize, fileBulkLength, 0, 0, NULL, &varData,
+          maxArraySize, fileBulkLength, 0, 0, NULL, &varData,
           &dataData) != DPI_SUCCESS)
   {
     E("Unable to create new var data");
@@ -91,23 +92,23 @@ void *doInsert(void *arg)
 
   unsigned int row = 0;
   int bbs = 0;
-  int bts = 0;
   struct partition partition = gBulk[targ->partition];
   struct row *rows = partition.rows;
   for (int i = 0; i < partition.count; i++)
   {
     targ->processed++;
-    if (bbs >= benchmarkBatchSize)
+    if (benchmarkBatchSize > 0 && bbs >= maxArraySize)
     {
       if (
           dpiStmt_executeMany(
               stmt, DPI_MODE_EXEC_DEFAULT,
-              benchmarkBatchSize) != DPI_SUCCESS)
+              maxArraySize) != DPI_SUCCESS)
       {
         E("Unable to execute insert stmt");
         D(
-            "{%d} [%u] %lu, numIters/benchmarkBatchSize %d, %s",
-            targ->trial, targ->partition, id, benchmarkBatchSize, sqlInsert);
+            "{%d} [%u] %lu, numIters/benchmarkBatchSize %d, maxArraySize %d, %s",
+            targ->trial, targ->partition, id, benchmarkBatchSize,
+            maxArraySize, sqlInsert);
         exit(-1);
       }
       bbs = 0;
@@ -127,8 +128,8 @@ void *doInsert(void *arg)
       exit(-1);
     }
     bbs++;
-    bts++;
-    if (bts > benchmarkTransactionSize)
+    if (benchmarkTransactionSize > 0 &&
+        targ->processed % benchmarkTransactionSize == 0)
     {
       if (dpiConn_commit(conn) != DPI_SUCCESS)
       {
@@ -136,7 +137,6 @@ void *doInsert(void *arg)
         D("{%d} [%u] %lu %s", targ->trial, targ->partition, id, sqlInsert);
         exit(-1);
       }
-      bts = 0;
     }
   }
   if (bbs)
