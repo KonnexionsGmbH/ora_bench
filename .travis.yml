@@ -22,7 +22,7 @@ before_install:
 # Elixir -----------------------------------------------------------------------
 - sudo apt install elixir
 - elixir -v
-- Y | mix local.hex
+- mix local.hex --force
 # Java -------------------------------------------------------------------------
 - sudo apt install default-jdk
 - java -version
