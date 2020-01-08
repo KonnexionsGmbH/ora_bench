@@ -2,7 +2,7 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_oranif_elixir.bat: Oracle Benchmark based on Elixir.
+rem run_bench_jamdb_oracle.bat: Oracle Benchmark based on Elixir.
 rem
 rem ------------------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - oranif and Elixir.
+echo ora_bench - Oracle benchmark - JamDB Oracle and Elixir.
 echo --------------------------------------------------------------------------------
 echo BENCHMARK_DATABASE      : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST         : %ORA_BENCH_CONNECTION_HOST%
@@ -41,10 +41,9 @@ echo ===========================================================================
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
 
 cd src_elixir
-call mix deps.clean oranif
 call mix deps.get
 call mix deps.compile
-call mix run -e "OraBench.CLI.main(["oranif"])"
+call mix run -e "OraBench.CLI.main(["Jamdb.Oracle"])"
 cd ..
 
 echo --------------------------------------------------------------------------------

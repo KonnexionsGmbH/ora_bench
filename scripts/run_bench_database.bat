@@ -89,31 +89,51 @@ if NOT ["%DOCKER_HEALTH_STATUS%"] == ["healthy"] (
 )
 
 priv\oracle\instantclient-windows.x64\instantclient_19_5\sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@%ORA_BENCH_CONNECT_IDENTIFIER% AS SYSDBA @scripts/run_bench_database.sql
-
-if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
-    call scripts\run_bench_cx_oracle_python.bat
+if %ERRORLEVEL% NEQ 0 (
+    GOTO EndOfScript
 )
 
+if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
+    call src_python\scripts\run_bench_cx_oracle.bat
+    if %ERRORLEVEL% NEQ 0 (
+        GOTO EndOfScript
+    )
+)
+
+
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU ["true"] (
-    call scripts\run_bench_jamdb_oracle_elixir.bat
+    call src_elixir\scripts\run_bench_jamdb_oracle.bat
+    if %ERRORLEVEL% NEQ 0 (
+        GOTO EndOfScript
+    )
 )
 
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
-    call scripts\run_bench_jdbc_java.bat
+    call src_java\scripts\run_bench_jdbc.bat
+    if %ERRORLEVEL% NEQ 0 (
+        GOTO EndOfScript
+    )
 )
 
 if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
-    call scripts\run_bench_odpi_c.bat
+    call src_c\scripts\run_bench_odpi.bat
+    if %ERRORLEVEL% NEQ 0 (
+        GOTO EndOfScript
+    )
 )
 
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
-    call scripts\run_bench_oranif_elixir.bat
+    call src_elixir\scripts\run_bench_oranif.bat
+    if %ERRORLEVEL% NEQ 0 (
+        GOTO EndOfScript
+    )
 )
 
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
-    call scripts\run_bench_oranif_erlang.bat
+   call  src_erlang\scripts\run_bench_oranif.bat
 )
 
+:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

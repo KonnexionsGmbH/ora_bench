@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_odpi_c.sh: Oracle Benchmark based on ODPI-C.
+# run_bench_jdbc.sh: Oracle Benchmark based on Java.
 #
 # ------------------------------------------------------------------------------
 
@@ -19,26 +19,23 @@ if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    if [ "$OSTYPE" = "msys" ]; then
+        export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    else
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+    fi
 fi
 
 if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+    make -f src_java/Makefile clean
+    make -f src_java/Makefile
 fi
-
-if [ "$OSTYPE" = "msys" ]; then
-    nmake -f src_c/Makefile.win32 clean
-    nmake -f src_c/Makefile.win32
-else
-    make -f src_c/Makefile clean
-    make -f src_c/Makefile
-fi
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_odpic
 
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - ODPI-C."
+echo "ora_bench - Oracle benchmark - JDBC and Java."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
@@ -52,11 +49,9 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-if [ "$OSTYPE" = "msys" ]; then
-    ./OraBench.exe priv/properties/ora_bench_odpi_c.properties
-else
-   ./OraBench priv/properties/ora_bench_odpi_c.properties
-fi
+PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
+
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench runBenchmark
 
 EXITCODE=$?
 

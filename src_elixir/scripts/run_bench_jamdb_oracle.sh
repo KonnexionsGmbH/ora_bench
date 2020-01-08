@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_jamdb_oracle_elixir.sh: Oracle Benchmark based on Elixir.
+# run_bench_jamdb_oracle.sh: Oracle Benchmark based on Elixir.
 #
 # ------------------------------------------------------------------------------
 

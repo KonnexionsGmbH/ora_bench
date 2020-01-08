@@ -75,23 +75,35 @@ export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
 
 { /bin/bash scripts/run_bench_setup.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
+fi
 
 if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     { /bin/bash scripts/run_bench_database_series.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
 fi
 
 if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     { /bin/bash scripts/run_bench_database_series.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
 fi
 
 if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     { /bin/bash scripts/run_bench_database_series.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
 fi
 
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT

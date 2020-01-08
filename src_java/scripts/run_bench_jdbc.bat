@@ -2,7 +2,7 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_odpi_c.sh: Oracle Benchmark based on ODPI-C.
+rem run_bench_jdbc.bat: Oracle Benchmark based on Java.
 rem
 rem ------------------------------------------------------------------------------
 
@@ -18,21 +18,23 @@ if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
 if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
     set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 )
-if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
-    set ORA_BENCH_JAVA_CLASSPATH=".;priv\java_jar\*"
-)
-
 if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 )
+if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
+    set ORA_BENCH_JAVA_CLASSPATH=.;priv\java_jar\*
+)
 
-nmake -f src_c\Makefile.win32 clean
-nmake -f src_c\Makefile.win32
+if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
+    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+    make -f src_java\Makefile clean
+    make -f src_java\Makefile
+)
 
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - ODPI-C.
+echo ora_bench - Oracle benchmark - JDBC and Java.
 echo --------------------------------------------------------------------------------
 echo BENCHMARK_DATABASE      : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST         : %ORA_BENCH_CONNECTION_HOST%
@@ -44,9 +46,9 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_odpic
+set PATH=%PATH%;\u01\app\oracle\product\12.2\db_1\jdbc\lib
 
-.\OraBench.exe priv\properties\ora_bench_odpi_c.properties
+java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench runBenchmark
 
 echo --------------------------------------------------------------------------------
 echo:| TIME

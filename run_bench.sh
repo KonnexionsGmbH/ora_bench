@@ -70,23 +70,35 @@ echo "==========================================================================
 EXITCODE="0"
 
 { /bin/bash scripts/run_bench_setup.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
+fi
 
 if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     { /bin/bash scripts/run_bench_database.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
 fi
 
 if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     { /bin/bash scripts/run_bench_database.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
 fi
 
 if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     { /bin/bash scripts/run_bench_database.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
 fi
 
 { /bin/bash scripts/run_bench_finalise.sh; }
