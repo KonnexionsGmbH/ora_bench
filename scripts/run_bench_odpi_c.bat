@@ -46,11 +46,7 @@ echo ===========================================================================
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_odpic
 
-if [ "$OSTYPE" = "msys%"] EQU [""] (
-    .\OraBench.exe priv\properties\ora_bench_odpi_c.properties
-else
-   .\OraBench priv\properties\ora_bench_odpi_c.properties
-)
+.\OraBench.exe priv\properties\ora_bench_odpi_c.properties
 
 echo --------------------------------------------------------------------------------
 echo:| TIME
