@@ -45,6 +45,13 @@ struct row
     char data[1024];
     int partition;
 };
-extern struct row *gBulk;
+
+struct partition {
+    int count;
+    struct row *rows;
+    int rowIdx;
+};
+
+extern struct partition *gBulk;
 
 #endif // _CONFIG_H_
