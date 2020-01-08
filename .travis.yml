@@ -3,8 +3,6 @@ dist: xenial
 
 sudo: true
 
-install:
-  - wget https://s3.amazonaws.com/rebar3/rebar3 && chmod +x rebar3
 language: erlang
 
 otp_release:
@@ -25,6 +23,9 @@ env:
 before_install:
   - sudo apt update
   - sudo apt install software-properties-common
+  # rebar3 -----------------------------------------------------------------------
+  - wget https://s3.amazonaws.com/rebar3/rebar3 && chmod +x rebar3
+  - rebar3 version
   # Elixir -----------------------------------------------------------------------
   - sudo apt install elixir
   - elixir -v
