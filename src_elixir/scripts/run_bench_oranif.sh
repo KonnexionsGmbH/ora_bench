@@ -48,7 +48,6 @@ java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
 
 cd src_elixir
 mix deps.get
-mix deps.clean oranif
 mix deps.compile
 mix run -e "OraBench.CLI.main([\"oranif\"])"
 
