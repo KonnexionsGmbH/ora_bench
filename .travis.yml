@@ -3,11 +3,12 @@ dist: xenial
 
 sudo: true
 
-language: erlang
-
+language: elixir
+elixir:
+  - '1.9.4'
 otp_release:
-  - 20.3
-
+  - '20.3'
+  
 env:
   matrix:
     - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
@@ -24,7 +25,6 @@ before_install:
   - sudo apt update
   - sudo apt install software-properties-common
   # Elixir -----------------------------------------------------------------------
-  - sudo apt install elixir
   - elixir -v
   - mix local.hex --force
   - mix local.rebar --force
