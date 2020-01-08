@@ -36,6 +36,19 @@ void *doInsert(void *arg)
     D("{%d} [%u] %lu", targ->trial, targ->partition, id);
     exit(1);
   }
+
+#ifdef W32
+  GetSystemTimeAsFileTime(&targ->start);
+  if (!QueryPerformanceCounter(&targ->qpcStart))
+    L(
+        "{%d} [%u] %lu ERROR QueryPerformanceCounter(&qpcStart)\n",
+        targ->trial, targ->partition, id);
+#else
+  if (clock_gettime(CLOCK_REALTIME, &targ->start))
+    L(
+        "{%d} [%u] %lu ERROR clock_gettime(CLOCK_REALTIME, start)\n",
+        targ->trial, targ->partition, id);
+#endif
   dpiVar *varKey, *varData;
   dpiData *dataKey, *dataData;
   if (dpiConn_newVar(
@@ -76,69 +89,56 @@ void *doInsert(void *arg)
     exit(-1);
   }
 
-#ifdef W32
-  GetSystemTimeAsFileTime(&targ->start);
-  if (!QueryPerformanceCounter(&targ->qpcStart))
-    L(
-        "{%d} [%u] %lu ERROR QueryPerformanceCounter(&qpcStart)\n",
-        targ->trial, targ->partition, id);
-#else
-  if (clock_gettime(CLOCK_REALTIME, &targ->start))
-    L(
-        "{%d} [%u] %lu ERROR clock_gettime(CLOCK_REALTIME, start)\n",
-        targ->trial, targ->partition, id);
-#endif
   unsigned int row = 0;
   int bbs = 0;
   int bts = 0;
-  do
+  struct partition partition = gBulk[targ->partition];
+  struct row *rows = partition.rows;
+  for (int i = 0; i < partition.count; i++)
   {
-    if (gBulk[row].partition == targ->partition)
+    targ->processed++;
+    if (bbs >= benchmarkBatchSize)
     {
-      targ->processed++;
-      if (bbs >= benchmarkBatchSize)
-      {
-        if (
-            dpiStmt_executeMany(
-                stmt, DPI_MODE_EXEC_DEFAULT,
-                benchmarkBatchSize) != DPI_SUCCESS)
-        {
-          E("Unable to execute insert stmt");
-          D(
-              "{%d} [%u] %lu, numIters/benchmarkBatchSize %d, %s",
-              targ->trial, targ->partition, id, benchmarkBatchSize, sqlInsert);
-          exit(-1);
-        }
-        bbs = 0;
-      }
-      if (dpiVar_setFromBytes(varKey, bbs, gBulk[row].key, 32) != DPI_SUCCESS)
-      {
-        E("Unable to set key to insert stmt");
-        D("{%d} [%u] %lu %s", targ->trial, targ->partition, id, sqlInsert);
-        exit(-1);
-      }
       if (
-          dpiVar_setFromBytes(
-              varData, bbs, gBulk[row].data, 1024) != DPI_SUCCESS)
+          dpiStmt_executeMany(
+              stmt, DPI_MODE_EXEC_DEFAULT,
+              benchmarkBatchSize) != DPI_SUCCESS)
       {
-        E("Unable to set data to insert stmt");
+        E("Unable to execute insert stmt");
+        D(
+            "{%d} [%u] %lu, numIters/benchmarkBatchSize %d, %s",
+            targ->trial, targ->partition, id, benchmarkBatchSize, sqlInsert);
+        exit(-1);
+      }
+      bbs = 0;
+    }
+    if (dpiVar_setFromBytes(varKey, bbs, rows[i].key, 32) != DPI_SUCCESS)
+    {
+      E("Unable to set key to insert stmt");
+      D("{%d} [%u] %lu %s", targ->trial, targ->partition, id, sqlInsert);
+      exit(-1);
+    }
+    if (
+        dpiVar_setFromBytes(
+            varData, bbs, rows[i].data, 1024) != DPI_SUCCESS)
+    {
+      E("Unable to set data to insert stmt");
+      D("{%d} [%u] %lu %s", targ->trial, targ->partition, id, sqlInsert);
+      exit(-1);
+    }
+    bbs++;
+    bts++;
+    if (bts > benchmarkTransactionSize)
+    {
+      if (dpiConn_commit(conn) != DPI_SUCCESS)
+      {
+        E("Unable to set commit insert stmt");
         D("{%d} [%u] %lu %s", targ->trial, targ->partition, id, sqlInsert);
         exit(-1);
       }
-      bbs++;
-      bts++;
-      if (bts > benchmarkTransactionSize)
-      {
-        if (dpiConn_commit(conn) != DPI_SUCCESS)
-        {
-          E("Unable to set commit insert stmt");
-          D("{%d} [%u] %lu %s", targ->trial, targ->partition, id, sqlInsert);
-          exit(-1);
-        }
-        bts = 0;
-      }
+      bts = 0;
     }
-  } while (++row < fileBulkSize);
+  }
   if (bbs)
   {
     if (dpiStmt_executeMany(stmt, DPI_MODE_EXEC_DEFAULT, bbs) != DPI_SUCCESS)
@@ -231,6 +231,17 @@ void *doSelect(void *arg)
   sprintf(
       patchedSqlSelect, "%s WHERE partition_key = %d", sqlSelect,
       targ->partition);
+
+#ifdef W32
+  GetSystemTimeAsFileTime(&targ->start);
+  if (!QueryPerformanceCounter(&targ->qpcStart))
+    L("ERROR QueryPerformanceCounter(&qpcStart)\n");
+#else
+  if (clock_gettime(CLOCK_REALTIME, &targ->start))
+    L(
+        "{%d} [%u] %lu ERROR clock_gettime(CLOCK_REALTIME, start)\n",
+        targ->trial, targ->partition, id);
+#endif
   dpiStmt *stmt = NULL;
   if (dpiConn_prepareStmt(
           conn, 0, patchedSqlSelect, strlen(patchedSqlSelect), NULL, 0,
@@ -266,16 +277,6 @@ void *doSelect(void *arg)
   /*dpiData *key, *data;
   dpiBytes *keyBytes, *dataBytes;*/
 
-#ifdef W32
-  GetSystemTimeAsFileTime(&targ->start);
-  if (!QueryPerformanceCounter(&targ->qpcStart))
-    L("ERROR QueryPerformanceCounter(&qpcStart)\n");
-#else
-  if (clock_gettime(CLOCK_REALTIME, &targ->start))
-    L(
-        "{%d} [%u] %lu ERROR clock_gettime(CLOCK_REALTIME, start)\n",
-        targ->trial, targ->partition, id);
-#endif
   while (
       (err = dpiStmt_fetch(stmt, &found, &bufferRowIndex)) == DPI_SUCCESS && found > 0)
   {
@@ -301,6 +302,13 @@ void *doSelect(void *arg)
 
     targ->processed++;
   }
+
+  if (dpiStmt_close(stmt, NULL, 0) != DPI_SUCCESS)
+  {
+    E("Unable to close select stmt");
+    D("{%d} [%u] %lu %s", targ->trial, targ->partition, id, patchedSqlSelect);
+    exit(-1);
+  }
 #ifdef W32
   GetSystemTimeAsFileTime(&targ->end);
   if (!QueryPerformanceCounter(&targ->qpcEnd))
@@ -312,12 +320,6 @@ void *doSelect(void *arg)
         targ->trial, targ->partition, id);
 #endif
 
-  if (dpiStmt_close(stmt, NULL, 0) != DPI_SUCCESS)
-  {
-    E("Unable to close select stmt");
-    D("{%d} [%u] %lu %s", targ->trial, targ->partition, id, patchedSqlSelect);
-    exit(-1);
-  }
   free(patchedSqlSelect);
   if (dpiConn_close(conn, DPI_MODE_CONN_CLOSE_DEFAULT, NULL, 0) != DPI_SUCCESS)
   {

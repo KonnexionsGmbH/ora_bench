@@ -32,6 +32,9 @@ int main(const int argc, const char *argv[])
     return -1;
   }
   load_config(argv[1]);
+
+  L("Start %s\n", __FILE__);
+
   load_bulk(fileBulkName);
 
   sprintf(
@@ -133,7 +136,6 @@ int main(const int argc, const char *argv[])
       /*duration (sec), */ fileResultDelimiter
       /*,	duration (ns)*/);
 
-  L("Start %s\n", __FILE__);
 #ifdef W32
   GetSystemTimeAsFileTime(&benchmarkStart);
   if (!QueryPerformanceCounter(&benchmarkQpcStart))
@@ -252,6 +254,7 @@ int main(const int argc, const char *argv[])
 
     for (int i = 0; i < benchmarkNumberPartitions; ++i)
     {
+      ta[i].processed = 0;
 #ifdef W32
       tid[i] = CreateThread(NULL, 0, doSelect, &(ta[i]), 0, NULL);
       if (tid[i] == NULL)
@@ -374,6 +377,17 @@ int main(const int argc, const char *argv[])
         elapsed.tv_nsec
 #endif
     );
+    char error = 0;
+    for (int i = 0; i < benchmarkNumberPartitions; ++i)
+      if (gBulk[ta[i].partition].count != ta[i].processed)
+      {
+        error = 1;
+        L(
+            "ERROR: %d of %d found in partition %d\n",
+            ta[i].processed, gBulk[ta[i].partition].count, ta[i].partition);
+      }
+    if (error)
+      exit(-1);
   }
 #ifdef W32
   GetSystemTimeAsFileTime(&benchmarkEnd);
