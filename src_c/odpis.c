@@ -106,9 +106,8 @@ void *doInsert(void *arg)
       {
         E("Unable to execute insert stmt");
         D(
-            "{%d} [%u] %lu, numIters/benchmarkBatchSize %d, maxArraySize %d, %s",
-            targ->trial, targ->partition, id, benchmarkBatchSize,
-            maxArraySize, sqlInsert);
+            "{%d} [%u] %lu, numIters(benchmarkBatchSize/maxArraySize) %d, %s",
+            targ->trial, targ->partition, id, maxArraySize, sqlInsert);
         exit(-1);
       }
       bbs = 0;
