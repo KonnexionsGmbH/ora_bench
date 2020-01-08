@@ -295,16 +295,17 @@ insert_partition(
     connection_password := Password,
     sql_insert := Insert,
 
-    benchmark_batch_size := NumItersExec,
+    benchmark_batch_size := CNumItersExec,
     benchmark_transaction_size := NumItersCommit,
     file_bulk_length := Size
   }
 ) ->
   Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
   Start = os:timestamp(),
+  NumItersExec = if CNumItersExec == 0 -> 1; true -> CNumItersExec end,
   #{var := KeyVar} = dpi:conn_newVar(
     Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES', NumItersExec,
-    Size, false, false, null
+    32, false, false, null
   ),
   #{var := DataVar} = dpi:conn_newVar(
     Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES', NumItersExec,
@@ -396,7 +397,6 @@ load_data(Fd, Header, BulkDelimiter, Partitions, Rows) ->
   case file:read_line(Fd) of
     eof -> Rows;
     {ok, Line0} ->
-      %io:format("Header = ~p\tLine = ~p~n", [Header, Line0]),
       case string:trim(Line0, both, "\r\n") of
         Header ->
           load_data(Fd, Header, BulkDelimiter, Partitions, Rows);
@@ -421,7 +421,10 @@ thread_join(Threads, Results) ->
     {'EXIT', Thread, _Reason} ->
       thread_join(Threads -- [Thread], Results)
   after
-    5000 ->
-      io:format("waiting ~p~n", [length(Threads)]),
+    10000 ->
+      io:format(
+        "[~p:~p:~p] waiting ~p~n",
+        [?MODULE, ?FUNCTION_NAME, ?LINE, length(Threads)]
+      ),
       thread_join(Threads, Results)
   end.
