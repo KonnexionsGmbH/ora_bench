@@ -2,7 +2,7 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_database_series.bat: Oracle benchmark for a speci)c database version.
+rem run_bench_database_series.bat: Oracle benchmark for a specific database version.
 rem
 rem ------------------------------------------------------------------------------
 
@@ -14,6 +14,9 @@ if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU [""] (
 )
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU [""] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
+)
+if ["%ORA_BENCH_RUN_ODPI_C%"] EQU [""] (
+    set ORA_BENCH_RUN_ODPI_C=true
 )
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU [""] (
     set ORA_BENCH_RUN_ORANIF_ELIXIR=true
@@ -27,7 +30,7 @@ set ORA_BENCH_CONNECT_IDENTIFIER=//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNEC
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - speci)c database.
+echo ora_bench - Oracle benchmark - specific database.
 echo --------------------------------------------------------------------------------
 echo BENCHMARK_DATABASE      : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_SERVICE      : %ORA_BENCH_CONNECTION_SERVICE%
@@ -35,6 +38,7 @@ echo ---------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON    : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_JAMDB_ORACLE_ELIXIR : %ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%
 echo RUN_JDBC_JAVA           : %ORA_BENCH_RUN_JDBC_JAVA%
+echo RUN_ODPI_C              : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORANIF_ELIXIR       : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG       : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------
@@ -88,6 +92,19 @@ if ["%ORA_BENCH_RUN_JDBC_JAVA%" = "true"] EQU [""] (
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
+)
+
+if ["%ORA_BENCH_RUN_ODPI_C%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+    { /bin/bash scripts/run_bench_odpi_c.sh; }
+)
+if ["%ORA_BENCH_RUN_ODPI_C%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+    { /bin/bash scripts/run_bench_odpi_c.sh; }
 )
 
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%" = "true"] EQU [""] (
@@ -155,6 +172,19 @@ if ["%ORA_BENCH_RUN_JDBC_JAVA%" = "true"] EQU [""] (
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
 )
 
+if ["%ORA_BENCH_RUN_ODPI_C%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER==%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+    { /bin/bash scripts/run_bench_odpi_c.sh; }
+)
+if ["%ORA_BENCH_RUN_ODPI_C%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+    { /bin/bash scripts/run_bench_odpi_c.sh; }
+)
+
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%" = "true"] EQU [""] (
     set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
@@ -220,6 +250,19 @@ if ["%ORA_BENCH_RUN_JDBC_JAVA%" = "true"] EQU [""] (
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
 )
 
+if ["%ORA_BENCH_RUN_ODPI_C%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_odpi_c.sh; }
+)
+if ["%ORA_BENCH_RUN_ODPI_C%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_odpi_c.sh; }
+)
+
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%" = "true"] EQU [""] (
     set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
@@ -283,6 +326,19 @@ if ["%ORA_BENCH_RUN_JDBC_JAVA%" = "true"] EQU [""] (
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
+)
+
+if ["%ORA_BENCH_RUN_ODPI_C%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_odpi_c.sh; }
+)
+if ["%ORA_BENCH_RUN_ODPI_C%" = "true"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash scripts/run_bench_odpi_c.sh; }
 )
 
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%" = "true"] EQU [""] (

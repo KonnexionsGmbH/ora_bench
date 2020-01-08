@@ -34,14 +34,14 @@ fi
 if [ -z "$ORA_BENCH_RUN_JDBC_JAVA" ]; then
     export ORA_BENCH_RUN_JDBC_JAVA=true
 fi
+if [ -z "$ORA_BENCH_RUN_ODPI_C" ]; then
+    export ORA_BENCH_RUN_ODPI_C=true
+fi
 if [ -z "$ORA_BENCH_RUN_ORANIF_ELIXIR" ]; then
     export ORA_BENCH_RUN_ORANIF_ELIXIR=true
 fi
 if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
-fi
-if [ -z "$ORA_BENCH_RUN_ODPI_C" ]; then
-    export ORA_BENCH_RUN_ODPI_C=true
 fi
 
 export ORA_BENCH_CONNECT_IDENTIFIER=//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE
@@ -64,9 +64,9 @@ echo "--------------------------------------------------------------------------
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JAMDB_ORACLE_ELIXIR    : $ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
+echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
-echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
 echo "--------------------------------------------------------------------------------"
 echo "CONNECT_IDENTIFIER         : $ORA_BENCH_CONNECT_IDENTIFIER"
 echo "--------------------------------------------------------------------------------"
@@ -100,16 +100,16 @@ if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
     { /bin/bash scripts/run_bench_jdbc_java.sh; }
 fi
 
+if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
+    { /bin/bash scripts/run_bench_odpi_c.sh; }
+fi
+
 if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
     { /bin/bash scripts/run_bench_oranif_elixir.sh; }
 fi
 
 if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
     { /bin/bash scripts/run_bench_oranif_erlang.sh; }
-fi
-
-if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
-    { /bin/bash scripts/run_bench_odpi_c.sh; }
 fi
 
 EXITCODE=$?

@@ -2,7 +2,7 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_database.bat: Oracle benchmark for a speci)c database version.
+rem run_bench_database.bat: Oracle benchmark for a specific database version.
 rem
 rem ------------------------------------------------------------------------------
 
@@ -34,6 +34,9 @@ if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU [""] (
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU [""] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
 )
+if ["%ORA_BENCH_RUN_ODPI_C%"] EQU [""] (
+    set ORA_BENCH_RUN_ODPI_C=true
+)
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU [""] (
     set ORA_BENCH_RUN_ORANIF_ELIXIR=true
 )
@@ -46,7 +49,7 @@ set ORA_BENCH_CONNECT_IDENTIFIER=//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNEC
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - speci)c database.
+echo ora_bench - Oracle benchmark - specific database.
 echo --------------------------------------------------------------------------------
 echo BENCHMARK_DATABASE         : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST            : %ORA_BENCH_CONNECTION_HOST%
@@ -61,6 +64,7 @@ echo ---------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_JAMDB_ORACLE_ELIXIR    : %ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%
 echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
+echo RUN_ODPI_C                 : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORANIF_ELIXIR          : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------
@@ -96,6 +100,10 @@ if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU ["true"] (
 
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
     call scripts\run_bench_jdbc_java.bat
+)
+
+if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
+    call scripts\run_bench_odpi_c.bat
 )
 
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (

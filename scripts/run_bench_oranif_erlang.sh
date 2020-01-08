@@ -25,12 +25,6 @@ if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"    
 fi
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
-
-cd src_erlang
-rebar3 escriptize
-cd ..
-
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -45,6 +39,12 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
+
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
+
+cd src_erlang
+rebar3 escriptize
+cd ..
 
 src_erlang/_build/default/bin/orabench priv/properties/ora_bench_oranif_erlang.properties
 

@@ -24,9 +24,9 @@ export ORA_BENCH_RUN_DB_19_3_EE=true
 export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
 export ORA_BENCH_RUN_JDBC_JAVA=true
+export ORA_BENCH_RUN_ODPI_C=true
 export ORA_BENCH_RUN_ORANIF_ELIXIR=true
 export ORA_BENCH_RUN_ORANIF_ERLANG=true
-export ORA_BENCH_RUN_ODPI_C=true
 
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     if [ "$OSTYPE" = "msys" ]; then
@@ -58,9 +58,9 @@ echo "--------------------------------------------------------------------------
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JAMDB_ORACLE_ELIXIR    : $ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
+echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
-echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
 echo "--------------------------------------------------------------------------------"
 echo "JAVA_HOME                  : $JAVA_HOME"
 echo "--------------------------------------------------------------------------------"
