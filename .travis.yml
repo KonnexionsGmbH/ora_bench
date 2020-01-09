@@ -33,7 +33,7 @@ before_install:
   - pwd
 # - sudo apt install automake autoconf libreadline-dev libncurses-dev libssl-dev libyaml-dev libxslt-dev libffi-dev libtool unixodbc-dev unzip curl
   - . ~/.bashrc
-  - asdf plugin-add Elixir asdf-vm/asdf-elixir
+  - asdf plugin-add Elixir https://github.com/asdf-vm/asdf-elixir
   - asdf install Elixir 1.9.4   
   - elixir -v
   - mix local.hex --force
