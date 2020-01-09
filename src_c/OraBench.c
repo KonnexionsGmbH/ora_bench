@@ -217,7 +217,6 @@ int main(const int argc, const char *argv[])
         maxEnd = ta[i].end;
 #endif
     }
-    L("Insert %llu nsec, %llu sec)\n", maxDurationInsert / 1000000000, maxDurationInsert);
 #ifdef W32
     FileTimeToSystemTime(&minStart, &minStartSys);
     FileTimeToSystemTime(&maxEnd, &minEndSys);
@@ -295,7 +294,6 @@ int main(const int argc, const char *argv[])
         maxEnd = ta[i].end;
 #endif
     }
-    L("tSelect %llu nsec, %llu sec)\n", maxDurationSelect / 1000000000, maxDurationSelect);
 #ifdef W32
     GetSystemTimeAsFileTime(&trialEnd);
     if (!QueryPerformanceCounter(&trialQpcEnd))
@@ -357,7 +355,6 @@ int main(const int argc, const char *argv[])
         elapsed / 1000000000, elapsed
 #endif
     );
-    L("Trial %d (%llu sec, %llu nsec)\n", t, elapsed / 1000000000, elapsed);
 
     char error = 0;
     for (int i = 0; i < benchmarkNumberPartitions; ++i)
