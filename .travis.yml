@@ -23,7 +23,8 @@ before_install:
   - sudo apt update
   - sudo apt install software-properties-common
   # Elixir -----------------------------------------------------------------------
-  - sudo apt install elixir=1.9.4
+  - sudo apt-cache madison elixir
+  - sudo apt install elixir=1.8.2
   - elixir -v
   - mix local.hex --force
   - mix local.rebar --force
