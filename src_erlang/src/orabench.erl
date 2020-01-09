@@ -295,44 +295,49 @@ insert_partition(
     connection_password := Password,
     sql_insert := Insert,
 
-    benchmark_batch_size := CNumItersExec,
+    benchmark_batch_size := NumItersExec,
     benchmark_transaction_size := NumItersCommit,
+    file_bulk_size := FBulkSz,
     file_bulk_length := Size
   }
 ) ->
   Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
   Start = os:timestamp(),
-  NumItersExec = if CNumItersExec == 0 -> 1; true -> CNumItersExec end,
   #{var := KeyVar} = dpi:conn_newVar(
-    Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES', NumItersExec,
+    Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES',
+    if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end,
     32, false, false, null
   ),
   #{var := DataVar} = dpi:conn_newVar(
-    Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES', NumItersExec,
+    Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES',
+    if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end,
     Size, false, false, null
   ),
   InsertStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Insert), <<>>),
   ok = dpi:stmt_bindByName(InsertStmt, <<"key">>, KeyVar),
   ok = dpi:stmt_bindByName(InsertStmt, <<"data">>, DataVar),
   {NIE, _} = lists:foldl(
-    fun({Key, Data}, {NIE, NIC}) ->
-      {NewNIE, NewNIC} =
-        if NIE < NumItersExec ->
+    fun({Key, Data}, {NIE, RowCount}) ->
+      NewNIE =
+        if
+          NumItersExec == 0 orelse NIE < NumItersExec ->
             ok = dpi:var_setFromBytes(KeyVar, NIE, Key),
             ok = dpi:var_setFromBytes(DataVar, NIE, Data),
-            {NIE + 1, NIC + 1};
+            NIE + 1;
           true ->
-            ok = dpi:stmt_executeMany(InsertStmt, [], NumItersExec),
+            ok = dpi:stmt_executeMany(
+              InsertStmt, [],
+              if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end
+            ),
             ok = dpi:var_setFromBytes(KeyVar, 0, Key),
             ok = dpi:var_setFromBytes(DataVar, 0, Data),
-            {1, NIC + 1}
+            1
         end,
-      if NewNIC < NumItersCommit ->
-          {NewNIE, NewNIC};
-        true -> 
-          ok = dpi:conn_commit(Conn),
-          {NewNIE, 0}
-      end
+      if NumItersCommit > 0 andalso RowCount rem NumItersCommit == 0 ->
+          ok = dpi:conn_commit(Conn);
+        true -> ok
+      end,
+      {NewNIE, RowCount + 1}
     end,
     {0, 0},
     Rows
