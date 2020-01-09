@@ -25,6 +25,9 @@ if [ -z "$ORA_BENCH_PASSWORD_SYS" ]; then
     export ORA_BENCH_PASSWORD_SYS=oracle
 fi
 
+export ORA_BENCH_RUN_ODPI_C=false
+export ORA_BENCH_RUN_ORANIF_ERLANG=false
+
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
