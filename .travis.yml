@@ -56,7 +56,6 @@ before_install:
   - python -m pip install --upgrade cx_Oracle
 
 script:
-  - set
   - export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (Travis CI)'
   - export ORA_BENCH_JAVA_CLASSPATH=.:priv/java_jar/*
   - git pull
