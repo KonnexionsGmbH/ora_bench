@@ -56,11 +56,11 @@ int main(const int argc, const char *argv[])
   LARGE_INTEGER trialQpcStart, trialQpcEnd, benchmarkQpcStart, benchmarkQpcEnd;
 #else
   struct timespec minStart, maxEnd, trialStart, trialEnd, benchmarkStart,
-      benchmarkEnd, elapsed, maxDurationInsert = {0, 0},
-                             maxDurationSelect = {0, 0};
+      benchmarkEnd;
   struct tm minStartTm, maxEndTm, trialStartTm, trialEndTm, benchmarkStartTm,
       benchmarkEndTm;
   char strStart[32], strEnd[32];
+  unsigned long long int elapsed, maxDurationInsert = 0, maxDurationSelect = 0;
 #endif
 
   FILE *rfp = fopen(fileResultName, "r");
@@ -203,11 +203,9 @@ int main(const int argc, const char *argv[])
       if (CompareFileTime(&(ta[i].end), &maxEnd) > 0)
         maxEnd = ta[i].end;
 #else
-      elapsed.tv_sec = ta[i].end.tv_sec - ta[i].start.tv_sec;
-      elapsed.tv_nsec = ta[i].end.tv_nsec - ta[i].start.tv_nsec;
-      if (maxDurationInsert.tv_sec < elapsed.tv_sec ||
-          (maxDurationInsert.tv_sec == elapsed.tv_sec &&
-           maxDurationInsert.tv_nsec < elapsed.tv_nsec))
+      elapsed = (ta[i].end.tv_sec - ta[i].start.tv_sec) * 1000000000;
+      elapsed += ta[i].end.tv_nsec - ta[i].start.tv_nsec;
+      if (maxDurationSelect < elapsed)
         maxDurationInsert = elapsed;
       if (ta[i].start.tv_sec < minStart.tv_sec ||
           (ta[i].start.tv_sec == minStart.tv_sec &&
@@ -217,14 +215,9 @@ int main(const int argc, const char *argv[])
           (ta[i].end.tv_sec == maxEnd.tv_sec &&
            ta[i].end.tv_nsec > maxEnd.tv_nsec))
         maxEnd = ta[i].end;
-      unsigned int es = ta[i].end.tv_sec - ta[i].start.tv_sec;
-      unsigned long long int ens = es * 1000000000 + ta[i].end.tv_nsec - ta[i].start.tv_nsec;
-      L(
-          "\tInsert(%d) %ld / %ld -> %ld / %ld (%u sec, %llu nsec)\n",
-          i, ta[i].start.tv_sec, ta[i].start.tv_nsec, ta[i].end.tv_sec,
-          ta[i].end.tv_nsec, es, ens);
 #endif
     }
+    L("Insert %llu nsec, %llu sec)\n", maxDurationInsert / 1000000000, maxDurationInsert);
 #ifdef W32
     FileTimeToSystemTime(&minStart, &minStartSys);
     FileTimeToSystemTime(&maxEnd, &minEndSys);
@@ -245,7 +238,7 @@ int main(const int argc, const char *argv[])
         (LONGLONG)(maxDurationInsert / 1000000), maxDurationInsert * 1000
 #else
         strStart, minStart.tv_nsec, strEnd, maxEnd.tv_nsec,
-        maxDurationInsert.tv_sec, maxDurationInsert.tv_nsec
+        maxDurationInsert / 1000000000, maxDurationInsert
 #endif
     );
 
@@ -288,11 +281,9 @@ int main(const int argc, const char *argv[])
       if (CompareFileTime(&(ta[i].end), &maxEnd) > 0)
         maxEnd = ta[i].end;
 #else
-      elapsed.tv_sec = ta[i].end.tv_sec - ta[i].start.tv_sec;
-      elapsed.tv_nsec = ta[i].end.tv_nsec - ta[i].start.tv_nsec;
-      if (maxDurationSelect.tv_sec < elapsed.tv_sec ||
-          (maxDurationSelect.tv_sec == elapsed.tv_sec &&
-           maxDurationSelect.tv_nsec < elapsed.tv_nsec))
+      elapsed = (ta[i].end.tv_sec - ta[i].start.tv_sec) * 1000000000;
+      elapsed += ta[i].end.tv_nsec - ta[i].start.tv_nsec;
+      if (maxDurationSelect < elapsed)
         maxDurationSelect = elapsed;
       if (ta[i].start.tv_sec < minStart.tv_sec ||
           (ta[i].start.tv_sec == minStart.tv_sec &&
@@ -302,14 +293,9 @@ int main(const int argc, const char *argv[])
           (ta[i].end.tv_sec == maxEnd.tv_sec &&
            ta[i].end.tv_nsec > maxEnd.tv_nsec))
         maxEnd = ta[i].end;
-      unsigned int es = ta[i].end.tv_sec - ta[i].start.tv_sec;
-      unsigned long long int ens = es * 1000000000 + ta[i].end.tv_nsec - ta[i].start.tv_nsec;
-      L(
-          "\tSelect(%d) %ld / %ld -> %ld / %ld (%u sec, %llu nsec)\n",
-          i, ta[i].start.tv_sec, ta[i].start.tv_nsec, ta[i].end.tv_sec,
-          ta[i].end.tv_nsec, es, ens);
 #endif
     }
+    L("tSelect %llu nsec, %llu sec)\n", maxDurationSelect / 1000000000, maxDurationSelect);
 #ifdef W32
     GetSystemTimeAsFileTime(&trialEnd);
     if (!QueryPerformanceCounter(&trialQpcEnd))
