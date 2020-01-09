@@ -63,6 +63,7 @@ script:
   #- export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=false
   #- ./scripts/run_bench_database.sh
   #- ./scripts/run_bench_finalise.sh
+  - chmod +x ./src_c/scripts/run_bench_odpi.sh
   - ./src_c/scripts/run_bench_odpi.sh
 
 #after_success:
