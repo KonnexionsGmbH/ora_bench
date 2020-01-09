@@ -217,6 +217,10 @@ int main(const int argc, const char *argv[])
           (ta[i].end.tv_sec == maxEnd.tv_sec &&
            ta[i].end.tv_nsec > maxEnd.tv_nsec))
         maxEnd = ta[i].end;
+      L(
+          "\tInsert(%d) %d/%d -> %d/%d\n",
+          i, ta[i].start.tv_sec, ta[i].start.tv_nsec, ta[i].end.tv_sec,
+          ta[i].end.tv_nsec);
 #endif
     }
 #ifdef W32
@@ -296,6 +300,10 @@ int main(const int argc, const char *argv[])
           (ta[i].end.tv_sec == maxEnd.tv_sec &&
            ta[i].end.tv_nsec > maxEnd.tv_nsec))
         maxEnd = ta[i].end;
+      L(
+          "\tSelect(%d) %d/%d -> %d/%d\n",
+          i, ta[i].start.tv_sec, ta[i].start.tv_nsec, ta[i].end.tv_sec,
+          ta[i].end.tv_nsec);
 #endif
     }
 #ifdef W32
