@@ -167,9 +167,6 @@ void load_config(const char *file)
     ch = getc(fp);
   }
 
-  if (!benchmarkBatchSize)
-    benchmarkBatchSize = 1;
-
   fclose(fp);
 }
 
