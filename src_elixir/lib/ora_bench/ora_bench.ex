@@ -1,7 +1,7 @@
 defmodule OraBench do
   require Logger
 
-  @benchmark_module "OraBench (Elixir #{System.version()})"
+  @benchmark_language "Elixir #{System.version()}"
 
   @file_configuration_name  "priv/properties/ora_bench.properties"
 
@@ -49,6 +49,8 @@ defmodule OraBench do
     :ok = IO.puts(
       result_file,
       [
+        config["benchmark.release"],
+        config["file.result.delimiter"],
         config["benchmark.id"],
         config["file.result.delimiter"],
         config["benchmark.comment"],
@@ -63,7 +65,7 @@ defmodule OraBench do
         config["file.result.delimiter"],
         config["benchmark.database"],
         config["file.result.delimiter"],
-        @benchmark_module,
+        @benchmark_language,
         config["file.result.delimiter"],
         benchmark_driver,
         config["file.result.delimiter"],
