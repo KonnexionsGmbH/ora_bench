@@ -357,6 +357,8 @@ int main(const int argc, const char *argv[])
         elapsed / 1000000000, elapsed
 #endif
     );
+    L("Trial %d (%llu sec, %llu nsec)\n", t, elapsed / 1000000000, elapsed);
+
     char error = 0;
     for (int i = 0; i < benchmarkNumberPartitions; ++i)
       if (gBulk[ta[i].partition].count != ta[i].processed)
@@ -403,7 +405,7 @@ int main(const int argc, const char *argv[])
       elapsed / 1000000000, elapsed
 #endif
   );
-  L("End %s\n", __FILE__);
+  L("End %s (%llu sec, %llu nsec)\n", __FILE__, elapsed / 1000000000, elapsed);
 
   fclose(rfp);
 
