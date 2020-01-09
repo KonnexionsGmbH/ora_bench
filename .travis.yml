@@ -39,6 +39,7 @@ before_install:
   - elixir -v
   - mix local.hex --force
   - mix local.rebar --force
+  - ldconfig
   - rebar3 version
   # Java -------------------------------------------------------------------------
   - sudo apt install default-jdk
@@ -67,4 +68,4 @@ script:
   - ./scripts/run_bench_finalise.sh
 
 after_success:
-  - "./scripts/run_bench_travis_push.sh"
+  - ./scripts/run_bench_travis_push.sh
