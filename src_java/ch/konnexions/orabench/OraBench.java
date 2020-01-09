@@ -116,7 +116,6 @@ public class OraBench {
         ArrayList<Statement> statements = new ArrayList<Statement>(config.getBenchmarkNumberPartitions());
 
         Connection connection;
-        Statement statement;
 
         for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
             Database database = new Database(config);

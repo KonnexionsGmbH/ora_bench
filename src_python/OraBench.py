@@ -1,5 +1,6 @@
 import configparser
 import csv
+import cx_Oracle
 import datetime
 import locale
 import logging
@@ -9,14 +10,12 @@ import sys
 import threading
 from pathlib import Path
 
-import cx_Oracle
-
 # ------------------------------------------------------------------------------
 # Definition of the global variables.
 # ------------------------------------------------------------------------------
 
 BENCHMARK_DRIVER = 'cx_Oracle (Version v' + cx_Oracle.version + ')'
-BENCHMARK_MODULE = 'OraBench (Python ' + platform.python_version() + ')'
+BENCHMARK_LANGUAGE = 'Python ' + platform.python_version()
 
 FILE_CONFIGURATION_NAME_CX_ORACLE_PYTHON = 'priv/properties/ora_bench_cx_oracle_python.ini'
 
@@ -73,14 +72,15 @@ def create_result(config, result_file, measurement_data, action, trial_number, s
     elif sql_operation == 'select':
         measurement_data[IX_DURATION_SELECT_SUM] += duration_ns
 
-    result_file.write(config['benchmark.id'] + config['file.result.delimiter'] +
+    result_file.write(config['benchmark.release'] + config['file.result.delimiter'] +
+                      config['benchmark.id'] + config['file.result.delimiter'] +
                       config['benchmark.comment'] + config['file.result.delimiter'] +
                       config['benchmark.host.name'] + config['file.result.delimiter'] +
                       str(config['benchmark.number.cores']) + config['file.result.delimiter'] +
                       config['benchmark.os'] + config['file.result.delimiter'] +
                       config['benchmark.user.name'] + config['file.result.delimiter'] +
                       config['benchmark.database'] + config['file.result.delimiter'] +
-                      BENCHMARK_MODULE + config['file.result.delimiter'] +
+                      BENCHMARK_LANGUAGE + config['file.result.delimiter'] +
                       BENCHMARK_DRIVER + config['file.result.delimiter'] +
                       str(trial_number) + config['file.result.delimiter'] +
                       sql_statement + config['file.result.delimiter'] +
@@ -218,6 +218,7 @@ def get_config():
     config['benchmark.number.cores'] = int(config_parser['DEFAULT']['benchmark.number.cores'])
     config['benchmark.number.partitions'] = int(config_parser['DEFAULT']['benchmark.number.partitions'])
     config['benchmark.os'] = config_parser['DEFAULT']['benchmark.os']
+    config['benchmark.release'] = config_parser['DEFAULT']['benchmark.release']
     config['benchmark.transaction.size'] = int(config_parser['DEFAULT']['benchmark.transaction.size'])
     config['benchmark.trials'] = int(config_parser['DEFAULT']['benchmark.trials'])
     config['benchmark.user.name'] = config_parser['DEFAULT']['benchmark.user.name']
