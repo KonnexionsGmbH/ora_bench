@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_oranif_erlang.sh: Oracle Benchmark based on Erlang.
+# run_bench_jamdb_oracle.sh: Oracle Benchmark based on Elixir.
 #
 # ------------------------------------------------------------------------------
 
@@ -22,19 +22,17 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"    
+    if [ "$OSTYPE" = "msys" ]; then
+        export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    else
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+    fi
 fi
-
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
-
-cd src_erlang
-rebar3 escriptize
-cd ..
 
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - oranif and Erlang."
+echo "ora_bench - Oracle benchmark - JamDB Oracle and Elixir."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
@@ -46,7 +44,13 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-src_erlang/_build/default/bin/orabench priv/properties/ora_bench_oranif_erlang.properties
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
+
+cd src_elixir
+mix deps.get
+mix deps.compile
+mix run -e "OraBench.CLI.main([\"Jamdb.Oracle\"])"
+cd ..
 
 EXITCODE=$?
 

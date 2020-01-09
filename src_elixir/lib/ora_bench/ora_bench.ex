@@ -1,9 +1,6 @@
 defmodule OraBench do
   require Logger
 
-  # @benchmark_driver  "jamdb_oracle (Version v#{Jamdb.Oracle.version_info()}})"
-  @benchmark_driver_jamdb_oracle  "JamDB Oracle (Version v0.3.6})"
-  @benchmark_driver_oralixir  "OraLixir (Version v0.3.6})"
   @benchmark_module "OraBench (Elixir #{System.version()})"
 
   @file_configuration_name  "priv/properties/ora_bench.properties"
@@ -11,62 +8,20 @@ defmodule OraBench do
   @moduledoc false
 
   # ----------------------------------------------------------------------------------------------
-  # Creating the database objects of type connection.
-  # ----------------------------------------------------------------------------------------------
-
-  defp create_database_objects(config, driver) do
-    Logger.debug("Start ==========> driver: #{driver} }<==========")
-
-    case config["benchmark.core.multiplier"] do
-      "0" ->
-        case driver.start_link(driver_config(config)) do
-          {:ok, conn} ->
-            Map.new([{1, conn}])
-          _ = other_reason ->
-            raise(
-              "[Error in create_database_objects] #{
-                driver
-              }.start_list: reason=#{
-                other_reason
-              }"
-            )
-        end
-      _ ->
-        Enum.reduce(
-          1..String.to_integer(config["benchmark.number.partitions"]),
-          %{},
-          fn (i, connections) ->
-            case driver.start_link(driver_config(config)) do
-              {:ok, conn} -> Map.put(connections, i, conn)
-              _ = other_reason ->
-                raise(
-                  "[Error in create_database_objects] #{
-                    driver
-                  }.start_list: reason=#{
-                    other_reason
-                  }"
-                )
-            end
-          end
-        )
-    end
-  end
-
-  # ----------------------------------------------------------------------------------------------
   # Writing the results.
   # ----------------------------------------------------------------------------------------------
 
-  defp create_result(
-         action,
-         config,
-         driver,
-         measurement_data,
-         result_file,
-         sql_operation,
-         sql_statement,
-         start_date_time,
-         trial_number
-       ) do
+  def create_result(
+        action,
+        benchmark_driver,
+        config,
+        measurement_data,
+        result_file,
+        sql_operation,
+        sql_statement,
+        start_date_time,
+        trial_number
+      ) do
     Logger.debug("Start ==========> action: #{action} <==========")
 
     end_date_time = DateTime.utc_now()
@@ -90,11 +45,6 @@ defmodule OraBench do
       _ -> measurement_data
     end
     #    IO.inspect(measurement_data_end, label: "measurement_data_end")
-
-    benchmark_driver = case driver do
-      Jamdb.Oracle -> @benchmark_driver_jamdb_oracle
-      OraLixir -> @benchmark_driver_oralixir
-    end
 
     :ok = IO.puts(
       result_file,
@@ -184,7 +134,7 @@ defmodule OraBench do
   # Creating the result file.
   # ----------------------------------------------------------------------------------------------
 
-  defp create_result_file(config) do
+  def create_result_file(config) do
     Logger.debug("Start ==========> <==========")
 
     result_file_name = Path.expand(
@@ -214,24 +164,24 @@ defmodule OraBench do
   # Recording the results of the benchmark - end processing.
   # ----------------------------------------------------------------------------------------------
 
-  defp create_result_measuring_point_end(
-         action,
-         config,
-         driver,
-         measurement_data,
-         result_file,
-         sql_operation,
-         sql_statement,
-         trial_number
-       ) do
+  def create_result_measuring_point_end(
+        action,
+        benchmark_driver,
+        config,
+        measurement_data,
+        result_file,
+        sql_operation,
+        sql_statement,
+        trial_number
+      ) do
     Logger.debug("Start ==========> action: #{action} <==========")
 
     measurement_data_end = case action do
       "query" ->
         create_result(
           action,
+          benchmark_driver,
           config,
-          driver,
           measurement_data,
           result_file,
           sql_operation,
@@ -242,8 +192,8 @@ defmodule OraBench do
       "trial" ->
         create_result(
           action,
+          benchmark_driver,
           config,
-          driver,
           measurement_data,
           result_file,
           sql_operation,
@@ -254,8 +204,8 @@ defmodule OraBench do
       "benchmark" ->
         create_result(
           action,
+          benchmark_driver,
           config,
-          driver,
           measurement_data,
           result_file,
           sql_operation,
@@ -280,7 +230,7 @@ defmodule OraBench do
   # Recording the results of the benchmark - start processing.
   # ----------------------------------------------------------------------------------------------
 
-  defp create_result_measuring_point_start(action, measurement_data) do
+  def create_result_measuring_point_start(action, measurement_data) do
     Logger.debug("Start ==========> action: #{action} <==========")
 
     case action do
@@ -301,22 +251,13 @@ defmodule OraBench do
   # Database driver configuration.
   # ----------------------------------------------------------------------------------------------
 
-  defp driver_config(config)  do
+  def driver_config(config)  do
     Logger.debug("Start ==========> <==========")
 
     [
       database: config["connection.service"],
       hostname: config["connection.host"],
-      idle_interval: 1000000,
-      parameters: [
-        autocommit: false,
-        fetch: String.to_integer(config["connection.fetch.size"])
-      ],
       password: config["connection.password"],
-      pool_size: case config["benchmark.core.multiplier"] do
-        "0" -> String.to_integer(config["benchmark.number.partitions"])
-        _ -> 1
-      end,
       port: String.to_integer(config["connection.port"]),
       timeout: :infinity,
       username: config["connection.user"]
@@ -327,62 +268,94 @@ defmodule OraBench do
   # Loading the bulk file into memory.
   # ----------------------------------------------------------------------------------------------
 
-  defp get_bulk_data_partitions(config) do
+  def get_bulk_data_partitions(config) do
     Logger.debug("Start ==========> <==========")
 
-    Path.expand(~s(../#{config["file.bulk.name"]}))
-    |> Path.absname
-    |> File.stream!()
-    |> Stream.map(&(String.replace(&1, "\n", "")))
-    |> Enum.reduce(
-         %{},
-         fn (line, bulk_data_partitions) ->
-           case line == config["file.bulk.header"] do
-             true ->
-               bulk_data_partitions
-             _ ->
-               case String.split(line, config["file.bulk.delimiter"]) do
-                 [key, data] ->
-                   partition_key = rem(
-                     (String.at(key, 0)
-                      |> String.to_charlist()
-                      |> hd) * 256 + (String.at(key, 1)
-                                      |> String.to_charlist()
-                                      |> hd),
-                     String.to_integer(config["benchmark.number.partitions"])
-                   )
-                   case Map.has_key?(
-                          bulk_data_partitions,
-                          partition_key
-                        ) do
-                     true ->
-                       Map.put(
-                         bulk_data_partitions,
-                         partition_key,
-                         [
-                           {key, data} | bulk_data_partitions[partition_key]
-                         ]
-                       )
-                     _ ->
-                       Map.put(
-                         bulk_data_partitions,
-                         partition_key,
-                         [{key, data}]
-                       )
-                   end
-                 _ ->
-                   bulk_data_partitions
-               end
-           end
-         end
-       )
+    bulk_data_partitions = Path.expand(~s(../#{config["file.bulk.name"]}))
+                           |> Path.absname
+                           |> File.stream!()
+                           |> Stream.map(&(String.replace(&1, "\n", "")))
+                           |> Enum.reduce(
+                                %{},
+                                fn (line, bulk_data_partitions) ->
+                                  case line == config["file.bulk.header"] do
+                                    true ->
+                                      bulk_data_partitions
+                                    _ ->
+                                      case String.split(
+                                             line,
+                                             config["file.bulk.delimiter"]
+                                           ) do
+                                        [key, data] ->
+                                          partition_key = rem(
+                                            (String.at(key, 0)
+                                             |> String.to_charlist()
+                                             |> hd) * 256 + (String.at(key, 1)
+                                                             |> String.to_charlist()
+                                                             |> hd),
+                                            String.to_integer(
+                                              config["benchmark.number.partitions"]
+                                            )
+                                          )
+                                          case Map.has_key?(
+                                                 bulk_data_partitions,
+                                                 partition_key
+                                               ) do
+                                            true ->
+                                              Map.put(
+                                                bulk_data_partitions,
+                                                partition_key,
+                                                [
+                                                  {
+                                                    key,
+                                                    data
+                                                  } | bulk_data_partitions[partition_key]
+                                                ]
+                                              )
+                                            _ ->
+                                              Map.put(
+                                                bulk_data_partitions,
+                                                partition_key,
+                                                [{key, data}]
+                                              )
+                                          end
+                                        _ ->
+                                          bulk_data_partitions
+                                      end
+                                  end
+                                end
+                              )
+
+
+    Logger.info("Start Distribution of the data in the partitions")
+
+    Enum.each(
+      Map.keys(bulk_data_partitions),
+      fn key ->
+        Logger.info(
+          "Partition p#{
+            key
+            |> Integer.to_string
+            |> String.pad_leading(5, "0")
+          } contains #{
+            length(bulk_data_partitions[key])
+            |> Integer.to_string
+            |> String.pad_leading(9, " ")
+          } rows"
+        )
+      end
+    )
+
+    Logger.info("End   Distribution of the data in the partitions")
+
+    bulk_data_partitions
   end
 
   # ----------------------------------------------------------------------------------------------
   # Loading the configuration parameters into memory.
   # ----------------------------------------------------------------------------------------------
 
-  defp get_config do
+  def get_config do
     Logger.debug("Start ==========> <==========")
 
     config = Path.expand("../#{@file_configuration_name}")
@@ -403,602 +376,5 @@ defmodule OraBench do
       "\\t" -> Map.put(config, "file.result.delimiter", <<"\t">>)
       _ -> config
     end
-  end
-
-  # ----------------------------------------------------------------------------------------------
-  # Performing the insert operations.
-  # ----------------------------------------------------------------------------------------------
-
-  defp insert(
-         _batch_data,
-         _batch_size,
-         [],
-         _config,
-         _connection,
-         _count,
-         _transaction_size
-       ) do
-    Logger.debug("Start ==========> final <==========")
-
-    #    if batch_size > 0 and batch_data.__len__() > 0 do
-    #      cursor.executemany(config["sql.insert"], batch_data)
-    #
-    #      if transaction_size == 0 or rem(count, transaction_size) != 0 do
-    #        connection.commit()
-    #      end
-  end
-
-  defp insert(
-         [],
-         0,
-         [_key_data_tuple | tail] = _bulk_data_partition,
-         config,
-         connection,
-         count,
-         transaction_size
-       ) do
-    #    cursor.execute(config["sql.insert"], [key_data_tuple[0], key_data_tuple[1]])
-
-    #    if transaction_size == 0 or rem(count, transaction_size) != 0 do
-    #      connection.commit()
-
-    insert([], 0, tail, config, connection, count + 1, transaction_size)
-  end
-
-  defp insert(
-         batch_data,
-         batch_size,
-         [_key_data_tuple | tail] = _bulk_data_partition,
-         config,
-         connection,
-         count,
-         transaction_size
-       ) do
-    #    batch_data.append(key_data_tuple)
-    #    if count % config["benchmark.batch.size"] == 0:
-    #      cursor.executemany(config["sql.insert"], batch_data)
-    #      batch_data = list()
-
-    #    if transaction_size == 0 or rem(count, transaction_size) != 0 do
-    #       connection.commit()
-
-    insert(
-      batch_data,
-      batch_size,
-      tail,
-      config,
-      connection,
-      count + 1,
-      transaction_size
-    )
-  end
-
-  # ----------------------------------------------------------------------------------------------
-  # Performing the benchmark run.
-  # ----------------------------------------------------------------------------------------------
-
-  def run_benchmark(driver) do
-    Logger.debug("Start ==========> driver: #{driver} <==========")
-
-    config = get_config()
-    #    IO.inspect(config, label: "config")
-
-    measurement_data = %{
-      :last_benchmark => DateTime.utc_now(),
-      :last_trial => "n/a",
-      :last_query => "n/a",
-      :duration_insert_sum => 0,
-      :duration_select_sum => 0
-    }
-    #    IO.inspect(measurement_data, label: "measurement_data")
-
-    result_file = create_result_file(config)
-    #    IO.inspect(result_file, label: "result_file")
-
-    bulk_data_partitions = get_bulk_data_partitions(config)
-    #   IO.inspect(bulk_data_partitions, label: "bulk_data_partitions")
-
-    connections = create_database_objects(config, driver)
-        IO.inspect(connections, label: "connections")
-
-    measurement_data_run_trial = case driver do
-      Jamdb.Oracle -> run_trial_jamdb_oracle(
-                        bulk_data_partitions,
-                        config,
-                        connections,
-                        driver,
-                        measurement_data,
-                        result_file,
-                        String.to_integer(config["benchmark.trials"]),
-                        1
-                      )
-      OraLixir -> run_trial_oralixir(
-                    bulk_data_partitions,
-                    config,
-                    connections,
-                    driver,
-                    measurement_data,
-                    result_file,
-                    String.to_integer(config["benchmark.trials"]),
-                    1
-                  )
-    end
-    #    IO.inspect(measurement_data_run_trial, label: "measurement_data_run_trial")
-
-    Enum.each(
-      Map.values(connections),
-      fn conn ->
-        Process.exit(conn, :normal)
-      end
-    )
-
-    create_result_measuring_point_end(
-      "benchmark",
-      config,
-      driver,
-      measurement_data_run_trial,
-      result_file,
-      "",
-      "",
-      0
-    )
-  end
-
-  # ----------------------------------------------------------------------------------------------
-  # Performing the insert operations.
-  # ----------------------------------------------------------------------------------------------
-
-  defp run_insert(
-         _bulk_data_partitions,
-         _config,
-         _connections,
-         _driver,
-         measurement_data,
-         0,
-         _partition_key_current,
-         _result_file,
-         _trial_number
-       ) do
-    Logger.debug("Start ==========> final <==========")
-
-    #    IO.inspect(measurement_data, label: "measurement_data - final")
-    measurement_data
-  end
-
-  defp run_insert(
-         bulk_data_partitions,
-         config,
-         connections,
-         driver,
-         measurement_data,
-         partition_key,
-         partition_key_current,
-         result_file,
-         trial_number
-       ) do
-    Logger.debug(
-      "Start ==========> partition key: #{partition_key_current} <=========="
-    )
-
-    measurement_data_start = create_result_measuring_point_start(
-      "query",
-      measurement_data
-    )
-    #    IO.inspect(measurement_data_start, label: "measurement_data_start - partition key: #{partition_key_current}")
-
-    case config["benchmark.core.multiplier"] do
-      "0" ->
-        insert(
-          [],
-          String.to_integer(config["benchmark.batch.size"]),
-          bulk_data_partitions[partition_key - 1],
-          config,
-          connections[1],
-          0,
-          String.to_integer(config["benchmark.transaction.size"])
-        )
-      _ ->
-        insert(
-          [],
-          String.to_integer(config["benchmark.batch.size"]),
-          bulk_data_partitions[partition_key - 1],
-          config,
-          connections[partition_key],
-          0,
-          String.to_integer(config["benchmark.transaction.size"])
-        )
-    end
-
-    measurement_data_end = create_result_measuring_point_end(
-      "query",
-      config,
-      driver,
-      measurement_data_start,
-      result_file,
-      "insert",
-      config["sql.insert"],
-      trial_number
-    )
-    #    IO.inspect(measurement_data_end, label: "measurement_data_end - partition key: #{partition_key_current}")
-
-    run_insert(
-      bulk_data_partitions,
-      config,
-      connections,
-      driver,
-      measurement_data_end,
-      partition_key - 1,
-      partition_key_current + 1,
-      result_file,
-      trial_number
-    )
-  end
-
-  defp run_select(
-         _bulk_data_partitions,
-         _config,
-         _connections,
-         _driver,
-         measurement_data,
-         0,
-         _partition_key_current,
-         _result_file,
-         _trial_number
-       ) do
-    Logger.debug("Start ==========> final <==========")
-
-    #    IO.inspect(measurement_data, label: "measurement_data - final")
-    measurement_data
-  end
-
-  defp run_select(
-         bulk_data_partitions,
-         config,
-         connections,
-         driver,
-         measurement_data,
-         partition_key,
-         partition_key_current,
-         result_file,
-         trial_number
-       ) do
-    Logger.debug(
-      "Start ==========> partition key: #{partition_key_current} <=========="
-    )
-
-    measurement_data_start = create_result_measuring_point_start(
-      "query",
-      measurement_data
-    )
-    #    IO.inspect(measurement_data_start, label: "measurement_data_start - partition key: #{partition_key_current}")
-
-    case config["benchmark.core.multiplier"] do
-      "0" ->
-        select(
-          bulk_data_partitions[partition_key - 1],
-          connections[1],
-          partition_key,
-          config["sql.select"]
-        )
-      _ ->
-        select(
-          bulk_data_partitions[partition_key - 1],
-          connections[partition_key],
-          partition_key,
-          config["sql.select"]
-        )
-    end
-
-    measurement_data_end = create_result_measuring_point_end(
-      "query",
-      config,
-      driver,
-      measurement_data_start,
-      result_file,
-      "select",
-      config["sql.select"],
-      trial_number
-    )
-    #    IO.inspect(measurement_data_end, label: "measurement_data_end - partition key: #{partition_key_current}")
-
-    run_select(
-      bulk_data_partitions,
-      config,
-      connections,
-      driver,
-      measurement_data_end,
-      partition_key - 1,
-      partition_key_current + 1,
-      result_file,
-      trial_number
-    )
-  end
-
-  # ----------------------------------------------------------------------------------------------
-  # Performing the trials - JamDB Oracle.
-  # ----------------------------------------------------------------------------------------------
-
-  defp run_trial_jamdb_oracle(
-         _bulk_data_partitions,
-         _config,
-         _connections,
-         _driver,
-         measurement_data,
-         _result_file,
-         0,
-         _trial_number_current
-       ) do
-    Logger.debug("Start ==========> final <==========")
-
-    #    IO.inspect(measurement_data, label: "measurement_data - final")
-    measurement_data
-  end
-
-  defp run_trial_jamdb_oracle(
-         bulk_data_partitions,
-         config,
-         connections,
-         driver,
-         measurement_data,
-         result_file,
-         trial_number,
-         trial_number_current
-       ) do
-    Logger.debug(
-      "Start ==========> trial no.: #{trial_number_current} <=========="
-    )
-
-    measurement_data_start = create_result_measuring_point_start(
-      "trial",
-      measurement_data
-    )
-    #    IO.inspect(measurement_data_start, label: "measurement_data_start - trial no.: #{trial_number_current}")
-
-    Logger.info("Start ==========> trial no. #{trial_number_current}")
-
-    sql_create = %Jamdb.Oracle.Query{statement: config["sql.create"]}
-    sql_drop = %Jamdb.Oracle.Query{statement: config["sql.drop"]}
-    IO.inspect(connections[1], label: "connections[1]")
-    Logger.info("wwe_017")
-    IO.inspect(sql_create, label: "sql_create")
-    Logger.info("wwe_018")
-
-    try do
-      Logger.info("wwe_019")
-      case DBConnection.prepare_execute(connections[1], sql_create, []) do
-      {:ok, Result} ->
-        Logger.info("wwe_020")
-        DBConnection.close(connections[1], sql_create)
-      _ ->
-        Logger.info("wwe_021")
-        {:ok, Result} = DBConnection.prepare_execute(
-          connections[1],
-          sql_drop,
-          []
-        )
-        DBConnection.close(connections[1], sql_drop)
-        {:ok, Result} = DBConnection.prepare_execute(
-          connections[1],
-          sql_create,
-          []
-        )
-        DBConnection.close(connections[1], sql_create)
-        Logger.debug(~s(Last DDL statement after DROP=#{config["sql.create"]}))
-    end
-    catch
-      e  ->       IO.inspect e
-    end
-    IO.inspect(:ok, label: "created")
-    
-    measurement_data_insert = run_insert(
-      bulk_data_partitions,
-      config,
-      connections,
-      driver,
-      measurement_data_start,
-      String.to_integer(config["benchmark.number.partitions"]),
-      1,
-      result_file,
-      trial_number_current
-    )
-    #    IO.inspect(measurement_data_insert, label: "measurement_data_insert - trial no.: #{trial_number_current}")
-
-    measurement_data_select = run_select(
-      bulk_data_partitions,
-      config,
-      connections,
-      driver,
-      measurement_data_insert,
-      String.to_integer(config["benchmark.number.partitions"]),
-      1,
-      result_file,
-      trial_number_current
-    )
-    #    IO.inspect(measurement_data_select, label: "measurement_data_select - trial no.: #{trial_number_current}")
-
-    {:ok, Result} = DBConnection.prepare_execute(
-      connections[1],
-      sql_drop,
-      []
-    )
-    #    DBConnection.close(connections[1], sql_drop)
-    Logger.debug(~s(last DDL statement=#{config["sql.drop"]}))
-
-    measurement_data_end = create_result_measuring_point_end(
-      "trial",
-      config,
-      driver,
-      measurement_data_select,
-      result_file,
-      "",
-      "",
-      trial_number_current
-    )
-    #    IO.inspect(measurement_data_end, label: "measurement_data_end - trial no.: #{trial_number_current}")
-
-    run_trial_jamdb_oracle(
-      bulk_data_partitions,
-      config,
-      connections,
-      driver,
-      measurement_data_end,
-      result_file,
-      trial_number - 1,
-      trial_number_current + 1
-    )
-  end
-
-  # ----------------------------------------------------------------------------------------------
-  # Performing the trials - OraLixir.
-  # ----------------------------------------------------------------------------------------------
-
-  defp run_trial_oralixir(
-         _bulk_data_partitions,
-         _config,
-         _connections,
-         _driver,
-         measurement_data,
-         _result_file,
-         0,
-         _trial_number_current
-       ) do
-    Logger.debug("Start ==========> final <==========")
-
-    #    IO.inspect(measurement_data, label: "measurement_data - final")
-    measurement_data
-  end
-
-  defp run_trial_oralixir(
-         bulk_data_partitions,
-         config,
-         connections,
-         driver,
-         measurement_data,
-         result_file,
-         trial_number,
-         trial_number_current
-       ) do
-    Logger.debug(
-      "Start ==========> trial no.: #{trial_number_current} <=========="
-    )
-
-    measurement_data_start = create_result_measuring_point_start(
-      "trial",
-      measurement_data
-    )
-    #    IO.inspect(measurement_data_start, label: "measurement_data_start - trial no.: #{trial_number_current}")
-
-    Logger.info("Start ==========> trial no. #{trial_number_current}")
-
-    sql_create = config["sql.create"]
-    sql_drop = config["sql.drop"]
-
-    case OraLixir.prepare_execute(connections[1], "", sql_create, [], []) do
-      {:ok, Result} -> nil
-      #        OraLixir.close(connections[1], sql_create)
-      _ ->
-        {:ok, Result} = OraLixir.prepare_execute(
-          connections[1],
-          "",
-          sql_drop,
-          [],
-          []
-        )
-        #        OraLixir.close(connections[1], sql_drop)
-        {:ok, Result} = OraLixir.prepare_execute(
-          connections[1],
-          "",
-          sql_create,
-          [],
-          []
-        )
-        #        OraLixir.close(connections[1], sql_create)
-        Logger.debug(~s(Last DDL statement after DROP=#{config["sql.create"]}))
-    end
-
-    measurement_data_insert = run_insert(
-      bulk_data_partitions,
-      config,
-      connections,
-      driver,
-      measurement_data_start,
-      String.to_integer(config["benchmark.number.partitions"]),
-      1,
-      result_file,
-      trial_number_current
-    )
-    #    IO.inspect(measurement_data_insert, label: "measurement_data_insert - trial no.: #{trial_number_current}")
-
-    measurement_data_select = run_select(
-      bulk_data_partitions,
-      config,
-      connections,
-      driver,
-      measurement_data_insert,
-      String.to_integer(config["benchmark.number.partitions"]),
-      1,
-      result_file,
-      trial_number_current
-    )
-    #    IO.inspect(measurement_data_select, label: "measurement_data_select - trial no.: #{trial_number_current}")
-
-    {:ok, Result} = OraLixir.prepare_execute(
-      connections[1],
-      "",
-      sql_drop,
-      [],
-      []
-    )
-    #    OraLixir.close(connections[1], sql_drop)
-    Logger.debug(~s(last DDL statement=#{config["sql.drop"]}))
-
-    measurement_data_end = create_result_measuring_point_end(
-      "trial",
-      config,
-      driver,
-      measurement_data_select,
-      result_file,
-      "",
-      "",
-      trial_number_current
-    )
-    #    IO.inspect(measurement_data_end, label: "measurement_data_end - trial no.: #{trial_number_current}")
-
-    run_trial_oralixir(
-      bulk_data_partitions,
-      config,
-      connections,
-      driver,
-      measurement_data_end,
-      result_file,
-      trial_number - 1,
-      trial_number_current + 1
-    )
-  end
-
-  # ----------------------------------------------------------------------------------------------
-  # Performing the select operations.
-  # ----------------------------------------------------------------------------------------------
-
-  defp select(
-         _bulk_size_partition,
-         _connection,
-         partition_key,
-         _sql_statement
-       ) do
-    Logger.debug(
-      "Start ==========> partition key: #{partition_key} <=========="
-    )
-
-    _count = 0
-    #     cursor.execute(sql_statement + ' where partition_key = ' + str(partition_key))
-    #
-    #     for _ in cursor:
-    #         count += 1
-    #
-    #     if count != len(bulk_size_partition):
-    #         logging.error('Number rows: expected=' + str(len(bulk_size_partition)) + ' - found=' + str(count))
-    #         sys.exit(1)
-
   end
 end

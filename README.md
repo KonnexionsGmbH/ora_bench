@@ -8,8 +8,9 @@
 **[2. Framework Tools](#framework_tools)**<br>
 **[3. Coding Pattern](#coding_pattern)**<br>
 **[4. Driver Specific Features](#driver_specifica)**<br>
-**[5. ToDo List](#todo_list)**<br>
-**[6. Contributing](#contributing)**<br>
+**[5. Reporting](#reporting)**<br>
+**[6. ToDo List](#todo_list)**<br>
+**[7. Contributing](#contributing)**<br>
 
 ----
 
@@ -20,11 +21,13 @@ The framework parameters for a benchmark run are stored in a central configurati
 
 The currently supported database drivers are:
 
-| Driver    | Programming Language |
-| :---      | :---   |
-| cx_Oracle | Python |
-| JDBC      | Java   |
-| oranif    | Erlang |
+| Driver    | Programming Languages |
+| :---      | :---                  |
+| cx_Oracle | Python                |
+| JamDB    | Elixir &amp; Erlang   |
+| JDBC      | Java                  |
+| ODPI      | C                  |
+| oranif    | Elixir &amp; Erlang   |
 
 The following Oracle database versions are provided in a benchmark run via Docker Container:
 
@@ -59,8 +62,16 @@ All the file names specified here are also part of the configuration file and ca
 ##### 2.2.1.1.1 Windows Platform
 
 - Docker Desktop for Windows from [here](https://www.docker.com/products/docker-desktop)
-- Java SE Development Kit, e.g. Version 11 from [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
+
 - Make for Windows from [here](http://gnuwin32.sourceforge.net/packages/make.htm)
+
+- Oracle Instant Client from [here](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
+
+- Erlang from [here](https://www.erlang.org/downloads/)
+- Elixir from [here](https://elixir-lang.org/install.html#windows)
+
+- Java SE Development Kit, e.g. Version 11 from [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
+
 - Python 3 from [here](https://www.python.org/downloads/)
 
 ##### 2.2.1.1.2 Windows Subsystem for Linux (WSL 2 and Ubuntu 18.04 LTS)
@@ -69,11 +80,20 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
 
 ##### 2.2.1.1.3 Linux Platform
 
-- Java SE Development Kit, e.g. `sudo apt install default-jdk`
 - Oracle Instant Client, e.g.
     - `sudo apt-get install alien`
     - `sudo alien priv/oracle/oracle-instantclient19.3-basiclite-19.3.0.0.0-1.x86_64.rpm`
     - `sudo dpkg -i oracle-instantclient19.3-basiclite_19.3.0.0.0-2_amd64.deb`
+
+- Erlang
+    - `sudo apt -y install erlang`
+- Elixir
+    - `sudo apt install elixir`
+    - `mix local.hex`
+
+- Java SE Development Kit, e.g.
+    - `sudo apt install default-jdk`
+
 - Python 3, e.g.:
     - `sudo apt install software-properties-common`
     - `sudo add-apt-repository -y ppa:deadsnakes/ppa`
@@ -138,7 +158,7 @@ This script also prepares the database for the benchmark run including the follo
 Finally the following child scripts are running:
 
 - `run_bench_setup.sh`
-- all driver and programming language related scripts, like for example: `run_bench_jdbc_java.sh`
+- all driver and programming language related scripts, like for example: `run_bench_jdbc.sh`
 - `run_bench_finalise.sh`
 
 ##### 2.2.1.5 `run_bench_database_series.sh`
@@ -151,7 +171,7 @@ This scripts is used to create a bulk file (see chapter 2.4).
 
 ##### 2.2.1.7 `run_bench_<driver>_<programming language>.sh`
 
-The driver and programming language related scripts, such as `run_bench_jdbc_java.sh`, first execute the insert statements and then the select statements in each trial with the bulk file.
+The driver and programming language related scripts, such as `run_bench_jdbc.sh`, first execute the insert statements and then the select statements in each trial with the bulk file.
 The time consumed is captured and recorded in result files.
 
 ##### 2.2.1.8 `run_bench_finalise.sh`
@@ -162,7 +182,7 @@ In this script, OraBench.java is used to reset the following configuration param
 - `benchmark.database`
 - `benchmark.driver`
 - `benchmark.environment`
-- `benchmark.module`
+- `benchmark.language`
 - `connection.service`
 
 #### 2.2.2 Travis CI
@@ -194,6 +214,7 @@ Otherwise, the new current results are appended to existing results.
 
 | Column            | Format                          | Content |
 | :---              | :---                            | :--- |
+| ora_bench release | alphanumeric                    | config param `benchmark.release` |
 | benchmark id      | alphanumeric                    | config param `benchmark.id` |
 | benchmark comment | alphanumeric                    | config param `benchmark.comment` |
 | host name         | alphanumeric                    | config param `benchmark.host.name` |
@@ -201,7 +222,7 @@ Otherwise, the new current results are appended to existing results.
 | os                | alphanumeric                    | config param `benchmark.os` |
 | user name         | alphanumeric                    | config param `benchmark.user.name` |
 | database          | alphanumeric                    | config param `benchmark.database` |
-| module            | alphanumeric                    | config param `benchmark.module` |
+| language          | alphanumeric                    | config param `benchmark.language` |
 | driver            | alphanumeric                    | config param `benchmark.driver` |
 | trial no.         | integer                         | `0` if action equals `benchmark`, trial no. otherwise |
 | SQL statement     | alphanumeric                    | SQL statement if action equals `query`, empty otherwise |
@@ -318,10 +339,8 @@ The data column in the bulk file is randomly generated with a unique key column 
         WHILE iterating through the collection bulk_data_partition
             count + 1
             
-            IF config_param 'benchmark.batch.size' = 0
-                execute the SQL statement in config param 'sql.insert' with the current bulk_data entry 
-            ELSE
-                add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection 
+            add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection 
+            IF config_param 'benchmark.batch.size' > 0
                 IF count modulo config param 'benchmark.batch.size' = 0 
                     execute the SQL statements in the collection batch_collection
                     batch_collection = empty
@@ -333,13 +352,11 @@ The data column in the bulk file is randomly generated with a unique key column 
             ENDIF    
         ENDWHILE
 
-        IF config param 'benchmark.batch.size' > 0 AND collection batch_collection is not empty
+        IF collection batch_collection is not empty
             execute the SQL statements in the collection batch_collection
         ENDIF
 
-        IF config param 'benchmark.transaction.size' > 0 AND NOT count modulo config param 'benchmark.transaction.size' = 0
-            commit
-        ENDIF
+        commit
 ```
 
 ### 3.5 `Select Control Function`
@@ -392,7 +409,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 - the following data in the configuration parameters is determined at runtime: 
 -- cx_Oracle version (`benchmark.driver`) and
--- Python version (`benchmark.module`). 
+-- Python version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.cx_oracle.python`) 
 - Python uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
 - the fetch size (`connection.fetch.size`) 
@@ -405,7 +422,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 -- benchmark identifier (`benchmark.id`),
 -- host name (`benchmark.host.name`), 
 -- number of cores (`benchmark.number.cores`), 
--- JRE version (`benchmark.module`), 
+-- JRE version (`benchmark.language`), 
 -- operating system environment (`benchmark.os`), 
 -- user name (`benchmark.user.name`) and 
 -- SQL create statement (`sql.create`). 
@@ -414,7 +431,11 @@ The data column in the bulk file is randomly generated with a unique key column 
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
-## 5 <a name="todo_list"></a> ToDo List
+## 5 <a name="reporting"> Reporting
+
+[see here](https://konnexionsgmbh.github.io/ora_bench/)
+
+## 6 <a name="todo_list"></a> ToDo List
 
 | Completed  | Created    | Assignee | Task Description |
 | :---:      | :---:      | :---     | :--- |
@@ -422,8 +443,12 @@ The data column in the bulk file is randomly generated with a unique key column 
 |            | 2019.11.05 | c_bik    | occi_c++: new |
 |            | 2019.11.05 | c_bik    | odbc_erlang: new |
 |            | 2019.11.05 | c_bik    | odpi-c_c: new |
-| 2019.12.23 | 2019.11.05 | c_bik    | oranif_erlang: new |
-|  prio. 4   | 2019.11.21 | wwe      | ecto_elixir: new |
+|            | 2019.11.05 | wwe      | jamdb_elixir: new |
+|            | 2020.01.08 | c_bik    | benchmark.batch.size=0 |
+|            | 2020.01.08 | c_bik    | plot: diagram types: bar graph & function graph |
+|            | 2020.01.08 | c_bik    | plot: object database version - selection driver & language, operation, ora_bench release, trial no.  |
+|            | 2020.01.08 | c_bik    | plot: object driver & language - selection database version, operation, ora_bench release, trial no.  |
+|            | 2020.01.08 | c_bik    | script run_bench_travis_push.sh append mode |
 | 2019.11.05 | 2019.11.05 | wwe      | jdbc_java: dynamic batchsize | 
 | 2019.11.06 | 2019.11.05 | wwe      | all: separating key column and data column |
 | 2019.11.06 | 2019.11.05 | wwe      | jdbc_java: finishing with summary report |
@@ -441,18 +466,20 @@ The data column in the bulk file is randomly generated with a unique key column 
 | 2019.11.21 | 2019.11.19 | wwe      | jdbc_java: benchmark.transaction.size = 0 |
 | 2019.11.21 | 2019.11.21 | wwe      | all: detailed result file -> result file |
 | 2019.11.21 | 2019.11.21 | wwe      | all: new config param: connection.fetch.size |
-| 2019.11.21 | 2019.11.21 | wwe      | all: new config params: benchmark.host.name, benchmark.id & benchmark.user.name |
+| 2019.11.21 | 2019.11.21 | wwe      | all: new config params: benchmark.host.name, benchmark.id &amp; benchmark.user.name |
 | 2019.11.21 | 2019.11.21 | wwe      | all: remove statistical results file |
 | 2019.11.21 | 2019.11.21 | wwe      | all: result file - date format: yyyy-mm-dd hh24:mi:ss.ffffffff |
 | 2019.11.23 | 2019.11.21 | wwe      | documentation: pseudocode |
 | 2019.11.30 | 2019.11.19 | wwe      | cx_oracle_python: connection pooling |
 | 2019.11.30 | 2019.11.19 | wwe      | cx_oracle_python: multithreading |
+| 2019.12.23 | 2019.11.05 | c_bik    | oranif_erlang: new |
+| 2020.01.07 | 2019.11.21 | wwe      | oranif_elixir: new |
 | rejected   | 2019.11.05 | wwe      | all: partitioned table ??? |
 | rejected   | 2019.11.21 | c_bik    | setup: define new c ini file format |
 | rejected   | 2019.11.21 | c_bik    | upload to GitHub from Travis CI: authentication method |
 | rejected   | 2019.11.21 | wwe      | setup: c script-> new c ini file |
 
-## 6. <a name="contributing"></a> Contributing
+## 7. <a name="contributing"></a> Contributing
 
 1. fork it
 2. create your feature branch (`git checkout -b my-new-feature`)

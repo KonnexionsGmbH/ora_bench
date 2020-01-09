@@ -2,7 +2,7 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_database.bat: Oracle benchmark for a speci)c database version.
+rem run_bench_database.bat: Oracle benchmark for a specific database version.
 rem
 rem ------------------------------------------------------------------------------
 
@@ -28,8 +28,17 @@ if ["%ORA_BENCH_PASSWORD_SYS%"] EQU [""] (
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 )
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU [""] (
+    set ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
+)
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU [""] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
+)
+if ["%ORA_BENCH_RUN_ODPI_C%"] EQU [""] (
+    set ORA_BENCH_RUN_ODPI_C=true
+)
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU [""] (
+    set ORA_BENCH_RUN_ORANIF_ELIXIR=true
 )
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
@@ -40,7 +49,7 @@ set ORA_BENCH_CONNECT_IDENTIFIER=//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNEC
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - speci)c database.
+echo ora_bench - Oracle benchmark - specific database.
 echo --------------------------------------------------------------------------------
 echo BENCHMARK_DATABASE         : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST            : %ORA_BENCH_CONNECTION_HOST%
@@ -53,7 +62,10 @@ echo BENCHMARK_CORE_MULTIPLIER  : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
 echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
+echo RUN_JAMDB_ORACLE_ELIXIR    : %ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%
 echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
+echo RUN_ODPI_C                 : %ORA_BENCH_RUN_ODPI_C%
+echo RUN_ORANIF_ELIXIR          : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------
 echo CONNECT_IDENTIFIER         : %ORA_BENCH_CONNECT_IDENTIFIER%
@@ -77,20 +89,51 @@ if NOT ["%DOCKER_HEALTH_STATUS%"] == ["healthy"] (
 )
 
 priv\oracle\instantclient-windows.x64\instantclient_19_5\sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@%ORA_BENCH_CONNECT_IDENTIFIER% AS SYSDBA @scripts/run_bench_database.sql
+if %ERRORLEVEL% NEQ 0 (
+    GOTO EndOfScript
+)
 
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
-    call scripts\run_bench_cx_oracle_python.bat
+    call src_python\scripts\run_bench_cx_oracle.bat
+    if %ERRORLEVEL% NEQ 0 (
+        GOTO EndOfScript
+    )
+)
+
+
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU ["true"] (
+    call src_elixir\scripts\run_bench_jamdb_oracle.bat
+    if %ERRORLEVEL% NEQ 0 (
+        GOTO EndOfScript
+    )
 )
 
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
-    call scripts\run_bench_jdbc_java.bat
+    call src_java\scripts\run_bench_jdbc.bat
+    if %ERRORLEVEL% NEQ 0 (
+        GOTO EndOfScript
+    )
+)
+
+if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
+    call src_c\scripts\run_bench_odpi.bat
+    if %ERRORLEVEL% NEQ 0 (
+        GOTO EndOfScript
+    )
+)
+
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
+    call src_elixir\scripts\run_bench_oranif.bat
+    if %ERRORLEVEL% NEQ 0 (
+        GOTO EndOfScript
+    )
 )
 
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
-    call scripts\run_bench_oranif_erlang.bat
+   call  src_erlang\scripts\run_bench_oranif.bat
 )
 
-echo
+:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

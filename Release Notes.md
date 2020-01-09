@@ -6,4 +6,5 @@ Release Date: dd.mm.yyyy
 
 - Database driver Oracle cx_Oracle and programming language Python 
 - Database driver Oracle JDBC and programming language Java 
+- Database driver Oracle oranif and programming language Elixir
 - Database driver Oracle oranif and programming language Erlang 

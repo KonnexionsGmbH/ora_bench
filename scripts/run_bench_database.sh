@@ -28,14 +28,20 @@ fi
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
+if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" ]; then
+    export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
+fi
 if [ -z "$ORA_BENCH_RUN_JDBC_JAVA" ]; then
     export ORA_BENCH_RUN_JDBC_JAVA=true
 fi
-if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
-    export ORA_BENCH_RUN_ORANIF_ERLANG=true
-fi
 if [ -z "$ORA_BENCH_RUN_ODPI_C" ]; then
     export ORA_BENCH_RUN_ODPI_C=true
+fi
+if [ -z "$ORA_BENCH_RUN_ORANIF_ELIXIR" ]; then
+    export ORA_BENCH_RUN_ORANIF_ELIXIR=true
+fi
+if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
+    export ORA_BENCH_RUN_ORANIF_ERLANG=true
 fi
 
 export ORA_BENCH_CONNECT_IDENTIFIER=//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE
@@ -56,9 +62,11 @@ echo "BENCHMARK_CORE_MULTIPLIER  : $ORA_BENCH_BENCHMARK_CORE_MULTIPLIER"
 echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
+echo "RUN_JAMDB_ORACLE_ELIXIR    : $ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
-echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
+echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
+echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
 echo "CONNECT_IDENTIFIER         : $ORA_BENCH_CONNECT_IDENTIFIER"
 echo "--------------------------------------------------------------------------------"
@@ -78,25 +86,51 @@ if [ "$OSTYPE" = "msys" ]; then
 else
   priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_database.sql
 fi  
-
+if [ $? -ne 0 ]; then
+    exit $?
+fi
+    
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
-    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
-    { /bin/bash scripts/run_bench_cx_oracle_python.sh; }
+    { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+
+if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" = "true" ]; then
+    { /bin/bash src_elixir/scripts/run_bench_jamdb_oracle.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
 fi
 
 if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
-    { /bin/bash scripts/run_bench_jdbc_java.sh; }
-fi
-
-if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
-    { /bin/bash scripts/run_bench_oranif_erlang.sh; }
+    { /bin/bash src_java/scripts/run_bench_jdbc.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
 fi
 
 if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
-    { /bin/bash scripts/run_bench_odpi_c.sh; }
+    { /bin/bash src_c/scripts/run_bench_odpi.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
 fi
 
-EXITCODE=$?
+if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
+    { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+
+if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
+    { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -104,5 +138,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

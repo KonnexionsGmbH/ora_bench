@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_jamdb_oracle_elixir.sh: Oracle Benchmark based on Elixir.
+# run_bench_cx_oracle.sh: Oracle Benchmark based on Python.
 #
 # ------------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ fi
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - JamDB Oracle and Elixir."
+echo "ora_bench - Oracle benchmark - cx_Oracle and Python."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
@@ -44,12 +44,13 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
 
-cd src_elixir
-mix deps.get
-mix deps.compile
-mix run -e "OraBench.CLI.main([\"Jamdb.Oracle\"])"
+if [ "$OSTYPE" = "msys" ]; then
+    python src_python/OraBench.py
+else
+    python3 src_python/OraBench.py
+fi
 
 EXITCODE=$?
 

@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_jamdb_oracle_elixir.sh: Oracle Benchmark based on Elixir.
+# run_bench_odpi.sh: Oracle Benchmark based on ODPI-C.
 #
 # ------------------------------------------------------------------------------
 
@@ -18,38 +18,45 @@ fi
 if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
+if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
+    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+fi
+
 if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
-if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    if [ "$OSTYPE" = "msys" ]; then
-        export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
-    else
-        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
-    fi
+
+if [ "$OSTYPE" = "msys" ]; then
+    nmake -f src_c/Makefile.win32 clean
+    nmake -f src_c/Makefile.win32
+else
+    make -f src_c/Makefile clean
+    make -f src_c/Makefile
 fi
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_odpic
 
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - OraLixir and Elixir."
+echo "ora_bench - Oracle benchmark - ODPI-C."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
 echo "CONNECTION_SERVICE      : $ORA_BENCH_CONNECTION_SERVICE"
+echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
+echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
-
-cd src_elixir
-mix deps.get
-mix deps.compile
-mix run -e "OraBench.CLI.main([\"OraLixir\"])"
+if [ "$OSTYPE" = "msys" ]; then
+    ./OraBench.exe priv/properties/ora_bench_odpi_c.properties
+else
+   ./OraBench priv/properties/ora_bench_odpi_c.properties
+fi
 
 EXITCODE=$?
 

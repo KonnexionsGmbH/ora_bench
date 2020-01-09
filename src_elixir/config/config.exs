@@ -10,13 +10,12 @@ config :ora_bench,
        adapter: Ecto.Adapters.Jamdb.Oracle
 
 # Configures Elixir's Logger
-config :logger, level: :debug
+config :logger, level: :info
 config :logger,
        :console,
        backends: [:console],
-       format: "$time $metadata\n[$level] $message\n",
+       format: "$time $metadata [$level] $message\n",
        metadata: [
          :module,
-         :function,
          :line
        ]

@@ -41,7 +41,6 @@ jar cf priv\java_jar\ora_bench.jar -C .\src_java ch
 
 java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup
 
-echo 
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

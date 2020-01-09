@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_cx_oracle_python.sh: Oracle Benchmark based on Python.
+# run_bench_oranif.sh: Oracle Benchmark based on Erlang.
 #
 # ------------------------------------------------------------------------------
 
@@ -22,17 +22,13 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    if [ "$OSTYPE" = "msys" ]; then
-        export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
-    else
-        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
-    fi
+    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"    
 fi
 
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - cx_Oracle and Python."
+echo "ora_bench - Oracle benchmark - oranif and Erlang."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
@@ -44,13 +40,13 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
 
-if [ "$OSTYPE" = "msys" ]; then
-    python src_python/OraBench.py
-else
-    python3 src_python/OraBench.py
-fi
+cd src_erlang
+rebar3 escriptize
+cd ..
+
+src_erlang/_build/default/bin/orabench priv/properties/ora_bench_oranif_erlang.properties
 
 EXITCODE=$?
 
