@@ -24,13 +24,11 @@ before_install:
   - sudo apt install software-properties-common
   # Elixir -----------------------------------------------------------------------
   - git clone https://github.com/asdf-vm/asdf.git ~/.asdf
-  - pwd
   - cd ~/.asdf
   - git checkout "$(git describe --abbrev=0 --tags)"
   - echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
   - echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
   - cd /home/travis/build/KonnexionsGmbH/ora_bench
-  - pwd
 # - sudo apt install automake autoconf libreadline-dev libncurses-dev libssl-dev libyaml-dev libxslt-dev libffi-dev libtool unixodbc-dev unzip curl
   - . ~/.bashrc
   - asdf plugin-add Elixir https://github.com/asdf-vm/asdf-elixir
@@ -40,14 +38,13 @@ before_install:
   - mix local.hex --force
   - mix local.rebar --force
   - rebar3 version
-  - set
   # Java -------------------------------------------------------------------------
   - sudo apt install default-jdk
   - java -version
   # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
   - sudo apt-get install libaio1
-  - export LD_LIBRARY_PATH=priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH
-  - sudo chmod +x priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus
+  - export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH
+  - sudo chmod +x $PWD/priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus
   # Python -----------------------------------------------------------------------
   - sudo add-apt-repository -y ppa:deadsnakes/ppa
   - sudo apt install python3
