@@ -23,8 +23,20 @@ before_install:
   - sudo apt update
   - sudo apt install software-properties-common
   # Elixir -----------------------------------------------------------------------
-  - sudo apt-cache madison elixir
-  - sudo apt install elixir=1.8.2
+  - git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+  - pwd
+  - cd ~/.asdf
+  - git checkout "$(git describe --abbrev=0 --tags)"
+  - echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+  - echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+  - pwd
+  - sudo apt install \
+    automake autoconf libreadline-dev \
+    libncurses-dev libssl-dev libyaml-dev \
+    libxslt-dev libffi-dev libtool unixodbc-dev \
+    unzip curl
+  - asdf plugin-add Elixir
+  - asdf install Elixir 1.9.4   
   - elixir -v
   - mix local.hex --force
   - mix local.rebar --force
