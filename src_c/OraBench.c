@@ -324,7 +324,7 @@ int main(const int argc, const char *argv[])
         (LONGLONG)(maxDurationSelect / 1000000), maxDurationSelect * 1000
 #else
         strStart, minStart.tv_nsec, strEnd, maxEnd.tv_nsec,
-        maxDurationSelect.tv_sec, maxDurationSelect.tv_nsec
+        maxDurationSelect / 1000000000, maxDurationSelect
 #endif
     );
 
@@ -339,8 +339,8 @@ int main(const int argc, const char *argv[])
     localtime_r(&trialEnd.tv_sec, &trialEndTm);
     strftime(strStart, 32, "%Y-%m-%d %H:%M:%S", &trialStartTm);
     strftime(strEnd, 32, "%Y-%m-%d %H:%M:%S", &trialEndTm);
-    elapsed.tv_sec = trialEnd.tv_sec - trialStart.tv_sec;
-    elapsed.tv_nsec = trialEnd.tv_nsec - trialStart.tv_nsec;
+    elapsed = (trialEnd.tv_sec - trialStart.tv_sec) * 1000000000;
+    elapsed += trialEnd.tv_nsec - trialStart.tv_nsec;
 #endif
     fprintf(
         rfp, resultFmt, t, "", "trial",
@@ -353,8 +353,8 @@ int main(const int argc, const char *argv[])
         trialEndSys.wMilliseconds * 1000000,
         (LONGLONG)(elapsed.QuadPart / 1000000), elapsed.QuadPart * 1000
 #else
-        strStart, trialStart.tv_nsec, strEnd, trialEnd.tv_nsec, elapsed.tv_sec,
-        elapsed.tv_nsec
+        strStart, trialStart.tv_nsec, strEnd, trialEnd.tv_nsec,
+        elapsed / 1000000000, elapsed
 #endif
     );
     char error = 0;
@@ -385,8 +385,8 @@ int main(const int argc, const char *argv[])
   localtime_r(&benchmarkEnd.tv_sec, &benchmarkEndTm);
   strftime(strStart, 32, "%Y-%m-%d %H:%M:%S", &benchmarkStartTm);
   strftime(strEnd, 32, "%Y-%m-%d %H:%M:%S", &benchmarkEndTm);
-  elapsed.tv_sec = benchmarkEnd.tv_sec - benchmarkStart.tv_sec;
-  elapsed.tv_nsec = benchmarkEnd.tv_nsec - benchmarkStart.tv_nsec;
+  elapsed = (benchmarkEnd.tv_sec - benchmarkStart.tv_sec) * 1000000000;
+  elapsed += benchmarkEnd.tv_nsec - benchmarkStart.tv_nsec;
 #endif
   fprintf(
       rfp, resultFmt, 0, "", "benchmark",
@@ -400,7 +400,7 @@ int main(const int argc, const char *argv[])
       (LONGLONG)(elapsed.QuadPart / 1000000), elapsed.QuadPart * 1000
 #else
       strStart, benchmarkStart.tv_nsec, strEnd, benchmarkEnd.tv_nsec,
-      elapsed.tv_sec, elapsed.tv_nsec
+      elapsed / 1000000000, elapsed
 #endif
   );
   L("End %s\n", __FILE__);
