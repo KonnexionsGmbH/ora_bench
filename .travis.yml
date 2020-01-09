@@ -39,7 +39,7 @@ before_install:
   - elixir -v
   - mix local.hex --force
   - mix local.rebar --force
-  - ldconfig
+  - sudo ldconfig
   - rebar3 version
   # Java -------------------------------------------------------------------------
   - sudo apt install default-jdk
