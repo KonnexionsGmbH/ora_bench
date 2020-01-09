@@ -219,15 +219,6 @@ int main(const int argc, const char *argv[])
         maxEnd = ta[i].end;
 #endif
     }
-    /*L(
-        "Trial {%d} insert duration: %llu s, %llu ns\n"
-        "\tstart: %04d-%02d-%02d %02d:%02d:%02d.%09d\n"
-        "\tend: %04d-%02d-%02d %02d:%02d:%02d.%09d\n",
-        t, (LONGLONG)(maxDurationInsert / 1000000), maxDurationInsert * 1000,
-        minStartSys.wYear, minStartSys.wMonth, minStartSys.wDay, minStartSys.wHour,
-        minStartSys.wMinute, minStartSys.wSecond, minStartSys.wMilliseconds * 1000000,
-        minEndSys.wYear, minEndSys.wMonth, minEndSys.wDay, minEndSys.wHour,
-        minEndSys.wMinute, minEndSys.wSecond, minEndSys.wMilliseconds * 1000000);*/
 #ifdef W32
     FileTimeToSystemTime(&minStart, &minStartSys);
     FileTimeToSystemTime(&maxEnd, &minEndSys);
@@ -315,15 +306,6 @@ int main(const int argc, const char *argv[])
     if (clock_gettime(CLOCK_REALTIME, &trialEnd))
       L("ERROR clock_gettime(CLOCK_REALTIME, &trialEnd)\n");
 #endif
-      /*L(
-        "Trial {%d} select duration: %llu s, %llu ns\n"
-        "\tstart: %04d-%02d-%02d %02d:%02d:%02d.%09d\n"
-        "\tend: %04d-%02d-%02d %02d:%02d:%02d.%09d\n",
-        t, (LONGLONG)(maxDurationSelect / 1000000), maxDurationSelect * 1000,
-        minStartSys.wYear, minStartSys.wMonth, minStartSys.wDay, minStartSys.wHour,
-        minStartSys.wMinute, minStartSys.wSecond, minStartSys.wMilliseconds * 1000000,
-        minEndSys.wYear, minEndSys.wMonth, minEndSys.wDay, minEndSys.wHour,
-        minEndSys.wMinute, minEndSys.wSecond, minEndSys.wMilliseconds * 1000000);*/
 #ifdef W32
     FileTimeToSystemTime(&minStart, &minStartSys);
     FileTimeToSystemTime(&maxEnd, &minEndSys);
