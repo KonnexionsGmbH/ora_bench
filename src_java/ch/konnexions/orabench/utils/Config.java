@@ -37,10 +37,11 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>benchmark.driver
  * <li>benchmark.host.name
  * <li>benchmark.id
- * <li>benchmark.module
+ * <li>benchmark.language
  * <li>benchmark.number.cores
  * <li>benchmark.number.partitions
  * <li>benchmark.os
+ * <li>benchmark.release
  * <li>benchmark.transaction.size
  * <li>benchmark.trials
  * <li>benchmark.user.name
@@ -79,10 +80,11 @@ public class Config {
     private String benchmarkDriver;
     private String benchmarkHostName;
     private String benchmarkId;
-    private String benchmarkModule;
+    private String benchmarkLanguage;
     private String benchmarkNumberCores;
     private int benchmarkNumberPartitions;
     private String benchmarkOs;
+    private String benchmarkRelease;
     private int benchmarkTransactionSize;
     private int benchmarkTrials;
     private String benchmarkUserName;
@@ -230,8 +232,6 @@ public class Config {
     public final void createConfigurationFileOdpiC() {
 
         try {
-            List<String> list = getNumericProperties();
-
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOdpiC(), false));
 
             String value;
@@ -317,11 +317,10 @@ public class Config {
     }
 
     /**
-     * @return the applied module name its programming language with name and
-     *         version
+     * @return the applied programming language with name and version
      */
-    public final String getBenchmarkModule() {
-        return benchmarkModule;
+    public final String getBenchmarkLanguage() {
+        return benchmarkLanguage;
     }
 
     /**
@@ -343,6 +342,13 @@ public class Config {
      */
     public final String getBenchmarkOs() {
         return benchmarkOs;
+    }
+
+    /**
+     * @return the ora_bench release no.
+     */
+    public final String getBenchmarkRelease() {
+        return benchmarkRelease;
     }
 
     /**
@@ -520,7 +526,7 @@ public class Config {
         list.add("benchmark.driver");
         list.add("benchmark.host.name");
         list.add("benchmark.id");
-        list.add("benchmark.module");
+        list.add("benchmark.language");
         list.add("benchmark.number.cores");
         list.add("benchmark.os");
         list.add("benchmark.user.name");
@@ -649,6 +655,7 @@ public class Config {
         benchmarkNumberCores = propertiesConfiguration.getString("benchmark.number.cores");
         benchmarkNumberPartitions = propertiesConfiguration.getInt("benchmark.number.partitions");
         benchmarkOs = propertiesConfiguration.getString("benchmark.os");
+        benchmarkRelease = propertiesConfiguration.getString("benchmark.release");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
         benchmarkTrials = propertiesConfiguration.getInt("benchmark.trials");
         benchmarkUserName = propertiesConfiguration.getString("benchmark.user.name");
@@ -678,7 +685,7 @@ public class Config {
         sqlInsert = propertiesConfiguration.getString("sql.insert");
         sqlSelect = propertiesConfiguration.getString("sql.select");
 
-        benchmarkModule = "OraBench (Java " + System.getProperty("java.version") + ")";
+        benchmarkLanguage = "Java " + System.getProperty("java.version");
     }
 
     private final void updatePropertiesFromOs() {
@@ -813,6 +820,12 @@ public class Config {
         if (benchmarkOs.equals("n/a")) {
             benchmarkOs = System.getProperty("os.arch") + " / " + System.getProperty("os.name") + " / " + System.getProperty("os.version");
             propertiesConfiguration.setProperty("benchmark.os", benchmarkOs);
+            isChanged = true;
+        }
+
+        if (benchmarkRelease.equals("n/a")) {
+            benchmarkRelease = System.getProperty("benchmark.release");
+            propertiesConfiguration.setProperty("benchmark.release", benchmarkRelease);
             isChanged = true;
         }
 
