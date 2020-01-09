@@ -35,6 +35,7 @@ before_install:
   - . ~/.bashrc
   - asdf plugin-add Elixir https://github.com/asdf-vm/asdf-elixir
   - asdf install Elixir 1.9.4   
+  - asdf global Elixir 1.9.4
   - elixir -v
   - mix local.hex --force
   - mix local.rebar --force
