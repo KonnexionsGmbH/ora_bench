@@ -75,11 +75,13 @@ echo "==========================================================================
 
 EXITCODE="0"
 
+date +"DOCKER Start : %d.%m.%Y %H:%M:%S"
 docker stop ora_bench_db
 docker rm -f ora_bench_db
 docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/$ORA_BENCH_BENCHMARK_DATABASE
 docker start ora_bench_db
 while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
+date +"DOCKER Ready: %d.%m.%Y %H:%M:%S"
 
 if [ "$OSTYPE" = "msys" ]; then
   priv/oracle/instantclient-windows.x64/instantclient_19_5/sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_database.sql

@@ -217,10 +217,12 @@ int main(const int argc, const char *argv[])
           (ta[i].end.tv_sec == maxEnd.tv_sec &&
            ta[i].end.tv_nsec > maxEnd.tv_nsec))
         maxEnd = ta[i].end;
+      unsigned int es = ta[i].end.tv_sec - ta[i].start.tv_sec;
+      unsigned long long int ens = es * 1000000000 + ta[i].end.tv_nsec - ta[i].start.tv_nsec;
       L(
-          "\tInsert(%d) %ld / %ld -> %ld / %ld\n",
+          "\tInsert(%d) %ld / %ld -> %ld / %ld (%u sec, %llu nsec)\n",
           i, ta[i].start.tv_sec, ta[i].start.tv_nsec, ta[i].end.tv_sec,
-          ta[i].end.tv_nsec);
+          ta[i].end.tv_nsec, es, ens);
 #endif
     }
 #ifdef W32
@@ -300,10 +302,12 @@ int main(const int argc, const char *argv[])
           (ta[i].end.tv_sec == maxEnd.tv_sec &&
            ta[i].end.tv_nsec > maxEnd.tv_nsec))
         maxEnd = ta[i].end;
+      unsigned int es = ta[i].end.tv_sec - ta[i].start.tv_sec;
+      unsigned long long int ens = es * 1000000000 + ta[i].end.tv_nsec - ta[i].start.tv_nsec;
       L(
-          "\tSelect(%d) %ld / %ld -> %ld / %ld\n",
+          "\tSelect(%d) %ld / %ld -> %ld / %ld (%u sec, %llu nsec)\n",
           i, ta[i].start.tv_sec, ta[i].start.tv_nsec, ta[i].end.tv_sec,
-          ta[i].end.tv_nsec);
+          ta[i].end.tv_nsec, es, ens);
 #endif
     }
 #ifdef W32
