@@ -13,6 +13,7 @@ char *benchmarkId;
 int benchmarkNumberCores;
 int benchmarkNumberPartitions;
 char *benchmarkOs;
+char *benchmarkRelease;
 int benchmarkTransactionSize;
 int benchmarkTrials;
 char *benchmarkUserName;
@@ -119,6 +120,8 @@ void load_config(const char *file)
         CONF_INT_CP(benchmarkNumberPartitions)
       else if
         CONF_STR_CP(benchmarkOs)
+      else if
+        CONF_STR_CP(benchmarkRelease)
       else if
         CONF_INT_CP(benchmarkTransactionSize)
       else if

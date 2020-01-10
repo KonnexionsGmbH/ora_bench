@@ -10,6 +10,7 @@ extern char *benchmarkId;
 extern int benchmarkNumberCores;
 extern int benchmarkNumberPartitions;
 extern char *benchmarkOs;
+extern char *benchmarkRelease;
 extern int benchmarkTransactionSize;
 extern int benchmarkTrials;
 extern char *benchmarkUserName;

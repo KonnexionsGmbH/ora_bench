@@ -83,14 +83,20 @@ int main(const int argc, const char *argv[])
   char resultFmt[1024];
   sprintf(
       resultFmt,
-      "%s%s"              // benchmark id
-      "%s%s"              // benchmark comment
-      "%s%s"              //	host name
-      "%d%s"              //	no. cores
-      "%s%s"              //	os
-      "%s%s"              //	user name
-      "%s%s"              //	database
-      "OraBench (C)%s"    //	module
+      "%s%s" // release
+      "%s%s" // benchmark id
+      "%s%s" // benchmark comment
+      "%s%s" //	host name
+      "%d%s" //	no. cores
+      "%s%s" //	os
+      "%s%s" //	user name
+      "%s%s" //	database
+#ifdef WIN32
+      "cl %d%s" //	language
+#else
+      "gnu %d.%d.%d%s" //	language
+#endif
+
       "OCPI-C (v3.2.2)%s" //	driver
       "%%d%s"             //	trial no.
       "%%s%s"             //	SQL statement
@@ -107,12 +113,13 @@ int main(const int argc, const char *argv[])
       "%%llu%s"                                     //	duration (sec)
       "%%llu"                                       //	duration (ns)
 #else
-      "%%s.%%09ld%s" //	start day time
-      "%%s.%%09ld%s" //	end day time
-      "%%lu%s"       //	duration (sec)
-      "%%lu"         //	duration (ns)
+      "%%s.%%09ld%s"   //	start day time
+      "%%s.%%09ld%s"   //	end day time
+      "%%lu%s"         //	duration (sec)
+      "%%lu"           //	duration (ns)
 #endif
       "\n",
+      benchmarkRelease, fileResultDelimiter,
       benchmarkId, fileResultDelimiter,
       benchmarkComment, fileResultDelimiter,
       benchmarkHostName, fileResultDelimiter,
@@ -120,7 +127,11 @@ int main(const int argc, const char *argv[])
       benchmarkOs, fileResultDelimiter,
       benchmarkUserName, fileResultDelimiter,
       benchmarkDatabase, fileResultDelimiter,
-      /*module, */ fileResultDelimiter,
+#ifdef W32
+      _MSC_VER, fileResultDelimiter,
+#else
+      __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__, fileResultDelimiter,
+#endif
       /*driver, */ fileResultDelimiter,
       /*trial no., */ fileResultDelimiter,
       /*SQL statement, */ fileResultDelimiter,
@@ -402,7 +413,11 @@ int main(const int argc, const char *argv[])
       elapsed / 1000000000, elapsed
 #endif
   );
+#ifdef W32
+  L("End %s (%llu sec, %llu nsec)\n", __FILE__, (LONGLONG)(elapsed.QuadPart / 1000000), elapsed.QuadPart * 1000);
+#else
   L("End %s (%llu sec, %llu nsec)\n", __FILE__, elapsed / 1000000000, elapsed);
+#endif
 
   fclose(rfp);
 
