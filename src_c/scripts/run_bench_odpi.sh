@@ -33,7 +33,6 @@ else
     make -f src_c/Makefile clean
     make -f src_c/Makefile
 fi
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_odpic
 
 echo "================================================================================"
 echo "Start $0"
@@ -52,10 +51,12 @@ echo "==========================================================================
 
 EXITCODE="0"
 
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
+
 if [ "$OSTYPE" = "msys" ]; then
-    ./OraBench.exe priv/properties/ora_bench_odpi_c.properties
+    ./OraBench.exe priv/properties/ora_bench_c.properties
 else
-   ./OraBench priv/properties/ora_bench_odpi_c.properties
+   ./OraBench priv/properties/ora_bench_c.properties
 fi
 
 EXITCODE=$?

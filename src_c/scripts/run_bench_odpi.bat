@@ -44,9 +44,9 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_odpic
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
 
-.\OraBench.exe priv\properties\ora_bench_odpi_c.properties
+.\OraBench.exe priv\properties\ora_bench_c.properties
 
 echo --------------------------------------------------------------------------------
 echo:| TIME

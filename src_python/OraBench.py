@@ -17,7 +17,7 @@ from pathlib import Path
 BENCHMARK_DRIVER = 'cx_Oracle (Version v' + cx_Oracle.version + ')'
 BENCHMARK_LANGUAGE = 'Python ' + platform.python_version()
 
-FILE_CONFIGURATION_NAME_CX_ORACLE_PYTHON = 'priv/properties/ora_bench_cx_oracle_python.ini'
+FILE_CONFIGURATION_NAME_PYTHON = 'priv/properties/ora_bench_python.properties'
 
 IX_DURATION_INSERT_SUM = 3
 IX_DURATION_SELECT_SUM = 4
@@ -202,10 +202,10 @@ def get_bulk_data_partitions(config):
 # ------------------------------------------------------------------------------
 
 def get_config():
-    global FILE_CONFIGURATION_NAME_CX_ORACLE_PYTHON
+    global FILE_CONFIGURATION_NAME_PYTHON
 
     config_parser = configparser.ConfigParser()
-    config_parser.read(FILE_CONFIGURATION_NAME_CX_ORACLE_PYTHON)
+    config_parser.read(FILE_CONFIGURATION_NAME_PYTHON)
 
     config = dict()
 
@@ -234,7 +234,7 @@ def get_config():
     config['file.bulk.length'] = int(config_parser['DEFAULT']['file.bulk.length'])
     config['file.bulk.name'] = config_parser['DEFAULT']['file.bulk.name']
     config['file.bulk.size'] = int(config_parser['DEFAULT']['file.bulk.size'])
-    config['file.configuration.name.cx_oracle.python'] = config_parser['DEFAULT']['file.configuration.name.cx_oracle.python']
+    config['file.configuration.name.python'] = config_parser['DEFAULT']['file.configuration.name.python']
     config['file.result.delimiter'] = str(config_parser['DEFAULT']['file.result.delimiter']).replace('TAB', '\t')
     config['file.result.header'] = config_parser['DEFAULT']['file.result.header']
     config['file.result.name'] = config_parser['DEFAULT']['file.result.name']

@@ -54,8 +54,9 @@ The default name for the configuration file is `priv/properties/ora_bench.proper
 A detailed description of the configuration options can be found [here](docs/benchmark_configuration_parameter.md).
 For reasons of convenience the following files are generated:
 
-- the configuration file `priv/ora_bench_cx_oracle_pytzhon.ini` for cx_Oracle &amp; Python.
-- the configuration file `priv/ora_bench_oranif_erlang.properties` with a corresponding map for oranif &amp; Erlang.
+- the configuration file `priv/ora_bench_c.propperties` for C,
+- the configuration file `priv/ora_bench_erlang.properties` with a corresponding map for Erlang, and
+- the configuration file `priv/ora_bench_python.propperties` for Python.
 
 All the file names specified here are also part of the configuration file and can be changed if necessary.
 
@@ -114,9 +115,9 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
     - `python -m pip install --upgrade pip`
     - `python -m pip install --upgrade cx_Oracle`
 
-##### 2.2.1.2 `run_bench_series.sh`
+##### 2.2.1.2 `run_bench_series`
 
-This script executes the following variations of the script `run_bench.sh` as a whole benchmark series:
+This script executes the following variations of the script `run_bench_database_series` as a whole benchmark series:
 
 | database   | service | batch.size    | core.multiplier | transaction.size | 
 | :---       | :---    | :---          | :---            | :---             | 
@@ -135,13 +136,13 @@ This script executes the following variations of the script `run_bench.sh` as a 
 
 The run log is stored in the `run_bench_series.log` file.
 
-##### 2.2.1.3 `run_bench.sh`
+##### 2.2.1.3 `run_bench`
 
-This script executes the `run_bench_database.sh` script for each of the databases listed in chapter [Introduction](#introduction).
+This script executes the `run_bench_database` script for each of the databases listed in chapter [Introduction](#introduction).
 At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark.
 The run log is stored in the `run_bench.log` file.
 
-##### 2.2.1.4 `run_bench_database.sh`
+##### 2.2.1.4 `run_bench_database`
 
 This script is executed for one of the databases listed in in chapter [Introduction](#introduction). 
 At the beginning of the script it is possible to exclude individual drivers from the current benchmark.
@@ -163,24 +164,25 @@ This script also prepares the database for the benchmark run including the follo
 
 Finally the following child scripts are running:
 
-- `run_bench_setup.sh`
-- all driver and programming language related scripts, like for example: `run_bench_jdbc.sh`
-- `run_bench_finalise.sh`
+- `run_bench_setup`
+- all driver and programming language related scripts, like for example: `run_bench_jdbc` from the `src_java` directory
+- `run_bench_finalise`
 
-##### 2.2.1.5 `run_bench_database_series.sh`
+##### 2.2.1.5 `run_bench_database_series`
 
-This script is a special version of script `run_bench_database.sh` which is used in script `run_bench_series.sh`.
+This script is a special version of script `run_bench_database` which is used in script `run_bench_series`.
 
-##### 2.2.1.6 `run_bench_setup.sh`
+##### 2.2.1.6 `run_bench_setup`
 
 This scripts is used to create a bulk file (see chapter 2.4).
 
-##### 2.2.1.7 `run_bench_<driver>_<programming language>.sh`
+##### 2.2.1.7 `run_bench_<driver>_<programming language>`
 
-The driver and programming language related scripts, such as `run_bench_jdbc.sh`, first execute the insert statements and then the select statements in each trial with the bulk file.
+The driver and programming language related scripts, such as `run_bench_jdbc` in the `src_java` directory, 
+first execute the insert statements and then the select statements in each trial with the bulk file.
 The time consumed is captured and recorded in result files.
 
-##### 2.2.1.8 `run_bench_finalise.sh`
+##### 2.2.1.8 `run_bench_finalise`
 
 In this script, OraBench.java is used to reset the following configuration parameters to the value 'n/a':
 
@@ -188,8 +190,14 @@ In this script, OraBench.java is used to reset the following configuration param
 - `benchmark.database`
 - `benchmark.driver`
 - `benchmark.environment`
+- `benchmark.host.name`
+- `benchmark.id`
 - `benchmark.language`
+- `benchmark.number.cores`
+- `benchmark.os`
+- `benchmark.user.name`
 - `connection.service`
+- `sql.create`
 
 #### 2.2.2 Travis CI
 
@@ -209,7 +217,7 @@ The following environment variables are used to perform additional tests for the
 | `ORA_BENCH_BENCHMARK_BATCH_SIZE=0` | `ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1` |                                          |
 | `ORA_BENCH_BENCHMARK_BATCH_SIZE=0` | `ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1` | `ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0` |
 
-In each build the script `run_bench_database.sh` will be executed.
+In each build the script `run_bench_database` will be executed.
 The results are uploaded to the repositopry at the end.
 
 ### 2.3 Benchmark Results
@@ -220,7 +228,7 @@ Otherwise, the new current results are appended to existing results.
 
 | Column            | Format                          | Content |
 | :---              | :---                            | :--- |
-| ora_bench release | alphanumeric                    | config param `benchmark.release` |
+| release           | alphanumeric                    | config param `benchmark.release` |
 | benchmark id      | alphanumeric                    | config param `benchmark.id` |
 | benchmark comment | alphanumeric                    | config param `benchmark.comment` |
 | host name         | alphanumeric                    | config param `benchmark.host.name` |
@@ -246,7 +254,7 @@ Otherwise, the new current results are appended to existing results.
  
 ### 2.4 Bulk File
 
-The bulk file in `csv` or `tsv` format is created in the `run_bench_setup.sh` script if it does not already exist. 
+The bulk file in `csv` or `tsv` format is created in the `run_bench_setup` script if it does not already exist. 
 The following configuration parameters are taken into account:
 
 - `file.bulk.delimiter`
@@ -414,28 +422,46 @@ The data column in the bulk file is randomly generated with a unique key column 
 ### 4.1 cx_Oracle and Python
 
 - the following data in the configuration parameters is determined at runtime: 
--- cx_Oracle version (`benchmark.driver`) and
--- Python version (`benchmark.language`). 
-- all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.cx_oracle.python`) 
+    - cx_Oracle version (`benchmark.driver`) and
+    - Python version (`benchmark.language`). 
+- all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.python`) 
 - Python uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
-- the fetch size (`connection.fetch.size`) 
 - the value fetch size (`connection.fetch.size`) is not used because the operation `SELECT` uses the operation `Cursor.fetchall()`
 
 ### 4.2 JDBC and Java
 
 - the following data in the configuration parameters is determined at runtime: 
--- JDBC version (`benchmark.driver`),
--- benchmark identifier (`benchmark.id`),
--- host name (`benchmark.host.name`), 
--- number of cores (`benchmark.number.cores`), 
--- JRE version (`benchmark.language`), 
--- operating system environment (`benchmark.os`), 
--- user name (`benchmark.user.name`) and 
--- SQL create statement (`sql.create`). 
-
+    - JDBC version (`benchmark.driver`),
+    - benchmark identifier (`benchmark.id`),
+    - host name (`benchmark.host.name`), 
+    - number of cores (`benchmark.number.cores`), 
+    - JRE version (`benchmark.language`), 
+    - operating system environment (`benchmark.os`), 
+    - user name (`benchmark.user.name`) and 
+    - SQL create statement (`sql.create`). 
 - the Java source code is compiled with the help of a make file
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
+
+### 4.3 ODPI and C
+
+- the following data in the configuration parameters is determined at runtime: 
+    - ODPI version (`benchmark.driver`) and
+    - C version (`benchmark.language`). 
+- all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.c`) 
+
+### 4.4 oranif and Elixir
+
+- the following data in the configuration parameters is determined at runtime: 
+    - oranif version (`benchmark.driver`) and
+    - Elixir version (`benchmark.language`). 
+
+### 4.5 oranif and Erlang
+
+- the following data in the configuration parameters is determined at runtime: 
+    - oranif version (`benchmark.driver`) and
+    - Erlang version (`benchmark.language`). 
+- all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.erlang`) 
 
 ## 5 <a name="reporting"> Reporting
 
