@@ -11,9 +11,10 @@
 %%====================================================================
 
 %% escript Entry point
-main([ConfigFile]) ->
+main([ConfigFile, Driver]) ->
   process_flag(trap_exit, true),
-  {ok, [Config]} = file:consult(ConfigFile),
+  {ok, [Config0]} = file:consult(ConfigFile),
+  Config = Config0#{benchmark_driver => Driver},
   #{
     benchmark_trials := Trials,
 
@@ -46,22 +47,41 @@ main([ConfigFile]) ->
   } = Config,
   {ok, Fd} = file:open(BulkFile, [read, raw, binary, {read_ahead, 1024 * 1024}]),
   Rows = load_data(Fd, list_to_binary(Header), BulkDelimiter, Partitions, #{}),
+  put(rows, Rows),
+  put(conf, Config),
   RowCount = length(lists:merge(maps:values(Rows))),
   if RowCount /= FBulkSz ->
-      io:format("First = ~pñLast = ~p~n", [hd(Rows), lists:last(Rows)]),
+      io:format("First = ~p~nLast = ~p~n", [hd(Rows), lists:last(Rows)]),
       error({loaded_rows, length(Rows), 'of', FBulkSz});
     true -> ok
   end,
   ok = file:close(Fd),
   io:format("[~p:~p] Start ~p~n", [?FUNCTION_NAME, ?LINE, ?MODULE]),
+  _ = maps:map(
+    fun(Partition, PartitionRows) ->
+      io:format(
+        "[~p:~p:~p] Partition ~p contains ~p rows~n",
+      [?MODULE, ?FUNCTION_NAME, ?LINE, Partition, length(PartitionRows)]
+      ),
+      PartitionRows
+    end,
+    Rows
+  ),
   #{
     startTime := StartTs,
     endTime := EndTs
-  } = Results = run_trials(Trials, Rows, Config),
-  ok = application:load(oranif),
+  } = Results = run_trials(Trials),
   io:format("[~p:~p] End ~p~n", [?FUNCTION_NAME, ?LINE, ?MODULE]),
-  {ok, OranifVsn} = application:get_key(oranif, vsn),
-  BMDrv = lists:flatten(io_lib:format("oranif (Version ~s)",[OranifVsn])),
+  BMDrv = case Driver of
+    "oranif" ->
+      ok = application:load(oranif),
+      {ok, OranifVsn} = application:get_key(oranif, vsn),
+      lists:flatten(io_lib:format("oranif (Version ~s)", [OranifVsn]));
+    "jamdb" ->
+      ok = application:load(jamdb_oracle),
+      {ok, JamDBVsn} = application:get_key(jamdb_oracle, vsn),
+      lists:flatten(io_lib:format("jamdb_oracle (Version ~s)", [JamDBVsn]))
+  end,
   BMMod = lists:flatten(
     io_lib:format(
       "OTP ~s, erts-~s",
@@ -169,77 +189,124 @@ ts_str({_, _, Micro} = Timestamp) ->
       [Y,M,D,H,Mi,S,Micro])
   ).
 
-run_trials(
-  Trials, Rows,
+run_trials(Trials) ->
   #{
     connection_host := Host,
     connection_port := Port,
     connection_service := Service,
     connection_user := UserStr,
-    connection_password := PasswordStr
-  } = Config
-) ->
-  ok = dpi:load_unsafe(),
-  Ctx = dpi:context_create(?DPI_MAJOR_VERSION, ?DPI_MINOR_VERSION),
-  _ = maps:map(
-    fun(Partition, PartitionRows) ->
-      io:format(
-        "[~p:~p:~p] Partition ~p contains ~p rows~n",
-      [?MODULE, ?FUNCTION_NAME, ?LINE, Partition, length(PartitionRows)]
-      ),
-      PartitionRows
-    end,
-    Rows
-  ),
-  run_trials(
-    1, Trials, Rows, Ctx,
-    Config#{
-      connection_user => list_to_binary(UserStr),
-      connection_password =>  list_to_binary(PasswordStr),
-      connection_string => list_to_binary(
-        io_lib:format("~s:~p/~s", [Host, Port, Service])
+    connection_password := PasswordStr,
+
+    benchmark_driver := Driver
+  } = Config = get(conf),
+
+  Ctx = case Driver of
+    "oranif" ->
+      ok = dpi:load_unsafe(),
+      dpi:context_create(?DPI_MAJOR_VERSION, ?DPI_MINOR_VERSION);
+    "jamdb" -> jamdb
+  end,
+  case Driver of
+    "oranif" ->
+      put(
+        conf,
+        Config#{
+          connection_user => list_to_binary(UserStr),
+          connection_password => list_to_binary(PasswordStr),
+          connection_string => list_to_binary(
+            io_lib:format("~s:~p/~s", [Host, Port, Service])
+          )
+        }
+      );
+    "jamdb" ->
+      put(
+        conf,
+        Config#{
+          connection_host := case inet:getaddr(Host, inet) of
+            {ok, {0,0,0,0}} -> "localhost";
+            _ -> Host
+          end
+        }
       )
-    },
-    #{startTime => os:timestamp()}
-  ).
-run_trials(Trial, Trials, _, Ctx, _, Stats) when Trial > Trials ->
-  ok = dpi:context_destroy(Ctx),
+  end,
+  run_trials(1, Trials, Ctx, #{startTime => os:timestamp()}).
+run_trials(Trial, Trials, Ctx, Stats) when Trial > Trials ->
+  #{benchmark_driver := Driver} = get(conf),
+  if Driver == "oranif" -> ok = dpi:context_destroy(Ctx); true -> nop end,
   Stats#{endTime => os:timestamp()};
-run_trials(
-  Trial, Trials, Rows, Ctx,
+run_trials(Trial, Trials, Ctx, Stats) ->
   #{
-    connection_string := ConnectString,
+    benchmark_driver := Driver,
+
     connection_user := User,
     connection_password := Password,
 
+    connection_host := Host,
+    connection_port := Port,
+    connection_service := Service,
+
     sql_create := Create,
     sql_drop := Drop
-  } = Config,
-  Stats
-) ->
-  io:format("[~p:~p:~p] Start trial no ~p~n", [?MODULE, ?FUNCTION_NAME, ?LINE, Trial]),
+  } = Conf = get(conf),
+  io:format(
+    "[~p:~p:~p] Start trial no ~p~n", [?MODULE, ?FUNCTION_NAME, ?LINE, Trial]
+  ),
   StartTime = os:timestamp(),
-  Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
-  CreateStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Create), <<>>),
-  DropStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Drop), <<>>),
-  case catch dpi:stmt_execute(CreateStmt, ['DPI_MODE_EXEC_COMMIT_ON_SUCCESS']) of
-    0 -> ok;
-    {'EXIT', {{error, _, _, #{code := 955}}, _}} ->
-      case dpi:stmt_execute(DropStmt, ['DPI_MODE_EXEC_COMMIT_ON_SUCCESS']) of
-        0 ->
-          case dpi:stmt_execute(CreateStmt, ['DPI_MODE_EXEC_COMMIT_ON_SUCCESS']) of
-            0 -> ok;
+  case Driver of
+    "oranif" ->
+      #{connection_string := ConnectString} = Conf,
+      Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
+      CreateStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Create), <<>>),
+      DropStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Drop), <<>>),
+      case catch dpi:stmt_execute(CreateStmt, ['DPI_MODE_EXEC_COMMIT_ON_SUCCESS']) of
+        0 -> ok;
+        {'EXIT', {{error, _, _, #{code := 955}}, _}} ->
+          case dpi:stmt_execute(DropStmt, ['DPI_MODE_EXEC_COMMIT_ON_SUCCESS']) of
+            0 ->
+              case dpi:stmt_execute(CreateStmt, ['DPI_MODE_EXEC_COMMIT_ON_SUCCESS']) of
+                0 -> ok;
+                Error -> error({?LINE, Error})
+              end;
             Error -> error({?LINE, Error})
           end;
         Error -> error({?LINE, Error})
-      end;
-    Error -> error({?LINE, Error})
+      end,
+      ok = dpi:stmt_close(CreateStmt, <<>>),
+      ok = dpi:stmt_close(DropStmt, <<>>),
+      ok = dpi:conn_close(Conn, [], <<>>);
+    "jamdb" ->
+      Opts = [
+        {host, Host},
+        {port, Port},
+        {user, User},
+        {password, Password},
+        {service_name, Service},
+        {app_name, "orabench"}
+      ],
+      case jamdb_oracle:start_link(Opts) of
+        {ok, ConnRef} ->
+          put(conf, Conf#{jamdb_opts => Opts}),
+          {ok,[]} = jamdb_oracle:sql_query(ConnRef, "COMON;"),
+          case jamdb_oracle:sql_query(ConnRef, Create) of
+            {ok, [{affected_rows,0}]} -> ok;
+            {ok, [{proc_result, 955, _}]} ->
+              case jamdb_oracle:sql_query(ConnRef, Drop) of
+                {ok, [{affected_rows,0}]} ->
+                  case jamdb_oracle:sql_query(ConnRef, Create) of
+                    {ok, [{proc_result,0,[[]]}]} -> ok;
+                    Error -> error({?LINE, Error})
+                  end;
+                Error -> error({?LINE, Error})
+              end;
+            Error -> error({?LINE, Error})
+          end,
+          ok = jamdb_oracle:stop(ConnRef);
+        {error, Error} -> error({?LINE, {Opts, Error}})
+      end
   end,
-  ok = dpi:stmt_close(CreateStmt, <<>>),
-  ok = dpi:stmt_close(DropStmt, <<>>),
-  ok = dpi:conn_close(Conn, [], <<>>),
-  InsertStat = run_insert(Ctx, Rows, Config),
-  SelectStat = run_select(Ctx, Config),
+  InsertStat = run_insert(Ctx),
+  SelectStat = run_select(Ctx),
+  timer:sleep(100000),
   InsertPR = maps:fold(
     fun(_Pid, #{partition := P, rows := R}, Map) -> Map#{P => R} end,
     #{},
@@ -260,7 +327,7 @@ run_trials(
     true -> ok
   end,
   run_trials(
-    Trial + 1, Trials, Rows, Ctx, Config,
+    Trial + 1, Trials, Ctx,
     Stats#{Trial => #{
       startTime => StartTime,
       endTime => os:timestamp(),
@@ -269,8 +336,10 @@ run_trials(
     }}
   ).
 
-run_insert(Ctx, Rows, #{benchmark_number_partitions := Partitions} = Config) ->
-  Master = self(),
+run_insert(Ctx) ->  
+  Rows = get(rows),
+  #{benchmark_number_partitions := Partitions} = Config = get(conf),
+  Master = self(),  
   Threads = [
     spawn_link(
       ?MODULE, insert_partition,
@@ -279,10 +348,11 @@ run_insert(Ctx, Rows, #{benchmark_number_partitions := Partitions} = Config) ->
   ],
   thread_join(Threads).
 
-run_select(Ctx, #{benchmark_number_partitions := Partitions} = Config) ->
+run_select(Ctx) ->
+  #{benchmark_number_partitions := Partitions} = Config = get(conf),
   Master = self(),
   Threads = [
-    spawn_link(
+    spawn_link(      
       ?MODULE, select_partition, [Partition, Ctx, Master, Config]
     ) || Partition <- lists:seq(0, Partitions - 1)
   ],
@@ -291,7 +361,6 @@ run_select(Ctx, #{benchmark_number_partitions := Partitions} = Config) ->
 insert_partition(
   Partition, Rows, Ctx, Master,
   #{
-    connection_string := ConnectString,
     connection_user := User,
     connection_password := Password,
     sql_insert := Insert,
@@ -299,10 +368,22 @@ insert_partition(
     benchmark_batch_size := NumItersExec,
     benchmark_transaction_size := NumItersCommit,
     file_bulk_size := FBulkSz,
-    file_bulk_length := Size
-  }
+    file_bulk_length := Size,
+
+    benchmark_driver := Driver
+  } = Config
 ) ->
-  Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
+  Conn = case Driver of
+    "oranif" ->
+      #{connection_string := ConnectString} = Config,
+      dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{});
+    "jamdb" ->
+      #{jamdb_opts := Opts} = Config,
+      case jamdb_oracle:start_link(Opts) of
+        {ok, ConnRef} -> ConnRef;
+        {error, Error} -> error({?LINE, {Opts, Error}})
+      end
+  end,
   Start = os:timestamp(),
   #{var := KeyVar} = dpi:conn_newVar(
     Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES',
@@ -365,10 +446,22 @@ select_partition(
     connection_user := User,
     connection_password := Password,
     sql_select := Select,
-    connection_fetch_size := FetchSize
-  }
-) ->
-  Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
+    connection_fetch_size := FetchSize,
+
+    benchmark_driver := Driver
+  } = Config
+) -> 
+  Conn = case Driver of
+    "oranif" ->
+      #{connection_string := ConnectString} = Config,
+      dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{});
+    "jamdb" ->
+      #{jamdb_opts := Opts} = Config,
+      case jamdb_oracle:start_link(Opts) of
+        {ok, ConnRef} -> ConnRef;
+        {error, Error} -> error({?LINE, {Opts, Error}})
+      end
+  end,
   SelectSql = list_to_binary(
     io_lib:format("~s WHERE partition_key = ~p", [Select, Partition])
   ),

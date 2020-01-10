@@ -5,7 +5,8 @@
   {applications,
    [kernel,
     stdlib,
-    oranif
+    oranif,
+    jamdb_oracle
    ]},
   {env,[]},
   {modules, []},

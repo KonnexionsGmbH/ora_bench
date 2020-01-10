@@ -46,7 +46,7 @@ cd src_erlang
 rebar3 escriptize
 cd ..
 
-src_erlang/_build/default/bin/orabench priv/properties/ora_bench_erlang.properties oranif
+src_erlang/_build/default/bin/orabench priv/properties/ora_bench_erlang.properties jamdb
 
 EXITCODE=$?
 
