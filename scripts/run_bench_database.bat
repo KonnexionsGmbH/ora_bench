@@ -79,7 +79,7 @@ docker stop ora_bench_db
 docker rm -f ora_bench_db
 echo Docker create ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%)
 docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/%ORA_BENCH_BENCHMARK_DATABASE%
-echo Docker start eate ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%)...
+echo Docker started ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%)...
 docker start ora_bench_db
 for /f "delims=" %%A in ('priv\Gammadyne\timer.exe /s') do set "CONSUMED=%%A"
 echo DOCKER ready in %CONSUMED%

@@ -81,7 +81,7 @@ docker stop ora_bench_db
 docker rm -f ora_bench_db
 echo "Docker create ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)"
 docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/$ORA_BENCH_BENCHMARK_DATABASE
-echo "Docker start eate ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)..."
+echo "Docker started ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)..."
 docker start ora_bench_db
 while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
 end=$(date +%s)

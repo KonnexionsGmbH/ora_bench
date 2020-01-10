@@ -6,6 +6,25 @@ rem run_bench_database_series.bat: Oracle benchmark for a specific database vers
 rem
 rem ------------------------------------------------------------------------------
 
+if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
+)
+if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
+    set ORA_BENCH_CONNECTION_HOST=0.0.0.0
+)
+if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
+    set ORA_BENCH_CONNECTION_PORT=1521
+)
+if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
+    set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+)
+if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
+    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+)
+if ["%ORA_BENCH_PASSWORD_SYS%"] EQU [""] (
+    set ORA_BENCH_PASSWORD_SYS=oracle
+)
+
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 )
@@ -32,8 +51,11 @@ echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - specific database.
 echo --------------------------------------------------------------------------------
-echo BENCHMARK_DATABASE      : %ORA_BENCH_BENCHMARK_DATABASE%
+echo BENCHMARK_DATABASE       %ORA_BENCH_BENCHMARK_DATABASE%
+echo CONNECTION_HOST         : %ORA_BENCH_CONNECTION_HOST%
+echo CONNECTION_PORT         : %ORA_BENCH_CONNECTION_PORT%
 echo CONNECTION_SERVICE      : %ORA_BENCH_CONNECTION_SERVICE%
+echo FILE_CONFIGURATION_NAME : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON    : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_JAMDB_ORACLE_ELIXIR : %ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%
@@ -53,7 +75,7 @@ docker stop ora_bench_db
 docker rm -f ora_bench_db
 echo Docker create ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%)
 docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/%ORA_BENCH_BENCHMARK_DATABASE%
-echo Docker start eate ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%)...
+echo Docker started ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%)...
 docker start ora_bench_db
 for /f "delims=" %%A in ('priv\Gammadyne\timer.exe /s') do set "CONSUMED=%%A"
 echo DOCKER ready in %CONSUMED%

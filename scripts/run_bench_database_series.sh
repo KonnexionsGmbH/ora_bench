@@ -6,6 +6,25 @@
 #
 # ------------------------------------------------------------------------------
 
+if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
+fi
+if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
+    export ORA_BENCH_CONNECTION_HOST=0.0.0.0
+fi
+if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
+    export ORA_BENCH_CONNECTION_PORT=1521
+fi
+if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
+    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+fi
+if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
+    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+fi
+if [ -z "$ORA_BENCH_PASSWORD_SYS" ]; then
+    export ORA_BENCH_PASSWORD_SYS=oracle
+fi
+
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
@@ -33,7 +52,10 @@ echo "--------------------------------------------------------------------------
 echo "ora_bench - Oracle benchmark - specific database."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
+echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
+echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
 echo "CONNECTION_SERVICE      : $ORA_BENCH_CONNECTION_SERVICE"
+echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON    : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JAMDB_ORACLE_ELIXIR : $ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR"
@@ -55,7 +77,7 @@ docker stop ora_bench_db
 docker rm -f ora_bench_db
 echo "Docker create ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)"
 docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/$ORA_BENCH_BENCHMARK_DATABASE
-echo "Docker start eate ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)..."
+echo "Docker started ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)..."
 docker start ora_bench_db
 while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
 end=$(date +%s)
