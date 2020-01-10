@@ -55,6 +55,9 @@ script:
   - git pull
   - ./scripts/run_bench_setup.sh
   - export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=false
+  - export ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
+  - export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
+  - export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
   - ./scripts/run_bench_database_series.sh
   - ./scripts/run_bench_finalise.sh
 
