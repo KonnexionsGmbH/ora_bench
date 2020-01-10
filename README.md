@@ -443,11 +443,25 @@ The data column in the bulk file is randomly generated with a unique key column 
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
-### 4.3 oranif and Elixir
+### 4.3 ODPI and C
+
+- the following data in the configuration parameters is determined at runtime: 
+    - ODPI version (`benchmark.driver`) and
+    - C version (`benchmark.language`). 
+- all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.c`) 
+
+### 4.4 oranif and Elixir
 
 - the following data in the configuration parameters is determined at runtime: 
     - oranif version (`benchmark.driver`) and
     - Elixir version (`benchmark.language`). 
+
+### 4.5 oranif and Erlang
+
+- the following data in the configuration parameters is determined at runtime: 
+    - oranif version (`benchmark.driver`) and
+    - Erlang version (`benchmark.language`). 
+- all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.erlang`) 
 
 ## 5 <a name="reporting"> Reporting
 

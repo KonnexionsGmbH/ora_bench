@@ -17,7 +17,7 @@ from pathlib import Path
 BENCHMARK_DRIVER = 'cx_Oracle (Version v' + cx_Oracle.version + ')'
 BENCHMARK_LANGUAGE = 'Python ' + platform.python_version()
 
-FILE_CONFIGURATION_NAME_CX_ORACLE_PYTHON = 'priv/properties/ora_bench_cx_oracle_python.ini'
+FILE_CONFIGURATION_NAME_PYTHON = 'priv/properties/ora_bench_python.properties'
 
 IX_DURATION_INSERT_SUM = 3
 IX_DURATION_SELECT_SUM = 4
@@ -202,10 +202,10 @@ def get_bulk_data_partitions(config):
 # ------------------------------------------------------------------------------
 
 def get_config():
-    global FILE_CONFIGURATION_NAME_CX_ORACLE_PYTHON
+    global FILE_CONFIGURATION_NAME_PYTHON
 
     config_parser = configparser.ConfigParser()
-    config_parser.read(FILE_CONFIGURATION_NAME_CX_ORACLE_PYTHON)
+    config_parser.read(FILE_CONFIGURATION_NAME_PYTHON)
 
     config = dict()
 
