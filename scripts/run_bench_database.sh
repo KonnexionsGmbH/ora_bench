@@ -25,9 +25,6 @@ if [ -z "$ORA_BENCH_PASSWORD_SYS" ]; then
     export ORA_BENCH_PASSWORD_SYS=oracle
 fi
 
-export ORA_BENCH_RUN_ODPI_C=false
-export ORA_BENCH_RUN_ORANIF_ERLANG=false
-
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
@@ -78,11 +75,17 @@ echo "==========================================================================
 
 EXITCODE="0"
 
+start=$(date +%s)
+echo "Docker stop/rm ora_bench_db"
 docker stop ora_bench_db
 docker rm -f ora_bench_db
+echo "Docker create ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)"
 docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/$ORA_BENCH_BENCHMARK_DATABASE
+echo "Docker start eate ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)..."
 docker start ora_bench_db
 while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
+end=$(date +%s)
+echo "DOCKER ready in $((end - start)) seconds"
 
 if [ "$OSTYPE" = "msys" ]; then
   priv/oracle/instantclient-windows.x64/instantclient_19_5/sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_database.sql

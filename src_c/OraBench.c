@@ -56,11 +56,11 @@ int main(const int argc, const char *argv[])
   LARGE_INTEGER trialQpcStart, trialQpcEnd, benchmarkQpcStart, benchmarkQpcEnd;
 #else
   struct timespec minStart, maxEnd, trialStart, trialEnd, benchmarkStart,
-      benchmarkEnd, elapsed, maxDurationInsert = {0, 0},
-                             maxDurationSelect = {0, 0};
+      benchmarkEnd;
   struct tm minStartTm, maxEndTm, trialStartTm, trialEndTm, benchmarkStartTm,
       benchmarkEndTm;
   char strStart[32], strEnd[32];
+  unsigned long long int elapsed, maxDurationInsert = 0, maxDurationSelect = 0;
 #endif
 
   FILE *rfp = fopen(fileResultName, "r");
@@ -83,14 +83,20 @@ int main(const int argc, const char *argv[])
   char resultFmt[1024];
   sprintf(
       resultFmt,
-      "%s%s"              // benchmark id
-      "%s%s"              // benchmark comment
-      "%s%s"              //	host name
-      "%d%s"              //	no. cores
-      "%s%s"              //	os
-      "%s%s"              //	user name
-      "%s%s"              //	database
-      "OraBench (C)%s"    //	module
+      "%s%s" // release
+      "%s%s" // benchmark id
+      "%s%s" // benchmark comment
+      "%s%s" //	host name
+      "%d%s" //	no. cores
+      "%s%s" //	os
+      "%s%s" //	user name
+      "%s%s" //	database
+#ifdef WIN32
+      "cl %d%s" //	language
+#else
+      "gnu %d.%d.%d%s" //	language
+#endif
+
       "OCPI-C (v3.2.2)%s" //	driver
       "%%d%s"             //	trial no.
       "%%s%s"             //	SQL statement
@@ -107,12 +113,13 @@ int main(const int argc, const char *argv[])
       "%%llu%s"                                     //	duration (sec)
       "%%llu"                                       //	duration (ns)
 #else
-      "%%s.%%09ld%s" //	start day time
-      "%%s.%%09ld%s" //	end day time
-      "%%lu%s"       //	duration (sec)
-      "%%lu"         //	duration (ns)
+      "%%s.%%09ld%s"   //	start day time
+      "%%s.%%09ld%s"   //	end day time
+      "%%lu%s"         //	duration (sec)
+      "%%lu"           //	duration (ns)
 #endif
       "\n",
+      benchmarkRelease, fileResultDelimiter,
       benchmarkId, fileResultDelimiter,
       benchmarkComment, fileResultDelimiter,
       benchmarkHostName, fileResultDelimiter,
@@ -120,7 +127,11 @@ int main(const int argc, const char *argv[])
       benchmarkOs, fileResultDelimiter,
       benchmarkUserName, fileResultDelimiter,
       benchmarkDatabase, fileResultDelimiter,
-      /*module, */ fileResultDelimiter,
+#ifdef W32
+      _MSC_VER, fileResultDelimiter,
+#else
+      __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__, fileResultDelimiter,
+#endif
       /*driver, */ fileResultDelimiter,
       /*trial no., */ fileResultDelimiter,
       /*SQL statement, */ fileResultDelimiter,
@@ -147,7 +158,7 @@ int main(const int argc, const char *argv[])
 
   for (int t = 1; t <= benchmarkTrials; ++t)
   {
-    L("Trial: %d\n", t);
+    L("Trial: %d\n", t); fflush(stdout);
 
     init_db();
     for (int i = 0; i < benchmarkNumberPartitions; ++i)
@@ -203,11 +214,9 @@ int main(const int argc, const char *argv[])
       if (CompareFileTime(&(ta[i].end), &maxEnd) > 0)
         maxEnd = ta[i].end;
 #else
-      elapsed.tv_sec = ta[i].end.tv_sec - ta[i].start.tv_sec;
-      elapsed.tv_nsec = ta[i].end.tv_nsec - ta[i].start.tv_nsec;
-      if (maxDurationInsert.tv_sec < elapsed.tv_sec ||
-          (maxDurationInsert.tv_sec == elapsed.tv_sec &&
-           maxDurationInsert.tv_nsec < elapsed.tv_nsec))
+      elapsed = (ta[i].end.tv_sec - ta[i].start.tv_sec) * 1000000000;
+      elapsed += ta[i].end.tv_nsec - ta[i].start.tv_nsec;
+      if (maxDurationSelect < elapsed)
         maxDurationInsert = elapsed;
       if (ta[i].start.tv_sec < minStart.tv_sec ||
           (ta[i].start.tv_sec == minStart.tv_sec &&
@@ -219,15 +228,6 @@ int main(const int argc, const char *argv[])
         maxEnd = ta[i].end;
 #endif
     }
-    /*L(
-        "Trial {%d} insert duration: %llu s, %llu ns\n"
-        "\tstart: %04d-%02d-%02d %02d:%02d:%02d.%09d\n"
-        "\tend: %04d-%02d-%02d %02d:%02d:%02d.%09d\n",
-        t, (LONGLONG)(maxDurationInsert / 1000000), maxDurationInsert * 1000,
-        minStartSys.wYear, minStartSys.wMonth, minStartSys.wDay, minStartSys.wHour,
-        minStartSys.wMinute, minStartSys.wSecond, minStartSys.wMilliseconds * 1000000,
-        minEndSys.wYear, minEndSys.wMonth, minEndSys.wDay, minEndSys.wHour,
-        minEndSys.wMinute, minEndSys.wSecond, minEndSys.wMilliseconds * 1000000);*/
 #ifdef W32
     FileTimeToSystemTime(&minStart, &minStartSys);
     FileTimeToSystemTime(&maxEnd, &minEndSys);
@@ -248,7 +248,7 @@ int main(const int argc, const char *argv[])
         (LONGLONG)(maxDurationInsert / 1000000), maxDurationInsert * 1000
 #else
         strStart, minStart.tv_nsec, strEnd, maxEnd.tv_nsec,
-        maxDurationInsert.tv_sec, maxDurationInsert.tv_nsec
+        maxDurationInsert / 1000000000, maxDurationInsert
 #endif
     );
 
@@ -291,11 +291,9 @@ int main(const int argc, const char *argv[])
       if (CompareFileTime(&(ta[i].end), &maxEnd) > 0)
         maxEnd = ta[i].end;
 #else
-      elapsed.tv_sec = ta[i].end.tv_sec - ta[i].start.tv_sec;
-      elapsed.tv_nsec = ta[i].end.tv_nsec - ta[i].start.tv_nsec;
-      if (maxDurationSelect.tv_sec < elapsed.tv_sec ||
-          (maxDurationSelect.tv_sec == elapsed.tv_sec &&
-           maxDurationSelect.tv_nsec < elapsed.tv_nsec))
+      elapsed = (ta[i].end.tv_sec - ta[i].start.tv_sec) * 1000000000;
+      elapsed += ta[i].end.tv_nsec - ta[i].start.tv_nsec;
+      if (maxDurationSelect < elapsed)
         maxDurationSelect = elapsed;
       if (ta[i].start.tv_sec < minStart.tv_sec ||
           (ta[i].start.tv_sec == minStart.tv_sec &&
@@ -315,15 +313,6 @@ int main(const int argc, const char *argv[])
     if (clock_gettime(CLOCK_REALTIME, &trialEnd))
       L("ERROR clock_gettime(CLOCK_REALTIME, &trialEnd)\n");
 #endif
-      /*L(
-        "Trial {%d} select duration: %llu s, %llu ns\n"
-        "\tstart: %04d-%02d-%02d %02d:%02d:%02d.%09d\n"
-        "\tend: %04d-%02d-%02d %02d:%02d:%02d.%09d\n",
-        t, (LONGLONG)(maxDurationSelect / 1000000), maxDurationSelect * 1000,
-        minStartSys.wYear, minStartSys.wMonth, minStartSys.wDay, minStartSys.wHour,
-        minStartSys.wMinute, minStartSys.wSecond, minStartSys.wMilliseconds * 1000000,
-        minEndSys.wYear, minEndSys.wMonth, minEndSys.wDay, minEndSys.wHour,
-        minEndSys.wMinute, minEndSys.wSecond, minEndSys.wMilliseconds * 1000000);*/
 #ifdef W32
     FileTimeToSystemTime(&minStart, &minStartSys);
     FileTimeToSystemTime(&maxEnd, &minEndSys);
@@ -344,7 +333,7 @@ int main(const int argc, const char *argv[])
         (LONGLONG)(maxDurationSelect / 1000000), maxDurationSelect * 1000
 #else
         strStart, minStart.tv_nsec, strEnd, maxEnd.tv_nsec,
-        maxDurationSelect.tv_sec, maxDurationSelect.tv_nsec
+        maxDurationSelect / 1000000000, maxDurationSelect
 #endif
     );
 
@@ -359,8 +348,8 @@ int main(const int argc, const char *argv[])
     localtime_r(&trialEnd.tv_sec, &trialEndTm);
     strftime(strStart, 32, "%Y-%m-%d %H:%M:%S", &trialStartTm);
     strftime(strEnd, 32, "%Y-%m-%d %H:%M:%S", &trialEndTm);
-    elapsed.tv_sec = trialEnd.tv_sec - trialStart.tv_sec;
-    elapsed.tv_nsec = trialEnd.tv_nsec - trialStart.tv_nsec;
+    elapsed = (trialEnd.tv_sec - trialStart.tv_sec) * 1000000000;
+    elapsed += trialEnd.tv_nsec - trialStart.tv_nsec;
 #endif
     fprintf(
         rfp, resultFmt, t, "", "trial",
@@ -373,10 +362,11 @@ int main(const int argc, const char *argv[])
         trialEndSys.wMilliseconds * 1000000,
         (LONGLONG)(elapsed.QuadPart / 1000000), elapsed.QuadPart * 1000
 #else
-        strStart, trialStart.tv_nsec, strEnd, trialEnd.tv_nsec, elapsed.tv_sec,
-        elapsed.tv_nsec
+        strStart, trialStart.tv_nsec, strEnd, trialEnd.tv_nsec,
+        elapsed / 1000000000, elapsed
 #endif
     );
+
     char error = 0;
     for (int i = 0; i < benchmarkNumberPartitions; ++i)
       if (gBulk[ta[i].partition].count != ta[i].processed)
@@ -405,8 +395,8 @@ int main(const int argc, const char *argv[])
   localtime_r(&benchmarkEnd.tv_sec, &benchmarkEndTm);
   strftime(strStart, 32, "%Y-%m-%d %H:%M:%S", &benchmarkStartTm);
   strftime(strEnd, 32, "%Y-%m-%d %H:%M:%S", &benchmarkEndTm);
-  elapsed.tv_sec = benchmarkEnd.tv_sec - benchmarkStart.tv_sec;
-  elapsed.tv_nsec = benchmarkEnd.tv_nsec - benchmarkStart.tv_nsec;
+  elapsed = (benchmarkEnd.tv_sec - benchmarkStart.tv_sec) * 1000000000;
+  elapsed += benchmarkEnd.tv_nsec - benchmarkStart.tv_nsec;
 #endif
   fprintf(
       rfp, resultFmt, 0, "", "benchmark",
@@ -420,10 +410,14 @@ int main(const int argc, const char *argv[])
       (LONGLONG)(elapsed.QuadPart / 1000000), elapsed.QuadPart * 1000
 #else
       strStart, benchmarkStart.tv_nsec, strEnd, benchmarkEnd.tv_nsec,
-      elapsed.tv_sec, elapsed.tv_nsec
+      elapsed / 1000000000, elapsed
 #endif
   );
-  L("End %s\n", __FILE__);
+#ifdef W32
+  L("End %s (%llu sec, %llu nsec)\n", __FILE__, (LONGLONG)(elapsed.QuadPart / 1000000), elapsed.QuadPart * 1000);
+#else
+  L("End %s (%llu sec, %llu nsec)\n", __FILE__, elapsed / 1000000000, elapsed);
+#endif
 
   fclose(rfp);
 

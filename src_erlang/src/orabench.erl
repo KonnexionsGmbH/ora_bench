@@ -31,6 +31,7 @@ main([ConfigFile]) ->
     benchmark_host_name := BMHost,
     benchmark_number_cores := BMCores,
     benchmark_os := BMOs,
+    benchmark_release := BMRelease,
     benchmark_user_name := BMUser,
     benchmark_database := BMDB,
     benchmark_core_multiplier := BMCoreMul,
@@ -63,14 +64,14 @@ main([ConfigFile]) ->
   BMDrv = lists:flatten(io_lib:format("oranif (Version ~s)",[OranifVsn])),
   BMMod = lists:flatten(
     io_lib:format(
-      "~p (OTP ~s, erts-~s)",
-      [?MODULE, erlang:system_info(otp_release), erlang:system_info(version)]
+      "OTP ~s, erts-~s",
+      [erlang:system_info(otp_release), erlang:system_info(version)]
     )
   ),
   RowFmt = string:join(
     [
-      BMId, BMComment, BMHost, integer_to_list(BMCores), BMOs, BMUser, BMDB,
-      BMMod, BMDrv,
+      BMRelease, BMId, BMComment, BMHost, integer_to_list(BMCores), BMOs,
+      BMUser, BMDB, BMMod, BMDrv,
       "~p", %trial_no
       "~s", % sql
       integer_to_list(BMCoreMul), integer_to_list(ConnFetchSz),

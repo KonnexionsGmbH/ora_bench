@@ -90,7 +90,6 @@ void *doInsert(void *arg)
     exit(-1);
   }
 
-  unsigned int row = 0;
   int bbs = 0;
   struct partition partition = gBulk[targ->partition];
   struct row *rows = partition.rows;
@@ -272,8 +271,8 @@ void *doSelect(void *arg)
 
   int found, err;
   uint32_t bufferRowIndex;
-  dpiNativeTypeNum nativeTypeNumKey, nativeTypeNumData;
-  /*dpiData *key, *data;
+  /*dpiNativeTypeNum nativeTypeNumKey, nativeTypeNumData;
+  dpiData *key, *data;
   dpiBytes *keyBytes, *dataBytes;*/
 
   while (
