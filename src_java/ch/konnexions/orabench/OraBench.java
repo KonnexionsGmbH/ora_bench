@@ -72,22 +72,22 @@ public class OraBench {
             log.info("Start Setup OraBench Run");
             new Setup(config).createBulkFile();
             log.info("End   Setup OraBench Run");
+        } else if (args0.equals("setup_c")) {
+            log.info("Start Setup ODPI-C OraBench Run");
+            config.createConfigurationFileC();
+            log.info("End   Setup ODPI-C OraBench Run");
         } else if (args0.equals("setup_elixir")) {
             log.info("Start Setup Elixir OraBench Run");
             new Config();
             log.info("End   Setup Elixir OraBench Run");
         } else if (args0.equals("setup_erlang")) {
             log.info("Start Setup Erlang OraBench Run");
-            config.createConfigurationFileOranifErlang();
+            config.createConfigurationFileErlang();
             log.info("End   Setup Erlang OraBench Run");
         } else if (args0.equals("setup_python")) {
             log.info("Start Setup Python OraBench Run");
-            config.createConfigurationFileCxOraclePython();
+            config.createConfigurationFilePython();
             log.info("End   Setup Python OraBench Run");
-        } else if (args0.equals("setup_odpic")) {
-            log.info("Start Setup ODPI-C OraBench Run");
-            config.createConfigurationFileOdpiC();
-            log.info("End   Setup ODPI-C OraBench Run");
         } else if (args0.contentEquals("")) {
             log.error("Command line argument missing");
         } else {
