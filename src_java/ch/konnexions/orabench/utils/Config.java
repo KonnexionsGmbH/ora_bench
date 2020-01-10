@@ -57,9 +57,9 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>file.bulk.name
  * <li>file.bulk.size
  * <li>file.configuration.name
- * <li>file.configuration.name.cx_oracle.python
- * <li>file.configuration.name.oranif.erlang
- * <li>file.configuration.name.odpi.c
+ * <li>file.configuration.name.c
+ * <li>file.configuration.name.erlang
+ * <li>file.configuration.name.python
  * <li>file.result.delimiter
  * <li>file.result.header
  * <li>file.result.name
@@ -105,9 +105,9 @@ public class Config {
     private String fileBulkName;
     private int fileBulkSize;
     private String fileConfigurationName;
-    private String fileConfigurationNameCxOraclePython;
-    private String fileConfigurationNameOranifErlang;
-    private String fileConfigurationNameOdpiC;
+    private String fileConfigurationNameC;
+    private String fileConfigurationNameErlang;
+    private String fileConfigurationNamePython;
     private String fileResultDelimiter;
     private String fileResultHeader;
     private String fileResultName;
@@ -151,16 +151,12 @@ public class Config {
     }
 
     /**
-     * Creates the cx_Oracle &amp; Python version of the configuration file.
+     * Creates the C version of the configuration file.
      */
-    public final void createConfigurationFileCxOraclePython() {
+    public final void createConfigurationFileC() {
 
         try {
-
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameCxOraclePython(), false));
-
-            bufferedWriter.write("[DEFAULT]");
-            bufferedWriter.newLine();
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameC(), false));
 
             String value;
 
@@ -173,7 +169,18 @@ public class Config {
                     value = propertiesConfiguration.getString(key);
                 }
 
-                bufferedWriter.write(key + " = " + ((value.contentEquals("\t")) ? "TAB" : value));
+                String camelKey = "";
+                for (int i = 0; i < key.length(); ++i) {
+                    if (key.charAt(i) == '.') {
+                        camelKey += Character.toUpperCase(key.charAt(i + 1));
+                        ++i;
+                    } else {
+                        camelKey += key.charAt(i);
+                    }
+                }
+
+                bufferedWriter.write(camelKey + "=" + value);
+
                 bufferedWriter.newLine();
             }
 
@@ -184,14 +191,14 @@ public class Config {
     }
 
     /**
-     * Creates the oranif &amp; Erlang version of the configuration file.
+     * Creates the Erlang version of the configuration file.
      */
-    public final void createConfigurationFileOranifErlang() {
+    public final void createConfigurationFileErlang() {
 
         try {
             List<String> list = getNumericProperties();
 
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOranifErlang(), false));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameErlang(), false));
 
             bufferedWriter.write("#{");
             bufferedWriter.newLine();
@@ -227,12 +234,16 @@ public class Config {
     }
 
     /**
-     * Creates the odpi &amp; Erlang version of the configuration file.
+     * Creates the Python version of the configuration file.
      */
-    public final void createConfigurationFileOdpiC() {
+    public final void createConfigurationFilePython() {
 
         try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameOdpiC(), false));
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNamePython(), false));
+
+            bufferedWriter.write("[DEFAULT]");
+            bufferedWriter.newLine();
 
             String value;
 
@@ -245,18 +256,7 @@ public class Config {
                     value = propertiesConfiguration.getString(key);
                 }
 
-                String camelKey = "";
-                for (int i = 0; i < key.length(); ++i) {
-                    if (key.charAt(i) == '.') {
-                        camelKey += Character.toUpperCase(key.charAt(i + 1));
-                        ++i;
-                    } else {
-                        camelKey += key.charAt(i);
-                    }
-                }
-
-                bufferedWriter.write(camelKey + "=" + value);
-
+                bufferedWriter.write(key + " = " + ((value.contentEquals("\t")) ? "TAB" : value));
                 bufferedWriter.newLine();
             }
 
@@ -459,29 +459,27 @@ public class Config {
     }
 
     /**
-     * @return the name of the configuration file for the cx_Oracle &amp; Python
-     *         language version. The file name may contain the absolute or relative
-     *         file path.
+     * @return the name of the configuration file for the C language version. The
+     *         file name may contain the absolute or relative file path.
      */
-    public final String getFileConfigurationNameCxOraclePython() {
-        return fileConfigurationNameCxOraclePython;
+    public final String getFileConfigurationNameC() {
+        return fileConfigurationNameC;
     }
 
     /**
-     * @return the name of the configuration file for the oranif &amp; Erlang
-     *         language version. The file name may contain the absolute or relative
-     *         file path.
+     * @return the name of the configuration file for the Erlang language version.
+     *         The file name may contain the absolute or relative file path.
      */
-    public final String getFileConfigurationNameOranifErlang() {
-        return fileConfigurationNameOranifErlang;
+    public final String getFileConfigurationNameErlang() {
+        return fileConfigurationNameErlang;
     }
 
     /**
-     * @return the name of the configuration file for the ODPI-C version. The file
-     *         name may contain the absolute or relative file path.
+     * @return the name of the configuration file for the Python language version.
+     *         The file name may contain the absolute or relative file path.
      */
-    public final String getFileConfigurationNameOdpiC() {
-        return fileConfigurationNameOdpiC;
+    public final String getFileConfigurationNamePython() {
+        return fileConfigurationNamePython;
     }
 
     /**
@@ -673,9 +671,9 @@ public class Config {
         fileBulkName = propertiesConfiguration.getString("file.bulk.name");
         fileBulkSize = propertiesConfiguration.getInt("file.bulk.size");
         fileConfigurationName = propertiesConfiguration.getString("file.configuration.name");
-        fileConfigurationNameCxOraclePython = propertiesConfiguration.getString("file.configuration.name.cx_oracle.python");
-        fileConfigurationNameOranifErlang = propertiesConfiguration.getString("file.configuration.name.oranif.erlang");
-        fileConfigurationNameOdpiC = propertiesConfiguration.getString("file.configuration.name.odpi.c");
+        fileConfigurationNameC = propertiesConfiguration.getString("file.configuration.name.c");
+        fileConfigurationNameErlang = propertiesConfiguration.getString("file.configuration.name.erlang");
+        fileConfigurationNamePython = propertiesConfiguration.getString("file.configuration.name.python");
         fileResultDelimiter = propertiesConfiguration.getString("file.result.delimiter");
         fileResultHeader = propertiesConfiguration.getString("file.result.header").replace(";", fileResultDelimiter);
         fileResultName = propertiesConfiguration.getString("file.result.name");

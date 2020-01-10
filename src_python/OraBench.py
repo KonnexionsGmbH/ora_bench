@@ -234,7 +234,7 @@ def get_config():
     config['file.bulk.length'] = int(config_parser['DEFAULT']['file.bulk.length'])
     config['file.bulk.name'] = config_parser['DEFAULT']['file.bulk.name']
     config['file.bulk.size'] = int(config_parser['DEFAULT']['file.bulk.size'])
-    config['file.configuration.name.cx_oracle.python'] = config_parser['DEFAULT']['file.configuration.name.cx_oracle.python']
+    config['file.configuration.name.python'] = config_parser['DEFAULT']['file.configuration.name.python']
     config['file.result.delimiter'] = str(config_parser['DEFAULT']['file.result.delimiter']).replace('TAB', '\t')
     config['file.result.header'] = config_parser['DEFAULT']['file.result.header']
     config['file.result.name'] = config_parser['DEFAULT']['file.result.name']

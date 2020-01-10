@@ -54,8 +54,9 @@ The default name for the configuration file is `priv/properties/ora_bench.proper
 A detailed description of the configuration options can be found [here](docs/benchmark_configuration_parameter.md).
 For reasons of convenience the following files are generated:
 
-- the configuration file `priv/ora_bench_cx_oracle_pytzhon.ini` for cx_Oracle &amp; Python.
-- the configuration file `priv/ora_bench_oranif_erlang.properties` with a corresponding map for oranif &amp; Erlang.
+- the configuration file `priv/ora_bench_c.propperties` for C,
+- the configuration file `priv/ora_bench_erlang.properties` with a corresponding map for Erlang, and
+- the configuration file `priv/ora_bench_python.propperties` for Python.
 
 All the file names specified here are also part of the configuration file and can be changed if necessary.
 
@@ -416,7 +417,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 - the following data in the configuration parameters is determined at runtime: 
 -- cx_Oracle version (`benchmark.driver`) and
 -- Python version (`benchmark.language`). 
-- all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.cx_oracle.python`) 
+- all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.python`) 
 - Python uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
 - the fetch size (`connection.fetch.size`) 
 - the value fetch size (`connection.fetch.size`) is not used because the operation `SELECT` uses the operation `Cursor.fetchall()`
