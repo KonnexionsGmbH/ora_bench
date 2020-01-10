@@ -422,10 +422,8 @@ The data column in the bulk file is randomly generated with a unique key column 
 ### 4.1 cx_Oracle and Python
 
 - the following data in the configuration parameters is determined at runtime: 
-
--- cx_Oracle version (`benchmark.driver`) and
--- Python version (`benchmark.language`). 
-
+    - cx_Oracle version (`benchmark.driver`) and
+    - Python version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.python`) 
 - Python uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
 - the value fetch size (`connection.fetch.size`) is not used because the operation `SELECT` uses the operation `Cursor.fetchall()`
@@ -433,16 +431,14 @@ The data column in the bulk file is randomly generated with a unique key column 
 ### 4.2 JDBC and Java
 
 - the following data in the configuration parameters is determined at runtime: 
-
--- JDBC version (`benchmark.driver`),
--- benchmark identifier (`benchmark.id`),
--- host name (`benchmark.host.name`), 
--- number of cores (`benchmark.number.cores`), 
--- JRE version (`benchmark.language`), 
--- operating system environment (`benchmark.os`), 
--- user name (`benchmark.user.name`) and 
--- SQL create statement (`sql.create`). 
-
+    - JDBC version (`benchmark.driver`),
+    - benchmark identifier (`benchmark.id`),
+    - host name (`benchmark.host.name`), 
+    - number of cores (`benchmark.number.cores`), 
+    - JRE version (`benchmark.language`), 
+    - operating system environment (`benchmark.os`), 
+    - user name (`benchmark.user.name`) and 
+    - SQL create statement (`sql.create`). 
 - the Java source code is compiled with the help of a make file
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
@@ -450,9 +446,8 @@ The data column in the bulk file is randomly generated with a unique key column 
 ### 4.3 oranif and Elixir
 
 - the following data in the configuration parameters is determined at runtime: 
-
--- oranif version (`benchmark.driver`) and
--- Elixir version (`benchmark.language`). 
+    - oranif version (`benchmark.driver`) and
+    - Elixir version (`benchmark.language`). 
 
 ## 5 <a name="reporting"> Reporting
 
