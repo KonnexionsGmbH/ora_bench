@@ -158,7 +158,7 @@ int main(const int argc, const char *argv[])
 
   for (int t = 1; t <= benchmarkTrials; ++t)
   {
-    L("Trial: %d\n", t);
+    L("Trial: %d\n", t); fflush(stdout);
 
     init_db();
     for (int i = 0; i < benchmarkNumberPartitions; ++i)

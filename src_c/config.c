@@ -191,7 +191,11 @@ void load_bulk(const char *file)
   struct row *rows = (struct row *)calloc(
       fileBulkSize, sizeof(struct row));
   struct row r, *row;
-  fscanf(fp, "%[^;];%[^\r\n]\r\n", r.key, r.data);
+  if (fscanf(fp, "%[^;];%[^\r\n]\r\n", r.key, r.data) < 2)
+  {
+    L("ERROR bad bulk file. expected 2 input items at first(header) row\n");
+    exit(-1);
+  };
   row = rows;
   L("Loading(%%).");
   while (fscanf(fp, "%[^;];%[^\r\n]\r\n", row->key, row->data) != EOF)
@@ -213,13 +217,17 @@ void load_bulk(const char *file)
     p->rowIdx++;
     rowIdx++;
     if (rowIdx % 5000 == 0)
+    {
       printf("..%d", rowIdx * 100 / fileBulkSize);
+      fflush(stdout);
+    }
   }
   printf("...finished\n");
   free(rows);
 
   for (int i = 0; i < benchmarkNumberPartitions; ++i)
     L("Partition %d contains %d rows\n", i + 1, gBulk[i].count);
+  fflush(stdout);
 
   fclose(fp);
 }
