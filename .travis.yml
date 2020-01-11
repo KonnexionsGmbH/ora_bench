@@ -18,7 +18,7 @@ before_install:
   - sudo apt update
   - sudo apt install software-properties-common
   # Elixir -----------------------------------------------------------------------
-  - travis_fold start "Setting_up_Elixir"
+  - travis_start "Setting_up_Elixir"
   - git clone https://github.com/asdf-vm/asdf.git ~/.asdf
   - cd ~/.asdf
   - git checkout "$(git describe --abbrev=0 --tags)"
@@ -33,20 +33,20 @@ before_install:
   - mix local.hex --force
   - mix local.rebar --force
   - rebar3 version
-  - travis_fold end   "Setting_up_Elixir"
+  - travis_end   "Setting_up_Elixir"
   # Java -------------------------------------------------------------------------
-  - travis_fold start "Setting_up_Java"
+  - travis_start "Setting_up_Java"
   - sudo apt install default-jdk
   - java -version
-  - travis_fold end   "Setting_up_Java"
+  - travis_end   "Setting_up_Java"
   # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
-  - travis_fold start "Setting_up_Oracle Instant Client"
+  - travis_start "Setting_up_Oracle Instant Client"
   - sudo apt-get install libaio1
   - export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH
   - sudo chmod +x $PWD/priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus
-  - travis_fold end   "Setting_up_Oracle Instant Client"
+  - travis_end   "Setting_up_Oracle Instant Client"
   # Python -----------------------------------------------------------------------
-  - travis_fold start "Setting_up_Python"
+  - travis_start "Setting_up_Python"
   - sudo add-apt-repository -y ppa:deadsnakes/ppa
   - sudo apt install python3
   - python3 --version
@@ -55,10 +55,10 @@ before_install:
   - source _build/ora_bench-env/bin/activate
   - python -m pip install --upgrade pip
   - python -m pip install --upgrade cx_Oracle
-  - travis_fold end   "Setting_up_Python"
+  - travis_end   "Setting_up_Python"
 
 script:
-  - travis_fold start "Setting_up_environment_variables"
+  - travis_start "Setting_up_environment_variables"
   - export ORA_BENCH_MULTIPLE_RUN=true
 
   - export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (Travis CI)'
@@ -82,7 +82,7 @@ script:
   - export ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
   - export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
   - export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
-  - travis_fold end   "Setting_up_environment_variables"
+  - travis_end   "Setting_up_environment_variables"
 
   - git pull
   - ./scripts/run_bench_setup.sh
