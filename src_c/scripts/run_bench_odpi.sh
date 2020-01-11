@@ -26,30 +26,38 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 
-if [ "$OSTYPE" = "msys" ]; then
-    nmake -f src_c/Makefile.win32 clean
-    nmake -f src_c/Makefile.win32
-else
-    make -f src_c/Makefile clean
-    make -f src_c/Makefile
-fi
-
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - ODPI-C."
 echo "--------------------------------------------------------------------------------"
-echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
-echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
-echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
-echo "CONNECTION_SERVICE      : $ORA_BENCH_CONNECTION_SERVICE"
-echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
-echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
+echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
+echo "BENCHMARK_DATABASE         : $ORA_BENCH_BENCHMARK_DATABASE"
+echo "CONNECTION_HOST            : $ORA_BENCH_CONNECTION_HOST"
+echo "CONNECTION_PORT            : $ORA_BENCH_CONNECTION_PORT"
+echo "CONNECTION_SERVICE         : $ORA_BENCH_CONNECTION_SERVICE"
+echo "--------------------------------------------------------------------------------"
+echo "BENCHMARK_BATCH_SIZE       : $ORA_BENCH_BENCHMARK_BATCH_SIZE"
+echo "BENCHMARK_CORE_MULTIPLIER  : $ORA_BENCH_BENCHMARK_CORE_MULTIPLIER"
+echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
+echo "--------------------------------------------------------------------------------"
+echo "FILE_CONFIGURATION_NAME    : $ORA_BENCH_FILE_CONFIGURATION_NAME"
+echo "JAVA_CLASSPATH             : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
+
+if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
+    if [ "$OSTYPE" = "msys" ]; then
+        nmake -f src_c/Makefile.win32 clean
+        nmake -f src_c/Makefile.win32
+    else
+        make -f src_c/Makefile clean
+        make -f src_c/Makefile
+    fi
+fi
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
 

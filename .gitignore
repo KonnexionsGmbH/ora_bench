@@ -8,6 +8,7 @@
 .concrete/DEV_MODE
 .eunit
 .rebar
+/priv/Gammadyne/timer.txt
 _build/
 deps
 ebin/*.beam
