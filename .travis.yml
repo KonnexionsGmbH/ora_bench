@@ -13,11 +13,13 @@ env:
     - ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 
-before_install:
+script:
+  # Prepare installation process -------------------------------------------------
+  - travis_fold start "Prepare_installation_process"
   - sudo apt update
   - sudo apt install software-properties-common
+  - travis_fold end   "Prepare_installation_process"
 
-script:
   # Elixir -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Elixir"
   - git clone https://github.com/asdf-vm/asdf.git ~/.asdf
@@ -89,10 +91,12 @@ script:
   - travis_fold end   "Setting_up_environment_variables"
 
   # Running ora_bench ------------------------------------------------------------
+  - travis_fold start "Running_ora_bench"
   - git pull
   - ./scripts/run_bench_setup.sh
   - ./scripts/run_bench_database_series.sh
   - ./scripts/run_bench_finalise.sh
+  - travis_fold end   "Running_ora_bench"
 
 after_success:
   - ./scripts/run_bench_travis_push.sh
