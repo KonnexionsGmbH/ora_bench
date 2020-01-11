@@ -1,0 +1,21 @@
+FROM ubuntu:19.10 as base
+
+RUN apt-get update
+RUN apt-get install -y  
+
+RUN export DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get install -yq autoconf \
+                        autotools-dev \
+                        build-essential \
+                        git \
+                        tmux \
+                        vim
+RUN autoconf -V
+RUN automake --version
+RUN gcc --version
+RUN git --version
+RUN tmux -V
+RUN vim --version
+
+CMD ["/bin/bash"]
