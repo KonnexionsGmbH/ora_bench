@@ -56,7 +56,7 @@ main([ConfigFile, Driver]) ->
     true -> ok
   end,
   ok = file:close(Fd),
-  io:format("[~p:~p] Start ~p~n", [?FUNCTION_NAME, ?LINE, ?MODULE]),
+  io:format("~n[~p:~p] Start ~p~n", [?FUNCTION_NAME, ?LINE, ?MODULE]),
   _ = maps:map(
     fun(Partition, PartitionRows) ->
       io:format(
@@ -249,7 +249,7 @@ run_trials(Trial, Trials, Ctx, Stats) ->
     sql_drop := Drop
   } = Conf = get(conf),
   io:format(
-    "[~p:~p:~p] Start trial no ~p~n", [?MODULE, ?FUNCTION_NAME, ?LINE, Trial]
+    "[~p:~p:~p] Start trial no ~p... ", [?MODULE, ?FUNCTION_NAME, ?LINE, Trial]
   ),
   StartTime = os:timestamp(),
   case Driver of
@@ -306,7 +306,6 @@ run_trials(Trial, Trials, Ctx, Stats) ->
   end,
   InsertStat = run_insert(Ctx),
   SelectStat = run_select(Ctx),
-  timer:sleep(100000),
   InsertPR = maps:fold(
     fun(_Pid, #{partition := P, rows := R}, Map) -> Map#{P => R} end,
     #{},
@@ -326,11 +325,15 @@ run_trials(Trial, Trials, Ctx, Stats) ->
       exit(bad_partitioncount);
     true -> ok
   end,
+  EndTime = os:timestamp(),
+  io:format(
+    "~p seconds~n", [round(timer:now_diff(EndTime, StartTime) / 1000000)]
+  ),
   run_trials(
     Trial + 1, Trials, Ctx,
     Stats#{Trial => #{
       startTime => StartTime,
-      endTime => os:timestamp(),
+      endTime => EndTime,
       insert => InsertStat,
       select => SelectStat
     }}
