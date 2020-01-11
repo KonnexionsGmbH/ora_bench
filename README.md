@@ -474,9 +474,9 @@ The data column in the bulk file is randomly generated with a unique key column 
 |            | 2019.11.05 | c_bik    | jamdb_erlang: new |
 |            | 2019.11.05 | c_bik    | occi_c++: new |
 |            | 2019.11.05 | c_bik    | odbc_erlang: new |
-|            | 2019.11.05 | c_bik    | odpi-c_c: new |
+| 2020.01.06 | 2019.11.05 | c_bik    | odpi-c_c: new |
 |            | 2019.11.05 | wwe      | jamdb_elixir: new |
-|            | 2020.01.08 | c_bik    | benchmark.batch.size=0 |
+| 2020.01.08 | 2020.01.08 | c_bik    | benchmark.batch.size=0 |
 |            | 2020.01.08 | c_bik    | plot: diagram types: bar graph & function graph |
 |            | 2020.01.08 | c_bik    | plot: object database version - selection driver & language, operation, ora_bench release, trial no.  |
 |            | 2020.01.08 | c_bik    | plot: object driver & language - selection database version, operation, ora_bench release, trial no.  |
