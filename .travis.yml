@@ -1,6 +1,5 @@
 ---
 dist: xenial
-  - export -f travis_fold
 
 sudo: true
 
@@ -18,7 +17,7 @@ before_install:
   - sudo apt update
   - sudo apt install software-properties-common
   # Elixir -----------------------------------------------------------------------
-  - travis_fold start "Setting_up_Elixir"
+  - echo 'Setting up Elixir ...' && echo -en 'travis_fold:start:script.1\\r'
   - git clone https://github.com/asdf-vm/asdf.git ~/.asdf
   - cd ~/.asdf
   - git checkout "$(git describe --abbrev=0 --tags)"
@@ -33,7 +32,7 @@ before_install:
   - mix local.hex --force
   - mix local.rebar --force
   - rebar3 version
-  - travis_fold end   "Setting_up_Elixir"
+  - echo -en 'travis_fold:end:script.1\\r'  
   # Java -------------------------------------------------------------------------
   - travis_fold start "Setting_up_Java"
   - sudo apt install default-jdk
