@@ -1,5 +1,6 @@
 ---
 dist: xenial
+  - export -f travis_fold
 
 sudo: true
 
@@ -14,8 +15,6 @@ env:
     - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 
 before_install:
-  - export -f travis_fold
-  
   - sudo apt update
   - sudo apt install software-properties-common
   # Elixir -----------------------------------------------------------------------
