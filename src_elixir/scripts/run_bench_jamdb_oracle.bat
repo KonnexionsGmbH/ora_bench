@@ -30,11 +30,15 @@ echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - JamDB Oracle and Elixir.
 echo --------------------------------------------------------------------------------
-echo MULTIPLE_RUN            : %ORA_BENCH_MULTIPLE_RUN%
-echo BENCHMARK_DATABASE      : %ORA_BENCH_BENCHMARK_DATABASE%
-echo CONNECTION_HOST         : %ORA_BENCH_CONNECTION_HOST%
-echo CONNECTION_PORT         : %ORA_BENCH_CONNECTION_PORT%
-echo CONNECTION_SERVICE      : %ORA_BENCH_CONNECTION_SERVICE%
+echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
+echo BENCHMARK_DATABASE         : %ORA_BENCH_BENCHMARK_DATABASE%
+echo CONNECTION_HOST            : %ORA_BENCH_CONNECTION_HOST%
+echo CONNECTION_PORT            : %ORA_BENCH_CONNECTION_PORT%
+echo CONNECTION_SERVICE         : %ORA_BENCH_CONNECTION_SERVICE%
+echo --------------------------------------------------------------------------------
+echo BENCHMARK_BATCH_SIZE       : %ORA_BENCH_BENCHMARK_BATCH_SIZE%
+echo BENCHMARK_CORE_MULTIPLIER  : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
+echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================

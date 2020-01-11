@@ -27,18 +27,15 @@ if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
 
-set ORA_BENCH_CONNECT_IDENTIFIER=//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE%
-
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - specific database.
 echo --------------------------------------------------------------------------------
-echo BENCHMARK_DATABASE       %ORA_BENCH_BENCHMARK_DATABASE%
+echo BENCHMARK_DATABASE      : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST         : %ORA_BENCH_CONNECTION_HOST%
 echo CONNECTION_PORT         : %ORA_BENCH_CONNECTION_PORT%
 echo CONNECTION_SERVICE      : %ORA_BENCH_CONNECTION_SERVICE%
-echo FILE_CONFIGURATION_NAME : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON    : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_JAMDB_ORACLE_ELIXIR : %ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%
@@ -47,7 +44,7 @@ echo RUN_ODPI_C              : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORANIF_ELIXIR       : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG       : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------
-echo CONNECT_IDENTIFIER      : %ORA_BENCH_CONNECT_IDENTIFIER%
+echo FILE_CONFIGURATION_NAME : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
@@ -106,7 +103,7 @@ if NOT ["%DOCKER_HEALTH_STATUS%"] == ["healthy"] (
     goto :check_health_status
 )
 
-priv\oracle\instantclient-windows.x64\instantclient_19_5\sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@%ORA_BENCH_CONNECT_IDENTIFIER% AS SYSDBA @scripts/run_bench_database.sql
+priv\oracle\instantclient-windows.x64\instantclient_19_5\sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE% AS SYSDBA @scripts/run_bench_database.sql
 if %ERRORLEVEL% NEQ 0 (
     GOTO EndOfScript
 )
@@ -122,15 +119,6 @@ if %ERRORLEVEL% NEQ 0 (
 
 rem #02
 set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
-set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
-set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-call scripts\run_bench_all_drivers.bat
-if %ERRORLEVEL% NEQ 0 (
-    GOTO EndOfScript
-)
-
-rem #03
-set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
 set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
@@ -138,9 +126,18 @@ if %ERRORLEVEL% NEQ 0 (
     GOTO EndOfScript
 )
 
+rem #03
+set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
+set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
+call scripts\run_bench_all_drivers.bat
+if %ERRORLEVEL% NEQ 0 (
+    GOTO EndOfScript
+)
+
 rem #04
-set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
-set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
@@ -149,24 +146,6 @@ if %ERRORLEVEL% NEQ 0 (
 
 rem #05
 set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
-set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
-call scripts\run_bench_all_drivers.bat
-if %ERRORLEVEL% NEQ 0 (
-    GOTO EndOfScript
-)
-
-rem #06
-set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
-set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-call scripts\run_bench_all_drivers.bat
-if %ERRORLEVEL% NEQ 0 (
-    GOTO EndOfScript
-)
-
-rem #07
-set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
@@ -174,7 +153,7 @@ if %ERRORLEVEL% NEQ 0 (
     GOTO EndOfScript
 )
 
-rem #08
+rem #06
 set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0

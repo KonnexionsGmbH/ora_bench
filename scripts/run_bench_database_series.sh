@@ -27,8 +27,6 @@ if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 fi
 
-export ORA_BENCH_CONNECT_IDENTIFIER=//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE
-
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -38,7 +36,6 @@ echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
 echo "CONNECTION_SERVICE      : $ORA_BENCH_CONNECTION_SERVICE"
-echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON    : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JAMDB_ORACLE_ELIXIR : $ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR"
@@ -47,7 +44,7 @@ echo "RUN_ODPI_C              : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR       : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG       : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
-echo "CONNECT_IDENTIFIER      : $ORA_BENCH_CONNECT_IDENTIFIER"
+echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
@@ -96,9 +93,9 @@ end=$(date +%s)
 echo "DOCKER ready in $((end - start)) seconds"
 
 if [ "$OSTYPE" = "msys" ]; then
-  priv/oracle/instantclient-windows.x64/instantclient_19_5/sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_database.sql
+  priv/oracle/instantclient-windows.x64/instantclient_19_5/sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_bench_database.sql
 else
-  priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus sys/$ORA_BENCH_PASSWORD_SYS@$ORA_BENCH_CONNECT_IDENTIFIER AS SYSDBA @scripts/run_bench_database.sql
+  priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_bench_database.sql
 fi  
 if [ $? -ne 0 ]; then
     exit $?
@@ -115,15 +112,6 @@ fi
 
 # #02
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-{ /bin/bash scripts/run_bench_all_drivers.sh; }
-if [ $? -ne 0 ]; then
-    exit $?
-fi
-
-# #03
-export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
 { /bin/bash scripts/run_bench_all_drivers.sh; }
@@ -131,9 +119,18 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
+# #03
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+{ /bin/bash scripts/run_bench_all_drivers.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
+fi
+
 # #04
-export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 { /bin/bash scripts/run_bench_all_drivers.sh; }
 if [ $? -ne 0 ]; then
@@ -142,24 +139,6 @@ fi
 
 # #05
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-{ /bin/bash scripts/run_bench_all_drivers.sh; }
-if [ $? -ne 0 ]; then
-    exit $?
-fi
-
-# #06
-export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-{ /bin/bash scripts/run_bench_all_drivers.sh; }
-if [ $? -ne 0 ]; then
-    exit $?
-fi
-
-# #07
-export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
 { /bin/bash scripts/run_bench_all_drivers.sh; }
@@ -167,7 +146,7 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
-# #08
+# #06
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
