@@ -43,6 +43,9 @@ if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU [""] (
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
+if ["%ORA_BENCH_RUN_JAMDB_ERLANG%"] EQU [""] (
+    set ORA_BENCH_RUN_JAMDB_ERLANG=true
+)
 
 set ORA_BENCH_CONNECT_IDENTIFIER=//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE%
 
@@ -67,6 +70,7 @@ echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_ODPI_C                 : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORANIF_ELIXIR          : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
+echo RUN_JAMDB_ERLANG           : %ORA_BENCH_RUN_JAMDB_ERLANG%
 echo --------------------------------------------------------------------------------
 echo CONNECT_IDENTIFIER         : %ORA_BENCH_CONNECT_IDENTIFIER%
 echo --------------------------------------------------------------------------------
@@ -131,6 +135,10 @@ if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
 
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
    call  src_erlang\scripts\run_bench_oranif.bat
+)
+
+if ["%ORA_BENCH_RUN_JAMDB_ERLANG%"] EQU ["true"] (
+   call  src_erlang\scripts\run_bench_jamdb.bat
 )
 
 :EndOfScript

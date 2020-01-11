@@ -12,6 +12,9 @@
 
 %% escript Entry point
 main([ConfigFile, Driver]) ->
+  io:format(
+    "~n[~p:~p] Start ~p (~s)~n", [?FUNCTION_NAME, ?LINE, ?MODULE, Driver]
+  ),
   process_flag(trap_exit, true),
   {ok, [Config0]} = file:consult(ConfigFile),
   Config = Config0#{benchmark_driver => Driver},
@@ -56,7 +59,6 @@ main([ConfigFile, Driver]) ->
     true -> ok
   end,
   ok = file:close(Fd),
-  io:format("~n[~p:~p] Start ~p~n", [?FUNCTION_NAME, ?LINE, ?MODULE]),
   _ = maps:map(
     fun(Partition, PartitionRows) ->
       io:format(
@@ -71,7 +73,6 @@ main([ConfigFile, Driver]) ->
     startTime := StartTs,
     endTime := EndTs
   } = Results = run_trials(Trials),
-  io:format("[~p:~p] End ~p~n", [?FUNCTION_NAME, ?LINE, ?MODULE]),
   BMDrv = case Driver of
     "oranif" ->
       ok = application:load(oranif),
@@ -176,6 +177,7 @@ main([ConfigFile, Driver]) ->
     round(DurationMicros / 1000000), DurationMicros * 1000]
   ),
   ok = file:close(RFd),
+  io:format("[~p:~p] End ~p (~s)~n", [?FUNCTION_NAME, ?LINE, ?MODULE, Driver]),
   halt(0).
 
 %%====================================================================
@@ -342,7 +344,7 @@ run_trials(Trial, Trials, Ctx, Stats) ->
 run_insert(Ctx) ->  
   Rows = get(rows),
   #{benchmark_number_partitions := Partitions} = Config = get(conf),
-  Master = self(),  
+  Master = self(),
   Threads = [
     spawn_link(
       ?MODULE, insert_partition,
@@ -388,52 +390,49 @@ insert_partition(
       end
   end,
   Start = os:timestamp(),
-  #{var := KeyVar} = dpi:conn_newVar(
-    Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES',
-    if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end,
-    32, false, false, null
-  ),
-  #{var := DataVar} = dpi:conn_newVar(
-    Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES',
-    if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end,
-    Size, false, false, null
-  ),
-  InsertStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Insert), <<>>),
-  ok = dpi:stmt_bindByName(InsertStmt, <<"key">>, KeyVar),
-  ok = dpi:stmt_bindByName(InsertStmt, <<"data">>, DataVar),
+  Params = case Driver of
+    "oranif" ->
+      #{var := KeyVar} = dpi:conn_newVar(
+        Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES',
+        if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end,
+        32, false, false, null
+      ),
+      #{var := DataVar} = dpi:conn_newVar(
+        Conn, 'DPI_ORACLE_TYPE_VARCHAR', 'DPI_NATIVE_TYPE_BYTES',
+        if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end,
+        Size, false, false, null
+      ),
+      InsertStmt = dpi:conn_prepareStmt(
+        Conn, false, list_to_binary(Insert), <<>>
+      ),
+      ok = dpi:stmt_bindByName(InsertStmt, <<"key">>, KeyVar),
+      ok = dpi:stmt_bindByName(InsertStmt, <<"data">>, DataVar),
+      #{
+        conn => Conn, insertStmt => InsertStmt, keyVar => KeyVar,
+        dataVar => DataVar
+      };
+    "jamdb" ->
+      {ok,[]} = jamdb_oracle:sql_query(Conn, "COMOFF;"),
+      #{conn => Conn, insertSql => Insert}
+  end,
   {NIE, _} = lists:foldl(
-    fun({Key, Data}, {NIE, RowCount}) ->
-      NewNIE =
-        if
-          NumItersExec == 0 orelse NIE < NumItersExec ->
-            ok = dpi:var_setFromBytes(KeyVar, NIE, Key),
-            ok = dpi:var_setFromBytes(DataVar, NIE, Data),
-            NIE + 1;
-          true ->
-            ok = dpi:stmt_executeMany(
-              InsertStmt, [],
-              if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end
-            ),
-            ok = dpi:var_setFromBytes(KeyVar, 0, Key),
-            ok = dpi:var_setFromBytes(DataVar, 0, Data),
-            1
-        end,
-      if NumItersCommit > 0 andalso RowCount rem NumItersCommit == 0 ->
-          ok = dpi:conn_commit(Conn);
-        true -> ok
-      end,
-      {NewNIE, RowCount + 1}
-    end,
-    {0, 0},
-    Rows
+    insert_fold_fn(Driver, NumItersExec, NumItersCommit, FBulkSz, Params),
+    {0, 0}, Rows
   ),
-  if NIE > 0 -> ok = dpi:stmt_executeMany(InsertStmt, [], NIE);
-  true -> ok end,
-  ok = dpi:conn_commit(Conn),
-  ok = dpi:var_release(KeyVar),
-  ok = dpi:var_release(DataVar),
-  ok = dpi:stmt_close(InsertStmt, <<>>),
-  ok = dpi:conn_close(Conn, [], <<>>),
+  case Driver of
+    "oranif" ->
+      #{insertStmt := InsStmt} = Params,
+      if NIE > 0 -> ok = dpi:stmt_executeMany(InsStmt, [], NIE);
+      true -> ok end,
+      ok = dpi:conn_commit(Conn),
+      ok = dpi:var_release(maps:get(keyVar, Params)),
+      ok = dpi:var_release(maps:get(dataVar, Params)),
+      ok = dpi:stmt_close(InsStmt, <<>>),
+      ok = dpi:conn_close(Conn, [], <<>>);
+    "jamdb" ->
+      {ok,[]} = jamdb_oracle:sql_query(Conn, "COMMIT;"),
+      ok = jamdb_oracle:stop(Conn)
+  end,
   Master ! {
     result, self(),
     #{
@@ -445,12 +444,11 @@ insert_partition(
 select_partition(
   Partition, Ctx, Master,
   #{
-    connection_string := ConnectString,
     connection_user := User,
     connection_password := Password,
     sql_select := Select,
     connection_fetch_size := FetchSize,
-
+    file_bulk_size := FileBulkSize,
     benchmark_driver := Driver
   } = Config
 ) -> 
@@ -469,22 +467,25 @@ select_partition(
     io_lib:format("~s WHERE partition_key = ~p", [Select, Partition])
   ),
   Start = os:timestamp(),
-  SelectStmt = dpi:conn_prepareStmt(Conn, false, SelectSql, <<>>),
-  2 = dpi:stmt_execute(SelectStmt, []),
-  ok = dpi:stmt_setFetchArraySize(SelectStmt, FetchSize),
-  Selected = (fun Fetch(Count) ->
-    case dpi:stmt_fetch(SelectStmt) of
-      #{found := true} ->
-        %#{data := Key} = dpi:stmt_getQueryValue(SelectStmt, 1),
-        %#{data := Data} = dpi:stmt_getQueryValue(SelectStmt, 2),
-        %true = byte_size(dpi:data_getBytes(Key)) > 0,
-        %true = byte_size(dpi:data_getBytes(Data)) > 0,
-        Fetch(Count+1);
-      #{found := false} -> Count
-    end
-  end)(0),
-  ok = dpi:stmt_close(SelectStmt, <<>>),
-  ok = dpi:conn_close(Conn, [], <<>>),
+  Params = case Driver of
+    "oranif" ->
+      SelectStmt = dpi:conn_prepareStmt(Conn, false, SelectSql, <<>>),
+      2 = dpi:stmt_execute(SelectStmt, []),
+      ok = dpi:stmt_setFetchArraySize(SelectStmt, FetchSize),
+      #{selectStmt => SelectStmt};
+    "jamdb" ->
+      {ok,[]} = jamdb_oracle:sql_query(Conn, {"FETCH", [FileBulkSize]}),
+      #{conn => Conn, selectSql => binary_to_list(SelectSql)}
+  end,
+  Selected = select_fetch_all(Driver, Params),
+  case Driver of
+    "oranif" ->
+      #{selectStmt := SelStmt} = Params,
+      ok = dpi:stmt_close(SelStmt, <<>>),
+      ok = dpi:conn_close(Conn, [], <<>>);
+    "jamdb" ->
+      ok = jamdb_oracle:stop(Conn)
+  end,
   Master ! {
     result, self(),
     #{
@@ -519,14 +520,74 @@ thread_join(Threads) -> thread_join(Threads, #{}).
 thread_join([], Results) -> Results;
 thread_join(Threads, Results) ->
   receive
-    {result, Pid, Result} -> thread_join(Threads, Results#{Pid => Result});
+    {result, Pid, Result} ->
+      thread_join(Threads, Results#{Pid => Result});
     {'EXIT', Thread, _Reason} ->
       thread_join(Threads -- [Thread], Results)
-  after
-    10000 ->
-      io:format(
-        "[~p:~p:~p] waiting ~p~n",
-        [?MODULE, ?FUNCTION_NAME, ?LINE, length(Threads)]
-      ),
-      thread_join(Threads, Results)
+  after 60000 ->
+    io:format(
+      "[~p:~p:~p] waiting ~p~n",
+      [?MODULE, ?FUNCTION_NAME, ?LINE, length(Threads)]
+    ),
+    thread_join(Threads, Results)
   end.
+
+insert_fold_fn(
+  "oranif", NumItersExec, NumItersCommit, FBulkSz,
+  #{
+    conn := Conn, insertStmt := InsertStmt, keyVar := KeyVar,
+    dataVar := DataVar
+  }
+) ->
+  fun({Key, Data}, {NIE, RowCount}) ->
+    NewNIE = if
+      NumItersExec == 0 orelse NIE < NumItersExec ->
+        ok = dpi:var_setFromBytes(KeyVar, NIE, Key),
+        ok = dpi:var_setFromBytes(DataVar, NIE, Data),
+        NIE + 1;
+      true ->
+        ok = dpi:stmt_executeMany(
+          InsertStmt, [],
+          if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end
+        ),
+        ok = dpi:var_setFromBytes(KeyVar, 0, Key),
+        ok = dpi:var_setFromBytes(DataVar, 0, Data),
+        1
+    end,
+    if NumItersCommit > 0 andalso RowCount rem NumItersCommit == 0 ->
+        ok = dpi:conn_commit(Conn);
+      true -> ok
+    end,
+    {NewNIE, RowCount + 1}
+  end;
+insert_fold_fn(
+  "jamdb", _NumItersExec, _NumItersCommit, _FBulkSz,
+  #{conn := Conn, insertSql := InsertSql}
+) ->
+  fun({Key, Data}, Acc) ->
+    {ok, [{affected_rows,1}]} = jamdb_oracle:sql_query(
+      Conn, {InsertSql, [Key, Data]}
+    ),
+    Acc
+  end.
+
+select_fetch_all("oranif", #{selectStmt := SelectStmt}) ->
+  select_fetch_all_oranif(SelectStmt, 0);
+select_fetch_all("jamdb", #{conn := Conn, selectSql := SelectSql}) ->
+  select_fetch_all_jamdb(Conn, SelectSql).
+
+select_fetch_all_oranif(SelectStmt, Count) ->
+  case dpi:stmt_fetch(SelectStmt) of
+    #{found := true} ->
+      %#{data := Key} = dpi:stmt_getQueryValue(SelectStmt, 1),
+      %#{data := Data} = dpi:stmt_getQueryValue(SelectStmt, 2),
+      %true = byte_size(dpi:data_getBytes(Key)) > 0,
+      %true = byte_size(dpi:data_getBytes(Data)) > 0,
+      select_fetch_all_oranif(SelectStmt, Count+1);
+    #{found := false} -> Count
+  end.
+
+select_fetch_all_jamdb(Conn, SelectSql) ->
+  {ok,[{result_set,[<<"KEY">>, <<"DATA">>], [], Rows}]} =
+    jamdb_oracle:sql_query(Conn, SelectSql),
+  length(Rows).

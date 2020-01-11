@@ -24,6 +24,9 @@ fi
 if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 fi
+if [ -z "$ORA_BENCH_RUN_JAMDB_ERLANG" ]; then
+    export ORA_BENCH_RUN_JAMDB_ERLANG=true
+fi
 
 export ORA_BENCH_CONNECT_IDENTIFIER=//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE
 
@@ -41,6 +44,7 @@ echo "RUN_JDBC_JAVA           : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "RUN_ODPI_C              : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR       : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG       : $ORA_BENCH_RUN_ORANIF_ERLANG"
+echo "RUN_JAMDB_ERLANG        : $ORA_BENCH_RUN_JAMDB_ERLANG"
 echo "--------------------------------------------------------------------------------"
 echo "CONNECT_IDENTIFIER      : $ORA_BENCH_CONNECT_IDENTIFIER"
 echo "--------------------------------------------------------------------------------"
@@ -175,6 +179,25 @@ if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
     fi
 fi
 
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
     export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
@@ -290,6 +313,44 @@ if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
     fi
 fi
 
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER==$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER==$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
     export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
@@ -405,6 +466,25 @@ if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
     fi
 fi
 
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
     export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
@@ -514,6 +594,22 @@ if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
     export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
     { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
+fi
+
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
 fi
 
 EXITCODE=$?

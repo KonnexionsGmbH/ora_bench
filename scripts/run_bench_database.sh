@@ -43,6 +43,9 @@ fi
 if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 fi
+if [ -z "$ORA_BENCH_RUN_JAMDB_ERLANG" ]; then
+    export ORA_BENCH_RUN_JAMDB_ERLANG=true
+fi
 
 export ORA_BENCH_CONNECT_IDENTIFIER=//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE
 
@@ -67,6 +70,7 @@ echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
+echo "RUN_JAMDB_ERLANG           : $ORA_BENCH_RUN_JAMDB_ERLANG"
 echo "--------------------------------------------------------------------------------"
 echo "CONNECT_IDENTIFIER         : $ORA_BENCH_CONNECT_IDENTIFIER"
 echo "--------------------------------------------------------------------------------"
@@ -81,7 +85,7 @@ docker stop ora_bench_db
 docker rm -f ora_bench_db
 echo "Docker create ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)"
 docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/$ORA_BENCH_BENCHMARK_DATABASE
-echo "Docker start eate ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)..."
+echo "Docker start ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)..."
 docker start ora_bench_db
 while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
 end=$(date +%s)
@@ -133,6 +137,13 @@ fi
 
 if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
     { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
     if [ $? -ne 0 ]; then
         exit $?
     fi

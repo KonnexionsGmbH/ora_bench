@@ -25,6 +25,7 @@ set ORA_BENCH_RUN_JDBC_JAVA=true
 set ORA_BENCH_RUN_ODPI_C=true
 set ORA_BENCH_RUN_ORANIF_ELIXIR=true
 set ORA_BENCH_RUN_ORANIF_ERLANG=true
+set ORA_BENCH_RUN_JAMDB_ERLANG=true
 
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
     set ORA_BENCH_JAVA_CLASSPATH=.;priv\java_jar\*
@@ -65,6 +66,7 @@ echo.
     echo RUN_ODPI_C              : %ORA_BENCH_RUN_ODPI_C%
     echo RUN_ORANIF_ELIXIR       : %ORA_BENCH_RUN_ORANIF_ELIXIR%
     echo RUN_ORANIF_ERLANG       : %ORA_BENCH_RUN_ORANIF_ERLANG%
+    echo RUN_JAMDB_ERLANG        : %ORA_BENCH_RUN_JAMDB_ERLANG%
     echo --------------------------------------------------------------------------------
     echo JAVA_HOME               : %JAVA_HOME%
     echo --------------------------------------------------------------------------------
