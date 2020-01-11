@@ -30,6 +30,7 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - oranif and Erlang."
 echo "--------------------------------------------------------------------------------"
+echo "MULTIPLE_RUN            : $ORA_BENCH_MULTIPLE_RUN"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
@@ -42,9 +43,11 @@ EXITCODE="0"
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
 
-cd src_erlang
-rebar3 escriptize
-cd ..
+if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
+    cd src_erlang
+    rebar3 escriptize
+    cd ..
+fi
 
 src_erlang/_build/default/bin/orabench priv/properties/ora_bench_erlang.properties
 

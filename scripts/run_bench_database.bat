@@ -6,6 +6,8 @@ rem run_bench_database.bat: Oracle benchmark for a specific database version.
 rem
 rem ------------------------------------------------------------------------------
 
+set ORA_BENCH_MULTIPLE_RUN=true
+
 if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 )
@@ -73,6 +75,39 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
+if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
+    echo Setup C - Start ============================================================ 
+    nmake -f src_c\Makefile.win32 clean
+    nmake -f src_c\Makefile.win32
+    echo Setup C - End   ============================================================ 
+)
+
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] == ["true"] (
+    echo Setup Elixir - Start ======================================================= 
+    cd src_elixir
+    call mix deps.get
+    call mix deps.compile
+    cd ..
+    echo Setup Elixir - End   ======================================================= 
+)
+
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
+    echo Setup Elixir - Start ======================================================= 
+    cd src_elixir
+    call mix deps.get
+    call mix deps.compile
+    cd ..
+    echo Setup Elixir - End   ======================================================= 
+)
+
+if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] == ["true"] (
+    echo Setup Erlang - Start ======================================================= 
+    cd src_erlang
+    call rebar3 escriptize
+    cd ..
+    echo Setup Erlang - End   ======================================================= 
+)    
+
 priv\Gammadyne\timer.exe
 echo Docker stop/rm ora_bench_db
 docker stop ora_bench_db
@@ -99,44 +134,9 @@ if %ERRORLEVEL% NEQ 0 (
     GOTO EndOfScript
 )
 
-if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
-    call src_python\scripts\run_bench_cx_oracle.bat
-    if %ERRORLEVEL% NEQ 0 (
-        GOTO EndOfScript
-    )
-)
-
-
-if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU ["true"] (
-    call src_elixir\scripts\run_bench_jamdb_oracle.bat
-    if %ERRORLEVEL% NEQ 0 (
-        GOTO EndOfScript
-    )
-)
-
-if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
-    call src_java\scripts\run_bench_jdbc.bat
-    if %ERRORLEVEL% NEQ 0 (
-        GOTO EndOfScript
-    )
-)
-
-if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
-    call src_c\scripts\run_bench_odpi.bat
-    if %ERRORLEVEL% NEQ 0 (
-        GOTO EndOfScript
-    )
-)
-
-if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
-    call src_elixir\scripts\run_bench_oranif.bat
-    if %ERRORLEVEL% NEQ 0 (
-        GOTO EndOfScript
-    )
-)
-
-if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
-   call  src_erlang\scripts\run_bench_oranif.bat
+call scripts\run_bench_all_drivers.bat
+if %ERRORLEVEL% NEQ 0 (
+    GOTO EndOfScript
 )
 
 :EndOfScript

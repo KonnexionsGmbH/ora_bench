@@ -34,6 +34,7 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - JamDB Oracle and Elixir."
 echo "--------------------------------------------------------------------------------"
+echo "MULTIPLE_RUN            : $ORA_BENCH_MULTIPLE_RUN"
 echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
@@ -47,8 +48,12 @@ EXITCODE="0"
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
 
 cd src_elixir
-mix deps.get
-mix deps.compile
+
+if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
+    mix deps.get
+    mix deps.compile
+fi    
+
 mix run -e "OraBench.CLI.main([\"Jamdb.Oracle\"])"
 cd ..
 

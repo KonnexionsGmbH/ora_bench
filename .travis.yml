@@ -50,6 +50,8 @@ before_install:
   - python -m pip install --upgrade cx_Oracle
 
 script:
+  - export ORA_BENCH_MULTIPLE_RUN=true
+
   - export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (Travis CI)'
   - export ORA_BENCH_CONNECTION_HOST=0.0.0.0
   - export ORA_BENCH_CONNECTION_PORT=1521

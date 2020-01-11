@@ -6,6 +6,8 @@
 #
 # ------------------------------------------------------------------------------
 
+export ORA_BENCH_MULTIPLE_RUN=true
+
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
@@ -52,6 +54,33 @@ echo "==========================================================================
 
 EXITCODE="0"
 
+if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
+    echo "Setup C - Start ============================================================" 
+    if [ "$OSTYPE" = "msys" ]; then
+        nmake -f src_c/Makefile.win32 clean
+        nmake -f src_c/Makefile.win32
+    else
+        make -f src_c/Makefile clean
+        make -f src_c/Makefile
+    fi
+    echo "Setup C - End   ============================================================" 
+fi
+
+if ["$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" == "true" or "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true"]: then
+    echo "Setup Elixir - Start =======================================================" 
+    call mix deps.get
+    call mix deps.compile
+    echo "Setup Elixir - End   =======================================================" 
+fi
+
+if ["$$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true"]: then
+    echo "Setup Erlang - Start =======================================================" 
+    cd src_erlang
+    rebar3 escriptize
+    echo "Setup Erlang - End   =======================================================" 
+    cd ..
+fi
+
 start=$(date +%s)
 echo "Docker stop/rm ora_bench_db"
 docker stop ora_bench_db
@@ -73,355 +102,76 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
-if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
+# #01
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+{ /bin/bash scripts/run_bench_all_drivers.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
 fi
 
-if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
+# #02
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+{ /bin/bash scripts/run_bench_all_drivers.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
 fi
 
-if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER==$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_elixir/scripts/run_bench_jamdb_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_elixir/scripts/run_bench_jamdb_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
+# #03
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+{ /bin/bash scripts/run_bench_all_drivers.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
 fi
 
-if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER==$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_java/scripts/run_bench_jdbc.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_java/scripts/run_bench_jdbc.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
+# #04
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
+export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+{ /bin/bash scripts/run_bench_all_drivers.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
 fi
 
-if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER==$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_c/scripts/run_bench_odpi.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
+# #05
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+{ /bin/bash scripts/run_bench_all_drivers.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
 fi
 
-if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_c/scripts/run_bench_odpi.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
+# #06
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+{ /bin/bash scripts/run_bench_all_drivers.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
 fi
 
-if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER==$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
+# #07
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
+{ /bin/bash scripts/run_bench_all_drivers.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
 fi
 
-if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER==$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-    { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_elixir/scripts/run_bench_jamdb_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_elixir/scripts/run_bench_jamdb_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_java/scripts/run_bench_jdbc.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_java/scripts/run_bench_jdbc.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_c/scripts/run_bench_odpi.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_c/scripts/run_bench_odpi.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_elixir/scripts/run_bench_jamdb_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_elixir/scripts/run_bench_jamdb_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_java/scripts/run_bench_jdbc.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_java/scripts/run_bench_jdbc.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_c/scripts/run_bench_odpi.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_c/scripts/run_bench_odpi.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
+# #08
+export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+{ /bin/bash scripts/run_bench_all_drivers.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
 fi
 
 EXITCODE=$?

@@ -6,6 +6,8 @@
 #
 # ------------------------------------------------------------------------------
 
+export ORA_BENCH_MULTIPLE_RUN=true
+
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
@@ -31,6 +33,7 @@ fi
 if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" ]; then
     export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
 fi
+export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=false
 if [ -z "$ORA_BENCH_RUN_JDBC_JAVA" ]; then
     export ORA_BENCH_RUN_JDBC_JAVA=true
 fi
@@ -75,6 +78,33 @@ echo "==========================================================================
 
 EXITCODE="0"
 
+if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
+    echo "Setup C - Start ============================================================" 
+    if [ "$OSTYPE" = "msys" ]; then
+        nmake -f src_c/Makefile.win32 clean
+        nmake -f src_c/Makefile.win32
+    else
+        make -f src_c/Makefile clean
+        make -f src_c/Makefile
+    fi
+    echo "Setup C - End   ============================================================" 
+fi
+
+if ["$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" == "true" or "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true"]: then
+    echo "Setup Elixir - Start =======================================================" 
+    call mix deps.get
+    call mix deps.compile
+    echo "Setup Elixir - End   =======================================================" 
+fi
+
+if ["$$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true"]: then
+    echo "Setup Erlang - Start =======================================================" 
+    cd src_erlang
+    rebar3 escriptize
+    echo "Setup Erlang - End   =======================================================" 
+    cd ..
+fi
+
 start=$(date +%s)
 echo "Docker stop/rm ora_bench_db"
 docker stop ora_bench_db
@@ -96,46 +126,9 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
     
-if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
-    { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" = "true" ]; then
-    { /bin/bash src_elixir/scripts/run_bench_jamdb_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
-    { /bin/bash src_java/scripts/run_bench_jdbc.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
-    { /bin/bash src_c/scripts/run_bench_odpi.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
-    { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
-    { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
+{ /bin/bash scripts/run_bench_all_drivers.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
 fi
 
 echo ""

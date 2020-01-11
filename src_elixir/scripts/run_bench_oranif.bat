@@ -30,6 +30,7 @@ echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - oranif and Elixir.
 echo --------------------------------------------------------------------------------
+echo MULTIPLE_RUN            : %ORA_BENCH_MULTIPLE_RUN%
 echo BENCHMARK_DATABASE      : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST         : %ORA_BENCH_CONNECTION_HOST%
 echo CONNECTION_PORT         : %ORA_BENCH_CONNECTION_PORT%
@@ -41,8 +42,12 @@ echo ===========================================================================
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
 
 cd src_elixir
-call mix deps.get
-call mix deps.compile
+
+if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    call mix deps.get
+    call mix deps.compile
+)
+    
 call mix run -e "OraBench.CLI.main(["oranif"])"
 cd ..
 

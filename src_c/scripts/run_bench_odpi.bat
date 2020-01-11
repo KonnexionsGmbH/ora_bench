@@ -26,14 +26,12 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 )
 
-nmake -f src_c\Makefile.win32 clean
-nmake -f src_c\Makefile.win32
-
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - ODPI-C.
 echo --------------------------------------------------------------------------------
+echo MULTIPLE_RUN            : %ORA_BENCH_MULTIPLE_RUN%
 echo BENCHMARK_DATABASE      : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST         : %ORA_BENCH_CONNECTION_HOST%
 echo CONNECTION_PORT         : %ORA_BENCH_CONNECTION_PORT%
@@ -43,6 +41,11 @@ echo JAVA_CLASSPATH          : %ORA_BENCH_JAVA_CLASSPATH%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
+
+if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    nmake -f src_c\Makefile.win32 clean
+    nmake -f src_c\Makefile.win32
+)
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
 
