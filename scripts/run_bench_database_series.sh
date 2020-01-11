@@ -66,14 +66,16 @@ if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
     echo "Setup C - End   ============================================================" 
 fi
 
-if ["$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" == "true" or "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true"]: then
+if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
     echo "Setup Elixir - Start =======================================================" 
-    call mix deps.get
-    call mix deps.compile
+    cd src_elixir
+    mix deps.get
+    mix deps.compile
+    cd ..
     echo "Setup Elixir - End   =======================================================" 
 fi
 
-if ["$$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true"]: then
+if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
     echo "Setup Erlang - Start =======================================================" 
     cd src_erlang
     rebar3 escriptize
