@@ -494,7 +494,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 ## 6 <a name="docker"></a> Docker
 
-This project supports the use of Docker for development in a current Ubuntu environment.  
+This project supports the use of Docker for development in a current Ubuntu environment. 
 For this purpose, either the script `run_bench_image` and the Docker file in the directory `priv/docker` can be used to create a special Docker image or the existing Docker image `konnexionsgmbh/ora_bench_dev` available in the Docker Hub can be downloaded and used.
 
 The following assumes that the default name `ora_bench_dev' is used for the Docker image and for the Docker container.
@@ -508,20 +508,20 @@ The following assumes that the default name `ora_bench_dev' is used for the Dock
 
 ### 6.2 Use Docker image from Docker Hub
 
-1. If a Docker container already exists, it must first be deleted as follows:
+If a Docker container already exists, it must first be deleted as follows:
 
     docker stop ora_bench_dev
     docker rm -f ora_bench_dev
 
-2. An existing Docker image must be deleted as follows:
+An existing Docker image must be deleted as follows:
 
     docker rmi -f ora_bench_dev
 
-3. Downloading the Docker image from the Docker Hub and creating a Docker container (Example for a data directory: `//D/SoftDevelopment/DockerData/ora_bench_dev`):
+Downloading the Docker image from the Docker Hub and creating a Docker container (Example for a data directory: `//D/SoftDevelopment/DockerData/ora_bench_dev`):
 
     docker create --name ora_bench_dev -i -v <data directory path>:/data konnexionsgmbh/ora_bench_dev
    
-4. After successful execution the Docker container `ora_bench_dev` is running and can be used with the Bash Shell for example (see chapter 6.3).
+After successful execution the Docker container `ora_bench_dev` is running and can be used with the Bash Shell for example (see chapter 6.3).
 
 ### 6.3 Working with an existing Docker container
 
