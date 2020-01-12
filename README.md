@@ -36,7 +36,7 @@ The currently supported database drivers are:
 | ODPI      | C                     |
 | oranif    | Elixir &amp; Erlang   |
 
-The following Oracle database versions are provided in a benchmark run via Docker Container:
+The following Oracle database versions are provided in a benchmark run via Docker container:
 
 | Shortcut   | Oracle Database Version |
 | :---       | :--- |
@@ -137,7 +137,6 @@ This script executes the following driver specific sub-scripts:
 - `run_bench_jdbc`
 - `run_bench_odpi`
 - `run_bench_oranif`
-- `run_bench_oranif`
 
 The possible exclusion of drivers made before is taken into account.
 
@@ -220,13 +219,13 @@ In this script, OraBench.java is used to reset the following configuration param
 
 ##### 2.2.1.10 `run_bench_image`
 
-This script creates the docker image `ora_bench_dev` based on `Ubuntu 19.10`.
+This script creates the Docker image `ora_bench_dev` based on `Ubuntu 19.10`.
 The script performs the following tasks:
 
 1. A possibly running Docker container `ora_bench_dev` is stopped and deleted. 
 2. A locally existing Docker image `ora_bench_dev` is deleted. 
-3. A new Docker image `ora_bench_dev` is created based on the docker file in the directory `priv\docker`.
-4. The new docker image `ora_bench_dev` is tagged as `konnexionsgmbh/ora_bench_dev` tag.
+3. A new Docker image `ora_bench_dev` is created based on the Docker file in the directory `priv\docker`.
+4. The new Docker image `ora_bench_dev` is tagged as `konnexionsgmbh/ora_bench_dev` tag.
 5. Then the new Docker image is loaded into the Docker Hub.
 6. Subsequently, any locally existing dangling Docker images are deleted.
 7. Finally the Docker container `ora_bench_dev` is created.
@@ -495,6 +494,45 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 ## 6 <a name="docker"></a> Docker
 
+This project supports the use of Docker for development in a current Ubuntu environment.  
+For this purpose, either the script `run_bench_image` and the Docker file in the directory `priv/docker` can be used to create a special Docker image or the existing Docker image `konnexionsgmbh/ora_bench_dev` available in the Docker Hub can be downloaded and used.
+
+The following assumes that the default name `ora_bench_dev' is used for the Docker image and for the Docker container.
+
+### 6.1 Create Docker image from scratch
+
+1. If required, the Docker file in the directory `priv/docker` can be customized.
+2. If uploading the Docker image to the Docker Hub is not desired, then the `docker push konnexionsgmbh/%REPOSITORY%` command must be commented out in the script `run_bench_image`.
+3. Run the script `run_bench_image`.
+4. After successful execution (see log file `run_bench_image.log`) the Docker container `ora_bench_dev` is running and can be used with the Bash Shell for example (see chapter 6.3).
+
+### 6.2 Use Docker image from Docker Hub
+
+1. If a Docker container already exists, it must first be deleted as follows:
+
+    docker stop ora_bench_dev
+    docker rm -f ora_bench_dev
+
+2. An existing Docker image must be deleted as follows:
+
+    docker rmi -f ora_bench_dev
+
+3. Downloading the Docker image from the Docker Hub and creating a Docker container (Example for a data directory: `//D/SoftDevelopment/DockerData/ora_bench_dev`):
+
+    docker create --name ora_bench_dev -i -v <data directory path>:/data konnexionsgmbh/ora_bench_dev
+   
+4. After successful execution the Docker container `ora_bench_dev` is running and can be used with the Bash Shell for example (see chapter 6.3).
+
+### 6.3 Working with an existing Docker container
+
+First the Docker container must be started:
+
+    docker start ora_bench_dev
+
+Afterwards you can switch to the Docker container with the following command:
+
+    docker exec -it ora_bench_dev /bin/bash
+
 ## 7 <a name="todo_list"></a> ToDo List
 
 | Completed  | Created    | Assignee | Task Description |
@@ -510,7 +548,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 | 2019.11.05 | 2019.11.05 | wwe      | jdbc_java: dynamic batchsize | 
 | 2019.11.06 | 2019.11.05 | wwe      | all: separating key column and data column |
 | 2019.11.06 | 2019.11.05 | wwe      | jdbc_java: finishing with summary report |
-| 2019.11.07 | 2019.11.05 | wwe      | all: databases via docker containers |
+| 2019.11.07 | 2019.11.05 | wwe      | all: databases via Docker containers |
 | 2019.11.07 | 2019.11.05 | wwe      | jdbc_java: dynamic Oracle database version |
 | 2019.11.08 | 2019.11.05 | wwe      | jdbc_java: generating language specific configuration files |
 | 2019.11.12 | 2019.11.05 | wwe      | all: Travis/CI integration |
