@@ -15,8 +15,9 @@
 **[3. Coding Pattern](#coding_pattern)**<br>
 **[4. Driver Specific Features](#driver_specifica)**<br>
 **[5. Reporting](#reporting)**<br>
-**[6. ToDo List](#todo_list)**<br>
-**[7. Contributing](#contributing)**<br>
+**[6. Docker](#docker)**<br>
+**[7. ToDo List](#todo_list)**<br>
+**[8. Contributing](#contributing)**<br>
 
 ----
 
@@ -28,11 +29,11 @@ The framework parameters for a benchmark run are stored in a central configurati
 The currently supported database drivers are:
 
 | Driver    | Programming Languages |
-| :---      | :---                  |
+| :---      | :--- |
 | cx_Oracle | Python                |
-| JamDB    | Elixir &amp; Erlang   |
+| JamDB     | Elixir &amp; Erlang   |
 | JDBC      | Java                  |
-| ODPI      | C                  |
+| ODPI      | C                     |
 | oranif    | Elixir &amp; Erlang   |
 
 The following Oracle database versions are provided in a benchmark run via Docker Container:
@@ -117,23 +118,8 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
 
 ##### 2.2.1.2 `run_bench_series`
 
-This script executes the following variations of the script `run_bench_database_series` as a whole benchmark series:
-
-| database   | service | batch.size    | core.multiplier | transaction.size | 
-| :---       | :---    | :---          | :---            | :---             | 
-| db_12_2_xe | ee      | default value | 1               | default value    |
-| db_12_2_xe | ee      | default value | default value   | default value    |
-| db_18_3_xe | ee      | default value | 1               | default value    |
-| db_18_3_xe | ee      | default value | default value   | default value    |
-| db_19_3_xe | ee      | 0             | 1               | 0                |
-| db_19_3_xe | ee      | 0             | 1               | default value    |
-| db_19_3_xe | ee      | 0             | default value   | 0                |
-| db_19_3_xe | ee      | 0             | default value   | default value    |
-| db_19_3_xe | ee      | default value | 1               | 0                |
-| db_19_3_xe | ee      | default value | 1               | default value    |
-| db_19_3_xe | ee      | default value | default value   | 0                |
-| db_19_3_xe | ee      | default value | default value   | default value    |
-
+This script executes the `run_bench_database_series` script for each of the databases listed in chapter [Introduction](#introduction).
+At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark.
 The run log is stored in the `run_bench_series.log` file.
 
 ##### 2.2.1.3 `run_bench`
@@ -142,54 +128,87 @@ This script executes the `run_bench_database` script for each of the databases l
 At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark.
 The run log is stored in the `run_bench.log` file.
 
-##### 2.2.1.4 `run_bench_database`
+##### 2.2.1.4 `run_bench_all_drivers`
+
+This script executes the following driver specific sub-scripts:
+
+- `run_bench_cx_oracle`
+- `run_bench_jamdb_oracle`
+- `run_bench_jdbc`
+- `run_bench_odpi`
+- `run_bench_oranif`
+- `run_bench_oranif`
+
+The possible exclusion of drivers made before is taken into account.
+
+##### 2.2.1.5 `run_bench_database`
 
 This script is executed for one of the databases listed in in chapter [Introduction](#introduction). 
-At the beginning of the script it is possible to exclude individual drivers from the current benchmark.
+The script performs the following tasks:
 
-First the corresponding Docker image is downloaded from the DockerHub, if not already available.
-Then a Docker container is started.
+1. Depending on the selected drivers, any necessary compilations for the programming languages C, Elixir and Erlang are performed.
+2. A possibly running Docker container is stopped and deleted. 
+3. The Docker container for the selected database version is started.
+4. Then the database is prepared for the benchmark run with the following steps:
 
-This script also prepares the database for the benchmark run including the following steps:
+  - If not yet available, create the database user according to the parameters `connection.user` and `connection.password`.
+  - Grant this database user the following rights:
 
-1. If not yet available, create the database user according to the parameters `connection.user` and `connection.password`.
+    - `ALTER SYSTEM`.
+    - `CREATE PROCEDURE`
+    - `CREATE SESSION`
+    - `CREATE TABLE`
+    - `UNLIMITED TABLESPACE`
 
-2. Grant this database user the following rights:
+5. Finally the following sub-script `run_bench_all_drivers` is running.
 
-- `ALTER SYSTEM`.
-- `CREATE PROCEDURE`
-- `CREATE SESSION`
-- `CREATE TABLE`
-- `UNLIMITED TABLESPACE`
+##### 2.2.1.6 `run_bench_database_series`
 
-Finally the following child scripts are running:
+This script is executed for one of the databases listed in in chapter [Introduction](#introduction). 
+The script performs the following tasks:
 
-- `run_bench_setup`
-- all driver and programming language related scripts, like for example: `run_bench_jdbc` from the `src_java` directory
-- `run_bench_finalise`
+1. Depending on the selected drivers, any necessary compilations for the programming languages C, Elixir and Erlang are performed.
+2. A possibly running Docker container is stopped and deleted. 
+3. The Docker container for the selected database version is started.
+4. Then the database is prepared for the benchmark run with the following steps:
 
-##### 2.2.1.5 `run_bench_database_series`
+  - If not yet available, create the database user according to the parameters `connection.user` and `connection.password`.
+  - Grant this database user the following rights:
 
-This script is a special version of script `run_bench_database` which is used in script `run_bench_series`.
+    - `ALTER SYSTEM`.
+    - `CREATE PROCEDURE`
+    - `CREATE SESSION`
+    - `CREATE TABLE`
+    - `UNLIMITED TABLESPACE`
 
-##### 2.2.1.6 `run_bench_setup`
+5. Finally the sub-script `run_bench_all_drivers` is running for each of the following parameter combinations:
+
+| batch.size    | core.multiplier | transaction.size | 
+| :---          | :---            | :---             | 
+| default value | default value   | default value    |
+| default value | 1               | default value    |
+| 0             | default value   | default value    |
+| 0             | default value   | 0                |
+| 0             | 1               | default value    |
+| 0             | 1               | 0                |
+
+##### 2.2.1.7 `run_bench_setup`
 
 This scripts is used to create a bulk file (see chapter 2.4).
 
-##### 2.2.1.7 `run_bench_<driver>_<programming language>`
+##### 2.2.1.8 `run_bench_<driver>_<programming language>`
 
 The driver and programming language related scripts, such as `run_bench_jdbc` in the `src_java` directory, 
-first execute the insert statements and then the select statements in each trial with the bulk file.
+first execute the insert statements and then the select statements in each trial with the data from the bulk file.
 The time consumed is captured and recorded in result files.
 
-##### 2.2.1.8 `run_bench_finalise`
+##### 2.2.1.9 `run_bench_finalise`
 
 In this script, OraBench.java is used to reset the following configuration parameters to the value 'n/a':
 
 - `benchmark.comment`
 - `benchmark.database`
 - `benchmark.driver`
-- `benchmark.environment`
 - `benchmark.host.name`
 - `benchmark.id`
 - `benchmark.language`
@@ -199,26 +218,33 @@ In this script, OraBench.java is used to reset the following configuration param
 - `connection.service`
 - `sql.create`
 
+##### 2.2.1.10 `run_bench_image`
+
+This script creates the docker image `ora_bench_dev` based on `Ubuntu 19.10`.
+The script performs the following tasks:
+
+1. A possibly running Docker container `ora_bench_dev` is stopped and deleted. 
+2. A locally existing Docker image `ora_bench_dev` is deleted. 
+3. A new Docker image `ora_bench_dev` is created based on the docker file in the directory `priv\docker`.
+4. The new docker image `ora_bench_dev` is tagged as `konnexionsgmbh/ora_bench_dev` tag.
+5. Then the new Docker image is loaded into the Docker Hub.
+6. Subsequently, any locally existing dangling Docker images are deleted.
+7. Finally the Docker container `ora_bench_dev` is created.
+
+The run log is stored in the `run_bench_image.log` file.
+
 #### 2.2.2 Travis CI
 
-In Travis CI, the following two environment variables are defined per build for each of the databases listed in chapter [Introduction](#introduction) except for Oracle Database 11gR2 Express Edition for Linux x64 (db_11_2_xe):
+In Travis CI, the following two environment variables are defined per build for each of the databases listed in chapter [Introduction](#introduction):
 
 - `ORA_BENCH_BENCHMARK_DATABASE`
-- `ORA_BENCH_CONNECTION_SERVICE`
 
-The following environment variables are used to perform additional tests for the `db_19_3_xe` database: 
+In each build the following tasks are performed:
 
-|                                    |                                         |                                          |
-| :---                               | :---                                    | :---                                     |
-| `                                ` | `                                     ` | `ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0` |
-| `                                ` | `ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1` | `ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0` |
-| `ORA_BENCH_BENCHMARK_BATCH_SIZE=0` | `                                     ` |                                          |
-| `ORA_BENCH_BENCHMARK_BATCH_SIZE=0` | `                                     ` | `ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0` |
-| `ORA_BENCH_BENCHMARK_BATCH_SIZE=0` | `ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1` |                                          |
-| `ORA_BENCH_BENCHMARK_BATCH_SIZE=0` | `ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1` | `ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0` |
-
-In each build the script `run_bench_database` will be executed.
-The results are uploaded to the repositopry at the end.
+1. Installation of Elixir, Erlang, Java, Oracle Instant Client and Python.
+2. Creation of the bulk file with the script `run_bench_setup`.
+3. Execution of the `run_bench_database_series`sub-script.
+4. Storing the measurement results in the branch `gh-pages`.
 
 ### 2.3 Benchmark Results
 
@@ -467,7 +493,9 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 [see here](https://konnexionsgmbh.github.io/ora_bench/)
 
-## 6 <a name="todo_list"></a> ToDo List
+## 6 <a name="docker"></a> Docker
+
+## 7 <a name="todo_list"></a> ToDo List
 
 | Completed  | Created    | Assignee | Task Description |
 | :---:      | :---:      | :---     | :--- |
@@ -511,7 +539,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 | rejected   | 2019.11.21 | c_bik    | upload to GitHub from Travis CI: authentication method |
 | rejected   | 2019.11.21 | wwe      | setup: c script-> new c ini file |
 
-## 7. <a name="contributing"></a> Contributing
+## 8. <a name="contributing"></a> Contributing
 
 1. fork it
 2. create your feature branch (`git checkout -b my-new-feature`)

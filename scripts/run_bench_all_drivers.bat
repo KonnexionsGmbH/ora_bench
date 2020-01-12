@@ -79,7 +79,7 @@ if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
 )
 
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
-   call  src_erlang\scripts\run_bench_oranif.bat
+    call src_erlang\scripts\run_bench_oranif.bat
     if %ERRORLEVEL% NEQ 0 (
         GOTO EndOfScript
     )

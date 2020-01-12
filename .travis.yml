@@ -9,9 +9,9 @@ otp_release:
 
 env:
   matrix:
-    - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    - ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
+    - ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
+    - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 
 script:
   # Prepare installation process -------------------------------------------------
@@ -70,6 +70,7 @@ script:
   - export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (Travis CI)'
   - export ORA_BENCH_CONNECTION_HOST=0.0.0.0
   - export ORA_BENCH_CONNECTION_PORT=1521
+  - export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
   - export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
   - export ORA_BENCH_JAVA_CLASSPATH=.:priv/java_jar/*
   - export ORA_BENCH_PASSWORD_SYS=oracle
@@ -95,7 +96,6 @@ script:
   - git pull
   - ./scripts/run_bench_setup.sh
   - ./scripts/run_bench_database_series.sh
-  - ./scripts/run_bench_finalise.sh
   - travis_fold end   "Running_ora_bench"
 
 after_success:
