@@ -49,7 +49,9 @@ main([ConfigFile, Driver]) ->
     sql_select := SqlSelect
   } = Config,
   {ok, Fd} = file:open(BulkFile, [read, raw, binary, {read_ahead, 1024 * 1024}]),
-  Rows = load_data(Fd, list_to_binary(Header), BulkDelimiter, Partitions, #{}),
+  Rows = load_data(
+    Driver, Fd, list_to_binary(Header), BulkDelimiter, Partitions, #{}
+  ),
   put(rows, Rows),
   put(conf, Config),
   RowCount = length(lists:merge(maps:values(Rows))),
@@ -415,13 +417,33 @@ insert_partition(
       {ok,[]} = jamdb_oracle:sql_query(Conn, "COMOFF;"),
       #{conn => Conn, insertSql => Insert}
   end,
-  {NIE, _} = lists:foldl(
-    insert_fold_fn(Driver, NumItersExec, NumItersCommit, FBulkSz, Params),
-    {0, 0}, Rows
-  ),
   case Driver of
     "oranif" ->
-      #{insertStmt := InsStmt} = Params,
+      #{insertStmt := InsStmt, keyVar := KV, dataVar := DV} = Params,
+      {NIE, _} = lists:foldl(
+        fun({Key, Data}, {NIE, RowCount}) ->
+          NewNIE = if
+            NumItersExec == 0 orelse NIE < NumItersExec ->
+              ok = dpi:var_setFromBytes(KV, NIE, Key),
+              ok = dpi:var_setFromBytes(DV, NIE, Data),
+              NIE + 1;
+            true ->
+              ok = dpi:stmt_executeMany(
+                InsStmt, [],
+                if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end
+              ),
+              ok = dpi:var_setFromBytes(KV, 0, Key),
+              ok = dpi:var_setFromBytes(DV, 0, Data),
+              1
+          end,
+          if NumItersCommit > 0 andalso RowCount rem NumItersCommit == 0 ->
+              ok = dpi:conn_commit(Conn);
+            true -> ok
+          end,
+          {NewNIE, RowCount + 1}
+        end,
+        {0, 0}, Rows
+      ),
       if NIE > 0 -> ok = dpi:stmt_executeMany(InsStmt, [], NIE);
       true -> ok end,
       ok = dpi:conn_commit(Conn),
@@ -430,6 +452,16 @@ insert_partition(
       ok = dpi:stmt_close(InsStmt, <<>>),
       ok = dpi:conn_close(Conn, [], <<>>);
     "jamdb" ->
+      #{insertSql := InsSql} = Params,
+      if
+        NumItersExec == 0 ->
+          {ok, [{affected_rows, FBulkSz}]} = jamdb_oracle:sql_query(
+            Conn,
+            {batch, InsSql, Rows}
+          );
+        true ->
+          insert_jamdb(Conn, Rows, InsSql, NumItersExec, NumItersCommit)
+      end,
       {ok,[]} = jamdb_oracle:sql_query(Conn, "COMMIT;"),
       ok = jamdb_oracle:stop(Conn)
   end,
@@ -496,13 +528,13 @@ select_partition(
     }
   }.
 
-load_data(Fd, Header, BulkDelimiter, Partitions, Rows) ->
+load_data(Driver, Fd, Header, BulkDelimiter, Partitions, Rows) ->
   case file:read_line(Fd) of
     eof -> Rows;
     {ok, Line0} ->
       case string:trim(Line0, both, "\r\n") of
         Header ->
-          load_data(Fd, Header, BulkDelimiter, Partitions, Rows);
+          load_data(Driver, Fd, Header, BulkDelimiter, Partitions, Rows);
         Line ->
           [<<KeyByte1:8, KeyByte2:8, _/binary>> = Key, Data] = string:split(
             Line, BulkDelimiter, all
@@ -510,8 +542,13 @@ load_data(Fd, Header, BulkDelimiter, Partitions, Rows) ->
           Partition = (KeyByte1 * 256 + KeyByte2) rem Partitions,
           OldData = maps:get(Partition, Rows, []),
           load_data(
-            Fd, Header, BulkDelimiter, Partitions,
-            Rows#{Partition => [{Key, Data} | OldData]}
+            Driver, Fd, Header, BulkDelimiter, Partitions,
+            Rows#{
+              Partition => case Driver of
+                "oranif" -> [{Key, Data} | OldData];
+                "jamdb" -> [[Key, Data] | OldData]
+              end
+            }
           )
       end
   end.
@@ -530,45 +567,6 @@ thread_join(Threads, Results) ->
       [?MODULE, ?FUNCTION_NAME, ?LINE, length(Threads)]
     ),
     thread_join(Threads, Results)
-  end.
-
-insert_fold_fn(
-  "oranif", NumItersExec, NumItersCommit, FBulkSz,
-  #{
-    conn := Conn, insertStmt := InsertStmt, keyVar := KeyVar,
-    dataVar := DataVar
-  }
-) ->
-  fun({Key, Data}, {NIE, RowCount}) ->
-    NewNIE = if
-      NumItersExec == 0 orelse NIE < NumItersExec ->
-        ok = dpi:var_setFromBytes(KeyVar, NIE, Key),
-        ok = dpi:var_setFromBytes(DataVar, NIE, Data),
-        NIE + 1;
-      true ->
-        ok = dpi:stmt_executeMany(
-          InsertStmt, [],
-          if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end
-        ),
-        ok = dpi:var_setFromBytes(KeyVar, 0, Key),
-        ok = dpi:var_setFromBytes(DataVar, 0, Data),
-        1
-    end,
-    if NumItersCommit > 0 andalso RowCount rem NumItersCommit == 0 ->
-        ok = dpi:conn_commit(Conn);
-      true -> ok
-    end,
-    {NewNIE, RowCount + 1}
-  end;
-insert_fold_fn(
-  "jamdb", _NumItersExec, _NumItersCommit, _FBulkSz,
-  #{conn := Conn, insertSql := InsertSql}
-) ->
-  fun({Key, Data}, Acc) ->
-    {ok, [{affected_rows,1}]} = jamdb_oracle:sql_query(
-      Conn, {InsertSql, [Key, Data]}
-    ),
-    Acc
   end.
 
 select_fetch_all("oranif", #{selectStmt := SelectStmt}) ->
@@ -591,3 +589,33 @@ select_fetch_all_jamdb(Conn, SelectSql) ->
   {ok,[{result_set,[<<"KEY">>, <<"DATA">>], [], Rows}]} =
     jamdb_oracle:sql_query(Conn, SelectSql),
   length(Rows).
+
+insert_jamdb(Conn, Rows, InsSql, NumItersExec, NumItersCommit) ->
+   insert_jamdb(Conn, Rows, InsSql, NumItersExec, NumItersCommit, 0).
+
+insert_jamdb(_, [], _, _, _, _) -> ok;
+insert_jamdb(Conn, Rows, InsSql, NumItersExec, NumItersCommit, RowCount)
+  when length(Rows) >= NumItersExec
+->
+      {Ins, Rest} = lists:split(NumItersExec, Rows),
+      JC = length(Ins),
+      {ok, [{affected_rows, JC}]} = jamdb_oracle:sql_query(
+        Conn,
+        {batch, InsSql, Ins}
+      ),
+      if NumItersCommit > 0 andalso RowCount rem NumItersCommit == 0 ->
+          {ok,[]} = jamdb_oracle:sql_query(Conn, "COMMIT;");
+        true -> ok
+      end,
+      insert_jamdb(
+        Conn, Rest, InsSql, NumItersExec, NumItersCommit, RowCount + JC
+      );
+insert_jamdb(Conn, Rows, InsSql, _NumItersExec, _NumItersCommit, _RowCount)
+  when length(Rows) > 0
+->
+      JC = length(Rows),
+      {ok, [{affected_rows, JC}]} = jamdb_oracle:sql_query(
+        Conn,
+        {batch, InsSql, Rows}
+      ),
+      {ok,[]} = jamdb_oracle:sql_query(Conn, "COMMIT;").
