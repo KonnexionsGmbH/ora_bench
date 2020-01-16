@@ -532,6 +532,7 @@ First the Docker container must be started:
 Afterwards you can switch to the Docker container with the following command:
 
     docker exec -it ora_bench_dev /bin/bash
+    docker run -it -v d:/SoftDevelopment/Projects/Konnexions/ora_bench_idea/ora_bench:/ora_bench ora_bench_dev /bin/sh
 
 ## 7 <a name="todo_list"></a> ToDo List
 

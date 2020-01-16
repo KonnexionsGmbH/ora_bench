@@ -32,7 +32,6 @@ echo.
 
     docker stop %REPOSITORY%
     docker rm -f %REPOSITORY%
-    docker rmi -f %REPOSITORY%
 
     docker build -t %REPOSITORY% priv\docker
 

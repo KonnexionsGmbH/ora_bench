@@ -1,21 +1,57 @@
 FROM ubuntu:19.10 as base
 
-RUN apt-get update
-RUN apt-get install -y  
-
 RUN export DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get install -yq autoconf \
-                        autotools-dev \
-                        build-essential \
-                        git \
-                        tmux \
-                        vim
+RUN apt-get update \
+ && apt-get install -yq  
+
+RUN apt-get install -yq software-properties-common
+
+RUN apt-get install -yq wget \
+ && wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
+ && dpkg -i erlang-solutions_2.0_all.deb
+
+RUN apt-get install -yq autoconf
 RUN autoconf -V
+
+RUN apt-get install -yq autotools-dev 
 RUN automake --version
+
+RUN apt-get install -yq build-essential
 RUN gcc --version
+
+RUN apt-get install -yq default-jdk
+RUN java -version
+
+RUN apt-get install -yq git
 RUN git --version
+
+RUN ln -fs /usr/share/zoneinfo/Europe/Zurich /etc/localtime \
+ && apt-get install -yq tzdata \
+ && dpkg-reconfigure --frontend noninteractive tzdata
+
+RUN wget https://s3.amazonaws.com/rebar3/rebar3 \
+ && chmod +x rebar3 \
+ && apt-get install -yq erlang
+ && ./rebar3 version
+
+RUN apt-get install -yq elixir \
+ && mix local.hex --force
+RUN elixir -v
+
+RUN apt-get install -yq libaio1
+
+# wwe RUN add-apt-repository -y ppa:deadsnakes/ppa
+RUN apt-get install -yq python3 \
+ && apt-get install -yq python3-venv \
+ && python3 -m pip install --upgrade pip \
+ && python3 -m pip install --upgrade cx_Oracle \
+ && python3 --version
+
+RUN apt-get install -yq tmux
 RUN tmux -V
+
+RUN apt-get install -yq vim
 RUN vim --version
 
 CMD ["/bin/bash"]
