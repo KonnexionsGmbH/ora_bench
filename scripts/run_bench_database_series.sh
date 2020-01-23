@@ -26,6 +26,9 @@ fi
 if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 fi
+if [ -z "$ORA_BENCH_RUN_JAMDB_ERLANG" ]; then
+    export ORA_BENCH_RUN_JAMDB_ERLANG=true
+fi
 
 echo "================================================================================"
 echo "Start $0"
@@ -43,6 +46,7 @@ echo "RUN_JDBC_JAVA           : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "RUN_ODPI_C              : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR       : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG       : $ORA_BENCH_RUN_ORANIF_ERLANG"
+echo "RUN_JAMDB_ERLANG        : $ORA_BENCH_RUN_JAMDB_ERLANG"
 echo "--------------------------------------------------------------------------------"
 echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "--------------------------------------------------------------------------------"
@@ -73,6 +77,14 @@ if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" == "true" ] || [ "$ORA_BENCH_RUN_ORANI
 fi
 
 if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
+    echo "Setup Erlang - Start =======================================================" 
+    cd src_erlang
+    rebar3 escriptize
+    echo "Setup Erlang - End   =======================================================" 
+    cd ..
+fi
+
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" == "true" ]; then
     echo "Setup Erlang - Start =======================================================" 
     cd src_erlang
     rebar3 escriptize
@@ -153,6 +165,22 @@ export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 { /bin/bash scripts/run_bench_all_drivers.sh; }
 if [ $? -ne 0 ]; then
     exit $?
+fi
+
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
+    if [ $? -ne 0 ]; then
+        exit $?
+    fi
+fi
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
 fi
 
 EXITCODE=$?

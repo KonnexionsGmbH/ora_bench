@@ -45,6 +45,9 @@ if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU [""] (
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
+if ["%ORA_BENCH_RUN_JAMDB_ERLANG%"] EQU [""] (
+    set ORA_BENCH_RUN_JAMDB_ERLANG=true
+)
 
 echo ================================================================================
 echo Start %0
@@ -66,6 +69,7 @@ echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_ODPI_C                 : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORANIF_ELIXIR          : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
+echo RUN_JAMDB_ERLANG           : %ORA_BENCH_RUN_JAMDB_ERLANG%
 echo --------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo --------------------------------------------------------------------------------
@@ -134,6 +138,10 @@ if %ERRORLEVEL% NEQ 0 (
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
     GOTO EndOfScript
+)
+
+if ["%ORA_BENCH_RUN_JAMDB_ERLANG%"] EQU ["true"] (
+   call  src_erlang\scripts\run_bench_jamdb.bat
 )
 
 :EndOfScript
