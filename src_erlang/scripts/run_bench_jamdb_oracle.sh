@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_oranif.sh: Oracle Benchmark based on Erlang.
+# run_bench_jamdb_oracle.sh: Oracle Benchmark based on Erlang.
 #
 # ------------------------------------------------------------------------------
 
@@ -22,18 +22,27 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"    
+    if [ "$OSTYPE" = "msys" ]; then
+    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    else
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+    fi
 fi
 
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - oranif and Erlang."
+echo "ora_bench - Oracle benchmark - JamDB Oracle and Erlang."
 echo "--------------------------------------------------------------------------------"
-echo "BENCHMARK_DATABASE      : $ORA_BENCH_BENCHMARK_DATABASE"
-echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
-echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
-echo "CONNECTION_SERVICE      : $ORA_BENCH_CONNECTION_SERVICE"
+echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
+echo "BENCHMARK_DATABASE         : $ORA_BENCH_BENCHMARK_DATABASE"
+echo "CONNECTION_HOST            : $ORA_BENCH_CONNECTION_HOST"
+echo "CONNECTION_PORT            : $ORA_BENCH_CONNECTION_PORT"
+echo "CONNECTION_SERVICE         : $ORA_BENCH_CONNECTION_SERVICE"
+echo "--------------------------------------------------------------------------------"
+echo "BENCHMARK_BATCH_SIZE       : $ORA_BENCH_BENCHMARK_BATCH_SIZE"
+echo "BENCHMARK_CORE_MULTIPLIER  : $ORA_BENCH_BENCHMARK_CORE_MULTIPLIER"
+echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"

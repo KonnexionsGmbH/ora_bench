@@ -59,6 +59,7 @@ if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
 fi    
 
 mix run -e "OraBench.CLI.main([\"oranif\"])"
+cd ..
 
 EXITCODE=$?
 

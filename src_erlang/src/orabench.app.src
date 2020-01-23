@@ -3,10 +3,10 @@
   {vsn, "0.1.0"},
   {registered, []},
   {applications,
-   [kernel,
-    stdlib,
+   [jamdb_oracle,
+    kernel,
     oranif,
-    jamdb_oracle
+    stdlib
    ]},
   {env,[]},
   {modules, []},

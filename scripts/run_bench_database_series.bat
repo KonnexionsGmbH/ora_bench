@@ -14,6 +14,9 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU [""] (
     set ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
 )
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU [""] (
+    set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
+)
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU [""] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
 )
@@ -25,9 +28,6 @@ if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU [""] (
 )
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
-)
-if ["%ORA_BENCH_RUN_JAMDB_ERLANG%"] EQU [""] (
-    set ORA_BENCH_RUN_JAMDB_ERLANG=true
 )
 
 echo ================================================================================
@@ -42,11 +42,11 @@ echo CONNECTION_SERVICE      : %ORA_BENCH_CONNECTION_SERVICE%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON    : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_JAMDB_ORACLE_ELIXIR : %ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%
+echo RUN_JAMDB_ORACLE_ERLANG : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
 echo RUN_JDBC_JAVA           : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_ODPI_C              : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORANIF_ELIXIR       : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG       : %ORA_BENCH_RUN_ORANIF_ERLANG%
-echo RUN_JAMDB_ERLANG        : %ORA_BENCH_RUN_JAMDB_ERLANG%
 echo --------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo --------------------------------------------------------------------------------
@@ -60,17 +60,15 @@ if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
     echo Setup C - End   ============================================================ 
 )
 
+set ORA_BENCH_RUN_ELIXIR=false
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] == ["true"] (
-    echo Setup Elixir - Start ======================================================= 
-    cd src_elixir
-    call mix deps.get
-    call mix deps.compile
-    cd ..
-    echo Setup Elixir - End   ======================================================= 
+    set ORA_BENCH_RUN_ELIXIR=true
 )
-
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
-    echo Setup Elixir - Start ======================================================= 
+    set ORA_BENCH_RUN_ELIXIR=true
+)
+if ["%ORA_BENCH_RUN_ELIXIR%"] == ["true"] (
+    echo Setup Elixir - Start =======================================================
     cd src_elixir
     call mix deps.get
     call mix deps.compile
@@ -78,15 +76,14 @@ if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
     echo Setup Elixir - End   ======================================================= 
 )
 
+set ORA_BENCH_RUN_ERLANG=false
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] == ["true"] (
+    set ORA_BENCH_RUN_ERLANG=true
+)
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] == ["true"] (
-    echo Setup Erlang - Start ======================================================= 
-    cd src_erlang
-    call rebar3 escriptize
-    cd ..
-    echo Setup Erlang - End   ======================================================= 
+    set ORA_BENCH_RUN_ERLANG=true
 )    
-
-if ["%ORA_BENCH_RUN_JAMDB_ERLANG%"] == ["true"] (
+if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
     echo Setup Erlang - Start ======================================================= 
     cd src_erlang
     call rebar3 escriptize
@@ -172,22 +169,6 @@ set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
     GOTO EndOfScript
-)
-
-if ["%ORA_BENCH_RUN_JAMDB_ERLANG%" = "true"] EQU [""] (
-    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
-    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    call src_erlang\scripts\run_bench_jamdb.bat
-    if %ERRORLEVEL% NEQ 0 (
-        GOTO EndOfScript
-    )
-)
-if ["%ORA_BENCH_RUN_JAMDB_ERLANG%" = "true"] EQU [""] (
-    set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    call src_erlang\scripts\run_bench_jamdb.bat
 )
 
 :EndOfScript

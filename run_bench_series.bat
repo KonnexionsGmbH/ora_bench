@@ -21,11 +21,11 @@ set ORA_BENCH_RUN_DB_19_3_EE=true
 
 set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 set ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=false
+set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
 set ORA_BENCH_RUN_JDBC_JAVA=true
 set ORA_BENCH_RUN_ODPI_C=true
 set ORA_BENCH_RUN_ORANIF_ELIXIR=true
 set ORA_BENCH_RUN_ORANIF_ERLANG=true
-set ORA_BENCH_RUN_JAMDB_ERLANG=true
 
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
     set ORA_BENCH_JAVA_CLASSPATH=.;priv\java_jar\*
@@ -62,11 +62,11 @@ echo.
     echo --------------------------------------------------------------------------------
     echo RUN_CX_ORACLE_PYTHON    : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
     echo RUN_JAMDB_ORACLE_ELIXIR : %ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%
+    echo RUN_JAMDB_ORACLE_ERLANG : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
     echo RUN_JDBC_JAVA           : %ORA_BENCH_RUN_JDBC_JAVA%
     echo RUN_ODPI_C              : %ORA_BENCH_RUN_ODPI_C%
     echo RUN_ORANIF_ELIXIR       : %ORA_BENCH_RUN_ORANIF_ELIXIR%
     echo RUN_ORANIF_ERLANG       : %ORA_BENCH_RUN_ORANIF_ERLANG%
-    echo RUN_JAMDB_ERLANG        : %ORA_BENCH_RUN_JAMDB_ERLANG%
     echo --------------------------------------------------------------------------------
     echo JAVA_HOME               : %JAVA_HOME%
     echo --------------------------------------------------------------------------------

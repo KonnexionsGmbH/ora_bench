@@ -34,6 +34,9 @@ if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" ]; then
     export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
 fi
 export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=false
+if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" ]; then
+    export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
+fi
 if [ -z "$ORA_BENCH_RUN_JDBC_JAVA" ]; then
     export ORA_BENCH_RUN_JDBC_JAVA=true
 fi
@@ -45,9 +48,6 @@ if [ -z "$ORA_BENCH_RUN_ORANIF_ELIXIR" ]; then
 fi
 if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
-fi
-if [ -z "$ORA_BENCH_RUN_JAMDB_ERLANG" ]; then
-    export ORA_BENCH_RUN_JAMDB_ERLANG=true
 fi
 
 echo "================================================================================"
@@ -66,11 +66,11 @@ echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JAMDB_ORACLE_ELIXIR    : $ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR"
+echo "RUN_JAMDB_ORACLE_ERLANG    : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
-echo "RUN_JAMDB_ERLANG           : $ORA_BENCH_RUN_JAMDB_ERLANG"
 echo "--------------------------------------------------------------------------------"
 echo "FILE_CONFIGURATION_NAME    : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "--------------------------------------------------------------------------------"
@@ -100,16 +100,8 @@ if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" == "true" ] || [ "$ORA_BENCH_RUN_ORANI
     echo "Setup Elixir - End   =======================================================" 
 fi
 
-if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
-    echo "Setup Erlang - Start =======================================================" 
-    cd src_erlang
-    rebar3 escriptize
-    echo "Setup Erlang - End   =======================================================" 
-    cd ..
-fi
-
-if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" == "true" ]; then
-    echo "Setup Erlang - Start =======================================================" 
+if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
+    echo "Setup Erlang - Start ======================================================="
     cd src_erlang
     rebar3 escriptize
     echo "Setup Erlang - End   =======================================================" 
@@ -140,13 +132,6 @@ fi
 { /bin/bash scripts/run_bench_all_drivers.sh; }
 if [ $? -ne 0 ]; then
     exit $?
-fi
-
-if [ "$ORA_BENCH_RUN_JAMDB_ERLANG" = "true" ]; then
-    { /bin/bash src_erlang/scripts/run_bench_jamdb.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
-    fi
 fi
 
 echo ""
