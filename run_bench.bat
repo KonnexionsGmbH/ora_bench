@@ -71,11 +71,6 @@ echo.
     echo:| TIME
     echo ================================================================================
     
-    call scripts\run_bench_setup.bat
-    if %ERRORLEVEL% NEQ 0 (
-        GOTO EndOfScript
-    )
-    
     if ["%ORA_BENCH_RUN_DB_12_2_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
@@ -112,8 +107,6 @@ echo.
         )
     )
     
-    call scripts\run_bench_finalise.bat
-
     :EndOfScript
     echo --------------------------------------------------------------------------------
     echo:| TIME

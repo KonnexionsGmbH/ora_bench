@@ -75,11 +75,6 @@ echo.
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
     
-    call scripts\run_bench_setup.bat
-    if %ERRORLEVEL% NEQ 0 (
-        GOTO EndOfScript
-    )
-    
     if ["%ORA_BENCH_RUN_DB_12_2_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
@@ -111,8 +106,6 @@ echo.
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
     
-    call scripts\run_bench_finalise.bat
-
     :EndOfScript
     echo --------------------------------------------------------------------------------
     echo:| TIME

@@ -32,6 +32,8 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - all drivers."
 echo "--------------------------------------------------------------------------------"
+echo "JAMDB                      : $ORA_BENCH_BENCHMARK_JAMDB"
+echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JAMDB_ORACLE_ELIXIR    : $ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
@@ -49,45 +51,51 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
-if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
-    { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" != "true" ]; then
+    if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
+        { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
+        if [ $? -ne 0 ]; then
+            exit $?
+        fi
     fi
 fi
 
-if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" = "true" ]; then
-    { /bin/bash src_elixir/scripts/run_bench_jamdb_oracle.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" != "false" ]; then
+    if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" = "true" ]; then
+        { /bin/bash src_elixir/scripts/run_bench_jamdb_oracle.sh; }
+        if [ $? -ne 0 ]; then
+            exit $?
+        fi
     fi
-fi
+fi    
 
-if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
-    { /bin/bash src_java/scripts/run_bench_jdbc.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" != "true" ]; then
+    if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
+        { /bin/bash src_java/scripts/run_bench_jdbc.sh; }
+        if [ $? -ne 0 ]; then
+            exit $?
+        fi
     fi
-fi
 
-if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
-    { /bin/bash src_c/scripts/run_bench_odpi.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
+    if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
+        { /bin/bash src_c/scripts/run_bench_odpi.sh; }
+        if [ $? -ne 0 ]; then
+            exit $?
+        fi
     fi
-fi
 
-if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
-    { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
+    if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
+        { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }
+        if [ $? -ne 0 ]; then
+            exit $?
+        fi
     fi
-fi
 
-if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
-    { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
-    if [ $? -ne 0 ]; then
-        exit $?
+    if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
+        { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
+        if [ $? -ne 0 ]; then
+            exit $?
+        fi
     fi
 fi
 

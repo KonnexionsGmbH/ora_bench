@@ -9,9 +9,12 @@ otp_release:
 
 env:
   matrix:
-    - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
-    - ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
-    - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
+    - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee ORA_BENCH_BENCHMARK_JAMDB=false
+    - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee ORA_BENCH_BENCHMARK_JAMDB=true
+    - ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee ORA_BENCH_BENCHMARK_JAMDB=false
+    - ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee ORA_BENCH_BENCHMARK_JAMDB=true
+    - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_BENCHMARK_JAMDB=false
+    - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_BENCHMARK_JAMDB=true
 
 script:
   # Prepare installation process -------------------------------------------------
@@ -94,7 +97,6 @@ script:
   # Running ora_bench ------------------------------------------------------------
   - travis_fold start "Running_ora_bench"
   - git pull
-  - ./scripts/run_bench_setup.sh
   - ./scripts/run_bench_database_series.sh
   - travis_fold end   "Running_ora_bench"
 
