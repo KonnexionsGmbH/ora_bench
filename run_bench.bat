@@ -15,7 +15,6 @@ set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 
 set ORA_BENCH_RUN_DB_12_2_EE=false
 set ORA_BENCH_RUN_DB_18_3_EE=false
-set ORA_BENCH_RUN_DB_18_4_XE=true
 set ORA_BENCH_RUN_DB_19_3_EE=false
 
 set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
@@ -56,7 +55,6 @@ echo.
     echo --------------------------------------------------------------------------------
     echo RUN_DB_12_2_EE             : %ORA_BENCH_RUN_DB_12_2_EE%
     echo RUN_DB_18_3_EE             : %ORA_BENCH_RUN_DB_18_3_EE%
-    echo RUN_DB_18_4_XE             : %ORA_BENCH_RUN_DB_18_4_XE%
     echo RUN_DB_19_3_EE             : %ORA_BENCH_RUN_DB_19_3_EE%
     echo --------------------------------------------------------------------------------
     echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
@@ -83,15 +81,6 @@ echo.
     if ["%ORA_BENCH_RUN_DB_18_3_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-        call scripts\run_bench_database.bat
-        if %ERRORLEVEL% NEQ 0 (
-            GOTO EndOfScript
-        )
-    )
-    
-    if ["%ORA_BENCH_RUN_DB_18_4_XE%"] EQU ["true"] (
-        set ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
-        set ORA_BENCH_CONNECTION_SERVICE=xe
         call scripts\run_bench_database.bat
         if %ERRORLEVEL% NEQ 0 (
             GOTO EndOfScript
