@@ -622,6 +622,11 @@ public class Config {
             isChanged = true;
         }
 
+        if (!(propertiesConfiguration.getString("connection.host").equals("0.0.0.0"))) {
+            propertiesConfiguration.setProperty("connection.host", "0.0.0.0");
+            isChanged = true;
+        }
+
         if (isChanged) {
             try {
                 fileBasedConfigurationBuilder.save();
