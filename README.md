@@ -526,10 +526,9 @@ The Docker container with the Oracle database is located on the host computer an
 
     export ORA_BENCH_CONNECTION_HOST=<IP address of the host computer> 
 
-The Docker container with the Oracle database is located on the host computer and can be accessed using the IP address of the host computer:
+Now any `ora_bench` script can be executed, for example:
 
     ./scripts/run_bench_database.sh 
-
 
 Elixir requires special treatment for 'rebar3'. The question `Shall I install rebar3?` must be answered with `Y`:
 
