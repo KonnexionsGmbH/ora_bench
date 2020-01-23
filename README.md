@@ -508,31 +508,46 @@ The following assumes that the default name `ora_bench_dev' is used for the Dock
 
 ### 6.2 Use Docker image from Docker Hub
 
-If a Docker container already exists, it must first be deleted as follows:
+An image that already exists on Docker Hub can be downloaded as follows:
 
-    docker stop ora_bench_dev
-    docker rm -f ora_bench_dev
+    docker pull konnexionsgmbh/ora_bench_dev
 
-An existing Docker image must be deleted as follows:
+### 6.3 Working with an existing Docker image
 
-    docker rmi -f ora_bench_dev
+First the Docker container must be started  (Example for a data directory: `D:\SoftDevelopment\Projects\Konnexions\ora_bench_idea\ora_bench`):
 
-Downloading the Docker image from the Docker Hub and creating a Docker container (Example for a data directory: `//D/SoftDevelopment/DockerData/ora_bench_dev`):
+    docker run -it --rm --name ora_bench_dev -v /var/run/docker.sock:/var/run/docker.sock -v <data directory path>:/ora_bench konnexionsgmbh/ora_bench_dev bash
 
-    docker create --name ora_bench_dev -i -v <data directory path>:/data konnexionsgmbh/ora_bench_dev
-   
-After successful execution the Docker container `ora_bench_dev` is running and can be used with the Bash Shell for example (see chapter 6.3).
+Afterwards you can switch to the data directory with the following command:
 
-### 6.3 Working with an existing Docker container
+    cd ora_bench
 
-First the Docker container must be started:
+The Docker container with the Oracle database is located on the host computer and can be accessed using the IP address of the host computer:
 
-    docker start ora_bench_dev
+    export ORA_BENCH_CONNECTION_HOST=<IP address of the host computer> 
 
-Afterwards you can switch to the Docker container with the following command:
+The Docker container with the Oracle database is located on the host computer and can be accessed using the IP address of the host computer:
 
-    docker exec -it ora_bench_dev /bin/bash
-    docker run -it -v d:/SoftDevelopment/Projects/Konnexions/ora_bench_idea/ora_bench:/ora_bench ora_bench_dev /bin/sh
+    ./scripts/run_bench_database.sh 
+
+
+Elixir requires special treatment for 'rebar3'. The question `Shall I install rebar3?` must be answered with `Y`:
+
+	Setup Elixir - Start =======================================================
+	Resolving Hex dependencies...
+	Dependency resolution completed:
+	Unchanged:
+	  connection 1.0.4
+	  db_connection 2.2.0
+	  decimal 1.8.1
+	  ecto 3.2.5
+	  ecto_sql 3.2.2
+	  jamdb_oracle 0.3.7
+	  telemetry 0.4.1
+	All dependencies are up to date
+	Could not find "rebar3", which is needed to build dependency :telemetry
+	I can install a local copy which is just used by Mix
+	Shall I install rebar3? (if running non-interactively, use "mix local.rebar --force") [Yn]
 
 ## 7 <a name="todo_list"></a> ToDo List
 

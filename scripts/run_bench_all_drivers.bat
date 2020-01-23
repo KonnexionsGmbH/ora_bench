@@ -43,6 +43,11 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
+call scripts\run_bench_setup.bat
+if %ERRORLEVEL% NEQ 0 (
+    GOTO EndOfScript
+)
+
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
     call src_python\scripts\run_bench_cx_oracle.bat
     if %ERRORLEVEL% NEQ 0 (
@@ -84,6 +89,8 @@ if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
         GOTO EndOfScript
     )
 )
+
+call scripts\run_bench_finalise.bat
 
 :EndOfScript
 echo --------------------------------------------------------------------------------

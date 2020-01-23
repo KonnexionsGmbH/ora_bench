@@ -44,6 +44,11 @@ echo "==========================================================================
 
 EXITCODE="0"
 
+{ /bin/bash scripts/run_bench_setup.sh; }
+if [ $? -ne 0 ]; then
+    exit $?
+fi
+
 if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
     { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
     if [ $? -ne 0 ]; then
@@ -85,6 +90,8 @@ if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
         exit $?
     fi
 fi
+
+{ /bin/bash scripts/run_bench_finalise.sh; }
 
 echo ""
 echo "--------------------------------------------------------------------------------"

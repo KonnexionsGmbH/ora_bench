@@ -3,55 +3,83 @@ FROM ubuntu:19.10 as base
 RUN export DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
- && apt-get install -yq  
+ && apt-get install -y  
 
-RUN apt-get install -yq software-properties-common
+RUN apt-get install -y software-properties-common
 
-RUN apt-get install -yq wget \
+RUN apt-get install -y wget \
  && wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
  && dpkg -i erlang-solutions_2.0_all.deb
 
-RUN apt-get install -yq autoconf
-RUN autoconf -V
+RUN apt-get install -y autoconf
 
-RUN apt-get install -yq autotools-dev 
-RUN automake --version
+RUN apt-get install -y autotools-dev 
 
-RUN apt-get install -yq build-essential
-RUN gcc --version
+RUN apt-get install -y build-essential
 
-RUN apt-get install -yq default-jdk
-RUN java -version
+RUN apt-get remove -y docker docker-engine docker.io \
+ && apt-get install -y docker.io
 
-RUN apt-get install -yq git
-RUN git --version
+RUN apt-get install -y default-jdk
+
+RUN apt-get install -y git
+
+RUN apt-get install -y iputils-ping
+
+RUN apt-get install -y language-pack-de
 
 RUN ln -fs /usr/share/zoneinfo/Europe/Zurich /etc/localtime \
- && apt-get install -yq tzdata \
+ && apt-get install -y tzdata \
  && dpkg-reconfigure --frontend noninteractive tzdata
 
 RUN wget https://s3.amazonaws.com/rebar3/rebar3 \
  && chmod +x rebar3 \
- && apt-get install -yq erlang
- && ./rebar3 version
+ && mv rebar3 /usr/bin \
+ && apt-get install -y erlang
 
-RUN apt-get install -yq elixir \
+RUN apt-get install -y elixir \
  && mix local.hex --force
-RUN elixir -v
 
-RUN apt-get install -yq libaio1
+RUN apt-get install -y libaio1
 
 # wwe RUN add-apt-repository -y ppa:deadsnakes/ppa
-RUN apt-get install -yq python3 \
- && apt-get install -yq python3-venv \
- && python3 -m pip install --upgrade pip \
- && python3 -m pip install --upgrade cx_Oracle \
- && python3 --version
+RUN apt-get install -y python3 \
+ && apt-get install -y python3-venv \
+ && wget https://bootstrap.pypa.io/get-pip.py \
+ && python3 get-pip.py \
+ && python3 -m pip install --upgrade cx_Oracle
 
-RUN apt-get install -yq tmux
-RUN tmux -V
+RUN apt-get install -y tmux
 
-RUN apt-get install -yq vim
-RUN vim --version
+RUN apt-get install -y vim
+
+ENV LD_LIBRARY_PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH"
+ENV PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:/usr/local/lib/nodejs/bin:${PATH}"
+
+# Show component versions ------------------------------------------------------
+RUN echo "====================> Curent Date: " \
+ && date \
+ && echo "====================> Version  autoconf: " \
+ && autoconf -V \
+ && echo "====================> Version  automake: " \
+ && automake --version \
+ && echo "====================> Version  Elixir: " \
+ && elixir -v \
+ && echo "====================> Version  gcc: " \
+ && gcc --version \
+ && echo "====================> Version  Git: " \
+ && git --version \
+ && echo "====================> Version  Java: " \
+ && java -version \
+ && echo "====================> Version  Python3: " \
+ && python3 --version \
+ && echo "====================> Version  rebar3: " \
+ && rebar3 version \
+ && echo "====================> Version  tmux: " \
+ && tmux -V \
+ && echo "====================> Version  Ubuntu: " \
+ && lsb_release -a \
+ && echo "====================> Version  Vim: " \
+ && vim --version
 
 CMD ["/bin/bash"]
