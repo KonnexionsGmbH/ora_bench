@@ -37,11 +37,23 @@ javac -g -deprecation -Werror -cp "%ORA_BENCH_JAVA_CLASSPATH%" -sourcepath src_j
       src_java/ch/konnexions/orabench/utils/Logger.java ^
       src_java/ch/konnexions/orabench/utils/Result.java ^
       src_java/ch/konnexions/orabench/utils/Setup.java
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
 
 jar cf priv\java_jar\ora_bench.jar -C .\src_java ch
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
 
 java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+)
 
+:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

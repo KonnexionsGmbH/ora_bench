@@ -82,6 +82,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_bench_database.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
             GOTO EndOfScript
         )
     )
@@ -91,6 +92,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_bench_database.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
             GOTO EndOfScript
         )
     )
@@ -100,7 +102,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_bench_database.bat
         if %ERRORLEVEL% NEQ 0 (
-            GOTO EndOfScript
+            echo ERRORLEVEL : %ERRORLEVEL%
         )
     )
     

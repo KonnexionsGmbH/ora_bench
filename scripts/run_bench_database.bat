@@ -33,6 +33,7 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU [""] (
     set ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
 )
+set ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=false
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
 )
@@ -137,12 +138,13 @@ if NOT ["%DOCKER_HEALTH_STATUS%"] == ["healthy"] (
 
 priv\oracle\instantclient-windows.x64\instantclient_19_5\sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE% AS SYSDBA @scripts/run_bench_database.sql
 if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
     GOTO EndOfScript
 )
 
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    GOTO EndOfScript
+    echo ERRORLEVEL : %ERRORLEVEL%
 )
 
 :EndOfScript

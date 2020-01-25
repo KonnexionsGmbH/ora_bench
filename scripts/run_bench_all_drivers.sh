@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
- # run_bench_all_drivers.sh: Oracle benchmark for all database drivers.
+# run_bench_all_drivers.sh: Oracle benchmark for all database drivers.
 #
 # ------------------------------------------------------------------------------
 

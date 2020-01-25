@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
- # run_bench_database.sh: Oracle benchmark for a specific database version.
+# run_bench_database.sh: Oracle benchmark for a specific database version.
 #
 # ------------------------------------------------------------------------------
 

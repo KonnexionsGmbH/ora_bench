@@ -13,9 +13,9 @@ set ORA_BENCH_CONNECTION_PORT=1521
 
 set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 
-set ORA_BENCH_RUN_DB_12_2_EE=false
-set ORA_BENCH_RUN_DB_18_3_EE=false
-set ORA_BENCH_RUN_DB_19_3_EE=false
+set ORA_BENCH_RUN_DB_12_2_EE=true
+set ORA_BENCH_RUN_DB_18_3_EE=true
+set ORA_BENCH_RUN_DB_19_3_EE=true
 
 set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 set ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=false
@@ -76,6 +76,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_bench_database.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
             GOTO EndOfScript
         )
     )
@@ -85,6 +86,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_bench_database.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
             GOTO EndOfScript
         )
     )
@@ -94,7 +96,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_bench_database.bat
         if %ERRORLEVEL% NEQ 0 (
-            GOTO EndOfScript
+            echo ERRORLEVEL : %ERRORLEVEL%
         )
     )
     

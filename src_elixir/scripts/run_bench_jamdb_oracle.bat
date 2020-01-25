@@ -44,17 +44,34 @@ echo:| TIME
 echo ================================================================================
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
 
 cd src_elixir
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     call mix deps.get
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
     call mix deps.compile
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
 )
     
 call mix run -e "OraBench.CLI.main(["Jamdb.Oracle"])"
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
 cd ..
 
+:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

@@ -49,13 +49,29 @@ echo ===========================================================================
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     nmake -f src_c\Makefile.win32 clean
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
     nmake -f src_c\Makefile.win32
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
 )
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
 
 .\OraBench.exe priv\properties\ora_bench_c.properties
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+)
 
+:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

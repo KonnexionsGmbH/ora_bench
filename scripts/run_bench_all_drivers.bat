@@ -49,12 +49,14 @@ echo ===========================================================================
 
 call scripts\run_bench_setup.bat
 if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
     GOTO EndOfScript
 )
 
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
     call src_python\scripts\run_bench_cx_oracle.bat
     if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
         GOTO EndOfScript
     )
 )
@@ -62,13 +64,15 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU ["true"] (
     call src_elixir\scripts\run_bench_jamdb_oracle.bat
     if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
         GOTO EndOfScript
     )
 )
 
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU ["true"] (
-   call  src_erlang\scripts\run_bench_jamdb.bat
+    call src_erlang\scripts\run_bench_jamdb_oracle.bat
     if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
         GOTO EndOfScript
     )
 )
@@ -76,13 +80,15 @@ if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU ["true"] (
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
     call src_java\scripts\run_bench_jdbc.bat
     if %ERRORLEVEL% NEQ 0 (
-        GOTO EndOfScript
+        echo ERRORLEVEL : %ERRORLEVEL%
+        rem wwe GOTO EndOfScript
     )
 )
 
 if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
     call src_c\scripts\run_bench_odpi.bat
     if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
         GOTO EndOfScript
     )
 )
@@ -90,6 +96,7 @@ if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
     call src_elixir\scripts\run_bench_oranif.bat
     if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
         GOTO EndOfScript
     )
 )
@@ -97,11 +104,15 @@ if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
     call src_erlang\scripts\run_bench_oranif.bat
     if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
         GOTO EndOfScript
     )
 )
 
 call scripts\run_bench_finalise.bat
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+)
 
 :EndOfScript
 echo --------------------------------------------------------------------------------
