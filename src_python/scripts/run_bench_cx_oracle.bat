@@ -44,9 +44,17 @@ echo:| TIME
 echo ================================================================================
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
 
 python src_python/OraBench.py
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+)
 
+:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

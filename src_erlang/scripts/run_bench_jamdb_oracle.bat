@@ -2,7 +2,7 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_jamdb_oracle.bat: Oracle Benchmark based on Elixir.
+rem run_bench_jamdb_oracle.bat: Oracle Benchmark based on Erlang.
 rem
 rem ------------------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - JamDB Oracle and Elixir.
+echo ora_bench - Oracle benchmark - JamDB Oracle and Erlang.
 echo --------------------------------------------------------------------------------
 echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
 echo BENCHMARK_DATABASE         : %ORA_BENCH_BENCHMARK_DATABASE%
@@ -43,33 +43,26 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORLEVEL : %ERRORLEVEL%
     GOTO EndOfScript
 )
-
-cd src_elixir
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
-    call mix deps.get
+    cd src_erlang
+    call rebar3 escriptize
     if %ERRORLEVEL% NEQ 0 (
         echo ERRORLEVEL : %ERRORLEVEL%
         GOTO EndOfScript
     )
-    call mix deps.compile
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
-    )
+    cd ..
 )
-    
-call mix run -e "OraBench.CLI.main(["Jamdb.Oracle"])"
+
+src_erlang\_build\default\bin\orabench priv\properties\ora_bench_erlang.properties jamdb
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
 )
-cd ..
 
 :EndOfScript
 echo --------------------------------------------------------------------------------

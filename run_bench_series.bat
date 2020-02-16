@@ -21,6 +21,7 @@ set ORA_BENCH_RUN_DB_19_3_EE=true
 
 set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 set ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=false
+set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
 set ORA_BENCH_RUN_JDBC_JAVA=true
 set ORA_BENCH_RUN_ODPI_C=true
 set ORA_BENCH_RUN_ORANIF_ELIXIR=true
@@ -61,6 +62,7 @@ echo.
     echo --------------------------------------------------------------------------------
     echo RUN_CX_ORACLE_PYTHON    : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
     echo RUN_JAMDB_ORACLE_ELIXIR : %ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%
+    echo RUN_JAMDB_ORACLE_ERLANG : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
     echo RUN_JDBC_JAVA           : %ORA_BENCH_RUN_JDBC_JAVA%
     echo RUN_ODPI_C              : %ORA_BENCH_RUN_ODPI_C%
     echo RUN_ORANIF_ELIXIR       : %ORA_BENCH_RUN_ORANIF_ELIXIR%
@@ -75,16 +77,12 @@ echo.
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
     
-    call scripts\run_bench_setup.bat
-    if %ERRORLEVEL% NEQ 0 (
-        GOTO EndOfScript
-    )
-    
     if ["%ORA_BENCH_RUN_DB_12_2_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_bench_database.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
             GOTO EndOfScript
         )
     )
@@ -94,6 +92,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_bench_database.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
             GOTO EndOfScript
         )
     )
@@ -103,7 +102,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_bench_database.bat
         if %ERRORLEVEL% NEQ 0 (
-            GOTO EndOfScript
+            echo ERRORLEVEL : %ERRORLEVEL%
         )
     )
     
@@ -111,8 +110,6 @@ echo.
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
     
-    call scripts\run_bench_finalise.bat
-
     :EndOfScript
     echo --------------------------------------------------------------------------------
     echo:| TIME

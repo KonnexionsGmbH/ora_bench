@@ -95,6 +95,7 @@ public class OraBench {
         }
 
         log.info("End   OraBench.java");
+        System.exit(0);
     }
 
     private final Config config = new Config();

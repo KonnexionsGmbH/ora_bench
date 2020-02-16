@@ -14,6 +14,9 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU [""] (
     set ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
 )
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU [""] (
+    set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
+)
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU [""] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
 )
@@ -39,6 +42,7 @@ echo CONNECTION_SERVICE      : %ORA_BENCH_CONNECTION_SERVICE%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON    : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_JAMDB_ORACLE_ELIXIR : %ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%
+echo RUN_JAMDB_ORACLE_ERLANG : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
 echo RUN_JDBC_JAVA           : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_ODPI_C              : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORANIF_ELIXIR       : %ORA_BENCH_RUN_ORANIF_ELIXIR%
@@ -56,17 +60,15 @@ if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
     echo Setup C - End   ============================================================ 
 )
 
+set ORA_BENCH_RUN_ELIXIR=false
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] == ["true"] (
-    echo Setup Elixir - Start ======================================================= 
-    cd src_elixir
-    call mix deps.get
-    call mix deps.compile
-    cd ..
-    echo Setup Elixir - End   ======================================================= 
+    set ORA_BENCH_RUN_ELIXIR=true
 )
-
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
-    echo Setup Elixir - Start ======================================================= 
+    set ORA_BENCH_RUN_ELIXIR=true
+)
+if ["%ORA_BENCH_RUN_ELIXIR%"] == ["true"] (
+    echo Setup Elixir - Start =======================================================
     cd src_elixir
     call mix deps.get
     call mix deps.compile
@@ -74,7 +76,14 @@ if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
     echo Setup Elixir - End   ======================================================= 
 )
 
+set ORA_BENCH_RUN_ERLANG=false
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] == ["true"] (
+    set ORA_BENCH_RUN_ERLANG=true
+)
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] == ["true"] (
+    set ORA_BENCH_RUN_ERLANG=true
+)    
+if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
     echo Setup Erlang - Start ======================================================= 
     cd src_erlang
     call rebar3 escriptize
@@ -105,6 +114,7 @@ if NOT ["%DOCKER_HEALTH_STATUS%"] == ["healthy"] (
 
 priv\oracle\instantclient-windows.x64\instantclient_19_5\sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE% AS SYSDBA @scripts/run_bench_database.sql
 if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
     GOTO EndOfScript
 )
 
@@ -114,6 +124,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DE
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
     GOTO EndOfScript
 )
 
@@ -123,6 +134,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
     GOTO EndOfScript
 )
 
@@ -132,6 +144,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DE
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
     GOTO EndOfScript
 )
 
@@ -141,6 +154,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DE
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
     GOTO EndOfScript
 )
 
@@ -150,6 +164,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
     GOTO EndOfScript
 )
 
@@ -159,7 +174,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    GOTO EndOfScript
+    echo ERRORLEVEL : %ERRORLEVEL%
 )
 
 :EndOfScript

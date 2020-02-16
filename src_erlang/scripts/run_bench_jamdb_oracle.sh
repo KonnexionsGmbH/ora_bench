@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_oranif.sh: Oracle Benchmark based on Erlang.
+# run_bench_jamdb_oracle.sh: Oracle Benchmark based on Erlang.
 #
 # ------------------------------------------------------------------------------
 
@@ -22,13 +22,17 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"    
+    if [ "$OSTYPE" = "msys" ]; then
+    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    else
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+    fi
 fi
 
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - oranif and Erlang."
+echo "ora_bench - Oracle benchmark - JamDB Oracle and Erlang."
 echo "--------------------------------------------------------------------------------"
 echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
 echo "BENCHMARK_DATABASE         : $ORA_BENCH_BENCHMARK_DATABASE"
@@ -47,13 +51,11 @@ EXITCODE="0"
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
 
-if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
-    cd src_erlang
-    rebar3 escriptize
-    cd ..
-fi
+cd src_erlang
+rebar3 escriptize
+cd ..
 
-src_erlang/_build/default/bin/orabench priv/properties/ora_bench_erlang.properties oranif
+src_erlang/_build/default/bin/orabench priv/properties/ora_bench_erlang.properties jamdb
 
 EXITCODE=$?
 

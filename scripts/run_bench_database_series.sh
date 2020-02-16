@@ -14,6 +14,9 @@ fi
 if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" ]; then
     export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
 fi
+if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" ]; then
+    export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
+fi
 if [ -z "$ORA_BENCH_RUN_JDBC_JAVA" ]; then
     export ORA_BENCH_RUN_JDBC_JAVA=true
 fi
@@ -39,6 +42,7 @@ echo "CONNECTION_SERVICE      : $ORA_BENCH_CONNECTION_SERVICE"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON    : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JAMDB_ORACLE_ELIXIR : $ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR"
+echo "RUN_JAMDB_ORACLE_ERLANG : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
 echo "RUN_JDBC_JAVA           : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "RUN_ODPI_C              : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR       : $ORA_BENCH_RUN_ORANIF_ELIXIR"
@@ -72,7 +76,7 @@ if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" == "true" ] || [ "$ORA_BENCH_RUN_ORANI
     echo "Setup Elixir - End   =======================================================" 
 fi
 
-if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
+if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
     echo "Setup Erlang - Start =======================================================" 
     cd src_erlang
     rebar3 escriptize
