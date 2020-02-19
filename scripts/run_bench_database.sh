@@ -30,10 +30,6 @@ fi
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
-if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" ]; then
-    export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
-fi
-export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=false
 if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" ]; then
     export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
 fi
@@ -65,7 +61,6 @@ echo "BENCHMARK_CORE_MULTIPLIER  : $ORA_BENCH_BENCHMARK_CORE_MULTIPLIER"
 echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
-echo "RUN_JAMDB_ORACLE_ELIXIR    : $ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR"
 echo "RUN_JAMDB_ORACLE_ERLANG    : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
@@ -91,7 +86,7 @@ if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
     echo "Setup C - End   ============================================================" 
 fi
 
-if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
+if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
     echo "Setup Elixir - Start =======================================================" 
     cd src_elixir
     mix deps.get

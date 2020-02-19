@@ -83,7 +83,6 @@ script:
   - export ORA_BENCH_RUN_DB_19_3_EE=true
 
   - export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
-  - export ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=false
   - export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
   - export ORA_BENCH_RUN_JDBC_JAVA=true
   - export ORA_BENCH_RUN_ODPI_C=true

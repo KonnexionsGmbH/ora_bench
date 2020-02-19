@@ -11,9 +11,6 @@ set ORA_BENCH_MULTIPLE_RUN=true
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 )
-if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] EQU [""] (
-    set ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR=true
-)
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
 )
@@ -41,7 +38,6 @@ echo CONNECTION_PORT         : %ORA_BENCH_CONNECTION_PORT%
 echo CONNECTION_SERVICE      : %ORA_BENCH_CONNECTION_SERVICE%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON    : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
-echo RUN_JAMDB_ORACLE_ELIXIR : %ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%
 echo RUN_JAMDB_ORACLE_ERLANG : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
 echo RUN_JDBC_JAVA           : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_ODPI_C              : %ORA_BENCH_RUN_ODPI_C%
@@ -61,13 +57,8 @@ if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
 )
 
 set ORA_BENCH_RUN_ELIXIR=false
-if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ELIXIR%"] == ["true"] (
-    set ORA_BENCH_RUN_ELIXIR=true
-)
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
     set ORA_BENCH_RUN_ELIXIR=true
-)
-if ["%ORA_BENCH_RUN_ELIXIR%"] == ["true"] (
     echo Setup Elixir - Start =======================================================
     cd src_elixir
     call mix deps.get
