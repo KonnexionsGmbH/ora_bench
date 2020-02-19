@@ -88,7 +88,6 @@ public class Config {
     private int benchmarkTransactionSize;
     private int benchmarkTrials;
     private String benchmarkUserName;
-    private final File configFile = new File(System.getenv("ORA_BENCH_FILE_CONFIGURATION_NAME"));
 
     private int connectionFetchSize;
     private String connectionHost;
@@ -96,7 +95,7 @@ public class Config {
     private int connectionPort;
     private String connectionService;
     private String connectionUser;
-    FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
+    final FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
 
     private String fileBulkDelimiter;
 
@@ -112,18 +111,13 @@ public class Config {
     private String fileResultHeader;
     private String fileResultName;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
-    private ArrayList<String> keysSorted = new ArrayList<String>();
+    private ArrayList<String> keysSorted = new ArrayList<>();
 
     private final Logger log = new Logger(Config.class);
 
     private PropertiesConfiguration propertiesConfiguration;
 
     private String sqlCreate;
-    private String sqlCreateDefault = "BEGIN EXECUTE IMMEDIATE 'CREATE TABLE ora_bench_table (key VARCHAR2(32) PRIMARY KEY, data VARCHAR2(4000), "
-            + "no_partitions NUMBER DEFAULT C...C, partition_key NUMBER(5)) PARTITION BY RANGE (partition_key) (PARTITION p00000 VALUES LESS THAN (1)P...P)'; "
-            + "EXECUTE IMMEDIATE 'CREATE TRIGGER ora_bench_table_before_insert BEFORE INSERT ON ora_bench_table FOR EACH ROW "
-            + "BEGIN :new.partition_key := MOD (ASCII (SUBSTR (:new.key, 1, 1)) * 256 + ASCII (SUBSTR (:new.key, 2, 1)), :new.no_partitions); "
-            + "END ora_bench_table_before_insert;'; END;";
     private String sqlDrop;
     private String sqlInsert;
     private String sqlSelect;
@@ -134,14 +128,15 @@ public class Config {
     public Config() {
         super();
 
-        fileBasedConfigurationBuilder = new FileBasedConfigurationBuilder<PropertiesConfiguration>(PropertiesConfiguration.class);
+        fileBasedConfigurationBuilder = new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class);
 
+        File configFile = new File(System.getenv("ORA_BENCH_FILE_CONFIGURATION_NAME"));
         fileBasedConfigurationBuilder.configure(new Parameters().properties().setFile(configFile));
 
         try {
             propertiesConfiguration = fileBasedConfigurationBuilder.getConfiguration();
             updatePropertiesFromOs();
-            keysSorted = getKeysSorted(propertiesConfiguration);
+            keysSorted = getKeysSorted();
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }
@@ -160,22 +155,20 @@ public class Config {
 
             String value;
 
-            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
-                final String key = iterator.next();
-
+            for (final String key : keysSorted) {
                 if ("file.result.header".contentEquals(key)) {
                     value = propertiesConfiguration.getString(key).replace(";", fileResultDelimiter);
                 } else {
                     value = propertiesConfiguration.getString(key);
                 }
 
-                String camelKey = "";
+                StringBuilder camelKey = new StringBuilder();
                 for (int i = 0; i < key.length(); ++i) {
                     if (key.charAt(i) == '.') {
-                        camelKey += Character.toUpperCase(key.charAt(i + 1));
+                        camelKey.append(Character.toUpperCase(key.charAt(i + 1)));
                         ++i;
                     } else {
-                        camelKey += key.charAt(i);
+                        camelKey.append(key.charAt(i));
                     }
                 }
 
@@ -216,7 +209,7 @@ public class Config {
 
                 final String quote = (list.contains(key.toLowerCase())) ? "" : "\"";
 
-                bufferedWriter.write("    " + key.replace(".", "_") + " => " + quote + value + quote);
+                bufferedWriter.write("    " + key.replace("", "_") + " => " + quote + value + quote);
 
                 if (iterator.hasNext()) {
                     bufferedWriter.write(",");
@@ -247,9 +240,7 @@ public class Config {
 
             String value;
 
-            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
-                final String key = iterator.next();
-
+            for (final String key : keysSorted) {
                 if ("file.result.header".contentEquals(key)) {
                     value = propertiesConfiguration.getString(key).replace(";", fileResultDelimiter);
                 } else {
@@ -451,14 +442,6 @@ public class Config {
     }
 
     /**
-     * @return the name of the configuration file. The file name may contain the
-     *         absolute or relative file path.
-     */
-    public final String getFileConfigurationName() {
-        return fileConfigurationName;
-    }
-
-    /**
      * @return the name of the configuration file for the C language version. The
      *         file name may contain the absolute or relative file path.
      */
@@ -504,7 +487,7 @@ public class Config {
         return fileResultName;
     }
 
-    private final ArrayList<String> getKeysSorted(PropertiesConfiguration propertiesConfiguration2) {
+    private ArrayList<String> getKeysSorted() {
 
         for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
             keysSorted.add(iterator.next());
@@ -515,9 +498,9 @@ public class Config {
         return keysSorted;
     }
 
-    private final List<String> getNotAvailables() {
+    private List<String> getNotAvailables() {
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         list.add("benchmark.comment");
         list.add("benchmark.database");
@@ -534,9 +517,9 @@ public class Config {
         return list;
     }
 
-    private final List<String> getNumericProperties() {
+    private List<String> getNumericProperties() {
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         list.add("benchmark.batch.size");
         list.add("benchmark.number.cores");
@@ -553,12 +536,12 @@ public class Config {
         return list;
     }
 
-    private final CharSequence getPartionString() {
+    private CharSequence getPartitionString() {
 
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
 
         for (int i = 2; i <= benchmarkNumberPartitions; i++) {
-            stringBuffer.append(", PARTITION p" + String.format("%05d", i - 1) + " VALUES LESS THAN (" + Integer.toString(i) + ")");
+            stringBuffer.append(", PARTITION p").append(String.format("%05d", i - 1)).append(" VALUES LESS THAN (").append(i).append(")");
         }
 
         return stringBuffer.toString();
@@ -602,9 +585,7 @@ public class Config {
 
         boolean isChanged = false;
 
-        for (final Iterator<String> iterator = list.iterator(); iterator.hasNext();) {
-            final String key = iterator.next();
-
+        for (final String key : list) {
             if (!(propertiesConfiguration.getString(key).equals("n/a"))) {
                 propertiesConfiguration.setProperty(key, "n/a");
                 isChanged = true;
@@ -644,7 +625,7 @@ public class Config {
         this.benchmarkDriver = benchmarkDriver;
     }
 
-    private final void storeConfiguration() {
+    private void storeConfiguration() {
 
         propertiesConfiguration.setThrowExceptionOnMissing(true);
 
@@ -691,7 +672,7 @@ public class Config {
         benchmarkLanguage = "Java " + System.getProperty("java.version");
     }
 
-    private final void updatePropertiesFromOs() {
+    private void updatePropertiesFromOs() {
 
         Map<String, String> environmentVariables = System.getenv();
 
@@ -779,12 +760,12 @@ public class Config {
         }
     }
 
-    private final void validateProperties() {
+    private void validateProperties() {
 
         boolean isChanged = false;
 
         if (benchmarkBatchSize < 0) {
-            log.error("Attention: The value of the configuration parameter 'benchmark.batch.size' [" + Integer.toString(benchmarkBatchSize)
+            log.error("Attention: The value of the configuration parameter 'benchmark.batch.size' [" + benchmarkBatchSize
                     + "] must not be less than 0, the specified value is replaced by 0.");
             benchmarkBatchSize = 0;
             propertiesConfiguration.setProperty("benchmark.batch.size", benchmarkBatchSize);
@@ -792,7 +773,7 @@ public class Config {
         }
 
         if (benchmarkCoreMultiplier < 0) {
-            log.error("Attention: The value of the core multiplier parameter 'benchmark.core.multiplier' [" + Integer.toString(benchmarkCoreMultiplier)
+            log.error("Attention: The value of the core multiplier parameter 'benchmark.core.multiplier' [" + benchmarkCoreMultiplier
                     + "] must not be less than 0, the specified value is replaced by 0.");
             benchmarkCoreMultiplier = 0;
             propertiesConfiguration.setProperty("benchmark.core.multiplier", benchmarkCoreMultiplier);
@@ -833,10 +814,9 @@ public class Config {
         }
 
         if (benchmarkTransactionSize < benchmarkBatchSize) {
-            log.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' [" + Integer.toString(benchmarkTransactionSize)
-                    + "] must not be less than value of the configuration parameter 'benchmark.batch.size' [" + Integer.toString(benchmarkBatchSize)
-                    + "], the specified value of the configuration parameter 'benchmark.transaction.size' is replaced by "
-                    + Integer.toString(benchmarkBatchSize) + ".");
+            log.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' [" + benchmarkTransactionSize
+                    + "] must not be less than value of the configuration parameter 'benchmark.batch.size' [" + benchmarkBatchSize
+                    + "], the specified value of the configuration parameter 'benchmark.transaction.size' is replaced by " + benchmarkBatchSize + "");
             benchmarkTransactionSize = benchmarkBatchSize;
             propertiesConfiguration.setProperty("benchmark.batch.size", benchmarkTransactionSize);
 
@@ -844,7 +824,7 @@ public class Config {
         }
 
         if (benchmarkTransactionSize < 0) {
-            log.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' [" + Integer.toString(benchmarkTransactionSize)
+            log.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' [" + benchmarkTransactionSize
                     + "] must not be less than 0, the specified value is replaced by 0.");
 
             benchmarkTransactionSize = 0;
@@ -854,7 +834,7 @@ public class Config {
         }
 
         if (benchmarkTrials < 1) {
-            log.error("Attention: The value of the configuration parameter 'benchmark.trials' [" + Integer.toString(benchmarkTrials)
+            log.error("Attention: The value of the configuration parameter 'benchmark.trials' [" + benchmarkTrials
                     + "] must not be less than 1, the specified value is replaced by 1.");
             benchmarkTrials = 1;
             propertiesConfiguration.setProperty("benchmark.trials", benchmarkTrials);
@@ -875,7 +855,7 @@ public class Config {
         }
 
         if (connectionFetchSize < 0) {
-            log.error("Attention: The value of the configuration parameter 'connection.fetch.size' [" + Integer.toString(connectionFetchSize)
+            log.error("Attention: The value of the configuration parameter 'connection.fetch.size' [" + connectionFetchSize
                     + "] must not be less than 0, the specified value is replaced by 0.");
             connectionFetchSize = 0;
             propertiesConfiguration.setProperty("connection.fetch.size", connectionFetchSize);
@@ -883,14 +863,14 @@ public class Config {
         }
 
         if (fileBulkLength < 80) {
-            log.error("Attention: The value of the configuration parameter 'file.bulk.length' [" + Integer.toString(fileBulkLength)
+            log.error("Attention: The value of the configuration parameter 'file.bulk.length' [" + fileBulkLength
                     + "] must not be less than 80, the specified value is replaced by 80.");
             fileBulkLength = 80;
             propertiesConfiguration.setProperty("file.bulk.length", fileBulkLength);
 
             isChanged = true;
         } else if (fileBulkLength > 4000) {
-            log.error("Attention: The value of the configuration parameter 'file.bulk.length' [" + Integer.toString(fileBulkLength)
+            log.error("Attention: The value of the configuration parameter 'file.bulk.length' [" + fileBulkLength
                     + "] must not be greater than 4000, the specified value is replaced by 4000.");
             fileBulkLength = 80;
             propertiesConfiguration.setProperty("file.bulk.length", fileBulkLength);
@@ -898,7 +878,7 @@ public class Config {
         }
 
         if (fileBulkSize < 1) {
-            log.error("Attention: The value of the configuration parameter 'file.bulk.size' [" + Integer.toString(fileBulkSize)
+            log.error("Attention: The value of the configuration parameter 'file.bulk.size' [" + fileBulkSize
                     + "] must not be less than 1, the specified value is replaced by 1.");
             fileBulkSize = 1;
             propertiesConfiguration.setProperty("file.bulk.size", fileBulkSize);
@@ -907,7 +887,12 @@ public class Config {
         }
 
         if (sqlCreate.equals("n/a")) {
-            sqlCreate = sqlCreateDefault.replace("C...C", Integer.toString(benchmarkNumberPartitions)).replace("P...P", getPartionString());
+            String sqlCreateDefault = "BEGIN EXECUTE IMMEDIATE 'CREATE TABLE ora_bench_table (key VARCHAR2(32) PRIMARY KEY, data VARCHAR2(4000), "
+                    + "no_partitions NUMBER DEFAULT C...C, partition_key NUMBER(5)) PARTITION BY RANGE (partition_key) (PARTITION p00000 VALUES LESS THAN (1)P...P)'; "
+                    + "EXECUTE IMMEDIATE 'CREATE TRIGGER ora_bench_table_before_insert BEFORE INSERT ON ora_bench_table FOR EACH ROW "
+                    + "BEGIN :new.partition_key := MOD (ASCII (SUBSTR (:new.key, 1, 1)) * 256 + ASCII (SUBSTR (:new.key, 2, 1)), :new.no_partitions); "
+                    + "END ora_bench_table_before_insert;'; END;";
+            sqlCreate = sqlCreateDefault.replace("C...C", Integer.toString(benchmarkNumberPartitions)).replace("P...P", getPartitionString());
             propertiesConfiguration.setProperty("sql.create", sqlCreate);
             isChanged = true;
         }

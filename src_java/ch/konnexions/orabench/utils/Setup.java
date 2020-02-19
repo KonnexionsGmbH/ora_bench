@@ -52,7 +52,7 @@ public class Setup {
      */
     static final int BULK_SIZE_MIN = 1;
 
-    private Config config;
+    private final Config config;
 
     private final Logger log = new Logger(Setup.class);
 

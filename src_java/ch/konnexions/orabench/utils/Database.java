@@ -28,13 +28,13 @@ import java.sql.SQLException;
  */
 public class Database {
 
-    private Config config;
+    private final Config config;
     private Connection connection;
-    private String connectionHost;
-    private String connectionPassword;
-    private int connectionPort;
-    private String connectionService;
-    private String connectionUser;
+    private final String connectionHost;
+    private final String connectionPassword;
+    private final int connectionPort;
+    private final String connectionService;
+    private final String connectionUser;
 
     private final Logger log = new Logger(Database.class);
 
@@ -58,7 +58,7 @@ public class Database {
      * @return the database connection
      */
     public final Connection connect() {
-        final String url = "jdbc:oracle:thin:@//" + connectionHost + ":" + String.valueOf(connectionPort) + "/" + connectionService;
+        final String url = "jdbc:oracle:thin:@//" + connectionHost + ":" + connectionPort + "/" + connectionService;
 
         if (connection == null) {
             try {

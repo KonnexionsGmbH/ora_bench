@@ -4,24 +4,23 @@
 
 package ch.konnexions.orabench.threads;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import ch.konnexions.orabench.OraBench;
 import ch.konnexions.orabench.utils.Config;
 import ch.konnexions.orabench.utils.Logger;
 
 public class Select implements Runnable {
-    private ArrayList<String[]> bulkDataPartition;
+    private final ArrayList<String[]> bulkDataPartition;
 
-    private Config config;
+    private final Config config;
 
-    public Logger log;
+    public final Logger log;
 
-    private int partitionKey;
+    private final int partitionKey;
 
-    private Statement statement;
+    private final Statement statement;
 
     /**
      * Instantiates a new Select class.
@@ -45,26 +44,7 @@ public class Select implements Runnable {
      */
     @Override
     public final void run() {
-        int count = 0;
-
-        try {
-            if (config.getConnectionFetchSize() > 0) {
-                statement.setFetchSize(config.getConnectionFetchSize());
-            }
-
-            ResultSet resultSet = statement.executeQuery(config.getSqlSelect() + " WHERE partition_key = " + Integer.toString(partitionKey));
-
-            while (resultSet.next()) {
-                count += 1;
-            }
-
-            if (count != bulkDataPartition.size()) {
-                log.error("Number rows: expected=" + Integer.toString(bulkDataPartition.size()) + " - found=" + Integer.toString(count));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        OraBench.selectHelper(statement, bulkDataPartition, partitionKey, config, log);
     }
 
 }

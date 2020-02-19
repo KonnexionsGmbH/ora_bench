@@ -33,7 +33,7 @@ import org.apache.commons.csv.CSVPrinter;
  * This class is used to record the results of the Oracle JDBC benchmark.
  */
 public class Result {
-    Config config;
+    final Config config;
 
     private final DecimalFormat decimalFormat = new DecimalFormat("#########");
 
@@ -49,8 +49,6 @@ public class Result {
 
     private CSVPrinter resultFile;
 
-    CSVPrinter summaryFile;
-
     /**
      * Constructs a Result object using the given {@link Config} object.
      *
@@ -62,17 +60,16 @@ public class Result {
         openResultFile();
     }
 
-    private final void createMeasuringPoint(String action, LocalDateTime endDateTime, long duration) {
-        createMeasuringPoint(action, 0, null, lastBenchmark, endDateTime, duration);
+    private void createMeasuringPoint(LocalDateTime endDateTime, long duration) {
+        createMeasuringPoint("benchmark", 0, null, lastBenchmark, endDateTime, duration);
 
     }
 
-    private final void createMeasuringPoint(String action, int trialNo, LocalDateTime startDateTime, LocalDateTime endDateTime, long duration) {
-        createMeasuringPoint(action, trialNo, null, startDateTime, endDateTime, duration);
+    private void createMeasuringPoint(int trialNo, LocalDateTime startDateTime, LocalDateTime endDateTime, long duration) {
+        createMeasuringPoint("trial", trialNo, null, startDateTime, endDateTime, duration);
     }
 
-    private final void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime, LocalDateTime endDateTime,
-            long duration) {
+    private void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime, LocalDateTime endDateTime, long duration) {
         try {
             resultFile.printRecord(config.getBenchmarkRelease(), config.getBenchmarkId(), config.getBenchmarkComment(), config.getBenchmarkHostName(),
                     config.getBenchmarkNumberCores(), config.getBenchmarkOs(), config.getBenchmarkUserName(), config.getBenchmarkDatabase(),
@@ -95,7 +92,7 @@ public class Result {
         LocalDateTime endDateTime = LocalDateTime.now();
         long duration = System.nanoTime() - lastBenchmarkNano;
 
-        createMeasuringPoint("benchmark", endDateTime, duration);
+        createMeasuringPoint(endDateTime, duration);
 
         try {
             resultFile.close();
@@ -139,10 +136,10 @@ public class Result {
      * @param trialNo the current trial number
      */
     public final void endTrial(int trialNo) {
-        createMeasuringPoint("trial", trialNo, lastTrial, LocalDateTime.now(), System.nanoTime() - lastTrialNano);
+        createMeasuringPoint(trialNo, lastTrial, LocalDateTime.now(), System.nanoTime() - lastTrialNano);
     }
 
-    private final void openResultFile() {
+    private void openResultFile() {
         String resultDelimiter = config.getFileResultDelimiter();
         String resultName = config.getFileResultName();
 

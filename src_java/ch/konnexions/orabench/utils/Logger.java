@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Logger {
 
-    private Log log;
+    private final Log log;
 
     /**
      * Constructs a Logger object using the given class.
@@ -70,39 +70,12 @@ public class Logger {
     }
 
     /**
-     * Logs a message with fatal log level..
-     *
-     * @param message log this message
-     */
-    public final void fatal(Object message) {
-        log.fatal(message);
-    }
-
-    /**
      * Logs a message with info log level..
      *
      * @param message log this message
      */
     public final void info(Object message) {
         log.info(message);
-    }
-
-    /**
-     * Logs a message with trace log level..
-     *
-     * @param message log this message
-     */
-    public final void trace(Object message) {
-        log.trace(message);
-    }
-
-    /**
-     * Logs a message with warn log level..
-     *
-     * @param message log this message
-     */
-    public final void warn(Object message) {
-        log.warn(message);
     }
 
 }
