@@ -28,6 +28,7 @@ fi
 
 if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+    { /bin/bash src_java/scripts/run_gradle.sh; }
 fi
 
 echo "================================================================================"
@@ -52,8 +53,6 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
-
-{ /bin/bash src_java/scripts/run_gradle.sh; }
 
 PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 

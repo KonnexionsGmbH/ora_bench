@@ -74,27 +74,42 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
-    echo "Setup C - Start ============================================================" 
-    if [ "$OSTYPE" = "msys" ]; then
-        nmake -f src_c/Makefile.win32 clean
-        nmake -f src_c/Makefile.win32
-    else
-        make -f src_c/Makefile clean
-        make -f src_c/Makefile
+export RUN_GLOBAL_JAMDB="false"
+export RUN_GLOBAL_NON_JAMDB="false"
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
+    export RUN_GLOBAL_JAMDB="true"
+    export RUN_GLOBAL_NON_JAMDB="true"
+fi
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "false" ]; then
+    export RUN_GLOBAL_NON_JAMDB="true"
+fi
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "true" ]; then
+    export RUN_GLOBAL_JAMDB="true"
+fi
+
+if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
+    if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
+        echo "Setup C - Start ============================================================" 
+        if [ "$OSTYPE" = "msys" ]; then
+            nmake -f src_c/Makefile.win32 clean
+            nmake -f src_c/Makefile.win32
+        else
+            make -f src_c/Makefile clean
+            make -f src_c/Makefile
+        fi
+        echo "Setup C - End   ============================================================" 
     fi
-    echo "Setup C - End   ============================================================" 
-fi
-
-if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
-    echo "Setup Elixir - Start =======================================================" 
-    cd src_elixir
-    mix deps.get
-    mix deps.compile
-    cd ..
-    echo "Setup Elixir - End   =======================================================" 
-fi
-
+    
+    if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
+        echo "Setup Elixir - Start =======================================================" 
+        cd src_elixir
+        mix deps.get
+        mix deps.compile
+        cd ..
+        echo "Setup Elixir - End   =======================================================" 
+    fi
+fi    
+    
 if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
     echo "Setup Erlang - Start ======================================================="
     cd src_erlang

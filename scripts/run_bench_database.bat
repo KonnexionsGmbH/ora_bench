@@ -72,24 +72,39 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
-    echo Setup C - Start ============================================================ 
-    nmake -f src_c\Makefile.win32 clean
-    nmake -f src_c\Makefile.win32
-    echo Setup C - End   ============================================================ 
+set RUN_GLOBAL_JAMDB="false"
+set RUN_GLOBAL_NON_JAMDB="false"
+if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU [""] (
+    set RUN_GLOBAL_JAMDB="true"
+    set RUN_GLOBAL_NON_JAMDB="true"
+)
+if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["false"] (
+    set RUN_GLOBAL_NON_JAMDB="true"
+)
+if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["true"] (
+    set RUN_GLOBAL_JAMDB="true"
 )
 
-set ORA_BENCH_RUN_ELIXIR=false
-if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
-    set ORA_BENCH_RUN_ELIXIR=true
-    echo Setup Elixir - Start ======================================================= 
-    cd src_elixir
-    call mix deps.get
-    call mix deps.compile
-    cd ..
-    echo Setup Elixir - End   ======================================================= 
+if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
+    if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
+        echo Setup C - Start ============================================================ 
+        nmake -f src_c\Makefile.win32 clean
+        nmake -f src_c\Makefile.win32
+        echo Setup C - End   ============================================================ 
+    )
+    
+    set ORA_BENCH_RUN_ELIXIR=false
+    if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
+        set ORA_BENCH_RUN_ELIXIR=true
+        echo Setup Elixir - Start ======================================================= 
+        cd src_elixir
+        call mix deps.get
+        call mix deps.compile
+        cd ..
+        echo Setup Elixir - End   ======================================================= 
+    )
 )
-
+    
 set ORA_BENCH_RUN_ERLANG=false
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] == ["true"] (
     set ORA_BENCH_RUN_ERLANG=true

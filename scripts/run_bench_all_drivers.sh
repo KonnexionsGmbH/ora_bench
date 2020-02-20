@@ -49,19 +49,6 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
-export RUN_GLOBAL_JAMDB="false"
-export RUN_GLOBAL_NON_JAMDB="false"
-if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
-    export RUN_GLOBAL_JAMDB="true"
-    export RUN_GLOBAL_NON_JAMDB="true"
-fi
-if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "false" ]; then
-    export RUN_GLOBAL_NON_JAMDB="true"
-fi
-if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "true" ]; then
-    export RUN_JAMDB="true"
-fi
-
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
         { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
