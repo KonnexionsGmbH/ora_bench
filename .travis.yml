@@ -48,13 +48,14 @@ script:
   - travis_fold end   "Setting_up_Java"
     
   # Gradle -----------------------------------------------------------------------
+  - travis_fold start "Setting_up_Gradle"
   - wget https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp  
   - sudo unzip -d /opt/gradle /tmp/gradle-*.zip
   - export GRADLE_HOME=/opt/gradle/gradle-6.2
   - export PATH=${GRADLE_HOME}/bin:${PATH}
   - sudo chmod +x /etc/profile.d/gradle.sh
-  - source /etc/profile.d/gradle.sh
   - gradle -v
+  - travis_fold end   "Setting_up_Gradle"
 
   # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
   - travis_fold start "Setting_up_Oracle Instant Client"
