@@ -106,7 +106,7 @@ if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
         echo Setup Elixir - End   ======================================================= 
     )
 )
-    
+
 set ORA_BENCH_RUN_ERLANG=false
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] == ["true"] (
     set ORA_BENCH_RUN_ERLANG=true

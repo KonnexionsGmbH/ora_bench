@@ -32,39 +32,60 @@ echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - specific database.
 echo --------------------------------------------------------------------------------
-echo BENCHMARK_DATABASE      : %ORA_BENCH_BENCHMARK_DATABASE%
-echo CONNECTION_HOST         : %ORA_BENCH_CONNECTION_HOST%
-echo CONNECTION_PORT         : %ORA_BENCH_CONNECTION_PORT%
-echo CONNECTION_SERVICE      : %ORA_BENCH_CONNECTION_SERVICE%
+echo BENCHMARK_DATABASE         : %ORA_BENCH_BENCHMARK_DATABASE%
+echo CONNECTION_HOST            : %ORA_BENCH_CONNECTION_HOST%
+echo CONNECTION_PORT            : %ORA_BENCH_CONNECTION_PORT%
+echo CONNECTION_SERVICE         : %ORA_BENCH_CONNECTION_SERVICE%
 echo --------------------------------------------------------------------------------
-echo RUN_CX_ORACLE_PYTHON    : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
-echo RUN_JAMDB_ORACLE_ERLANG : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
-echo RUN_JDBC_JAVA           : %ORA_BENCH_RUN_JDBC_JAVA%
-echo RUN_ODPI_C              : %ORA_BENCH_RUN_ODPI_C%
-echo RUN_ORANIF_ELIXIR       : %ORA_BENCH_RUN_ORANIF_ELIXIR%
-echo RUN_ORANIF_ERLANG       : %ORA_BENCH_RUN_ORANIF_ERLANG%
+echo BENCHMARK_BATCH_SIZE       : %ORA_BENCH_BENCHMARK_BATCH_SIZE%
+echo BENCHMARK_CORE_MULTIPLIER  : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
+echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
-echo FILE_CONFIGURATION_NAME : %ORA_BENCH_FILE_CONFIGURATION_NAME%
+echo ORA_BENCH_BENCHMARK_JAMDB  : %ORA_BENCH_BENCHMARK_JAMDB%
+echo --------------------------------------------------------------------------------
+echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
+echo RUN_JAMDB_ORACLE_ERLANG    : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
+echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
+echo RUN_ODPI_C                 : %ORA_BENCH_RUN_ODPI_C%
+echo RUN_ORANIF_ELIXIR          : %ORA_BENCH_RUN_ORANIF_ELIXIR%
+echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
+echo --------------------------------------------------------------------------------
+echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
-    echo Setup C - Start ============================================================ 
-    nmake -f src_c\Makefile.win32 clean
-    nmake -f src_c\Makefile.win32
-    echo Setup C - End   ============================================================ 
+set RUN_GLOBAL_JAMDB="false"
+set RUN_GLOBAL_NON_JAMDB="false"
+if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU [""] (
+    set RUN_GLOBAL_JAMDB="true"
+    set RUN_GLOBAL_NON_JAMDB="true"
+)
+if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["false"] (
+    set RUN_GLOBAL_NON_JAMDB="true"
+)
+if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["true"] (
+    set RUN_GLOBAL_JAMDB="true"
 )
 
-set ORA_BENCH_RUN_ELIXIR=false
-if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
-    set ORA_BENCH_RUN_ELIXIR=true
-    echo Setup Elixir - Start =======================================================
-    cd src_elixir
-    call mix deps.get
-    call mix deps.compile
-    cd ..
-    echo Setup Elixir - End   ======================================================= 
+if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
+    if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
+        echo Setup C - Start ============================================================ 
+        nmake -f src_c\Makefile.win32 clean
+        nmake -f src_c\Makefile.win32
+        echo Setup C - End   ============================================================ 
+    )
+    
+    set ORA_BENCH_RUN_ELIXIR=false
+    if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
+        set ORA_BENCH_RUN_ELIXIR=true
+        echo Setup Elixir - Start ======================================================= 
+        cd src_elixir
+        call mix deps.get
+        call mix deps.compile
+        cd ..
+        echo Setup Elixir - End   ======================================================= 
+    )
 )
 
 set ORA_BENCH_RUN_ERLANG=false
@@ -73,7 +94,7 @@ if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] == ["true"] (
 )
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] == ["true"] (
     set ORA_BENCH_RUN_ERLANG=true
-)    
+)
 if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
     echo Setup Erlang - Start ======================================================= 
     cd src_erlang
