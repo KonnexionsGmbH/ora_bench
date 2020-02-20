@@ -31,7 +31,7 @@ The currently supported database drivers are:
 | Driver    | Programming Languages |
 | :---      | :--- |
 | cx_Oracle | Python                |
-| JamDB     | Elixir &amp; Erlang   |
+| JamDB     | Erlang                |
 | JDBC      | Java                  |
 | ODPI      | C                     |
 | oranif    | Elixir &amp; Erlang   |
@@ -541,7 +541,6 @@ Elixir requires special treatment for 'rebar3'. The question `Shall I install re
 	  decimal 1.8.1
 	  ecto 3.2.5
 	  ecto_sql 3.2.2
-	  jamdb_oracle 0.3.7
 	  telemetry 0.4.1
 	All dependencies are up to date
 	Could not find "rebar3", which is needed to build dependency :telemetry
@@ -555,11 +554,11 @@ Elixir requires special treatment for 'rebar3'. The question `Shall I install re
 |            | 2019.11.05 | c_bik    | jamdb_erlang: new |
 |            | 2019.11.05 | c_bik    | occi_c++: new |
 |            | 2019.11.05 | c_bik    | odbc_erlang: new |
-|            | 2019.11.05 | wwe      | jamdb_elixir: new |
 |            | 2020.01.08 | c_bik    | plot: diagram types: bar graph & function graph |
 |            | 2020.01.08 | c_bik    | plot: object database version - selection driver & language, operation, ora_bench release, trial no.  |
 |            | 2020.01.08 | c_bik    | plot: object driver & language - selection database version, operation, ora_bench release, trial no.  |
 |            | 2020.01.08 | c_bik    | script run_bench_travis_push.sh append mode |
+|            | 2020.02.19 | wwe      | jdbc_kotlin: new |
 | 2019.11.05 | 2019.11.05 | wwe      | jdbc_java: dynamic batchsize | 
 | 2019.11.06 | 2019.11.05 | wwe      | all: separating key column and data column |
 | 2019.11.06 | 2019.11.05 | wwe      | jdbc_java: finishing with summary report |
@@ -588,6 +587,7 @@ Elixir requires special treatment for 'rebar3'. The question `Shall I install re
 | 2020.01.07 | 2019.11.21 | wwe      | oranif_elixir: new |
 | 2020.01.08 | 2020.01.08 | c_bik    | benchmark.batch.size=0 |
 | rejected   | 2019.11.05 | wwe      | all: partitioned table ??? |
+| rejected   | 2019.11.05 | wwe      | jamdb_elixir: new |
 | rejected   | 2019.11.21 | c_bik    | setup: define new c ini file format |
 | rejected   | 2019.11.21 | c_bik    | upload to GitHub from Travis CI: authentication method |
 | rejected   | 2019.11.21 | wwe      | setup: c script-> new c ini file |

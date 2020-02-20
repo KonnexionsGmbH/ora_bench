@@ -34,7 +34,7 @@ def create_database_objects(config):
     connections = list()
     cursors = list()
 
-    for i in range(0, config['benchmark.number.partitions']):
+    for _ in range(0, config['benchmark.number.partitions']):
         try:
             connection = cx_Oracle.connect(config['connection.user'], config['connection.password'],
                                            config['connection.host'] + ':' + str(config['connection.port']) + '/' + config['connection.service'])
@@ -184,7 +184,7 @@ def get_bulk_data_partitions(config):
         key = key_data_tuple[0]
         partition_key = (ord(key[0]) * 256 + ord(key[1])) % config['benchmark.number.partitions']
         bulk_data_partition = bulk_data_partitions[partition_key]
-        bulk_data_partition.append(key_data_tuple)
+        bulk_data_partition.append([key_data_tuple])
         bulk_data_partitions[partition_key] = bulk_data_partition
 
     logging.info('Start Distribution of the data in the partitions')

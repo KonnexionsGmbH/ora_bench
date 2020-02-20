@@ -19,7 +19,6 @@ defmodule OraBench.MixProject do
     [
       extra_applications: [
         :ecto,
-        :jamdb_oracle,
         :logger
       ]
     ]
@@ -31,7 +30,6 @@ defmodule OraBench.MixProject do
   defp deps do
     [
       {:ecto_sql, "~> 3.2.2"},
-      {:jamdb_oracle, "~> 0.3.6"},
       {:oranif, git: "https://github.com/c-bik/oranif"}
     ]
   end

@@ -5,10 +5,6 @@
 # is restricted to this project.
 use Mix.Config
 
-# Configures the endpoint
-config :ora_bench,
-       adapter: Ecto.Adapters.Jamdb.Oracle
-
 # Configures Elixir's Logger
 config :logger, level: :info
 config :logger,
