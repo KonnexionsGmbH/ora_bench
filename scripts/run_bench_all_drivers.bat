@@ -48,51 +48,70 @@ if %ERRORLEVEL% NEQ 0 (
     GOTO EndOfScript
 )
 
-if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
-    call src_python\scripts\run_bench_cx_oracle.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+set RUN_GLOBAL_JAMDB="false"
+set RUN_GLOBAL_NON_JAMDB="false"
+if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU [""] (
+    set RUN_GLOBAL_JAMDB="true"
+    set RUN_GLOBAL_NON_JAMDB="true"
+)
+if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["false"] (
+    set RUN_GLOBAL_NON_JAMDB="true"
+)
+if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["true"] (
+    set RUN_JAMDB="true"
+)
+
+if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
+    if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
+        call src_python\scripts\run_bench_cx_oracle.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
     )
 )
 
-if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU ["true"] (
-    call src_erlang\scripts\run_bench_jamdb_oracle.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+if [%RUN_GLOBAL_JAMDB%] EQU ["true"] (
+    if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU ["true"] (
+        call src_erlang\scripts\run_bench_jamdb_oracle.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
     )
 )
 
-if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
-    call src_java\scripts\run_bench_jdbc.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        rem wwe GOTO EndOfScript
+if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
+    if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
+        call src_java\scripts\run_bench_jdbc.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            rem wwe GOTO EndOfScript
+        )
     )
-)
-
-if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
-    call src_c\scripts\run_bench_odpi.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+    
+    if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
+        call src_c\scripts\run_bench_odpi.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
     )
-)
-
-if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
-    call src_elixir\scripts\run_bench_oranif.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+    
+    if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
+        call src_elixir\scripts\run_bench_oranif.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
     )
-)
-
-if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
-    call src_erlang\scripts\run_bench_oranif.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+    
+    if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
+        call src_erlang\scripts\run_bench_oranif.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
     )
 )
 
