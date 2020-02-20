@@ -28,8 +28,7 @@ fi
 
 if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-    make -f src_java/Makefile clean
-    make -f src_java/Makefile
+    { /bin/bash src_java/scripts/run_gradle.sh; }
 fi
 
 echo "================================================================================"

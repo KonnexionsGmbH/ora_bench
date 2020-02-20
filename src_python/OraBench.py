@@ -255,7 +255,7 @@ def insert(config, connection, cursor, bulk_data_partition):
     count = 0
     batch_data = list()
 
-    for key_data_tuple in bulk_data_partition:
+    for [key_data_tuple] in bulk_data_partition:
         count += 1
 
         if config['benchmark.batch.size'] == 0:

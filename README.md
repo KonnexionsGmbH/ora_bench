@@ -80,6 +80,8 @@ All the file names specified here are also part of the configuration file and ca
 
 - Java SE Development Kit, e.g. Version 11 from [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
 
+- Gradle from [here](https://www.python.org/downloads/) 
+
 - Python 3 from [here](https://www.python.org/downloads/)
 
 ##### 2.2.1.1.2 Windows Subsystem for Linux (WSL 2 and Ubuntu 18.04 LTS)
@@ -101,6 +103,12 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
 
 - Java SE Development Kit, e.g.
     - `sudo apt install default-jdk`
+
+- Gradle, e.g.
+    - `wget https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp`  
+    - `sudo unzip -d /opt/gradle /tmp/gradle-*.zip`
+    - `export GRADLE_HOME=/opt/gradle/gradle-6.2`
+    - `export PATH=${GRADLE_HOME}/bin:${PATH}`
 
 - Python 3, e.g.:
     - `sudo apt install software-properties-common`
@@ -464,7 +472,7 @@ The data column in the bulk file is randomly generated with a unique key column 
     - operating system environment (`benchmark.os`), 
     - user name (`benchmark.user.name`) and 
     - SQL create statement (`sql.create`). 
-- the Java source code is compiled with the help of a make file
+- the Java source code is compiled with the help of Gradle
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 

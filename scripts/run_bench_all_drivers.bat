@@ -32,6 +32,10 @@ echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - all drivers.
 echo --------------------------------------------------------------------------------
+echo ORA_BENCH_BENCHMARK_JAMDB  : %ORA_BENCH_BENCHMARK_JAMDB%
+echo RUN_GLOBAL_JAMDB           : %RUN_GLOBAL_JAMDB%
+echo RUN_GLOBAL_NON_JAMDB       : %RUN_GLOBAL_NON_JAMDB%
+echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_JAMDB_ORACLE_ERLANG    : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
 echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
@@ -48,51 +52,57 @@ if %ERRORLEVEL% NEQ 0 (
     GOTO EndOfScript
 )
 
-if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
-    call src_python\scripts\run_bench_cx_oracle.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
+    if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
+        call src_python\scripts\run_bench_cx_oracle.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
     )
 )
 
-if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU ["true"] (
-    call src_erlang\scripts\run_bench_jamdb_oracle.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+if [%RUN_GLOBAL_JAMDB%] EQU ["true"] (
+    if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU ["true"] (
+        call src_erlang\scripts\run_bench_jamdb_oracle.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
     )
 )
 
-if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
-    call src_java\scripts\run_bench_jdbc.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        rem wwe GOTO EndOfScript
+if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
+    if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
+        call src_java\scripts\run_bench_jdbc.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            rem wwe GOTO EndOfScript
+        )
     )
-)
-
-if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
-    call src_c\scripts\run_bench_odpi.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+    
+    if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
+        call src_c\scripts\run_bench_odpi.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
     )
-)
-
-if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
-    call src_elixir\scripts\run_bench_oranif.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+    
+    if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
+        call src_elixir\scripts\run_bench_oranif.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
     )
-)
-
-if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
-    call src_erlang\scripts\run_bench_oranif.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+    
+    if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
+        call src_erlang\scripts\run_bench_oranif.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
     )
 )
 

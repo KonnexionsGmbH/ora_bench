@@ -46,6 +46,14 @@ script:
   - sudo apt install default-jdk
   - java -version
   - travis_fold end   "Setting_up_Java"
+    
+  # Gradle -----------------------------------------------------------------------
+  - travis_fold start "Setting_up_Gradle"
+  - wget https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp  
+  - sudo unzip -d /opt/gradle /tmp/gradle-*.zip
+  - export GRADLE_HOME=/opt/gradle/gradle-6.2
+  - export PATH=${GRADLE_HOME}/bin:${PATH}
+  - travis_fold end   "Setting_up_Gradle"
 
   # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
   - travis_fold start "Setting_up_Oracle Instant Client"
@@ -97,6 +105,14 @@ script:
   # Running ora_bench ------------------------------------------------------------
   - travis_fold start "Running_ora_bench"
   - git pull
+  - cd src_java
+  - gradle wrapper
+  # - sudo chmod +x gradlew
+  # - cd ../src_kotlin
+  # - gradle wrapper
+  # - sudo chmod +x gradlew
+  - cd ..
+  # - sudo chmod +x src_kotlin/gradlew
   - ./scripts/run_bench_database_series.sh
   - travis_fold end   "Running_ora_bench"
 
