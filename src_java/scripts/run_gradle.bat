@@ -2,42 +2,28 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_setup.bat: Oracle Benchmark Run Setup.
+rem run_gradle.bat: clean and assemble the Java part of the project.
 rem
 rem ------------------------------------------------------------------------------
-
-set ORA_BENCH_MULTIPLE_RUN=
-
-if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
-    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
-)
-
-set ORA_BENCH_JAVA_CLASSPATH=.;priv\java_jar\*
 
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - setup benchmark run.
-echo --------------------------------------------------------------------------------
-echo FILE_CONFIGURATION_NAME : %ORA_BENCH_FILE_CONFIGURATION_NAME%
-echo JAVA_CLASSPATH          : %ORA_BENCH_JAVA_CLASSPATH%
+echo ora_bench - Oracle benchmark - gradle: clean and assemble the Java part of the project.
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-call src_java\scripts\run_gradle
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-)
+cd src_java
 
-set PATH=%PATH%;\u01\app\oracle\product\12.2\db_1\jdbc\lib
+call gradle assemble
 
-java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-)
+copy /Y build\libs\ora_bench.jar ..\priv\java_jar
 
-:EndOfScript
+call gradle clean
+
+cd ..
+
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------
