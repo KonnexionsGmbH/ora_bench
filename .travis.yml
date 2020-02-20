@@ -53,7 +53,6 @@ script:
   - sudo unzip -d /opt/gradle /tmp/gradle-*.zip
   - export GRADLE_HOME=/opt/gradle/gradle-6.2
   - export PATH=${GRADLE_HOME}/bin:${PATH}
-  - gradle -v
   - travis_fold end   "Setting_up_Gradle"
 
   # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
