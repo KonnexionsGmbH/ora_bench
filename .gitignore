@@ -8,7 +8,14 @@
 .concrete/DEV_MODE
 .eunit
 .rebar
+/.gradle/
 /priv/Gammadyne/timer.txt
+/src_java/gradle/wrapper/
+/src_java/gradlew
+/src_java/gradlew.bat
+/src_kotlin/gradle/wrapper/
+/src_kotlin/gradlew
+/src_kotlin/gradlew.bat
 _build/
 deps
 ebin/*.beam
@@ -23,3 +30,4 @@ rebar.lock
 rel/example_project
 test/bin/*
 tmp/
+/src_java/.gradle/

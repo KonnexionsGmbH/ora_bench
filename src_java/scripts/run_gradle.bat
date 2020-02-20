@@ -9,18 +9,22 @@ rem ----------------------------------------------------------------------------
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - gradle: clean and assemble the Java part of the project.
+echo ora_bench - Oracle benchmark - Gradle: clean and assemble the Java part of the project.
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
 cd src_java
 
-call gradle assemble
-
+call gradlew assemble
 copy /Y build\libs\ora_bench.jar ..\priv\java_jar
 
-call gradle clean
+call gradlew javadoc
+rmdir /s /q ..\priv\java_doc
+mkdir ..\priv\java_doc
+xcopy /Q /S build\docs\javadoc\*.* ..\priv\java_doc
+
+call gradlew clean
 
 cd ..
 

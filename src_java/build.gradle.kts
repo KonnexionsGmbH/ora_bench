@@ -26,11 +26,3 @@ plugins {
 repositories {
     jcenter()
 }
-
-sourceSets {
-    main {
-        java {
-            srcDirs("src_java/src/main/java")
-        }
-    }
-}
