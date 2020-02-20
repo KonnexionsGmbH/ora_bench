@@ -10,9 +10,6 @@
 .rebar
 /.gradle/
 /priv/Gammadyne/timer.txt
-/src_java/.gradle/
-/src_java/gradle/wrapper/
-/src_kotlin/gradle/wrapper/
 _build/
 deps
 ebin/*.beam
