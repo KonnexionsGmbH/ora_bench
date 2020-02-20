@@ -106,6 +106,8 @@ script:
   # Running ora_bench ------------------------------------------------------------
   - travis_fold start "Running_ora_bench"
   - git pull
+  - sudo chmod +x src_java/gradlew
+  - sudo chmod +x src_kotlin/gradlew
   - ./scripts/run_bench_database_series.sh
   - travis_fold end   "Running_ora_bench"
 
