@@ -2,7 +2,8 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_series.bat: Oracle Benchmark series.
+rem run_bench_all_dbs_props_var.bat: Oracle Benchmark for all database versions
+rem                                  with variations of properties.
 rem
 rem ------------------------------------------------------------------------------
 
@@ -35,17 +36,17 @@ set ORA_BENCH_PASSWORD_SYS=oracle
 echo.
 echo Skript %0 is now running
 echo.
-echo You can find the run log in the file run_bench.log
+echo You can find the run log in the file run_bench_all_dbs_props_var.log
 echo.
 echo Please wait ...
 echo.
 
-> run_bench_series.log 2>&1 (
+> run_bench_all_dbs_props_var.log 2>&1 (
 
     echo ================================================================================
     echo Start %0
     echo --------------------------------------------------------------------------------
-    echo ora_bench - Oracle benchmark - series.
+    echo ora_bench - Oracle benchmark - all databases with property variations.
     echo --------------------------------------------------------------------------------
     echo RUN_SERIES              : %ORA_BENCH_RUN_SERIES%
     echo --------------------------------------------------------------------------------
@@ -78,7 +79,7 @@ echo.
     if ["%ORA_BENCH_RUN_DB_12_2_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-        call scripts\run_bench_database.bat
+        call scripts\run_db_setup_benchmark_props_std.bat
         if %ERRORLEVEL% NEQ 0 (
             echo ERRORLEVEL : %ERRORLEVEL%
             GOTO EndOfScript
@@ -88,7 +89,7 @@ echo.
     if ["%ORA_BENCH_RUN_DB_18_3_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-        call scripts\run_bench_database.bat
+        call scripts\run_db_setup_benchmark_props_std.bat
         if %ERRORLEVEL% NEQ 0 (
             echo ERRORLEVEL : %ERRORLEVEL%
             GOTO EndOfScript
@@ -98,7 +99,7 @@ echo.
     if ["%ORA_BENCH_RUN_DB_19_3_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-        call scripts\run_bench_database.bat
+        call scripts\run_db_setup_benchmark_props_std.bat
         if %ERRORLEVEL% NEQ 0 (
             echo ERRORLEVEL : %ERRORLEVEL%
         )

@@ -48,7 +48,7 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-{ /bin/bash scripts/run_bench_setup.sh; }
+{ /bin/bash scripts/run_create_bulk_file.sh; }
 if [ $? -ne 0 ]; then
     exit $?
 fi
@@ -101,7 +101,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     fi
 fi
 
-{ /bin/bash scripts/run_bench_finalise.sh; }
+{ /bin/bash scripts/run_finalise_benchmark.sh; }
 
 echo ""
 echo "--------------------------------------------------------------------------------"

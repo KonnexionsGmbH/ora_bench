@@ -59,7 +59,7 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     cd ..
 )    
 
-src_erlang\_build\default\bin\orabench priv\properties\ora_bench_erlang.properties
+src_erlang\_build\default\bin\orabench priv\properties\ora_bench_erlang.properties oranif
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORLEVEL : %ERRORLEVEL%
 )

@@ -1,5 +1,5 @@
 /*
-    ora_bench - database setup.
+    run_db_setup.sql: Database setup.
 */
 
 SET ECHO OFF
@@ -16,7 +16,7 @@ BEGIN
     DBMS_OUTPUT.put_line ('================================================================================');
     DBMS_OUTPUT.put_line ('Current user is now: ' || USER);
     DBMS_OUTPUT.put_line ('================================================================================');
-    DBMS_OUTPUT.put_line ('Start run_bench_database.sql');
+    DBMS_OUTPUT.put_line ('Start run_db_setup_benchmark_props_std.sql');
 END;
 /
 
@@ -91,7 +91,7 @@ END;
 
 BEGIN
     DBMS_OUTPUT.put_line ('--------------------------------------------------------------------------------');
-    DBMS_OUTPUT.put_line ('End   run_bench_database.sql');
+    DBMS_OUTPUT.put_line ('End   run_db_setup_benchmark_props_std.sql');
     DBMS_OUTPUT.put_line ('================================================================================');
 END;
 /

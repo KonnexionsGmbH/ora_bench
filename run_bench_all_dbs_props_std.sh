@@ -1,12 +1,13 @@
 #!/bin/bash
 
-exec &> >(tee -i run_bench.log)
+exec &> >(tee -i run_bench_all_dbs_props_std.log)
 sleep .1
 
 
 # ------------------------------------------------------------------------------
 #
-# run_bench.sh: Oracle Benchmark for all database versions.
+# run_bench_all_dbs_props_std.sh: Oracle Benchmark for all database versions
+#                                 with standard properties.
 #
 # ------------------------------------------------------------------------------
 
@@ -41,7 +42,7 @@ export ORA_BENCH_PASSWORD_SYS=oracle
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - all databases."
+echo "ora_bench - Oracle benchmark - all databases with standard properties."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_BATCH_SIZE       : $ORA_BENCH_BENCHMARK_BATCH_SIZE"
 echo "BENCHMARK_COMMENT          : $ORA_BENCH_BENCHMARK_COMMENT"
@@ -72,7 +73,7 @@ EXITCODE="0"
 if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_bench_database.sh; }
+    { /bin/bash scripts/run_db_setup_benchmark_props_std.sh; }
     if [ $? -ne 0 ]; then
         exit $?
     fi
@@ -81,7 +82,7 @@ fi
 if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_bench_database.sh; }
+    { /bin/bash scripts/run_db_setup_benchmark_props_std.sh; }
     if [ $? -ne 0 ]; then
         exit $?
     fi
@@ -90,7 +91,7 @@ fi
 if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_bench_database.sh; }
+    { /bin/bash scripts/run_db_setup_benchmark_props_std.sh; }
     if [ $? -ne 0 ]; then
         exit $?
     fi

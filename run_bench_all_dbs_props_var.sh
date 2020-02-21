@@ -1,11 +1,12 @@
 #!/bin/bash
 
-exec &> >(tee -i run_bench_series.log)
+exec &> >(tee -i run_bench_all_dbs_props_var.log)
 sleep .1
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_series.sh: Oracle Benchmark series.
+# run_bench_all_dbs_props_var.sh: Oracle Benchmark for all database versions
+#                                 with variations of properties.
 #
 # ------------------------------------------------------------------------------
 
@@ -42,7 +43,7 @@ export ORA_BENCH_PASSWORD_SYS=oracle
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - series."
+echo "ora_bench - Oracle benchmark - all databases with property variations."
 echo "--------------------------------------------------------------------------------"
 echo "RUN_SERIES              : $ORA_BENCH_RUN_SERIES"
 echo "--------------------------------------------------------------------------------"
@@ -77,7 +78,7 @@ export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
 if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_bench_database_series.sh; }
+    { /bin/bash scripts/run_db_setup_benchmark_props_var.sh; }
     if [ $? -ne 0 ]; then
         exit $?
     fi
@@ -86,7 +87,7 @@ fi
 if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_bench_database_series.sh; }
+    { /bin/bash scripts/run_db_setup_benchmark_props_var.sh; }
     if [ $? -ne 0 ]; then
         exit $?
     fi
@@ -95,7 +96,7 @@ fi
 if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_bench_database_series.sh; }
+    { /bin/bash scripts/run_db_setup_benchmark_props_var.sh; }
     if [ $? -ne 0 ]; then
         exit $?
     fi

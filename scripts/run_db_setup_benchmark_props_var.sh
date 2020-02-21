@@ -2,7 +2,8 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_database_series.sh: Oracle benchmark for a specific database version.
+# run_db_setup_benchmark_props_std.sh: Database setup and Oracle benchmark 
+#                                      with variations of properties.
 #
 # ------------------------------------------------------------------------------
 
@@ -30,7 +31,7 @@ fi
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - specific database."
+echo "ora_bench - Oracle benchmark - database setup and Oracle benchmark - variations."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE         : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST            : $ORA_BENCH_CONNECTION_HOST"
@@ -114,9 +115,9 @@ end=$(date +%s)
 echo "DOCKER ready in $((end - start)) seconds"
 
 if [ "$OSTYPE" = "msys" ]; then
-  priv/oracle/instantclient-windows.x64/instantclient_19_5/sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_bench_database.sql
+  priv/oracle/instantclient-windows.x64/instantclient_19_5/sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql
 else
-  priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_bench_database.sql
+  priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql
 fi  
 if [ $? -ne 0 ]; then
     exit $?

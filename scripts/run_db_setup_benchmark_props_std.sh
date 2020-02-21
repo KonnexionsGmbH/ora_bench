@@ -2,7 +2,8 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_database.sh: Oracle benchmark for a specific database version.
+# run_db_setup_benchmark_props_std.sh: Database setup and Oracle benchmark 
+#                                      with standard properties.
 #
 # ------------------------------------------------------------------------------
 
@@ -49,7 +50,7 @@ fi
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - specific database."
+echo "ora_bench - Oracle benchmark - database setup and Oracle benchmark - standard."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE         : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST            : $ORA_BENCH_CONNECTION_HOST"
@@ -76,41 +77,29 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-export RUN_GLOBAL_JAMDB="false"
-export RUN_GLOBAL_NON_JAMDB="false"
-if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
-    export RUN_GLOBAL_JAMDB="true"
-    export RUN_GLOBAL_NON_JAMDB="true"
-fi
-if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "false" ]; then
-    export RUN_GLOBAL_NON_JAMDB="true"
-fi
-if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "true" ]; then
-    export RUN_GLOBAL_JAMDB="true"
+export RUN_GLOBAL_JAMDB="true"
+export RUN_GLOBAL_NON_JAMDB="true"
+
+if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
+    echo "Setup C - Start ============================================================" 
+    if [ "$OSTYPE" = "msys" ]; then
+        nmake -f src_c/Makefile.win32 clean
+        nmake -f src_c/Makefile.win32
+    else
+        make -f src_c/Makefile clean
+        make -f src_c/Makefile
+    fi
+    echo "Setup C - End   ============================================================" 
 fi
 
-if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
-    if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
-        echo "Setup C - Start ============================================================" 
-        if [ "$OSTYPE" = "msys" ]; then
-            nmake -f src_c/Makefile.win32 clean
-            nmake -f src_c/Makefile.win32
-        else
-            make -f src_c/Makefile clean
-            make -f src_c/Makefile
-        fi
-        echo "Setup C - End   ============================================================" 
-    fi
-    
-    if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
-        echo "Setup Elixir - Start =======================================================" 
-        cd src_elixir
-        mix deps.get
-        mix deps.compile
-        cd ..
-        echo "Setup Elixir - End   =======================================================" 
-    fi
-fi    
+if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
+    echo "Setup Elixir - Start =======================================================" 
+    cd src_elixir
+    mix deps.get
+    mix deps.compile
+    cd ..
+    echo "Setup Elixir - End   =======================================================" 
+fi
     
 if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
     echo "Setup Erlang - Start ======================================================="
@@ -133,9 +122,9 @@ end=$(date +%s)
 echo "DOCKER ready in $((end - start)) seconds"
 
 if [ "$OSTYPE" = "msys" ]; then
-  priv/oracle/instantclient-windows.x64/instantclient_19_5/sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_bench_database.sql
+  priv/oracle/instantclient-windows.x64/instantclient_19_5/sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql
 else
-  priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_bench_database.sql
+  priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql
 fi  
 if [ $? -ne 0 ]; then
     exit $?

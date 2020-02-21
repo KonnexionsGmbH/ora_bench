@@ -209,7 +209,7 @@ public class Config {
 
                 final String quote = (list.contains(key.toLowerCase())) ? "" : "\"";
 
-                bufferedWriter.write("    " + key.replace("", "_") + " => " + quote + value + quote);
+                bufferedWriter.write("    " + key.replace(".", "_") + " => " + quote + value + quote);
 
                 if (iterator.hasNext()) {
                     bufferedWriter.write(",");

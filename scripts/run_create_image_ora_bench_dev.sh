@@ -1,11 +1,11 @@
 #!/bin/bash
 
-exec &> >(tee -i run_bench_image.log)
+exec &> >(tee -i run_create_image_ora_bench_dev.log)
 sleep .1
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_image.sh: Create a project specific docker image based on Ubuntu.
+# run_create_image_ora_bench_dev.sh: Create a project specific docker image based on Ubuntu.
 #
 # ------------------------------------------------------------------------------
 
@@ -34,8 +34,6 @@ for IMAGE in $(docker images -q -f "dangling=true" -f "label=autodelete=true")
 do
     docker rmi -f $IMAGE
 done
-
-docker create --name $REPOSITORY -i -v //D/SoftDevelopment/DockerData/$REPOSITORY:/data konnexionsgmbh/$REPOSITORY
 
 EXITCODE=$?
 

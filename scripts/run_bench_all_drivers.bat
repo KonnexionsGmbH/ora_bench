@@ -46,7 +46,7 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-call scripts\run_bench_setup.bat
+call scripts\run_create_bulk_file.bat
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORLEVEL : %ERRORLEVEL%
     GOTO EndOfScript
@@ -106,7 +106,7 @@ if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
     )
 )
 
-call scripts\run_bench_finalise.bat
+call scripts\run_finalise_benchmark.bat
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORLEVEL : %ERRORLEVEL%
 )

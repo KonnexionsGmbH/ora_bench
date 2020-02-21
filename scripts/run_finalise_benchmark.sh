@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_finalise.sh: Oracle Benchmark Run Finalise.
+# run_finalise_benchmark.sh: Finalise Oracle benchmark run.
 #
 # ------------------------------------------------------------------------------
 

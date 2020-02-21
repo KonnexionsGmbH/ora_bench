@@ -22,6 +22,13 @@ RUN apt-get remove -y docker docker-engine docker.io \
 
 RUN apt-get install -y default-jdk
 
+RUN wget https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp \
+ && apt-get install -y unzip \
+ && unzip -d /opt/gradle /tmp/gradle-*.zip
+
+ENV GRADLE_HOME=/opt/gradle/gradle-6.2
+ENV PATH=${GRADLE_HOME}/bin:${PATH}
+
 RUN apt-get install -y git
 
 RUN apt-get install -y iputils-ping
@@ -69,6 +76,8 @@ RUN echo "====================> Curent Date: " \
  && gcc --version \
  && echo "====================> Version  Git: " \
  && git --version \
+ && echo "====================> Version  Gradle: " \
+ && gradle --version \
  && echo "====================> Version  Java: " \
  && java -version \
  && echo "====================> Version  Python3: " \
