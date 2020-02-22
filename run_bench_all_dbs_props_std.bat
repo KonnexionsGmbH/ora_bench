@@ -35,8 +35,12 @@ if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
 
 set ORA_BENCH_PASSWORD_SYS=oracle
 
-set RUN_GLOBAL_JAMDB=true
-set RUN_GLOBAL_NON_JAMDB=true
+if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (
+    set RUN_GLOBAL_JAMDB=true
+)
+if ["%RUN_GLOBAL_NON_JAMDB%"] EQU [""] (
+    set RUN_GLOBAL_NON_JAMDB=true
+)
 
 echo.
 echo Skript %0 is now running

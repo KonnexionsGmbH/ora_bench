@@ -43,8 +43,12 @@ fi
 
 export ORA_BENCH_PASSWORD_SYS=oracle
 
-export RUN_GLOBAL_JAMDB=true
-export RUN_GLOBAL_NON_JAMDB=true
+if [ -z "$RUN_GLOBAL_JAMDB" ]; then
+    export RUN_GLOBAL_JAMDB=true
+fi
+if [ -z "$RUN_GLOBAL_NON_JAMDB" ]; then
+    export RUN_GLOBAL_NON_JAMDB=true
+fi
 
 echo "================================================================================"
 echo "Start $0"
