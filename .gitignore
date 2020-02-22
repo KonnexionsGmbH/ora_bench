@@ -7,10 +7,13 @@
 *.swp
 .concrete/DEV_MODE
 .eunit
+.fetch
 .rebar
 /.gradle/
+/OraBench
 /priv/Gammadyne/timer.txt
 /src_elixir/deps/
+/src_elixir/mix.lock
 /src_erlang/_build/
 /src_java/.gradle/
 /src_java/gradle/wrapper/
@@ -23,6 +26,7 @@
 /src_kotlin/gradlew.bat
 _build/
 erl_crash.dump
+erlcinfo
 odpi/
 ora_bench.jar
 ora_bench_bulk_data.csv
