@@ -16,6 +16,7 @@
 /src_elixir/mix.lock
 /src_erlang/_build/
 /src_java/.gradle/
+/src_java/build/
 /src_java/gradle/wrapper/
 /src_java/gradlew
 /src_java/gradlew.bat
