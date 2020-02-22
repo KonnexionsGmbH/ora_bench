@@ -105,6 +105,8 @@ script:
   # Running ora_bench ------------------------------------------------------------
   - travis_fold start "Running_ora_bench"
   - git pull
+  - sudo chmod +x *.sh
+  - sudo chmod +x scripts/*.sh
   - cd src_java
   - gradle wrapper
   # - sudo chmod +x gradlew
