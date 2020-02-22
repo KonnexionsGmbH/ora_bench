@@ -2,7 +2,8 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_database.bat: Oracle benchmark for a specific database version.
+rem run_db_setup_benchmark_props_std.bat: Database setup and Oracle benchmark 
+rem                                       with standard properties.
 rem
 rem ------------------------------------------------------------------------------
 
@@ -46,10 +47,17 @@ if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
 
+if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (
+    set RUN_GLOBAL_JAMDB=true
+)    
+if ["%RUN_GLOBAL_NON_JAMDB%"] EQU [""] (
+    set RUN_GLOBAL_NON_JAMDB=true
+)
+
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - specific database.
+echo ora_bench - Oracle benchmark - database setup and Oracle benchmark - standard.
 echo --------------------------------------------------------------------------------
 echo BENCHMARK_DATABASE         : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST            : %ORA_BENCH_CONNECTION_HOST%
@@ -61,6 +69,8 @@ echo BENCHMARK_CORE_MULTIPLIER  : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
 echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
 echo ORA_BENCH_BENCHMARK_JAMDB  : %ORA_BENCH_BENCHMARK_JAMDB%
+echo RUN_GLOBAL_JAMDB           : %RUN_GLOBAL_JAMDB%
+echo RUN_GLOBAL_NON_JAMDB       : %RUN_GLOBAL_NON_JAMDB%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_JAMDB_ORACLE_ERLANG    : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
@@ -74,37 +84,22 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-set RUN_GLOBAL_JAMDB="false"
-set RUN_GLOBAL_NON_JAMDB="false"
-if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU [""] (
-    set RUN_GLOBAL_JAMDB="true"
-    set RUN_GLOBAL_NON_JAMDB="true"
-)
-if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["false"] (
-    set RUN_GLOBAL_NON_JAMDB="true"
-)
-if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["true"] (
-    set RUN_GLOBAL_JAMDB="true"
+if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
+    echo Setup C - Start ============================================================ 
+    nmake -f src_c\Makefile.win32 clean
+    nmake -f src_c\Makefile.win32
+    echo Setup C - End   ============================================================ 
 )
 
-if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
-    if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
-        echo Setup C - Start ============================================================ 
-        nmake -f src_c\Makefile.win32 clean
-        nmake -f src_c\Makefile.win32
-        echo Setup C - End   ============================================================ 
-    )
-    
-    set ORA_BENCH_RUN_ELIXIR=false
-    if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
-        set ORA_BENCH_RUN_ELIXIR=true
-        echo Setup Elixir - Start ======================================================= 
-        cd src_elixir
-        call mix deps.get
-        call mix deps.compile
-        cd ..
-        echo Setup Elixir - End   ======================================================= 
-    )
+set ORA_BENCH_RUN_ELIXIR=false
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
+    set ORA_BENCH_RUN_ELIXIR=true
+    echo Setup Elixir - Start ======================================================= 
+    cd src_elixir
+    call mix deps.get
+    call mix deps.compile
+    cd ..
+    echo Setup Elixir - End   ======================================================= 
 )
 
 set ORA_BENCH_RUN_ERLANG=false
@@ -143,7 +138,7 @@ if NOT ["%DOCKER_HEALTH_STATUS%"] == ["healthy"] (
     goto :check_health_status
 )
 
-priv\oracle\instantclient-windows.x64\instantclient_19_5\sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE% AS SYSDBA @scripts/run_bench_database.sql
+priv\oracle\instantclient-windows.x64\instantclient_19_5\sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE% AS SYSDBA @scripts/run_db_setup.sql
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORLEVEL : %ERRORLEVEL%
     GOTO EndOfScript

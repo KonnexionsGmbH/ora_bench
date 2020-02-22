@@ -124,17 +124,17 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
     - `python -m pip install --upgrade pip`
     - `python -m pip install --upgrade cx_Oracle`
 
-##### 2.2.1.2 `run_bench_series`
+##### 2.2.1.2 `run_bench_all_dbs_props_std`
 
-This script executes the `run_bench_database_series` script for each of the databases listed in chapter [Introduction](#introduction).
+This script executes the `run_db_setup_benchmark_props_std` script for each of the databases listed in chapter [Introduction](#introduction) with standard properties.
 At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark.
-The run log is stored in the `run_bench_series.log` file.
+The run log is stored in the `run_bench_all_dbs_props_std.log` file.
 
-##### 2.2.1.3 `run_bench`
+##### 2.2.1.3 `run_bench_all_dbs_props_var`
 
-This script executes the `run_bench_database` script for each of the databases listed in chapter [Introduction](#introduction).
+This script executes the `run_db_setup_benchmark_props_var` script for each of the databases listed in chapter [Introduction](#introduction) with variations of properties.
 At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark.
-The run log is stored in the `run_bench.log` file.
+The run log is stored in the `run_bench_all_dbs_props_var.log` file.
 
 ##### 2.2.1.4 `run_bench_all_drivers`
 
@@ -148,9 +148,28 @@ This script executes the following driver specific sub-scripts:
 
 The possible exclusion of drivers made before is taken into account.
 
-##### 2.2.1.5 `run_bench_database`
+##### 2.2.1.5 `run_create_bulk_file`
 
-This script is executed for one of the databases listed in in chapter [Introduction](#introduction). 
+This scripts is used to create a bulk file (see chapter 2.4).
+
+##### 2.2.1.6 `run_create_image_ora_bench_dev`
+
+This script creates the Docker image `ora_bench_dev` based on `Ubuntu 19.10`.
+The script performs the following tasks:
+
+1. A possibly running Docker container `ora_bench_dev` is stopped and deleted. 
+2. A locally existing Docker image `ora_bench_dev` is deleted. 
+3. A new Docker image `ora_bench_dev` is created based on the Docker file in the directory `priv\docker`.
+4. The new Docker image `ora_bench_dev` is tagged as `konnexionsgmbh/ora_bench_dev` tag.
+5. Then the new Docker image is loaded into the Docker Hub.
+6. Subsequently, any locally existing dangling Docker images are deleted.
+7. Finally the Docker container `ora_bench_dev` is created.
+
+The run log is stored in the `run_create_image_ora_bench_dev.log` file.
+
+##### 2.2.1.7 `run_db_setup_benchmark_props_std`
+
+This script is executed for one of the databases listed in in chapter [Introduction](#introduction) with standard properties. 
 The script performs the following tasks:
 
 1. Depending on the selected drivers, any necessary compilations for the programming languages C, Elixir and Erlang are performed.
@@ -169,7 +188,7 @@ The script performs the following tasks:
 
 5. Finally the following sub-script `run_bench_all_drivers` is running.
 
-##### 2.2.1.6 `run_bench_database_series`
+##### 2.2.1.8 `run_db_setup_benchmark_props_var`
 
 This script is executed for one of the databases listed in in chapter [Introduction](#introduction). 
 The script performs the following tasks:
@@ -199,17 +218,8 @@ The script performs the following tasks:
 | 0             | 1               | default value    |
 | 0             | 1               | 0                |
 
-##### 2.2.1.7 `run_bench_setup`
 
-This scripts is used to create a bulk file (see chapter 2.4).
-
-##### 2.2.1.8 `run_bench_<driver>_<programming language>`
-
-The driver and programming language related scripts, such as `run_bench_jdbc` in the `src_java` directory, 
-first execute the insert statements and then the select statements in each trial with the data from the bulk file.
-The time consumed is captured and recorded in result files.
-
-##### 2.2.1.9 `run_bench_finalise`
+##### 2.2.1.9 `run_finalise_benchmark`
 
 In this script, OraBench.java is used to reset the following configuration parameters to the value 'n/a':
 
@@ -225,20 +235,11 @@ In this script, OraBench.java is used to reset the following configuration param
 - `connection.service`
 - `sql.create`
 
-##### 2.2.1.10 `run_bench_image`
+##### 2.2.1.10 `run_bench_<driver>_<programming language>`
 
-This script creates the Docker image `ora_bench_dev` based on `Ubuntu 19.10`.
-The script performs the following tasks:
-
-1. A possibly running Docker container `ora_bench_dev` is stopped and deleted. 
-2. A locally existing Docker image `ora_bench_dev` is deleted. 
-3. A new Docker image `ora_bench_dev` is created based on the Docker file in the directory `priv\docker`.
-4. The new Docker image `ora_bench_dev` is tagged as `konnexionsgmbh/ora_bench_dev` tag.
-5. Then the new Docker image is loaded into the Docker Hub.
-6. Subsequently, any locally existing dangling Docker images are deleted.
-7. Finally the Docker container `ora_bench_dev` is created.
-
-The run log is stored in the `run_bench_image.log` file.
+The driver and programming language related scripts, such as `run_bench_jdbc` in the `src_java` directory, 
+first execute the insert statements and then the select statements in each trial with the data from the bulk file.
+The time consumed is captured and recorded in result files.
 
 #### 2.2.2 Travis CI
 
@@ -249,8 +250,8 @@ In Travis CI, the following two environment variables are defined per build for 
 In each build the following tasks are performed:
 
 1. Installation of Elixir, Erlang, Java, Oracle Instant Client and Python.
-2. Creation of the bulk file with the script `run_bench_setup`.
-3. Execution of the `run_bench_database_series`sub-script.
+2. Creation of the bulk file with the script `run_create_bulk_file`.
+3. Execution of the `run_db_setup_benchmark_props_var`sub-script.
 4. Storing the measurement results in the branch `gh-pages`.
 
 ### 2.3 Benchmark Results
@@ -287,7 +288,7 @@ Otherwise, the new current results are appended to existing results.
  
 ### 2.4 Bulk File
 
-The bulk file in `csv` or `tsv` format is created in the `run_bench_setup` script if it does not already exist. 
+The bulk file in `csv` or `tsv` format is created in the `run_create_bulk_file` script if it does not already exist. 
 The following configuration parameters are taken into account:
 
 - `file.bulk.delimiter`
@@ -503,16 +504,16 @@ The data column in the bulk file is randomly generated with a unique key column 
 ## 6 <a name="docker"></a> Docker
 
 This project supports the use of Docker for development in a current Ubuntu environment. 
-For this purpose, either the script `run_bench_image` and the Docker file in the directory `priv/docker` can be used to create a special Docker image or the existing Docker image `konnexionsgmbh/ora_bench_dev` available in the Docker Hub can be downloaded and used.
+For this purpose, either the script `run_create_image_ora_bench_dev` and the Docker file in the directory `priv/docker` can be used to create a special Docker image or the existing Docker image `konnexionsgmbh/ora_bench_dev` available in the Docker Hub can be downloaded and used.
 
 The following assumes that the default name `ora_bench_dev' is used for the Docker image and for the Docker container.
 
 ### 6.1 Create Docker image from scratch
 
 1. If required, the Docker file in the directory `priv/docker` can be customized.
-2. If uploading the Docker image to the Docker Hub is not desired, then the `docker push konnexionsgmbh/%REPOSITORY%` command must be commented out in the script `run_bench_image`.
-3. Run the script `run_bench_image`.
-4. After successful execution (see log file `run_bench_image.log`) the Docker container `ora_bench_dev` is running and can be used with the Bash Shell for example (see chapter 6.3).
+2. If uploading the Docker image to the Docker Hub is not desired, then the `docker push konnexionsgmbh/%REPOSITORY%` command must be commented out in the script `run_create_image_ora_bench_dev`.
+3. Run the script `run_create_image_ora_bench_dev`.
+4. After successful execution (see log file `run_create_image_ora_bench_dev.log`) the Docker container `ora_bench_dev` is running and can be used with the Bash Shell for example (see chapter 6.3).
 
 ### 6.2 Use Docker image from Docker Hub
 
@@ -536,7 +537,7 @@ The Docker container with the Oracle database is located on the host computer an
 
 Now any `ora_bench` script can be executed, for example:
 
-    ./scripts/run_bench_database.sh 
+    ./scripts/run_db_setup_benchmark_props_std.sh 
 
 Elixir requires special treatment for 'rebar3'. The question `Shall I install rebar3?` must be answered with `Y`:
 
@@ -565,7 +566,7 @@ Elixir requires special treatment for 'rebar3'. The question `Shall I install re
 |            | 2020.01.08 | c_bik    | plot: diagram types: bar graph & function graph |
 |            | 2020.01.08 | c_bik    | plot: object database version - selection driver & language, operation, ora_bench release, trial no.  |
 |            | 2020.01.08 | c_bik    | plot: object driver & language - selection database version, operation, ora_bench release, trial no.  |
-|            | 2020.01.08 | c_bik    | script run_bench_travis_push.sh append mode |
+|            | 2020.01.08 | c_bik    | script run_travis_push_to_github.sh append mode |
 |            | 2020.02.19 | wwe      | jdbc_kotlin: new |
 | 2019.11.05 | 2019.11.05 | wwe      | jdbc_java: dynamic batchsize | 
 | 2019.11.06 | 2019.11.05 | wwe      | all: separating key column and data column |

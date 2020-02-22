@@ -16,17 +16,19 @@ echo "==========================================================================
 
 EXITCODE="0"
 
+{ ./gradlew clean; }
+
 cd src_java
 
 { ./gradlew assemble; }
 cp build/libs/ora_bench.jar ../priv/java_jar
 
 { ./gradlew javadoc; }
-rm -rf ../priv/java_doc
-mkdir ../priv/java_doc
-cp -R build/docs/javadoc/* ../priv/java_doc
+# rm -rf ../priv/java_doc
+# mkdir ../priv/java_doc
+# cp -R build/docs/javadoc/* ../priv/java_doc
 
-{ ./gradlew clean; }
+# { ./gradlew clean; }
 
 cd ..
 

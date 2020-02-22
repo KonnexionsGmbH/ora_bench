@@ -293,6 +293,7 @@ run_trials(Trial, Trials, Ctx, Stats) ->
           {ok,[]} = jamdb_oracle:sql_query(ConnRef, "COMON;"),
           case jamdb_oracle:sql_query(ConnRef, Create) of
             {ok, [{affected_rows,0}]} -> ok;
+            {ok, [{proc_result,0,[[]]}]} -> ok;
             {ok, [{proc_result, 955, _}]} ->
               case jamdb_oracle:sql_query(ConnRef, Drop) of
                 {ok, [{affected_rows,0}]} ->

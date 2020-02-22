@@ -2,7 +2,7 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_finalise.bat: Oracle Benchmark Run finalise.
+rem run_finalise_benchmark.bat: Finalise Oracle benchmark run.
 rem
 rem ------------------------------------------------------------------------------
 

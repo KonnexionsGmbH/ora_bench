@@ -111,10 +111,9 @@ script:
   # - cd ../src_kotlin
   # - gradle wrapper
   # - sudo chmod +x gradlew
-  - cd ..
-  # - sudo chmod +x src_kotlin/gradlew
-  - ./scripts/run_bench_database_series.sh
+I - cd ..
+  - ./scripts/run_db_setup_benchmark_props_var.sh
   - travis_fold end   "Running_ora_bench"
 
 after_success:
-  - ./scripts/run_bench_travis_push.sh
+  - ./scripts/run_travis_push_to_github.sh

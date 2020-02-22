@@ -46,13 +46,13 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-call scripts\run_bench_setup.bat
+call scripts\run_create_bulk_file.bat
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORLEVEL : %ERRORLEVEL%
     GOTO EndOfScript
 )
 
-if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
+if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
         call src_python\scripts\run_bench_cx_oracle.bat
         if %ERRORLEVEL% NEQ 0 (
@@ -62,7 +62,7 @@ if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
     )
 )
 
-if [%RUN_GLOBAL_JAMDB%] EQU ["true"] (
+if ["%RUN_GLOBAL_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU ["true"] (
         call src_erlang\scripts\run_bench_jamdb_oracle.bat
         if %ERRORLEVEL% NEQ 0 (
@@ -72,7 +72,7 @@ if [%RUN_GLOBAL_JAMDB%] EQU ["true"] (
     )
 )
 
-if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
+if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
         call src_java\scripts\run_bench_jdbc.bat
         if %ERRORLEVEL% NEQ 0 (
@@ -106,7 +106,7 @@ if [%RUN_GLOBAL_NON_JAMDB%] EQU ["true"] (
     )
 )
 
-call scripts\run_bench_finalise.bat
+call scripts\run_finalise_benchmark.bat
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORLEVEL : %ERRORLEVEL%
 )

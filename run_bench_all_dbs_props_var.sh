@@ -1,11 +1,12 @@
 #!/bin/bash
 
-exec &> >(tee -i run_bench_series.log)
+exec &> >(tee -i run_bench_all_dbs_props_var.log)
 sleep .1
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_series.sh: Oracle Benchmark series.
+# run_bench_all_dbs_props_var.sh: Oracle Benchmark for all database versions
+#                                 with variations of properties.
 #
 # ------------------------------------------------------------------------------
 
@@ -13,8 +14,12 @@ export ORA_BENCH_RUN_SERIES=true
 
 export ORA_BENCH_BENCHMARK_COMMENT='Standard series (locally)'
 
-export ORA_BENCH_CONNECTION_HOST=0.0.0.0
-export ORA_BENCH_CONNECTION_PORT=1521
+if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
+    export ORA_BENCH_CONNECTION_HOST=0.0.0.0
+fi
+if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
+    export ORA_BENCH_CONNECTION_PORT=1521
+fi
 
 export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 
@@ -39,10 +44,17 @@ fi
 
 export ORA_BENCH_PASSWORD_SYS=oracle
 
+if [ -z "$RUN_GLOBAL_JAMDB" ]; then
+    export RUN_GLOBAL_JAMDB=true
+fi
+if [ -z "$RUN_GLOBAL_NON_JAMDB" ]; then
+    export RUN_GLOBAL_NON_JAMDB=true
+fi
+
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - series."
+echo "ora_bench - Oracle benchmark - all databases with property variations."
 echo "--------------------------------------------------------------------------------"
 echo "RUN_SERIES              : $ORA_BENCH_RUN_SERIES"
 echo "--------------------------------------------------------------------------------"
@@ -55,6 +67,9 @@ echo "--------------------------------------------------------------------------
 echo "RUN_DB_12_2_EE          : $ORA_BENCH_RUN_DB_12_2_EE"
 echo "RUN_DB_18_3_EE          : $ORA_BENCH_RUN_DB_18_3_EE"
 echo "RUN_DB_19_3_EE          : $ORA_BENCH_RUN_DB_19_3_EE"
+echo "--------------------------------------------------------------------------------"
+echo "RUN_GLOBAL_JAMDB        : $RUN_GLOBAL_JAMDB"
+echo "RUN_GLOBAL_NON_JAMDB    : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON    : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JAMDB_ORACLE_ERLANG : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
@@ -77,7 +92,7 @@ export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
 if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_bench_database_series.sh; }
+    { /bin/bash scripts/run_db_setup_benchmark_props_var.sh; }
     if [ $? -ne 0 ]; then
         exit $?
     fi
@@ -86,7 +101,7 @@ fi
 if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_bench_database_series.sh; }
+    { /bin/bash scripts/run_db_setup_benchmark_props_var.sh; }
     if [ $? -ne 0 ]; then
         exit $?
     fi
@@ -95,7 +110,7 @@ fi
 if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_bench_database_series.sh; }
+    { /bin/bash scripts/run_db_setup_benchmark_props_var.sh; }
     if [ $? -ne 0 ]; then
         exit $?
     fi

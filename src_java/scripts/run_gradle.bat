@@ -16,15 +16,17 @@ echo ===========================================================================
 
 cd src_java
 
+call gradlew clean
+
 call gradlew assemble
 copy /Y build\libs\ora_bench.jar ..\priv\java_jar
 
 call gradlew javadoc
-rmdir /s /q ..\priv\java_doc
-mkdir ..\priv\java_doc
-xcopy /Q /S build\docs\javadoc\*.* ..\priv\java_doc
+rem rmdir /s /q ..\priv\java_doc
+rem mkdir ..\priv\java_doc
+rem xcopy /Q /S build\docs\javadoc\*.* ..\priv\java_doc
 
-call gradlew clean
+rem call gradlew clean
 
 cd ..
 

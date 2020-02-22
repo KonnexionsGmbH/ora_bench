@@ -1,41 +1,36 @@
 #!/bin/bash
 
-exec &> >(tee -i run_bench_image.log)
-sleep .1
-
 # ------------------------------------------------------------------------------
 #
-# run_bench_image.sh: Create a project specific docker image based on Ubuntu.
+# run_finalise_benchmark.sh: Finalise Oracle benchmark run.
 #
 # ------------------------------------------------------------------------------
 
-export REPOSITORY=ora_bench_dev
+if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
+    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+fi
+if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
+    if [ "$OSTYPE" = "msys" ]; then
+        export ORA_BENCH_JAVA_CLASSPATH=.;priv/java_jar/*
+    else
+        export ORA_BENCH_JAVA_CLASSPATH=.:priv/java_jar/*
+    fi
+fi
 
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "Create the docker image $REPOSITORY"
+echo "ora_bench - Oracle benchmark - finalise benchmark run."
+echo "--------------------------------------------------------------------------------"
+echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
+echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
 
-docker stop $REPOSITORY
-docker rm -f $REPOSITORY
-
-docker build -t $REPOSITORY priv/docker
-
-docker tag $REPOSITORY konnexionsgmbh/$REPOSITORY
-
-docker push konnexionsgmbh/$REPOSITORY
-
-for IMAGE in $(docker images -q -f "dangling=true" -f "label=autodelete=true")
-do
-    docker rmi -f $IMAGE
-done
-
-docker create --name $REPOSITORY -i -v //D/SoftDevelopment/DockerData/$REPOSITORY:/data konnexionsgmbh/$REPOSITORY
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench finalise
 
 EXITCODE=$?
 

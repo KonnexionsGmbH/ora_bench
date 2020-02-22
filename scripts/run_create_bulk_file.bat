@@ -2,7 +2,7 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_setup.bat: Oracle Benchmark Run Setup.
+rem run_create_bulk_file.bat: Oracle Benchmark Run Setup.
 rem
 rem ------------------------------------------------------------------------------
 

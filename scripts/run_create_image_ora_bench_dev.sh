@@ -1,41 +1,39 @@
 #!/bin/bash
 
+exec &> >(tee -i run_create_image_ora_bench_dev.log)
+sleep .1
+
 # ------------------------------------------------------------------------------
 #
-# run_bench_setup.sh: Oracle Benchmark Run Setup.
+# run_create_image_ora_bench_dev.sh: Create a project specific docker image based on Ubuntu.
 #
 # ------------------------------------------------------------------------------
 
-export ORA_BENCH_MULTIPLE_RUN=
-
-if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
-    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-fi
-
-if [ "$OSTYPE" = "msys" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
-else
-    export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
-fi
+export REPOSITORY=ora_bench_dev
 
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - setup benchmark run."
-echo "--------------------------------------------------------------------------------"
-echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
-echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
+echo "Create the docker image $REPOSITORY"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
 
-{ /bin/bash src_java/scripts/run_gradle.sh; }
+docker stop $REPOSITORY
+docker rm -f $REPOSITORY
 
-PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
+docker build -t $REPOSITORY priv/docker
 
-java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup
+docker tag $REPOSITORY konnexionsgmbh/$REPOSITORY
+
+docker push konnexionsgmbh/$REPOSITORY
+
+for IMAGE in $(docker images -q -f "dangling=true" -f "label=autodelete=true")
+do
+    docker rmi -f $IMAGE
+done
 
 EXITCODE=$?
 
