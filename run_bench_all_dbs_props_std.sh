@@ -39,6 +39,9 @@ fi
 
 export ORA_BENCH_PASSWORD_SYS=oracle
 
+export RUN_GLOBAL_JAMDB=true
+export RUN_GLOBAL_NON_JAMDB=true
+
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -55,6 +58,9 @@ echo "--------------------------------------------------------------------------
 echo "RUN_DB_12_2_EE             : $ORA_BENCH_RUN_DB_12_2_EE"
 echo "RUN_DB_18_3_EE             : $ORA_BENCH_RUN_DB_18_3_EE"
 echo "RUN_DB_19_3_EE             : $ORA_BENCH_RUN_DB_19_3_EE"
+echo "--------------------------------------------------------------------------------"
+echo "RUN_GLOBAL_JAMDB           : $RUN_GLOBAL_JAMDB"
+echo "RUN_GLOBAL_NON_JAMDB       : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JAMDB_ORACLE_ERLANG    : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"

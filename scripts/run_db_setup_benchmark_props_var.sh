@@ -28,6 +28,19 @@ if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 fi
 
+export RUN_GLOBAL_JAMDB=false
+export RUN_GLOBAL_NON_JAMDB=false
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
+    export RUN_GLOBAL_JAMDB=true
+    export RUN_GLOBAL_NON_JAMDB=true
+fi
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "false" ]; then
+    export RUN_GLOBAL_NON_JAMDB=true
+fi
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "true" ]; then
+    export RUN_GLOBAL_JAMDB=true
+fi
+
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -43,6 +56,8 @@ echo "BENCHMARK_CORE_MULTIPLIER  : $ORA_BENCH_BENCHMARK_CORE_MULTIPLIER"
 echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
 echo "ORA_BENCH_BENCHMARK_JAMDB  : $ORA_BENCH_BENCHMARK_JAMDB"
+echo "RUN_GLOBAL_JAMDB           : $RUN_GLOBAL_JAMDB"
+echo "RUN_GLOBAL_NON_JAMDB       : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JAMDB_ORACLE_ERLANG    : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
@@ -57,19 +72,6 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
-
-export RUN_GLOBAL_JAMDB="false"
-export RUN_GLOBAL_NON_JAMDB="false"
-if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
-    export RUN_GLOBAL_JAMDB="true"
-    export RUN_GLOBAL_NON_JAMDB="true"
-fi
-if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "false" ]; then
-    export RUN_GLOBAL_NON_JAMDB="true"
-fi
-if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "true" ]; then
-    export RUN_GLOBAL_JAMDB="true"
-fi
 
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
