@@ -17,12 +17,11 @@
 /src_java/gradlew
 /src_java/gradlew.bat
 /src_kotlin/.gradle/
+/src_kotlin/build/
 /src_kotlin/gradle/wrapper/
 /src_kotlin/gradlew
 /src_kotlin/gradlew.bat
 _build/
-deps
-ebin/*.beam
 erl_crash.dump
 odpi/
 ora_bench.jar
@@ -31,6 +30,4 @@ ora_bench_c.properties
 ora_bench_erlang.properties
 ora_bench_python.properties
 rebar.lock
-rel/example_project
-test/bin/*
 tmp/

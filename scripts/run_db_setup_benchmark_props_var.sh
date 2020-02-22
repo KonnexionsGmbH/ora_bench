@@ -28,8 +28,12 @@ if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 fi
 
-export RUN_GLOBAL_JAMDB=false
-export RUN_GLOBAL_NON_JAMDB=false
+if [ -z "$RUN_GLOBAL_JAMDB" ]; then
+    export RUN_GLOBAL_JAMDB=false
+fi
+if [ -z "$RUN_GLOBAL_NON_JAMDB" ]; then
+    export RUN_GLOBAL_NON_JAMDB=false
+fi
 if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
     export RUN_GLOBAL_JAMDB=true
     export RUN_GLOBAL_NON_JAMDB=true
