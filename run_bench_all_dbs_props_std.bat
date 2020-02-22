@@ -9,8 +9,12 @@ rem ----------------------------------------------------------------------------
 
 set ORA_BENCH_BENCHMARK_COMMENT="Standard tests (locally)"
 
-set ORA_BENCH_CONNECTION_HOST=0.0.0.0
-set ORA_BENCH_CONNECTION_PORT=1521
+if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
+    set ORA_BENCH_CONNECTION_HOST=0.0.0.0
+)
+if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
+    set ORA_BENCH_CONNECTION_PORT=1521
+)
 
 set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 

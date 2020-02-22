@@ -13,8 +13,12 @@ sleep .1
 
 export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (locally)'
 
-export ORA_BENCH_CONNECTION_HOST=0.0.0.0
-export ORA_BENCH_CONNECTION_PORT=1521
+if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
+    export ORA_BENCH_CONNECTION_HOST=0.0.0.0
+fi
+if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
+    export ORA_BENCH_CONNECTION_PORT=1521
+fi
 
 export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 

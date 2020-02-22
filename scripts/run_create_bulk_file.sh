@@ -13,9 +13,9 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
 fi
 
 if [ "$OSTYPE" = "msys" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    export ORA_BENCH_JAVA_CLASSPATH=.;priv/java_jar/*
 else
-    export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+    export ORA_BENCH_JAVA_CLASSPATH=.:priv/java_jar/*
 fi
 
 echo "================================================================================"
