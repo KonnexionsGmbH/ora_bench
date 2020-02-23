@@ -252,7 +252,6 @@ public class Config {
                     value = propertiesConfiguration.getString(key);
                 }
                 try {
-                    System.out.println("try parsing " + value + ":" + Integer.parseInt(value) + " as integer");
                     obj.put(key, Integer.parseInt(value));
                 } catch (Exception e) {
                     obj.put(key, value);
