@@ -541,7 +541,7 @@ This command switches into the running Docker container:
 
     docker exec -it ora_bench_dev bash
 
-### 6.4 Starting an existing Docker container
+### 6.4 Working inside a running Docker container
 
 Inside the Docker container you can switch to the ora_bench repository with the following command:
 
