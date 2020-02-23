@@ -36,6 +36,7 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | file.configuration.name | priv/properties/ora_bench.properties | yes | The relative filename of the configuration file. |
 | file.configuration.name.c | priv/properties/ora_bench_c.properties | no | The relative filename of the C version of the configuration file. |
 | file.configuration.name.erlang | priv/properties/ora_bench_erlang.properties | no | The relative filename of the Erlang version of the configuration file. |
+| file.configuration.name.json | priv/properties/ora_bench.json | no | The relative filename of the JSON version of the configuration file. |
 | file.configuration.name.python | priv/properties/ora_bench_python.properties | no | The relative filename of the Python version of the configuration file. |
 | file.result.delimiter | \t | no | The delimiter character in the result file. Here the semicolon must be used as separator. |
 | file.result.header | release;benchmark id;<br>benchmark comment;<br>host name;<br>no. cores;<br>os;<br>user name;<br>database;<br>language;<br>driver;<br>trial no.;<br>SQL statement;<br>core multiplier;<br>fetch size;<br>transaction size;<br>bulk length;<br>bulk size;<br>batch size;<br>action;<br>start day time;<br>end day time;<br>duration (sec);<br>duration (ns) | no | The header used to generate the result file. At runtime, this is replaced by the character specified in parameter `file.result.delimiter`. |

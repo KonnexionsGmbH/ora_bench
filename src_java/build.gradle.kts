@@ -10,6 +10,7 @@ dependencies {
     implementation(group = "org.apache.commons", name = "commons-csv", version = "1.7")
     implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.9")
     implementation(group = "org.apache.commons", name = "commons-text", version = "1.8")
+    implementation(group = "com.googlecode.json-simple", name = "json-simple", version = "1.1.1")
     implementation("com.google.guava:guava:28.1-jre")
 }
 
