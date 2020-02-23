@@ -40,10 +40,11 @@ public class OraBench {
      * benchmark run
      * <li>setup - creates the bulk file
      * <li>setup_erlang - creates a configuration parameter file suited for Erlang
+     * <li>setup_json - creates a JSON configuration parameter file
      * <li>setup_python - creates a configuration parameter file suited for Python
      * </ul>
      * 
-     * @param args finalise / runBenchmark / setup / setup_erlang / setup_python
+     * @param args finalise / runBenchmark / setup / setup_erlang / setup_python / setup_json
      */
     public static void main(String[] args) {
 
@@ -85,6 +86,10 @@ public class OraBench {
         } else if (args0.equals("setup_erlang")) {
             log.info("Start Setup Erlang OraBench Run");
             config.createConfigurationFileErlang();
+            log.info("End   Setup Erlang OraBench Run");
+        } else if (args0.equals("setup_json")) {
+            log.info("Start Setup JSON OraBench Run");
+            config.createConfigurationFileJson();
             log.info("End   Setup Erlang OraBench Run");
         } else if (args0.equals("setup_python")) {
             log.info("Start Setup Python OraBench Run");

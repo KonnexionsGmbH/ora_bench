@@ -23,6 +23,7 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.json.simple.JSONObject;
 
 /**
  * The configuration parameters for the Oracle JDBC benchmark tests. The
@@ -59,6 +60,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * <li>file.configuration.name
  * <li>file.configuration.name.c
  * <li>file.configuration.name.erlang
+ * <li>file.configuration.name.json
  * <li>file.configuration.name.python
  * <li>file.result.delimiter
  * <li>file.result.header
@@ -106,6 +108,7 @@ public class Config {
     private String fileConfigurationName;
     private String fileConfigurationNameC;
     private String fileConfigurationNameErlang;
+    private String fileConfigurationNameJson;
     private String fileConfigurationNamePython;
     private String fileResultDelimiter;
     private String fileResultHeader;
@@ -222,6 +225,44 @@ public class Config {
 
             bufferedWriter.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Creates the Erlang version of the configuration file.
+     */
+    public final void createConfigurationFileJson() {
+
+        try {
+
+            List<String> list = getNumericProperties();
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameJson(), false));
+
+            String value;
+
+            JSONObject obj = new JSONObject();
+            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
+                final String key = iterator.next();
+
+                if ("file.result.header".contentEquals(key)) {
+                    value = propertiesConfiguration.getString(key).replace(";", fileResultDelimiter);
+                } else {
+                    value = propertiesConfiguration.getString(key);
+                }
+                try {
+                    System.out.println("try parsing " + value + ":" + Integer.parseInt(value) + " as integer");
+                    obj.put(key, Integer.parseInt(value));
+                } catch (Exception e) {
+                    obj.put(key, value);
+                }
+            }
+
+            bufferedWriter.write(obj.toString());
+            bufferedWriter.close();
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -458,6 +499,14 @@ public class Config {
     }
 
     /**
+     * @return the name of the configuration file in JSON format. The file name may
+     *         contain the absolute or relative file path.
+     */
+    public final String getFileConfigurationNameJson() {
+        return fileConfigurationNameJson;
+    }
+
+    /**
      * @return the name of the configuration file for the Python language version.
      *         The file name may contain the absolute or relative file path.
      */
@@ -659,6 +708,8 @@ public class Config {
         fileConfigurationName = propertiesConfiguration.getString("file.configuration.name");
         fileConfigurationNameC = propertiesConfiguration.getString("file.configuration.name.c");
         fileConfigurationNameErlang = propertiesConfiguration.getString("file.configuration.name.erlang");
+        fileConfigurationNameJson = propertiesConfiguration.getString("file.configuration.name.json");
+
         fileConfigurationNamePython = propertiesConfiguration.getString("file.configuration.name.python");
         fileResultDelimiter = propertiesConfiguration.getString("file.result.delimiter");
         fileResultHeader = propertiesConfiguration.getString("file.result.header").replace(";", fileResultDelimiter);
