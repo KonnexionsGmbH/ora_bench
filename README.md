@@ -510,7 +510,7 @@ The following assumes that the default name `ora_bench_dev' is used for the Dock
 
 ### 6.1 Create Docker image from scratch
 
-1. If required, the Docker file in the directory `priv/docker` can be customized.
+1. If required, the Docker file in the directory `docker` can be customized.
 2. If uploading the Docker image to the Docker Hub is not desired, then the `docker push konnexionsgmbh/%REPOSITORY%` command must be commented out in the script `run_create_image_ora_bench_dev`.
 3. Run the script `run_create_image_ora_bench_dev`.
 4. After successful execution (see log file `run_create_image_ora_bench_dev.log`) the Docker container `ora_bench_dev` is running and can be used with the Bash Shell for example (see chapter 6.3).
@@ -523,11 +523,27 @@ An image that already exists on Docker Hub can be downloaded as follows:
 
 ### 6.3 Working with an existing Docker image
 
-First the Docker container must be started  (Example for a data directory: `D:\SoftDevelopment\Projects\Konnexions\ora_bench_idea\ora_bench`):
+#### 6.3.1 Creating the Docker container
 
-    docker run -it --rm --name ora_bench_dev -v /var/run/docker.sock:/var/run/docker.sock -v <data directory path>:/ora_bench konnexionsgmbh/ora_bench_dev bash
+First the Docker container must be created and started  (Example for a data directory: `D:\SoftDevelopment\Projects\Konnexions\ora_bench_idea\ora_bench`):
 
-Afterwards you can switch to the data directory with the following command:
+    docker run -it --name ora_bench_dev -v /var/run/docker.sock:/var/run/docker.sock -v <data directory path>:/ora_bench konnexionsgmbh/ora_bench_dev bash
+
+Afterwards you are inside the Docker container.
+
+#### 6.3.2 Starting an existing Docker container
+
+You can start an existing Docker container as follows
+
+    docker start ora_bench_dev
+
+This command switches into the running Docker container:
+
+    docker exec -it ora_bench_dev bash
+
+### 6.4 Starting an existing Docker container
+
+Inside the Docker container you can switch to the ora_bench repository with the following command:
 
     cd ora_bench
 

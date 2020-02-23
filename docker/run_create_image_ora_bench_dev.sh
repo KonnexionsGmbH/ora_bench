@@ -24,7 +24,7 @@ EXITCODE="0"
 docker stop $REPOSITORY
 docker rm -f $REPOSITORY
 
-docker build -t $REPOSITORY priv/docker
+docker build -t $REPOSITORY docker
 
 docker tag $REPOSITORY konnexionsgmbh/$REPOSITORY
 
