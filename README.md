@@ -503,6 +503,8 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 ## 6 <a name="docker"></a> Docker
 
+[see here](docker/README.md)
+
 This project supports the use of Docker for development in a current Ubuntu environment. 
 For this purpose, either the script `run_create_image_ora_bench_dev` and the Docker file in the directory `priv/docker` can be used to create a special Docker image or the existing Docker image `konnexionsgmbh/ora_bench_dev` available in the Docker Hub can be downloaded and used.
 
