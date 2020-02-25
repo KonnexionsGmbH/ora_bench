@@ -27,6 +27,13 @@ if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
 
+if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (
+    set RUN_GLOBAL_JAMDB=true
+)
+if ["%RUN_GLOBAL_NON_JAMDB%"] EQU [""] (
+    set RUN_GLOBAL_NON_JAMDB=true
+)
+
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
