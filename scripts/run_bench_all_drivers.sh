@@ -27,6 +27,13 @@ if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 fi
 
+if [ -z "$RUN_GLOBAL_JAMDB" ]; then
+    export RUN_GLOBAL_JAMDB=true
+fi
+if [ -z "$RUN_GLOBAL_NON_JAMDB" ]; then
+    export RUN_GLOBAL_NON_JAMDB=true
+fi
+
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"

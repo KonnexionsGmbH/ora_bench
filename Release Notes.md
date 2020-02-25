@@ -4,7 +4,9 @@ Release Date: dd.mm.yyyy
 
 ### New Features
 
-- Database driver Oracle cx_Oracle and programming language Python 
-- Database driver Oracle JDBC and programming language Java 
-- Database driver Oracle oranif and programming language Elixir
-- Database driver Oracle oranif and programming language Erlang 
+- Database driver `cx_Oracle` and programming language `Python` 
+- Database driver `jamdb_oracle` and programming language `Erlang` 
+- Database driver `JDBC` and programming language `Java` 
+- Database driver `ODPI-C` and programming language `C` 
+- Database driver `oranif` and programming language `Elixir`
+- Database driver `oranif` and programming language `Erlang` 
