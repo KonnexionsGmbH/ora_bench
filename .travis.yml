@@ -102,13 +102,6 @@ script:
   - export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
   - travis_fold end   "Setting_up_environment_variables"
 
-  - travis_fold start "Environment_Variables"
-  # Show Environment Variables ---------------------------------------------------
-  - echo 'GRADLE_HOME=$GRADLE_HOME'
-  - echo 'LD_LIBRARY_PATH=$LD_LIBRARY_PATH' 
-  - echo 'PATH=$PATH'
-  - travis_fold end   "Environment_Variables"
-    
   - travis_fold start "Software_versions"
   # Show component versions ------------------------------------------------------
   - echo autoconf -V 
