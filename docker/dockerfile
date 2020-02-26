@@ -61,8 +61,17 @@ RUN apt-get install -y dos2unix \
  && apt-get install -y tmux \
  && apt-get install -y vim
 
+RUN cd /tmp \
+ && wget https://dl.google.com/go/go1.13.8.linux-amd64.tar.gz \
+ && tar xvf go1.13.8.linux-amd64.tar.gz \
+ && mv go /usr/local
+
 ENV LD_LIBRARY_PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH"
 ENV PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:/usr/local/lib/nodejs/bin:${PATH}"
+
+ENV GOROOT=/usr/local/go
+ENV GOPATH=/ora_bench/src_go
+ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # Show component versions ------------------------------------------------------
 RUN echo "====================> Curent Date: " \
@@ -94,6 +103,8 @@ RUN echo "====================> Curent Date: " \
  && echo "====================> Version  Ubuntu: " \
  && lsb_release -a \
  && echo "====================> Version  Vim: " \
- && vim --version
+ && vim --version \
+ && echo "====================> Version  Go: " \
+ && go version
 
 CMD ["/bin/bash"]

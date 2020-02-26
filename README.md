@@ -496,6 +496,13 @@ The data column in the bulk file is randomly generated with a unique key column 
     - Erlang version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.erlang`) 
 
+### 4.6 godror and Go
+
+- the following data in the configuration parameters is determined at runtime: 
+    - godror version (`benchmark.driver`) and
+    - Go version (`benchmark.language`). 
+- all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.json`) 
+
 ## 5 <a name="reporting"> Reporting
 
 [see here](https://konnexionsgmbh.github.io/ora_bench/)
