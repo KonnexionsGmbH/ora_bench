@@ -104,9 +104,9 @@ script:
 
   - travis_fold start "Environment_Variables"
   # Show Environment Variables ---------------------------------------------------
-  - echo GRADLE_HOME=$GRADLE_HOME 
-  - echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH 
-  - echo PATH=$PATH
+  - echo 'GRADLE_HOME=$GRADLE_HOME'
+  - echo 'LD_LIBRARY_PATH=$LD_LIBRARY_PATH' 
+  - echo 'PATH=$PATH'
   - travis_fold end   "Environment_Variables"
     
   - travis_fold start "Software_versions"
