@@ -102,19 +102,26 @@ script:
   - export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
   - travis_fold end   "Setting_up_environment_variables"
 
+  - travis_fold start "Environment_Variables"
+  # Show Environment Variables ---------------------------------------------------
+  - echo GRADLE_HOME=$GRADLE_HOME
+  - echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+  - echo PATH=$PATH
+  - travis_fold end   "Environment_Variables"
+    
   - travis_fold start "Software_versions"
   # Show component versions ------------------------------------------------------
-  - echo autoconf -V 
-  - echo automake --version 
-  - echo elixir -v 
-  - echo gcc --version 
-  - echo git --version 
-  - echo gradle --version 
-  - echo java -version 
-  - echo mix --version 
-  - echo python3 --version 
-  - echo rebar3 version 
-  - echo lsb_release -a 
+  - echo $(autoconf -V)
+  - echo $(automake --version)
+  - echo $(elixir -v)
+  - echo $(gcc --version)
+  - echo $(git --version)
+  - echo $(gradle --version)
+  - echo $(java -version)
+  - echo $(mix --version)
+  - echo $(python3 --version)
+  - echo $(rebar3 version)
+  - echo $(lsb_release -a) 
   - travis_fold end   "Software_Versions"
 
   # Running ora_bench ------------------------------------------------------------
