@@ -11,11 +11,9 @@ RUN apt-get install -y wget \
  && wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
  && dpkg -i erlang-solutions_2.0_all.deb
 
-RUN apt-get install -y autoconf
-
-RUN apt-get install -y autotools-dev 
-
-RUN apt-get install -y build-essential
+RUN apt-get install -y autoconf \
+                       autotools-dev \ 
+                       build-essential
 
 RUN apt-get remove -y docker docker-engine docker.io \
  && apt-get install -y docker.io
@@ -26,14 +24,11 @@ RUN wget https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp \
  && apt-get install -y unzip \
  && unzip -d /opt/gradle /tmp/gradle-*.zip
 
-ENV GRADLE_HOME=/opt/gradle/gradle-6.2
-ENV PATH=${GRADLE_HOME}/bin:${PATH}
+RUN apt-get install -y git \
+ && git config --global credential.helper 'cache --timeout 3600'
 
-RUN apt-get install -y git
-
-RUN apt-get install -y iputils-ping
-
-RUN apt-get install -y language-pack-de
+RUN apt-get install -y iputils-ping \
+                       language-pack-de
 
 RUN ln -fs /usr/share/zoneinfo/Europe/Zurich /etc/localtime \
  && apt-get install -y tzdata \
@@ -49,7 +44,6 @@ RUN apt-get install -y elixir \
 
 RUN apt-get install -y libaio1
 
-# wwe RUN add-apt-repository -y ppa:deadsnakes/ppa
 RUN apt-get install -y python3 \
  && apt-get install -y python3-venv \
  && wget https://bootstrap.pypa.io/get-pip.py \
@@ -57,43 +51,54 @@ RUN apt-get install -y python3 \
  && python3 -m pip install --upgrade cx_Oracle
 
 RUN apt-get install -y dos2unix \
- && apt-get install -y htop \
- && apt-get install -y tmux \
- && apt-get install -y vim
+                       htop \
+                       tmux \
+                       vim
 
-ENV LD_LIBRARY_PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH"
-ENV PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:/usr/local/lib/nodejs/bin:${PATH}"
+ENV GRADLE_HOME=/opt/gradle/gradle-6.2
 
-# Show component versions ------------------------------------------------------
-RUN echo "====================> Curent Date: " \
+ENV LD_LIBRARY_PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH" \
+    PATH="${GRADLE_HOME}/bin:/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:/usr/local/lib/nodejs/bin:${PATH}"
+
+RUN echo "=====================================================================> Curent Date: " \
  && date \
- && echo "====================> Version  autoconf: " \
+# Show Environment Variables ---------------------------------------------------
+ && echo "=====================================================================> Environment variable GRADLE_HOME: " \
+ && echo $GRADLE_HOME \
+ && echo "=====================================================================> Environment variable LD_LIBRARY_PATH: " \
+ && echo $LD_LIBRARY_PATH \
+ && echo "=====================================================================> Environment variable PATH: " \
+ && echo $PATH \
+# Show component versions ------------------------------------------------------
+ && echo "=====================================================================> Version  autoconf: " \
  && autoconf -V \
- && echo "====================> Version  automake: " \
+ && echo "=====================================================================> Version  automake: " \
  && automake --version \
- && echo "====================> Version  dos2unix: " \
+ && echo "=====================================================================> Version  dos2unix: " \
  && dos2unix --version \
- && echo "====================> Version  Elixir: " \
+ && echo "=====================================================================> Version  Elixir: " \
  && elixir -v \
- && echo "====================> Version  gcc: " \
+ && echo "=====================================================================> Version  gcc: " \
  && gcc --version \
- && echo "====================> Version  Git: " \
+ && echo "=====================================================================> Version  Git: " \
  && git --version \
- && echo "====================> Version  Gradle: " \
+ && echo "=====================================================================> Version  Gradle: " \
  && gradle --version \
- && echo "====================> Version  htop: " \
+ && echo "=====================================================================> Version  htop: " \
  && htop --version \
- && echo "====================> Version  Java: " \
+ && echo "=====================================================================> Version  Java: " \
  && java -version \
- && echo "====================> Version  Python3: " \
+ && echo "=====================================================================> Version  mix: " \
+ && mix --version \
+ && echo "=====================================================================> Version  Python3: " \
  && python3 --version \
- && echo "====================> Version  rebar3: " \
+ && echo "=====================================================================> Version  rebar3: " \
  && rebar3 version \
- && echo "====================> Version  tmux: " \
+ && echo "=====================================================================> Version  tmux: " \
  && tmux -V \
- && echo "====================> Version  Ubuntu: " \
+ && echo "=====================================================================> Version  Ubuntu: " \
  && lsb_release -a \
- && echo "====================> Version  Vim: " \
+ && echo "=====================================================================> Version  Vim: " \
  && vim --version
 
 CMD ["/bin/bash"]

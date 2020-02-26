@@ -28,8 +28,8 @@ script:
   - git clone https://github.com/asdf-vm/asdf.git ~/.asdf
   - cd ~/.asdf
   - git checkout "$(git describe --abbrev=0 --tags)"
-  - echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
-  - echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+  - 'echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+  - 'echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
   - cd /home/travis/build/KonnexionsGmbH/ora_bench
   - . ~/.bashrc
   - asdf plugin-add Elixir https://github.com/asdf-vm/asdf-elixir
@@ -101,6 +101,50 @@ script:
   - export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
   - export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
   - travis_fold end   "Setting_up_environment_variables"
+
+  - travis_fold start "Environment_Variables"
+  # Show Environment Variables ---------------------------------------------------
+  - 'echo "=====================================================================> Environment variable GRADLE_HOME: "'
+  - echo $GRADLE_HOME 
+  - 'echo "=====================================================================> Environment variable LD_LIBRARY_PATH: "' 
+  - echo $LD_LIBRARY_PATH 
+  - 'echo "=====================================================================> Environment variable PATH: "' 
+  - echo $PATH
+  - travis_fold end   "Environment_Variables"
+    
+  - travis_fold start "Software_versions"
+  # Show component versions ------------------------------------------------------
+  - 'echo "=====================================================================> Version  autoconf: "' 
+  - autoconf -V 
+  - 'echo "=====================================================================> Version  automake: "' 
+  - automake --version 
+  - 'echo "=====================================================================> Version  dos2unix: "' 
+  - dos2unix --version 
+  - 'echo "=====================================================================> Version  Elixir: "' 
+  - elixir -v 
+  - 'echo "=====================================================================> Version  gcc: "' 
+  - gcc --version 
+  - 'echo "=====================================================================> Version  Git: "' 
+  - git --version 
+  - 'echo "=====================================================================> Version  Gradle: "' 
+  - gradle --version 
+  - 'echo "=====================================================================> Version  htop: "' 
+  - htop --version 
+  - 'echo "=====================================================================> Version  Java: "' 
+  - java -version 
+  - 'echo "=====================================================================> Version  mix: "' 
+  - mix --version 
+  - 'echo "=====================================================================> Version  Python3: "' 
+  - python3 --version 
+  - 'echo "=====================================================================> Version  rebar3: "' 
+  - rebar3 version 
+  - 'echo "=====================================================================> Version  tmux: "' 
+  - tmux -V 
+  - 'echo "=====================================================================> Version  Ubuntu: "' 
+  - lsb_release -a 
+  - 'echo "=====================================================================> Version  Vim: "' 
+  - vim --version
+  - travis_fold end   "Software_Versions"
 
   # Running ora_bench ------------------------------------------------------------
   - travis_fold start "Running_ora_bench"
