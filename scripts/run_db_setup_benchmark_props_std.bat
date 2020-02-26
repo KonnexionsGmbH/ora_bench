@@ -96,6 +96,7 @@ if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
     set ORA_BENCH_RUN_ELIXIR=true
     echo Setup Elixir - Start ======================================================= 
     cd src_elixir
+    call mix deps.clean oranif
     call mix deps.get
     call mix deps.compile
     cd ..

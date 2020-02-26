@@ -54,6 +54,7 @@ java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
 cd src_elixir
 
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
+    mix deps.clean --all
     mix deps.get
     mix deps.compile
 fi    

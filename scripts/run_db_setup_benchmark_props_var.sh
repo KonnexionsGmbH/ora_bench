@@ -87,6 +87,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
         echo "Setup Elixir - Start =======================================================" 
         cd src_elixir
+        mix deps.clean --all
         mix deps.get
         mix deps.compile
         cd ..

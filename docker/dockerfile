@@ -1,4 +1,4 @@
-FROM ubuntu:19.10 as base
+FROM ubuntu:20.04 as base
 
 RUN export DEBIAN_FRONTEND=noninteractive
 
@@ -39,8 +39,9 @@ RUN wget https://s3.amazonaws.com/rebar3/rebar3 \
  && mv rebar3 /usr/bin \
  && apt-get install -y erlang
 
-RUN apt-get install -y elixir \
- && mix local.hex --force
+RUN apt-get install -y elixir 
+ && mix local.hex --force \
+ && mix local.rebar --force
 
 RUN apt-get install -y libaio1
 
@@ -60,45 +61,26 @@ ENV GRADLE_HOME=/opt/gradle/gradle-6.2
 ENV LD_LIBRARY_PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH" \
     PATH="${GRADLE_HOME}/bin:/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:/usr/local/lib/nodejs/bin:${PATH}"
 
-RUN echo "=====================================================================> Curent Date: " \
- && date \
 # Show Environment Variables ---------------------------------------------------
- && echo "=====================================================================> Environment variable GRADLE_HOME: " \
- && echo $GRADLE_HOME \
- && echo "=====================================================================> Environment variable LD_LIBRARY_PATH: " \
- && echo $LD_LIBRARY_PATH \
- && echo "=====================================================================> Environment variable PATH: " \
- && echo $PATH \
+RUN echo GRADLE_HOME=$GRADLE_HOME \
+ && echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH \
+ && echo PATH=$PATH
+ 
 # Show component versions ------------------------------------------------------
- && echo "=====================================================================> Version  autoconf: " \
- && autoconf -V \
- && echo "=====================================================================> Version  automake: " \
- && automake --version \
- && echo "=====================================================================> Version  dos2unix: " \
- && dos2unix --version \
- && echo "=====================================================================> Version  Elixir: " \
- && elixir -v \
- && echo "=====================================================================> Version  gcc: " \
- && gcc --version \
- && echo "=====================================================================> Version  Git: " \
- && git --version \
- && echo "=====================================================================> Version  Gradle: " \
- && gradle --version \
- && echo "=====================================================================> Version  htop: " \
- && htop --version \
- && echo "=====================================================================> Version  Java: " \
- && java -version \
- && echo "=====================================================================> Version  mix: " \
- && mix --version \
- && echo "=====================================================================> Version  Python3: " \
- && python3 --version \
- && echo "=====================================================================> Version  rebar3: " \
- && rebar3 version \
- && echo "=====================================================================> Version  tmux: " \
- && tmux -V \
- && echo "=====================================================================> Version  Ubuntu: " \
- && lsb_release -a \
- && echo "=====================================================================> Version  Vim: " \
- && vim --version
+RUN echo $(autoconf -V) \
+ && echo $(automake --version) \
+ && echo $(dos2unix --version) \
+ && echo $(elixir -v) \
+ && echo $(gcc --version) \
+ && echo $(git --version) \
+ && echo $(gradle --version) \
+ && echo $(htop --version) \
+ && echo $(java -version) \
+ && echo $(mix --version) \
+ && echo $(python3 --version) \
+ && echo $(rebar3 version) \
+ && echo $(tmux -V) \
+ && echo $(lsb_release -a) \
+ && echo $(vim --version)
 
 CMD ["/bin/bash"]
