@@ -28,8 +28,8 @@ script:
   - git clone https://github.com/asdf-vm/asdf.git ~/.asdf
   - cd ~/.asdf
   - git checkout "$(git describe --abbrev=0 --tags)"
-  - 'echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
-  - 'echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+# - 'echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+# - 'echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
   - cd /home/travis/build/KonnexionsGmbH/ora_bench
   - . ~/.bashrc
   - asdf plugin-add Elixir https://github.com/asdf-vm/asdf-elixir
@@ -104,45 +104,45 @@ script:
 
   - travis_fold start "Environment_Variables"
   # Show Environment Variables ---------------------------------------------------
-  - 'echo "=====================================================================> Environment variable GRADLE_HOME: "'
+# - 'echo "=====================================================================> Environment variable GRADLE_HOME: "'
   - echo $GRADLE_HOME 
-  - 'echo "=====================================================================> Environment variable LD_LIBRARY_PATH: "' 
+# - 'echo "=====================================================================> Environment variable LD_LIBRARY_PATH: "' 
   - echo $LD_LIBRARY_PATH 
-  - 'echo "=====================================================================> Environment variable PATH: "' 
+# - 'echo "=====================================================================> Environment variable PATH: "' 
   - echo $PATH
   - travis_fold end   "Environment_Variables"
     
   - travis_fold start "Software_versions"
   # Show component versions ------------------------------------------------------
-  - 'echo "=====================================================================> Version  autoconf: "' 
+# - 'echo "=====================================================================> Version  autoconf: "' 
   - autoconf -V 
-  - 'echo "=====================================================================> Version  automake: "' 
+# - 'echo "=====================================================================> Version  automake: "' 
   - automake --version 
-  - 'echo "=====================================================================> Version  dos2unix: "' 
+# - 'echo "=====================================================================> Version  dos2unix: "' 
   - dos2unix --version 
-  - 'echo "=====================================================================> Version  Elixir: "' 
+# - 'echo "=====================================================================> Version  Elixir: "' 
   - elixir -v 
-  - 'echo "=====================================================================> Version  gcc: "' 
+# - 'echo "=====================================================================> Version  gcc: "' 
   - gcc --version 
-  - 'echo "=====================================================================> Version  Git: "' 
+# - 'echo "=====================================================================> Version  Git: "' 
   - git --version 
-  - 'echo "=====================================================================> Version  Gradle: "' 
+# - 'echo "=====================================================================> Version  Gradle: "' 
   - gradle --version 
-  - 'echo "=====================================================================> Version  htop: "' 
+# - 'echo "=====================================================================> Version  htop: "' 
   - htop --version 
-  - 'echo "=====================================================================> Version  Java: "' 
+# - 'echo "=====================================================================> Version  Java: "' 
   - java -version 
-  - 'echo "=====================================================================> Version  mix: "' 
+# - 'echo "=====================================================================> Version  mix: "' 
   - mix --version 
-  - 'echo "=====================================================================> Version  Python3: "' 
+# - 'echo "=====================================================================> Version  Python3: "' 
   - python3 --version 
-  - 'echo "=====================================================================> Version  rebar3: "' 
+# - 'echo "=====================================================================> Version  rebar3: "' 
   - rebar3 version 
-  - 'echo "=====================================================================> Version  tmux: "' 
+# - 'echo "=====================================================================> Version  tmux: "' 
   - tmux -V 
-  - 'echo "=====================================================================> Version  Ubuntu: "' 
+# - 'echo "=====================================================================> Version  Ubuntu: "' 
   - lsb_release -a 
-  - 'echo "=====================================================================> Version  Vim: "' 
+# - 'echo "=====================================================================> Version  Vim: "' 
   - vim --version
   - travis_fold end   "Software_Versions"
 
