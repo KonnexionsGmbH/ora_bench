@@ -16,13 +16,13 @@ echo "==========================================================================
 
 EXITCODE="0"
 
+cd src_java
+
 { ./gradlew clean; }
 if [ $? -ne 0 ]; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
-
-cd src_java
 
 { ./gradlew assemble; }
 if [ $? -ne 0 ]; then
