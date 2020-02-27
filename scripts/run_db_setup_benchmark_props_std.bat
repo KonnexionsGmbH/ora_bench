@@ -7,6 +7,8 @@ rem                                       with standard properties.
 rem
 rem ------------------------------------------------------------------------------
 
+setlocal EnableDelayedExpansion
+
 set ORA_BENCH_MULTIPLE_RUN=true
 
 if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (

@@ -6,6 +6,8 @@ rem run_bench_all_drivers.bat: Oracle benchmark for all database drivers.
 rem
 rem ------------------------------------------------------------------------------
 
+setlocal EnableDelayedExpansion
+
 set ORA_BENCH_MULTIPLE_RUN=true
 
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (

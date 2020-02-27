@@ -7,6 +7,8 @@ rem                                       with variations of properties.
 rem
 rem ------------------------------------------------------------------------------
 
+setlocal EnableDelayedExpansion
+
 set ORA_BENCH_MULTIPLE_RUN=true
 
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (

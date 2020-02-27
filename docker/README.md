@@ -44,7 +44,10 @@ Inside the Docker container you can switch to the ora_bench repository with the 
 
     cd ora_bench
 
-**Important:** If the repository was previously used on Windows, then all files in the `src_elixir/deps` directory must also be deleted from Windows first! 
+**Important:** If the repository was previously used on Windows, then all files in the following directories must also be deleted from Windows first:
+
+- `src_erlang/_build` 
+- `src_elixir/deps`  
 
 The Docker container with the Oracle database is located on the host computer and can be accessed using the IP address of the host computer:
 

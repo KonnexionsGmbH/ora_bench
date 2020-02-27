@@ -6,6 +6,8 @@ rem run_create_bulk_file.bat: Oracle Benchmark Run Setup.
 rem
 rem ------------------------------------------------------------------------------
 
+setlocal EnableDelayedExpansion
+
 set ORA_BENCH_MULTIPLE_RUN=
 
 if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
