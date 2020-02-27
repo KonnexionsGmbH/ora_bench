@@ -33,7 +33,7 @@ if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
     export RUN_GLOBAL_NON_JAMDB=true
 fi
 if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "false" ]; then
-    export RUN_GLOBAL_NON_JAMDB=true
+    export RUN_GLOBAL_NON_JAMDB=false
 fi
 if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "true" ]; then
     export RUN_GLOBAL_JAMDB=true
