@@ -46,14 +46,26 @@ echo "==========================================================================
 EXITCODE="0"
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
     cd src_erlang
     rebar3 escriptize
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
     cd ..
 fi
 
 src_erlang/_build/default/bin/orabench priv/properties/ora_bench_erlang.properties oranif
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 
 EXITCODE=$?
 

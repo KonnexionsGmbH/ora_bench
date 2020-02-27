@@ -131,6 +131,9 @@ echo.
     echo ================================================================================
     
     start priv\audio\end_of_series.mp3
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+    )
     
     exit /B %ERRORLEVEL%
 )

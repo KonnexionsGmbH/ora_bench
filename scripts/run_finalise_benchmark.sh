@@ -31,6 +31,10 @@ echo "==========================================================================
 EXITCODE="0"
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench finalise
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 
 EXITCODE=$?
 

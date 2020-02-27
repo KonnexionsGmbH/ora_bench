@@ -84,7 +84,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         call src_java\scripts\run_bench_jdbc.bat
         if %ERRORLEVEL% NEQ 0 (
             echo ERRORLEVEL : %ERRORLEVEL%
-            rem wwe GOTO EndOfScript
+            GOTO EndOfScript
         )
     )
     

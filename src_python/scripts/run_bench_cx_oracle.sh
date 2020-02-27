@@ -50,11 +50,19 @@ echo "==========================================================================
 EXITCODE="0"
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 
 if [ "$OSTYPE" = "msys" ]; then
     python src_python/OraBench.py
 else
     python3 src_python/OraBench.py
+fi
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
 fi
 
 EXITCODE=$?

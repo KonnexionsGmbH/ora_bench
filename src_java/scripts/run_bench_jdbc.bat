@@ -52,6 +52,10 @@ echo:| TIME
 echo ================================================================================
 
 call src_java\scripts\run_gradle
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
 
 java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench runBenchmark
 if %ERRORLEVEL% NEQ 0 (

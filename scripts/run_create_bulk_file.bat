@@ -28,6 +28,7 @@ echo ===========================================================================
 call src_java\scripts\run_gradle
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
 )
 
 set PATH=%PATH%;\u01\app\oracle\product\12.2\db_1\jdbc\lib

@@ -17,19 +17,28 @@ echo ===========================================================================
 cd src_java
 
 call gradlew clean
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
 
 call gradlew assemble
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
+
 copy /Y build\libs\ora_bench.jar ..\priv\java_jar
 
 call gradlew javadoc
-rem rmdir /s /q ..\priv\java_doc
-rem mkdir ..\priv\java_doc
-rem xcopy /Q /S build\docs\javadoc\*.* ..\priv\java_doc
-
-rem call gradlew clean
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
 
 cd ..
 
+:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------
