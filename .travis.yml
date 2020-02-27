@@ -28,8 +28,8 @@ script:
   - git clone https://github.com/asdf-vm/asdf.git ~/.asdf
   - cd ~/.asdf
   - git checkout "$(git describe --abbrev=0 --tags)"
-# - 'echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
-# - 'echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+  - echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+  - echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
   - cd /home/travis/build/KonnexionsGmbH/ora_bench
   - . ~/.bashrc
   - asdf plugin-add Elixir https://github.com/asdf-vm/asdf-elixir
