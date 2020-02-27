@@ -32,10 +32,18 @@ echo "==========================================================================
 EXITCODE="0"
 
 { /bin/bash src_java/scripts/run_gradle.sh; }
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 
 PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 
 java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 
 EXITCODE=$?
 

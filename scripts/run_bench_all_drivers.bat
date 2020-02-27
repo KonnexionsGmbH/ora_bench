@@ -6,6 +6,8 @@ rem run_bench_all_drivers.bat: Oracle benchmark for all database drivers.
 rem
 rem ------------------------------------------------------------------------------
 
+setlocal EnableDelayedExpansion
+
 set ORA_BENCH_MULTIPLE_RUN=true
 
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
@@ -84,7 +86,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         call src_java\scripts\run_bench_jdbc.bat
         if %ERRORLEVEL% NEQ 0 (
             echo ERRORLEVEL : %ERRORLEVEL%
-            rem wwe GOTO EndOfScript
+            GOTO EndOfScript
         )
     )
     

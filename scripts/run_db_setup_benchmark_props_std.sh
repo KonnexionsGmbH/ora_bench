@@ -90,10 +90,22 @@ if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
     echo "Setup C - Start ============================================================" 
     if [ "$OSTYPE" = "msys" ]; then
         nmake -f src_c/Makefile.win32 clean
+        if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
         nmake -f src_c/Makefile.win32
     else
         make -f src_c/Makefile clean
+        if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
         make -f src_c/Makefile
+    fi
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
     fi
     echo "Setup C - End   ============================================================" 
 fi
@@ -101,8 +113,26 @@ fi
 if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
     echo "Setup Elixir - Start =======================================================" 
     cd src_elixir
+    mix local.hex --force
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
+    mix deps.clean --all
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
     mix deps.get
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
     mix deps.compile
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
     cd ..
     echo "Setup Elixir - End   =======================================================" 
 fi
@@ -111,6 +141,10 @@ if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANI
     echo "Setup Erlang - Start ======================================================="
     cd src_erlang
     rebar3 escriptize
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
     echo "Setup Erlang - End   =======================================================" 
     cd ..
 fi
@@ -123,7 +157,16 @@ echo "Docker create ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)"
 docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/$ORA_BENCH_BENCHMARK_DATABASE
 echo "Docker started ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)..."
 docker start ora_bench_db
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
+
 while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 end=$(date +%s)
 echo "DOCKER ready in $((end - start)) seconds"
 
@@ -133,11 +176,13 @@ else
   priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql
 fi  
 if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
     exit $?
 fi
     
 { /bin/bash scripts/run_bench_all_drivers.sh; }
 if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
     exit $?
 fi
 

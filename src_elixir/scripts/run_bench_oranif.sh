@@ -50,15 +50,41 @@ echo "==========================================================================
 EXITCODE="0"
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 
 cd src_elixir
 
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
+    mix local.hex --force
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
+    mix deps.clean --all
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
     mix deps.get
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
     mix deps.compile
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
 fi    
 
 mix run -e "OraBench.CLI.main([\"oranif\"])"
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 cd ..
 
 EXITCODE=$?

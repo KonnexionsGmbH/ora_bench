@@ -52,6 +52,16 @@ if %ERRORLEVEL% NEQ 0 (
 cd src_elixir
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    call mix local.hex --force
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
+    call mix deps.clean --all
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
     call mix deps.get
     if %ERRORLEVEL% NEQ 0 (
         echo ERRORLEVEL : %ERRORLEVEL%

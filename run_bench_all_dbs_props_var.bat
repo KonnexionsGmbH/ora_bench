@@ -7,6 +7,8 @@ rem                                  with variations of properties.
 rem
 rem ------------------------------------------------------------------------------
 
+setlocal EnableDelayedExpansion
+
 set ORA_BENCH_RUN_SERIES=true
 
 set ORA_BENCH_BENCHMARK_COMMENT="Standard series (locally)"
@@ -131,6 +133,9 @@ echo.
     echo ================================================================================
     
     start priv\audio\end_of_series.mp3
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+    )
     
     exit /B %ERRORLEVEL%
 )

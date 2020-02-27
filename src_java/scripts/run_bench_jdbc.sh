@@ -57,6 +57,10 @@ EXITCODE="0"
 PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench runBenchmark
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 
 EXITCODE=$?
 
