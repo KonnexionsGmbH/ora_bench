@@ -35,10 +35,12 @@ if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU [""] (
     set RUN_GLOBAL_NON_JAMDB=true
 )
 if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["false"] (
-    set RUN_GLOBAL_NON_JAMDB=false
+    set RUN_GLOBAL_JAMDB=false
+    set RUN_GLOBAL_NON_JAMDB=true
 )
 if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["true"] (
     set RUN_GLOBAL_JAMDB=true
+    set RUN_GLOBAL_NON_JAMDB=false
 )
 
 echo ================================================================================
