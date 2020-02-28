@@ -45,7 +45,7 @@ script:
 
   # Go ---------------------------------------------------------------------------
   - travis_fold start "Setting_up_Go"
-  - f -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
+  - wget -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
   - tar -xf go${VERSION_GO}.linux-amd64.tar.gz
   - sudo mv go /usr/local
   - export GOPATH=/ora_bench/src_go
