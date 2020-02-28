@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_oranif.sh: Oracle Benchmark based on Erlang.
+# run_bench_godror.sh: Oracle Benchmark based on Go.
 #
 # ------------------------------------------------------------------------------
 
@@ -17,12 +17,6 @@ if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
 fi
 if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-fi
-if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
-    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-fi
-if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"    
 fi
 
 echo "================================================================================"
@@ -46,6 +40,10 @@ echo "==========================================================================
 EXITCODE="0"
 
 go run src_go/orabench.go priv/properties/ora_bench.properties
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 
 EXITCODE=$?
 
