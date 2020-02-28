@@ -45,6 +45,7 @@ echo "==========================================================================
 
 EXITCODE="0"
 
+java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup
 go run src_go/orabench.go priv/properties/ora_bench.properties
 
 EXITCODE=$?
