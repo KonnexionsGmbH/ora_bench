@@ -130,8 +130,8 @@ script:
   - echo $(elixir -v)
   - echo $(gcc --version)
   - echo $(git --version)
-  - echo $(go version) \
-  - echo $(go env) \
+  - echo $(go version)
+  - echo $(go env)
   - echo $(gradle --version)
   - echo $(java -version)
   - echo $(mix --version)
