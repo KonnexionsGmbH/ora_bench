@@ -8,10 +8,6 @@ otp_release:
   - 20.3
 
 env:
-  - VERSION_ERLANG_SOLUTIONS=1.14
-  - VERSION_GO=1.14
-  - VERSION_GRADLE=6.2
-  - VERSION_ORACLE_INSTANT_CLIENT=19_5
   matrix:
     - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee ORA_BENCH_BENCHMARK_JAMDB=false
     - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee ORA_BENCH_BENCHMARK_JAMDB=true
@@ -23,6 +19,10 @@ env:
 script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
+  - export VERSION_ERLANG_SOLUTIONS=1.14
+  - export VERSION_GO=1.14
+  - export VERSION_GRADLE=6.2
+  - export VERSION_ORACLE_INSTANT_CLIENT=19_5
   - sudo apt update
   - sudo apt install software-properties-common
   - travis_fold end   "Prepare_installation_process"
