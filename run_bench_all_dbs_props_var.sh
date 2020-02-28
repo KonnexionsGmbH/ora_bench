@@ -94,6 +94,7 @@ if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     { /bin/bash scripts/run_db_setup_benchmark_props_var.sh; }
     if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
         exit $?
     fi
 fi
@@ -103,6 +104,7 @@ if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     { /bin/bash scripts/run_db_setup_benchmark_props_var.sh; }
     if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
         exit $?
     fi
 fi
@@ -112,6 +114,7 @@ if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     { /bin/bash scripts/run_db_setup_benchmark_props_var.sh; }
     if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
         exit $?
     fi
 fi
@@ -130,5 +133,9 @@ echo "End   $0"
 echo "================================================================================"
 
 start priv/audio/end_of_series.mp3
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 
 exit $EXITCODE

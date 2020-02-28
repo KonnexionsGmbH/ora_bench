@@ -1,4 +1,4 @@
-FROM ubuntu:19.10 as base
+FROM ubuntu:20.04 as base
 
 RUN export DEBIAN_FRONTEND=noninteractive
 
@@ -11,11 +11,9 @@ RUN apt-get install -y wget \
  && wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
  && dpkg -i erlang-solutions_2.0_all.deb
 
-RUN apt-get install -y autoconf
-
-RUN apt-get install -y autotools-dev 
-
-RUN apt-get install -y build-essential
+RUN apt-get install -y autoconf \
+                       autotools-dev \ 
+                       build-essential
 
 RUN apt-get remove -y docker docker-engine docker.io \
  && apt-get install -y docker.io
@@ -26,14 +24,11 @@ RUN wget https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp \
  && apt-get install -y unzip \
  && unzip -d /opt/gradle /tmp/gradle-*.zip
 
-ENV GRADLE_HOME=/opt/gradle/gradle-6.2
-ENV PATH=${GRADLE_HOME}/bin:${PATH}
+RUN apt-get install -y git \
+ && git config --global credential.helper 'cache --timeout 3600'
 
-RUN apt-get install -y git
-
-RUN apt-get install -y iputils-ping
-
-RUN apt-get install -y language-pack-de
+RUN apt-get install -y iputils-ping \
+                       language-pack-de
 
 RUN ln -fs /usr/share/zoneinfo/Europe/Zurich /etc/localtime \
  && apt-get install -y tzdata \
@@ -44,12 +39,12 @@ RUN wget https://s3.amazonaws.com/rebar3/rebar3 \
  && mv rebar3 /usr/bin \
  && apt-get install -y erlang
 
-RUN apt-get install -y elixir \
- && mix local.hex --force
+RUN apt-get install -y elixir 
+ && mix local.hex --force \
+ && mix local.rebar --force
 
 RUN apt-get install -y libaio1
 
-# wwe RUN add-apt-repository -y ppa:deadsnakes/ppa
 RUN apt-get install -y python3 \
  && apt-get install -y python3-venv \
  && wget https://bootstrap.pypa.io/get-pip.py \
@@ -57,54 +52,35 @@ RUN apt-get install -y python3 \
  && python3 -m pip install --upgrade cx_Oracle
 
 RUN apt-get install -y dos2unix \
- && apt-get install -y htop \
- && apt-get install -y tmux \
- && apt-get install -y vim
+                       htop \
+                       tmux \
+                       vim
 
-RUN cd /tmp \
- && wget https://dl.google.com/go/go1.13.8.linux-amd64.tar.gz \
- && tar xvf go1.13.8.linux-amd64.tar.gz \
- && mv go /usr/local
+ENV GRADLE_HOME=/opt/gradle/gradle-6.2
 
-ENV LD_LIBRARY_PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH"
-ENV PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:/usr/local/lib/nodejs/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH" \
+    PATH="${GRADLE_HOME}/bin:/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:/usr/local/lib/nodejs/bin:${PATH}"
 
-ENV GOROOT=/usr/local/go
-ENV GOPATH=/ora_bench/src_go
-ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-
+# Show Environment Variables ---------------------------------------------------
+RUN echo GRADLE_HOME=$GRADLE_HOME \
+ && echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH \
+ && echo PATH=$PATH
+ 
 # Show component versions ------------------------------------------------------
-RUN echo "====================> Curent Date: " \
- && date \
- && echo "====================> Version  autoconf: " \
- && autoconf -V \
- && echo "====================> Version  automake: " \
- && automake --version \
- && echo "====================> Version  dos2unix: " \
- && dos2unix --version \
- && echo "====================> Version  Elixir: " \
- && elixir -v \
- && echo "====================> Version  gcc: " \
- && gcc --version \
- && echo "====================> Version  Git: " \
- && git --version \
- && echo "====================> Version  Gradle: " \
- && gradle --version \
- && echo "====================> Version  htop: " \
- && htop --version \
- && echo "====================> Version  Java: " \
- && java -version \
- && echo "====================> Version  Python3: " \
- && python3 --version \
- && echo "====================> Version  rebar3: " \
- && rebar3 version \
- && echo "====================> Version  tmux: " \
- && tmux -V \
- && echo "====================> Version  Ubuntu: " \
- && lsb_release -a \
- && echo "====================> Version  Vim: " \
- && vim --version \
- && echo "====================> Version  Go: " \
- && go version
+RUN echo $(autoconf -V) \
+ && echo $(automake --version) \
+ && echo $(dos2unix --version) \
+ && echo $(elixir -v) \
+ && echo $(gcc --version) \
+ && echo $(git --version) \
+ && echo $(gradle --version) \
+ && echo $(htop --version) \
+ && echo $(java -version) \
+ && echo $(mix --version) \
+ && echo $(python3 --version) \
+ && echo $(rebar3 version) \
+ && echo $(tmux -V) \
+ && echo $(lsb_release -a) \
+ && echo $(vim --version)
 
 CMD ["/bin/bash"]

@@ -7,6 +7,8 @@ rem                                       with variations of properties.
 rem
 rem ------------------------------------------------------------------------------
 
+setlocal EnableDelayedExpansion
+
 set ORA_BENCH_MULTIPLE_RUN=true
 
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
@@ -33,10 +35,12 @@ if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU [""] (
     set RUN_GLOBAL_NON_JAMDB=true
 )
 if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["false"] (
+    set RUN_GLOBAL_JAMDB=false
     set RUN_GLOBAL_NON_JAMDB=true
 )
 if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["true"] (
     set RUN_GLOBAL_JAMDB=true
+    set RUN_GLOBAL_NON_JAMDB=false
 )
 
 echo ================================================================================
@@ -73,7 +77,15 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
         echo Setup C - Start ============================================================ 
         nmake -f src_c\Makefile.win32 clean
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
         nmake -f src_c\Makefile.win32
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
         echo Setup C - End   ============================================================ 
     )
     
@@ -82,8 +94,26 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         set ORA_BENCH_RUN_ELIXIR=true
         echo Setup Elixir - Start ======================================================= 
         cd src_elixir
+        call mix local.hex --force
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
+        call mix deps.clean --all
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
         call mix deps.get
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
         call mix deps.compile
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
         cd ..
         echo Setup Elixir - End   ======================================================= 
     )
@@ -100,6 +130,10 @@ if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
     echo Setup Erlang - Start ======================================================= 
     cd src_erlang
     call rebar3 escriptize
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
     cd ..
     echo Setup Erlang - End   ======================================================= 
 )    
@@ -112,6 +146,10 @@ echo Docker create ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%)
 docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/%ORA_BENCH_BENCHMARK_DATABASE%
 echo Docker started ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%)...
 docker start ora_bench_db
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
 for /f "delims=" %%A in ('priv\Gammadyne\timer.exe /s') do set "CONSUMED=%%A"
 echo DOCKER ready in %CONSUMED%
 

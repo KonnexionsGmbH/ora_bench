@@ -57,6 +57,7 @@ EXITCODE="0"
 
 { /bin/bash scripts/run_create_bulk_file.sh; }
 if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
     exit $?
 fi
 
@@ -64,6 +65,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
         { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
         if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
             exit $?
         fi
     fi
@@ -73,6 +75,7 @@ if [ "$RUN_GLOBAL_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" = "true" ]; then
         { /bin/bash src_erlang/scripts/run_bench_jamdb_oracle.sh; }
         if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
             exit $?
         fi
     fi
@@ -82,6 +85,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
         { /bin/bash src_java/scripts/run_bench_jdbc.sh; }
         if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
             exit $?
         fi
     fi
@@ -89,6 +93,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
         { /bin/bash src_c/scripts/run_bench_odpi.sh; }
         if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
             exit $?
         fi
     fi
@@ -96,6 +101,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
         { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }
         if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
             exit $?
         fi
     fi
@@ -103,6 +109,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
         { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
         if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
             exit $?
         fi
     fi

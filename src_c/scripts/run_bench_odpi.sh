@@ -52,19 +52,39 @@ EXITCODE="0"
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
     if [ "$OSTYPE" = "msys" ]; then
         nmake -f src_c/Makefile.win32 clean
+        if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
         nmake -f src_c/Makefile.win32
     else
         make -f src_c/Makefile clean
+        if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
         make -f src_c/Makefile
+    fi
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
     fi
 fi
 
 java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 
 if [ "$OSTYPE" = "msys" ]; then
     ./OraBench.exe priv/properties/ora_bench_c.properties
 else
    ./OraBench priv/properties/ora_bench_c.properties
+fi
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
 fi
 
 EXITCODE=$?

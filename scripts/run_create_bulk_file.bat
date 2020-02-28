@@ -6,6 +6,8 @@ rem run_create_bulk_file.bat: Oracle Benchmark Run Setup.
 rem
 rem ------------------------------------------------------------------------------
 
+setlocal EnableDelayedExpansion
+
 set ORA_BENCH_MULTIPLE_RUN=
 
 if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
@@ -28,6 +30,7 @@ echo ===========================================================================
 call src_java\scripts\run_gradle
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
 )
 
 set PATH=%PATH%;\u01\app\oracle\product\12.2\db_1\jdbc\lib

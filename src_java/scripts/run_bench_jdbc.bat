@@ -27,7 +27,7 @@ if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
 
 if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-    set PATH=%PATH%;\u01\app\oracle\product\12.2\db_1\jdbc\lib
+    set PATH="%PATH%;\u01\app\oracle\product\12.2\db_1\jdbc\lib"
 )
 
 echo ================================================================================
@@ -52,6 +52,10 @@ echo:| TIME
 echo ================================================================================
 
 call src_java\scripts\run_gradle
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
 
 java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench runBenchmark
 if %ERRORLEVEL% NEQ 0 (
