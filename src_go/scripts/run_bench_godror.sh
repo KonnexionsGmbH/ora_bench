@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_oranif.sh: Oracle Benchmark based on Erlang.
+# run_bench_oranif.sh: Oracle Benchmark based on Go-Lang.
 #
 # ------------------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ fi
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - godror and GO."
+echo "ora_bench - Oracle benchmark - godror and GO-Lang."
 echo "--------------------------------------------------------------------------------"
 echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
 echo "BENCHMARK_DATABASE         : $ORA_BENCH_BENCHMARK_DATABASE"
