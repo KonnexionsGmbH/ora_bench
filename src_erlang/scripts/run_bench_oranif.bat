@@ -43,13 +43,13 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
-)
-
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
+
     cd src_erlang
     call rebar3 escriptize
     if %ERRORLEVEL% NEQ 0 (

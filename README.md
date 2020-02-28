@@ -105,8 +105,8 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
     - `mix local.hex`
 
 - Go
-    - `wget https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz`
-    - `tar -xvf go${VERSION_GO}.linux-amd64.tar.gz`
+    - `wget -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz`
+    - `tar -xf go${VERSION_GO}.linux-amd64.tar.gz`
     - `mv go /usr/local`
     - `export GOPATH=/ora_bench/src_go`
     - `export GOROOT=/usr/local/go`
@@ -116,7 +116,7 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
     - `sudo apt install default-jdk`
 
 - Gradle, e.g.
-    - `wget https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp`  
+    - `wget -q https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp`  
     - `sudo unzip -d /opt/gradle /tmp/gradle-*.zip`
     - `export GRADLE_HOME=/opt/gradle/gradle-6.2`
     - `export PATH=${GRADLE_HOME}/bin:${PATH}`

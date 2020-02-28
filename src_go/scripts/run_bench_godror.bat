@@ -37,6 +37,14 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
+if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    go get github.com/godror/godror
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
+)    
+
 go run src_go\orabench.go priv\properties\ora_bench.properties
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORLEVEL : %ERRORLEVEL%

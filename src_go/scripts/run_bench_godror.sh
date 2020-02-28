@@ -39,6 +39,14 @@ echo "==========================================================================
 
 EXITCODE="0"
 
+if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
+    go get github.com/godror/godror
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
+fi
+
 go run src_go/orabench.go priv/properties/ora_bench.properties
 if [ $? -ne 0 ]; then
     echo "ERRORLEVEL : $?"

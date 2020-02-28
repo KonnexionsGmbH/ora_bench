@@ -13,15 +13,15 @@ RUN apt-get update \
 RUN apt-get install -y software-properties-common
 
 RUN apt-get install -y wget \
- && wget https://packages.erlang-solutions.com/erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb \
+ && wget -q https://packages.erlang-solutions.com/erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb \
  && dpkg -i erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
 
 RUN apt-get install -y autoconf \
                        autotools-dev \ 
                        build-essential
 
-RUN wget https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz \
- && tar -xvf go${VERSION_GO}.linux-amd64.tar.gz \
+RUN wget -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz \
+ && tar -xf go${VERSION_GO}.linux-amd64.tar.gz \
  && mv go /usr/local
 
 RUN apt-get remove -y docker docker-engine docker.io \
@@ -29,7 +29,7 @@ RUN apt-get remove -y docker docker-engine docker.io \
 
 RUN apt-get install -y default-jdk
 
-RUN wget https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp \
+RUN wget -q https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp \
  && apt-get install -y unzip \
  && unzip -d /opt/gradle /tmp/gradle-*.zip
 
@@ -43,7 +43,7 @@ RUN ln -fs /usr/share/zoneinfo/Europe/Zurich /etc/localtime \
  && apt-get install -y tzdata \
  && dpkg-reconfigure --frontend noninteractive tzdata
 
-RUN wget https://s3.amazonaws.com/rebar3/rebar3 \
+RUN wget -q https://s3.amazonaws.com/rebar3/rebar3 \
  && chmod +x rebar3 \
  && mv rebar3 /usr/bin \
  && apt-get install -y erlang
@@ -56,7 +56,7 @@ RUN apt-get install -y libaio1
 
 RUN apt-get install -y python3 \
  && apt-get install -y python3-venv \
- && wget https://bootstrap.pypa.io/get-pip.py \
+ && wget -q https://bootstrap.pypa.io/get-pip.py \
  && python3 get-pip.py \
  && python3 -m pip install --upgrade cx_Oracle
 

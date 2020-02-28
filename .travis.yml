@@ -19,7 +19,6 @@ env:
 script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
-  - export VERSION_ERLANG_SOLUTIONS=1.14
   - export VERSION_GO=1.14
   - export VERSION_GRADLE=6.2
   - export VERSION_ORACLE_INSTANT_CLIENT=19_5
@@ -46,9 +45,9 @@ script:
 
   # Go ---------------------------------------------------------------------------
   - travis_fold start "Setting_up_Go"
-  - wget https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
-  - tar -xvf go${VERSION_GO}.linux-amd64.tar.gz
-  - mv go /usr/local
+  - f -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
+  - tar -xf go${VERSION_GO}.linux-amd64.tar.gz
+  - sudo mv go /usr/local
   - export GOPATH=/ora_bench/src_go
   - export GOROOT=/usr/local/go
   - export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}
@@ -61,7 +60,7 @@ script:
     
   # Gradle -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Gradle"
-  - wget https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp  
+  - wget -q https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp  
   - sudo unzip -d /opt/gradle /tmp/gradle-*.zip
   - export GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}
   - export PATH=${GRADLE_HOME}/bin:${PATH}
