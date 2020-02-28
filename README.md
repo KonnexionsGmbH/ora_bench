@@ -28,8 +28,9 @@ The framework parameters for a benchmark run are stored in a central configurati
 The currently supported database drivers are:
 
 | Driver    | Programming Languages |
-| :---      | :--- |
+| :---      | :---                  |
 | cx_Oracle | Python                |
+| godror    | Go                    |
 | JamDB     | Erlang                |
 | JDBC      | Java                  |
 | ODPI      | C                     |
@@ -77,9 +78,11 @@ All the file names specified here are also part of the configuration file and ca
 - Erlang from [here](https://www.erlang.org/downloads/)
 - Elixir from [here](https://elixir-lang.org/install.html#windows)
 
+- Go from [here](https://golang.org/dl/)
+
 - Java SE Development Kit, e.g. Version 11 from [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
 
-- Gradle from [here](https://www.python.org/downloads/) 
+- Gradle from [here](https://gradle.org/releases/) 
 
 - Python 3 from [here](https://www.python.org/downloads/)
 
@@ -96,9 +99,18 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
 
 - Erlang
     - `sudo apt -y install erlang`
+    
 - Elixir
     - `sudo apt install elixir`
     - `mix local.hex`
+
+- Go
+    - `wget https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz`
+    - `tar -xvf go${VERSION_GO}.linux-amd64.tar.gz`
+    - `mv go /usr/local`
+    - `export GOPATH=/ora_bench/src_go`
+    - `export GOROOT=/usr/local/go`
+    - `export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}`
 
 - Java SE Development Kit, e.g.
     - `sudo apt install default-jdk`
@@ -140,6 +152,7 @@ The run log is stored in the `run_bench_all_dbs_props_var.log` file.
 This script executes the following driver specific sub-scripts:
 
 - `run_bench_cx_oracle`
+- `run_bench_godror`
 - `run_bench_jamdb_oracle`
 - `run_bench_jdbc`
 - `run_bench_odpi`
@@ -248,7 +261,7 @@ In Travis CI, the following two environment variables are defined per build for 
 
 In each build the following tasks are performed:
 
-1. Installation of Elixir, Erlang, Java, Oracle Instant Client and Python.
+1. Installation of Elixir, Erlang, Go, Java, Oracle Instant Client and Python.
 2. Creation of the bulk file with the script `run_create_bulk_file`.
 3. Execution of the `run_db_setup_benchmark_props_var`sub-script.
 4. Storing the measurement results in the branch `gh-pages`.
@@ -461,7 +474,11 @@ The data column in the bulk file is randomly generated with a unique key column 
 - Python uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
 - the value fetch size (`connection.fetch.size`) is not used because the operation `SELECT` uses the operation `Cursor.fetchall()`
 
-### 4.2 JDBC and Java
+### 4.2 godror and Go
+
+- TBD
+
+### 4.3 JDBC and Java
 
 - the following data in the configuration parameters is determined at runtime: 
     - JDBC version (`benchmark.driver`),
@@ -476,20 +493,20 @@ The data column in the bulk file is randomly generated with a unique key column 
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
-### 4.3 ODPI and C
+### 4.4 ODPI and C
 
 - the following data in the configuration parameters is determined at runtime: 
     - ODPI version (`benchmark.driver`) and
     - C version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.c`) 
 
-### 4.4 oranif and Elixir
+### 4.5 oranif and Elixir
 
 - the following data in the configuration parameters is determined at runtime: 
     - oranif version (`benchmark.driver`) and
     - Elixir version (`benchmark.language`). 
 
-### 4.5 oranif and Erlang
+### 4.6 oranif and Erlang
 
 - the following data in the configuration parameters is determined at runtime: 
     - oranif version (`benchmark.driver`) and

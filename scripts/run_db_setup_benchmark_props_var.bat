@@ -14,6 +14,9 @@ set ORA_BENCH_MULTIPLE_RUN=true
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 )
+if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU [""] (
+    set ORA_BENCH_RUN_GODROR_GO=true
+)
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
 )
@@ -62,6 +65,7 @@ echo RUN_GLOBAL_JAMDB           : %RUN_GLOBAL_JAMDB%
 echo RUN_GLOBAL_NON_JAMDB       : %RUN_GLOBAL_NON_JAMDB%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
+echo RUN_GODROR_GO              : %ORA_BENCH_RUN_GODROR_GO%
 echo RUN_JAMDB_ORACLE_ERLANG    : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
 echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_ODPI_C                 : %ORA_BENCH_RUN_ODPI_C%

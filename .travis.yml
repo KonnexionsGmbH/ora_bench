@@ -8,6 +8,10 @@ otp_release:
   - 20.3
 
 env:
+  - VERSION_ERLANG_SOLUTIONS=1.14
+  - VERSION_GO=1.14
+  - VERSION_GRADLE=6.2
+  - VERSION_ORACLE_INSTANT_CLIENT=19_5
   matrix:
     - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee ORA_BENCH_BENCHMARK_JAMDB=false
     - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee ORA_BENCH_BENCHMARK_JAMDB=true
@@ -38,35 +42,42 @@ script:
   - elixir -v
   - mix local.hex --force
   - mix local.rebar --force
-  - rebar3 version
   - travis_fold end   "Setting_up_Elixir"
+
+  # Go ---------------------------------------------------------------------------
+  - travis_fold start "Setting_up_Go"
+  - wget https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
+  - tar -xvf go${VERSION_GO}.linux-amd64.tar.gz
+  - mv go /usr/local
+  - export GOPATH=/ora_bench/src_go
+  - export GOROOT=/usr/local/go
+  - export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}
+  - travis_fold end   "Setting_up_Go"
 
   # Java -------------------------------------------------------------------------
   - travis_fold start "Setting_up_Java"
   - sudo apt install default-jdk
-  - java -version
   - travis_fold end   "Setting_up_Java"
     
   # Gradle -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Gradle"
-  - wget https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp  
+  - wget https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp  
   - sudo unzip -d /opt/gradle /tmp/gradle-*.zip
-  - export GRADLE_HOME=/opt/gradle/gradle-6.2
+  - export GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}
   - export PATH=${GRADLE_HOME}/bin:${PATH}
   - travis_fold end   "Setting_up_Gradle"
 
   # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
   - travis_fold start "Setting_up_Oracle Instant Client"
   - sudo apt-get install libaio1
-  - export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH
-  - sudo chmod +x $PWD/priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus
+  - export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}:$LD_LIBRARY_PATH
+  - sudo chmod +x $PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}/sqlplus
   - travis_fold end   "Setting_up_Oracle Instant Client"
 
   # Python -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Python"
   - sudo add-apt-repository -y ppa:deadsnakes/ppa
   - sudo apt install python3
-  - python3 --version
   - sudo apt install python3-venv
   - python3 -m venv _build/ora_bench-env
   - source _build/ora_bench-env/bin/activate
@@ -91,6 +102,7 @@ script:
   - export ORA_BENCH_RUN_DB_19_3_EE=true
 
   - export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
+  - export ORA_BENCH_RUN_GODROR_GO=true
   - export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
   - export ORA_BENCH_RUN_JDBC_JAVA=true
   - export ORA_BENCH_RUN_ODPI_C=true
@@ -104,6 +116,8 @@ script:
 
   - travis_fold start "Environment_Variables"
   # Show Environment Variables ---------------------------------------------------
+  - echo GOPATH=$GOPATH
+  - echo GOROOT=$GOROOT
   - echo GRADLE_HOME=$GRADLE_HOME
   - echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH
   - echo PATH=$PATH
@@ -116,6 +130,8 @@ script:
   - echo $(elixir -v)
   - echo $(gcc --version)
   - echo $(git --version)
+  - echo $(go version) \
+  - echo $(go env) \
   - echo $(gradle --version)
   - echo $(java -version)
   - echo $(mix --version)

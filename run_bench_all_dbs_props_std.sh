@@ -27,6 +27,7 @@ export ORA_BENCH_RUN_DB_18_3_EE=true
 export ORA_BENCH_RUN_DB_19_3_EE=true
 
 export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
+export ORA_BENCH_RUN_GODROR_GO=true
 export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
 export ORA_BENCH_RUN_JDBC_JAVA=true
 export ORA_BENCH_RUN_ODPI_C=true
@@ -71,6 +72,7 @@ echo "RUN_GLOBAL_JAMDB           : $RUN_GLOBAL_JAMDB"
 echo "RUN_GLOBAL_NON_JAMDB       : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
+echo "RUN_GODROR_GO              : $ORA_BENCH_RUN_GODROR_GO"
 echo "RUN_JAMDB_ORACLE_ERLANG    : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"

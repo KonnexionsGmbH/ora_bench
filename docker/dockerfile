@@ -1,5 +1,10 @@
 FROM ubuntu:20.04 as base
 
+ARG VERSION_ERLANG_SOLUTIONS=2.0
+ARG VERSION_GO=1.14
+ARG VERSION_GRADLE=6.2
+ARG VERSION_ORACLE_INSTANT_CLIENT=19_5
+
 RUN export DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
@@ -8,19 +13,23 @@ RUN apt-get update \
 RUN apt-get install -y software-properties-common
 
 RUN apt-get install -y wget \
- && wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
- && dpkg -i erlang-solutions_2.0_all.deb
+ && wget https://packages.erlang-solutions.com/erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb \
+ && dpkg -i erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
 
 RUN apt-get install -y autoconf \
                        autotools-dev \ 
                        build-essential
+
+RUN wget https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz \
+ && tar -xvf go${VERSION_GO}.linux-amd64.tar.gz \
+ && mv go /usr/local
 
 RUN apt-get remove -y docker docker-engine docker.io \
  && apt-get install -y docker.io
 
 RUN apt-get install -y default-jdk
 
-RUN wget https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp \
+RUN wget https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp \
  && apt-get install -y unzip \
  && unzip -d /opt/gradle /tmp/gradle-*.zip
 
@@ -39,7 +48,7 @@ RUN wget https://s3.amazonaws.com/rebar3/rebar3 \
  && mv rebar3 /usr/bin \
  && apt-get install -y erlang
 
-RUN apt-get install -y elixir 
+RUN apt-get install -y elixir \
  && mix local.hex --force \
  && mix local.rebar --force
 
@@ -56,13 +65,17 @@ RUN apt-get install -y dos2unix \
                        tmux \
                        vim
 
-ENV GRADLE_HOME=/opt/gradle/gradle-6.2
+ENV GOPATH=/ora_bench/src_go \
+    GOROOT=/usr/local/go \
+    GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}
 
-ENV LD_LIBRARY_PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH" \
-    PATH="${GRADLE_HOME}/bin:/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_19_5:/usr/local/lib/nodejs/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}:$LD_LIBRARY_PATH" \
+    PATH="${GOPATH}/bin:${GOROOT}/bin:${GRADLE_HOME}/bin:/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}:/usr/local/lib/nodejs/bin:${PATH}"
 
 # Show Environment Variables ---------------------------------------------------
-RUN echo GRADLE_HOME=$GRADLE_HOME \
+RUN echo GOPATH=$GOPATH \
+ && echo GOROOT=$GOROOT \
+ && echo GRADLE_HOME=$GRADLE_HOME \
  && echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH \
  && echo PATH=$PATH
  
@@ -73,6 +86,8 @@ RUN echo $(autoconf -V) \
  && echo $(elixir -v) \
  && echo $(gcc --version) \
  && echo $(git --version) \
+ && echo $(go version) \
+ && echo $(go env) \
  && echo $(gradle --version) \
  && echo $(htop --version) \
  && echo $(java -version) \
