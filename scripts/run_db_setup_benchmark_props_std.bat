@@ -64,6 +64,9 @@ echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - database setup and Oracle benchmark - standard.
 echo --------------------------------------------------------------------------------
+echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
+echo BULKFILE_EXISTING          : %ORA_BENCH_BULKFILE_EXISTING%
+echo --------------------------------------------------------------------------------
 echo BENCHMARK_DATABASE         : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST            : %ORA_BENCH_CONNECTION_HOST%
 echo CONNECTION_PORT            : %ORA_BENCH_CONNECTION_PORT%
@@ -90,68 +93,11 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
-    echo Setup C - Start ============================================================ 
-    nmake -f src_c\Makefile.win32 clean
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
-    )
-    nmake -f src_c\Makefile.win32
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
-    )
-    echo Setup C - End   ============================================================ 
+call scripts\run_collect_and_compile.bat
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
 )
-
-set ORA_BENCH_RUN_ELIXIR=false
-if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
-    set ORA_BENCH_RUN_ELIXIR=true
-    echo Setup Elixir - Start ======================================================= 
-    cd src_elixir
-    call mix local.hex --force
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
-    )
-    call mix deps.clean --all
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
-    )
-    call mix deps.get
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
-    )
-    call mix deps.compile
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
-    )
-    cd ..
-    echo Setup Elixir - End   ======================================================= 
-)
-
-set ORA_BENCH_RUN_ERLANG=false
-if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] == ["true"] (
-    set ORA_BENCH_RUN_ERLANG=true
-)
-if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] == ["true"] (
-    set ORA_BENCH_RUN_ERLANG=true
-)
-if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
-    echo Setup Erlang - Start ======================================================= 
-    cd src_erlang
-    call rebar3 escriptize
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
-    )
-    cd ..
-    echo Setup Erlang - End   ======================================================= 
-)    
 
 priv\Gammadyne\timer.exe
 echo Docker stop/rm ora_bench_db

@@ -2,9 +2,11 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_all_drivers.sh: Oracle benchmark for all database drivers.
+# collect_and_compile.sh: Collect libraries and compile.
 #
 # ------------------------------------------------------------------------------
+
+export ORA_BENCH_MULTIPLE_RUN=true
 
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
@@ -38,11 +40,10 @@ fi
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - all drivers."
+echo "ora_bench - Oracle benchmark - collect libraries and compile."
 echo "--------------------------------------------------------------------------------"
-echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
+echo "BULKFILE_EXISTING          : $BULKFILE_EXISTING"
 echo "--------------------------------------------------------------------------------"
-echo "ORA_BENCH_BENCHMARK_JAMDB  : $ORA_BENCH_BENCHMARK_JAMDB"
 echo "RUN_GLOBAL_JAMDB           : $RUN_GLOBAL_JAMDB"
 echo "RUN_GLOBAL_NON_JAMDB       : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
@@ -59,69 +60,121 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
-    if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
-        { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
-        if [ $? -ne 0 ]; then
-            echo "ERRORLEVEL : $?"
-            exit $?
-        fi
-    fi
-    
-    if [ "$ORA_BENCH_RUN_GODROR_GO" = "true" ]; then
-        { /bin/bash src_go/scripts/run_bench_godror.sh; }
-        if [ $? -ne 0 ]; then
-            echo "ERRORLEVEL : $?"
-            exit $?
-        fi
-    fi
-fi
-
-if [ "$RUN_GLOBAL_JAMDB" = "true" ]; then
-    if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" = "true" ]; then
-        { /bin/bash src_erlang/scripts/run_bench_jamdb_oracle.sh; }
-        if [ $? -ne 0 ]; then
-            echo "ERRORLEVEL : $?"
-            exit $?
-        fi
+if [ "$$BULKFILE_EXISTING" != "true" ]; then
+    { /bin/bash scripts/run_create_bulk_file.sh; }
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
     fi
 fi
 
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
-    if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
-        { /bin/bash src_java/scripts/run_bench_jdbc.sh; }
+    if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
+        echo "Setup C - Start ============================================================" 
+        if [ "$OSTYPE" = "msys" ]; then
+            nmake -f src_c/Makefile.win32 clean
+            if [ $? -ne 0 ]; then
+                echo "ERRORLEVEL : $?"
+                exit $?
+            fi
+            nmake -f src_c/Makefile.win32
+        else
+            make -f src_c/Makefile clean
+            if [ $? -ne 0 ]; then
+                echo "ERRORLEVEL : $?"
+                exit $?
+            fi
+            make -f src_c/Makefile
+        fi
         if [ $? -ne 0 ]; then
             echo "ERRORLEVEL : $?"
             exit $?
         fi
+
+        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
+        if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+        echo "Setup C - End   ============================================================" 
     fi
     
-    if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
-        { /bin/bash src_c/scripts/run_bench_odpi.sh; }
+    if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
+        echo "Setup Elixir - Start =======================================================" 
+        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
         if [ $? -ne 0 ]; then
             echo "ERRORLEVEL : $?"
             exit $?
         fi
+
+        cd src_elixir
+        mix local.hex --force
+        if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+        
+        mix deps.clean --all
+        if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+        
+        mix deps.get
+        if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+        
+        mix deps.compile
+        if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+        cd ..
+        echo "Setup Elixir - End   =======================================================" 
+    fi
+fi    
+    
+if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
+    echo "Setup Erlang - Start ======================================================="
+    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
     fi
     
-    if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
-        { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }
-        if [ $? -ne 0 ]; then
-            echo "ERRORLEVEL : $?"
-            exit $?
-        fi
+    cd src_erlang
+    rebar3 escriptize
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
     fi
-    
-    if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
-        { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }
-        if [ $? -ne 0 ]; then
-            echo "ERRORLEVEL : $?"
-            exit $?
-        fi
-    fi
+    echo "Setup Erlang - End   =======================================================" 
+    cd ..
 fi
 
-{ /bin/bash scripts/run_finalise_benchmark.sh; }
+if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
+    if [ "$ORA_BENCH_RUN_GODROR_GO" == "true" ]; then
+        echo "Setup Go - Start ===========================================================" 
+        go get github.com/godror/godror
+        if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+        echo "Setup Go - End   ===========================================================" 
+    fi    
+
+    if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" == "true" ]; then
+        echo "Setup Python - Start =======================================================" 
+        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
+        if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+        echo "Setup Python - End   =======================================================" 
+    fi    
+fi    
 
 echo ""
 echo "--------------------------------------------------------------------------------"

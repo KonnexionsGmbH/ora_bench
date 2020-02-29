@@ -62,6 +62,7 @@ echo.
     echo --------------------------------------------------------------------------------
     echo BENCHMARK_BATCH_SIZE       : %ORA_BENCH_BENCHMARK_BATCH_SIZE%
     echo BENCHMARK_COMMENT          : %ORA_BENCH_BENCHMARK_COMMENT%
+    echo BULKFILE_EXISTING          : %ORA_BENCH_BULKFILE_EXISTING%
     echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
     echo CONNECTION_HOST            : %ORA_BENCH_CONNECTION_HOST%
     echo CONNECTION_PORT            : %ORA_BENCH_CONNECTION_PORT%
@@ -88,6 +89,14 @@ echo.
     echo:| TIME
     echo ================================================================================
     
+    call scripts\run_create_bulk_file.bat
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
+    
+    set ORA_BENCH_BULKFILE_EXISTING=true
+
     if ["%ORA_BENCH_RUN_DB_12_2_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1

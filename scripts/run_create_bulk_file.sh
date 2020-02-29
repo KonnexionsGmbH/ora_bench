@@ -6,8 +6,6 @@
 #
 # ------------------------------------------------------------------------------
 
-export ORA_BENCH_MULTIPLE_RUN=
-
 if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
@@ -22,6 +20,10 @@ echo "==========================================================================
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - setup benchmark run."
+echo "--------------------------------------------------------------------------------"
+echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
+echo "--------------------------------------------------------------------------------"
+echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
 echo "--------------------------------------------------------------------------------"
 echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"

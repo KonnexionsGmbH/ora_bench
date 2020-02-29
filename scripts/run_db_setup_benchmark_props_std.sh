@@ -62,6 +62,9 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - database setup and Oracle benchmark - standard."
 echo "--------------------------------------------------------------------------------"
+echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
+echo "BULKFILE_EXISTING          : $BULKFILE_EXISTING"
+echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE         : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST            : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT            : $ORA_BENCH_CONNECTION_PORT"
@@ -90,67 +93,10 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
-    echo "Setup C - Start ============================================================" 
-    if [ "$OSTYPE" = "msys" ]; then
-        nmake -f src_c/Makefile.win32 clean
-        if [ $? -ne 0 ]; then
-            echo "ERRORLEVEL : $?"
-            exit $?
-        fi
-        nmake -f src_c/Makefile.win32
-    else
-        make -f src_c/Makefile clean
-        if [ $? -ne 0 ]; then
-            echo "ERRORLEVEL : $?"
-            exit $?
-        fi
-        make -f src_c/Makefile
-    fi
-    if [ $? -ne 0 ]; then
-        echo "ERRORLEVEL : $?"
-        exit $?
-    fi
-    echo "Setup C - End   ============================================================" 
-fi
-
-if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
-    echo "Setup Elixir - Start =======================================================" 
-    cd src_elixir
-    mix local.hex --force
-    if [ $? -ne 0 ]; then
-        echo "ERRORLEVEL : $?"
-        exit $?
-    fi
-    mix deps.clean --all
-    if [ $? -ne 0 ]; then
-        echo "ERRORLEVEL : $?"
-        exit $?
-    fi
-    mix deps.get
-    if [ $? -ne 0 ]; then
-        echo "ERRORLEVEL : $?"
-        exit $?
-    fi
-    mix deps.compile
-    if [ $? -ne 0 ]; then
-        echo "ERRORLEVEL : $?"
-        exit $?
-    fi
-    cd ..
-    echo "Setup Elixir - End   =======================================================" 
-fi
-    
-if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
-    echo "Setup Erlang - Start ======================================================="
-    cd src_erlang
-    rebar3 escriptize
-    if [ $? -ne 0 ]; then
-        echo "ERRORLEVEL : $?"
-        exit $?
-    fi
-    echo "Setup Erlang - End   =======================================================" 
-    cd ..
+{ /bin/bash scripts/run_collect_and_compile.sh; }
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
 fi
 
 start=$(date +%s)

@@ -31,6 +31,7 @@ echo ---------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - cx_Oracle and Python.
 echo --------------------------------------------------------------------------------
 echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
+echo --------------------------------------------------------------------------------
 echo BENCHMARK_DATABASE         : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST            : %ORA_BENCH_CONNECTION_HOST%
 echo CONNECTION_PORT            : %ORA_BENCH_CONNECTION_PORT%
@@ -43,11 +44,19 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
-)
+if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    call src_java\scripts\run_gradle
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
+
+    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
+)    
 
 python src_python/OraBench.py
 if %ERRORLEVEL% NEQ 0 (

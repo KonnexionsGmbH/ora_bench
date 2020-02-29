@@ -10,7 +10,7 @@ sleep .1
 #
 # ------------------------------------------------------------------------------
 
-export ORA_BENCH_RUN_SERIES=true
+export ORA_BENCH_MULTIPLE_RUN=true
 
 export ORA_BENCH_BENCHMARK_COMMENT='Standard series (locally)'
 
@@ -57,9 +57,8 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - all databases with property variations."
 echo "--------------------------------------------------------------------------------"
-echo "RUN_SERIES              : $ORA_BENCH_RUN_SERIES"
-echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_COMMENT       : $ORA_BENCH_BENCHMARK_COMMENT"
+echo "BULKFILE_EXISTING       : $ORA_BENCH_BULKFILE_EXISTING"
 echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
 echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
@@ -90,6 +89,14 @@ EXITCODE="0"
 export ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
+
+{ /bin/bash scripts/run_create_bulk_file.sh; }
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
+
+export ORA_BENCH_BULKFILE_EXISTING=true
 
 if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee

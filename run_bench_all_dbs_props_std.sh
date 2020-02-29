@@ -58,6 +58,7 @@ echo "ora_bench - Oracle benchmark - all databases with standard properties."
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_BATCH_SIZE       : $ORA_BENCH_BENCHMARK_BATCH_SIZE"
 echo "BENCHMARK_COMMENT          : $ORA_BENCH_BENCHMARK_COMMENT"
+echo "BULKFILE_EXISTING          : $ORA_BENCH_BULKFILE_EXISTING"
 echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "CONNECTION_HOST            : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT            : $ORA_BENCH_CONNECTION_PORT"
@@ -86,7 +87,15 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
+{ /bin/bash scripts/run_create_bulk_file.sh; }
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
+
+export ORA_BENCH_BULKFILE_EXISTING=true
+
+ if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     { /bin/bash scripts/run_db_setup_benchmark_props_std.sh; }

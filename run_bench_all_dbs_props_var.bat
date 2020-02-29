@@ -9,8 +9,6 @@ rem ----------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
-set ORA_BENCH_RUN_SERIES=true
-
 set ORA_BENCH_BENCHMARK_COMMENT="Standard series (locally)"
 
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
@@ -62,9 +60,8 @@ echo.
     echo --------------------------------------------------------------------------------
     echo ora_bench - Oracle benchmark - all databases with property variations.
     echo --------------------------------------------------------------------------------
-    echo RUN_SERIES              : %ORA_BENCH_RUN_SERIES%
-    echo --------------------------------------------------------------------------------
     echo BENCHMARK_COMMENT       : %ORA_BENCH_BENCHMARK_COMMENT%
+    echo BULKFILE_EXISTING       : %ORA_BENCH_BULKFILE_EXISTING%
     echo CONNECTION_HOST         : %ORA_BENCH_CONNECTION_HOST%
     echo CONNECTION_PORT         : %ORA_BENCH_CONNECTION_PORT%
     echo FILE_CONFIGURATION_NAME : %ORA_BENCH_FILE_CONFIGURATION_NAME%
@@ -74,8 +71,8 @@ echo.
     echo RUN_DB_18_3_EE          : %ORA_BENCH_RUN_DB_18_3_EE%
     echo RUN_DB_19_3_EE          : %ORA_BENCH_RUN_DB_19_3_EE%E
     echo --------------------------------------------------------------------------------
-    echo RUN_GLOBAL_JAMDB           : %RUN_GLOBAL_JAMDB%
-    echo RUN_GLOBAL_NON_JAMDB       : %RUN_GLOBAL_NON_JAMDB%
+    echo RUN_GLOBAL_JAMDB        : %RUN_GLOBAL_JAMDB%
+    echo RUN_GLOBAL_NON_JAMDB    : %RUN_GLOBAL_NON_JAMDB%
     echo --------------------------------------------------------------------------------
     echo RUN_CX_ORACLE_PYTHON    : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
     echo RUN_GODROR_GO           : %ORA_BENCH_RUN_GODROR_GO%
@@ -94,6 +91,14 @@ echo.
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
     
+    call scripts\run_create_bulk_file.bat
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
+    
+    set ORA_BENCH_BULKFILE_EXISTING=true
+
     if ["%ORA_BENCH_RUN_DB_12_2_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1

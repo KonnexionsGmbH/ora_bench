@@ -35,6 +35,7 @@ echo "--------------------------------------------------------------------------
 echo "ora_bench - Oracle benchmark - JamDB Oracle and Erlang."
 echo "--------------------------------------------------------------------------------"
 echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
+echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE         : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST            : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT            : $ORA_BENCH_CONNECTION_PORT"
@@ -50,6 +51,12 @@ echo "==========================================================================
 EXITCODE="0"
 
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
+    { /bin/bash src_java/scripts/run_gradle.sh; }
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
+
     java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
     if [ $? -ne 0 ]; then
         echo "ERRORLEVEL : $?"
