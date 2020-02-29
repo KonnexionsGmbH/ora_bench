@@ -27,6 +27,12 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
+call scripts\run_show_environment.bat
+if %ERRORLEVEL% NEQ 0 (
+    echo ERRORLEVEL : %ERRORLEVEL%
+    GOTO EndOfScript
+)
+
 call src_java\scripts\run_gradle
 if %ERRORLEVEL% NEQ 0 (
     echo ERRORLEVEL : %ERRORLEVEL%

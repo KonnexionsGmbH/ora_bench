@@ -24,6 +24,7 @@ script:
   - export VERSION_ORACLE_INSTANT_CLIENT=19_5
   - sudo apt update
   - sudo apt install software-properties-common
+  - sudo apt-get install lsb-core
   - travis_fold end   "Prepare_installation_process"
 
   # Elixir -----------------------------------------------------------------------
@@ -111,32 +112,6 @@ script:
   - export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
   - export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
   - travis_fold end   "Setting_up_environment_variables"
-
-  - travis_fold start "Environment_Variables"
-  # Show Environment Variables ---------------------------------------------------
-  - echo GOPATH=$GOPATH
-  - echo GOROOT=$GOROOT
-  - echo GRADLE_HOME=$GRADLE_HOME
-  - echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH
-  - echo PATH=$PATH
-  - travis_fold end   "Environment_Variables"
-    
-  - travis_fold start "Software_versions"
-  # Show component versions ------------------------------------------------------
-  - echo $(autoconf -V)
-  - echo $(automake --version)
-  - echo $(elixir -v)
-  - echo $(gcc --version)
-  - echo $(git --version)
-  - echo $(go version)
-  - echo $(go env)
-  - echo $(gradle --version)
-  - echo $(java -version)
-  - echo $(mix --version)
-  - echo $(python3 --version)
-  - echo $(rebar3 version)
-  - echo $(lsb_release -a) 
-  - travis_fold end   "Software_Versions"
 
   # Running ora_bench ------------------------------------------------------------
   - travis_fold start "Running_ora_bench"

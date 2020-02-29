@@ -122,6 +122,12 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
 fi
 
 { /bin/bash scripts/run_finalise_benchmark.sh; }
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
+
+EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -129,3 +135,5 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
+
+exit $EXITCODE
