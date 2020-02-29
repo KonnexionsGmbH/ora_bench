@@ -154,6 +154,7 @@ if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
 if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_GODROR_GO%"] == ["true"] (
         echo Setup Go - Start =========================================================== 
+        echo go get github.com/godror/godror
         go get github.com/godror/godror
         if %ERRORLEVEL% NEQ 0 (
             echo ERRORLEVEL : %ERRORLEVEL%

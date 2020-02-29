@@ -135,17 +135,17 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
     - `python -m pip install --upgrade pip`
     - `python -m pip install --upgrade cx_Oracle`
 
-##### 2.2.1.2 `run_bench_all_dbs_props_std`
+##### 2.2.1.2 `run_properties_standard`
 
-This script executes the `run_db_setup_benchmark_props_std` script for each of the databases listed in chapter [Introduction](#introduction) with standard properties.
+This script executes the `run_properties_standard` script for each of the databases listed in chapter [Introduction](#introduction) with standard properties.
 At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark.
-The run log is stored in the `run_bench_all_dbs_props_std.log` file.
+The run log is stored in the `run_properties_standard.log` file.
 
-##### 2.2.1.3 `run_bench_all_dbs_props_var`
+##### 2.2.1.3 `run_properties_variations`
 
-This script executes the `run_db_setup_benchmark_props_var` script for each of the databases listed in chapter [Introduction](#introduction) with variations of properties.
+This script executes the `run_properties_variations` script for each of the databases listed in chapter [Introduction](#introduction) with variations of properties.
 At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark.
-The run log is stored in the `run_bench_all_dbs_props_var.log` file.
+The run log is stored in the `run_properties_variations.log` file.
 
 ##### 2.2.1.4 `run_bench_all_drivers`
 
@@ -179,7 +179,7 @@ The script performs the following tasks:
 
 The run log is stored in the `run_create_image_ora_bench_dev.log` file.
 
-##### 2.2.1.7 `run_db_setup_benchmark_props_std`
+##### 2.2.1.7 `run_properties_standard`
 
 This script is executed for one of the databases listed in in chapter [Introduction](#introduction) with standard properties. 
 The script performs the following tasks:
@@ -200,7 +200,7 @@ The script performs the following tasks:
 
 5. Finally the following sub-script `run_bench_all_drivers` is running.
 
-##### 2.2.1.8 `run_db_setup_benchmark_props_var`
+##### 2.2.1.8 `run_properties_variations`
 
 This script is executed for one of the databases listed in in chapter [Introduction](#introduction). 
 The script performs the following tasks:
@@ -263,7 +263,7 @@ In each build the following tasks are performed:
 
 1. Installation of Elixir, Erlang, Go, Java, Oracle Instant Client and Python.
 2. Creation of the bulk file with the script `run_create_bulk_file`.
-3. Execution of the `run_db_setup_benchmark_props_var`sub-script.
+3. Execution of the `run_properties_variations`sub-script.
 4. Storing the measurement results in the branch `gh-pages`.
 
 ### 2.3 Benchmark Results

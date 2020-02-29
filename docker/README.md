@@ -56,7 +56,7 @@ The Docker container with the Oracle database is located on the host computer an
 
 Now any `ora_bench` script can be executed, for example:
 
-    ./scripts/run_db_setup_benchmark_props_std.sh 
+    ./scripts/run_properties_standard.sh 
 
 Elixir requires special treatment for 'rebar3'. The question `Shall I install rebar3?` must be answered with `Y`:
 

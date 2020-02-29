@@ -157,6 +157,7 @@ fi
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_GODROR_GO" == "true" ]; then
         echo "Setup Go - Start ===========================================================" 
+        echo go get github.com/godror/godror
         go get github.com/godror/godror
         if [ $? -ne 0 ]; then
             echo "ERRORLEVEL : $?"

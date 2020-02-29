@@ -98,7 +98,7 @@ export ORA_BENCH_BULKFILE_EXISTING=true
  if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_db_setup_benchmark_props_std.sh; }
+    { /bin/bash scripts/run_properties_standard.sh; }
     if [ $? -ne 0 ]; then
         echo "ERRORLEVEL : $?"
         exit $?
@@ -108,7 +108,7 @@ fi
 if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_db_setup_benchmark_props_std.sh; }
+    { /bin/bash scripts/run_properties_standard.sh; }
     if [ $? -ne 0 ]; then
         echo "ERRORLEVEL : $?"
         exit $?
@@ -118,7 +118,7 @@ fi
 if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_db_setup_benchmark_props_std.sh; }
+    { /bin/bash scripts/run_properties_standard.sh; }
     if [ $? -ne 0 ]; then
         echo "ERRORLEVEL : $?"
         exit $?

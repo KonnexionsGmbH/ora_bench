@@ -46,7 +46,7 @@ script:
   # Go ---------------------------------------------------------------------------
   - travis_fold start "Setting_up_Go"
   - wget -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
-  - sudo tar -xf go${VERSION_GO}.linux-amd64.tar.gz
+  - tar -xf go${VERSION_GO}.linux-amd64.tar.gz
   - sudo mv go /usr/local
   - export GOPATH=/ora_bench/src_go
   - export GOROOT=/usr/local/go
@@ -150,7 +150,7 @@ script:
   # - gradle wrapper
   # - sudo chmod +x gradlew
   - cd ..
-  - ./scripts/run_db_setup_benchmark_props_var.sh
+  - sudo ./scripts/run_properties_variations.sh
   - travis_fold end   "Running_ora_bench"
 
 after_success:

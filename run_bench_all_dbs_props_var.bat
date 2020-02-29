@@ -102,7 +102,7 @@ echo.
     if ["%ORA_BENCH_RUN_DB_12_2_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-        call scripts\run_db_setup_benchmark_props_std.bat
+        call scripts\run_properties_variations.bat
         if %ERRORLEVEL% NEQ 0 (
             echo ERRORLEVEL : %ERRORLEVEL%
             GOTO EndOfScript
@@ -112,7 +112,7 @@ echo.
     if ["%ORA_BENCH_RUN_DB_18_3_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-        call scripts\run_db_setup_benchmark_props_std.bat
+        call scripts\run_properties_variations.bat
         if %ERRORLEVEL% NEQ 0 (
             echo ERRORLEVEL : %ERRORLEVEL%
             GOTO EndOfScript
@@ -122,7 +122,7 @@ echo.
     if ["%ORA_BENCH_RUN_DB_19_3_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-        call scripts\run_db_setup_benchmark_props_std.bat
+        call scripts\run_properties_variations.bat
         if %ERRORLEVEL% NEQ 0 (
             echo ERRORLEVEL : %ERRORLEVEL%
         )
