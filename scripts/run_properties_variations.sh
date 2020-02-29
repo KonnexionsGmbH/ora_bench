@@ -8,14 +8,17 @@
 
 export ORA_BENCH_MULTIPLE_RUN=true
 
-if [ -z "$RUN_GLOBAL_JAMDB" ]; then
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
     export RUN_GLOBAL_JAMDB=true
-fi
-if [ -z "$RUN_GLOBAL_JAMDB" ]; then
-    export RUN_GLOBAL_JAMDB=true
-fi
-if [ -z "$RUN_GLOBAL_NON_JAMDB" ]; then
     export RUN_GLOBAL_NON_JAMDB=true
+fi
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "false" ]; then
+    export RUN_GLOBAL_JAMDB=false
+    export RUN_GLOBAL_NON_JAMDB=true
+fi
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "true" ]; then
+    export RUN_GLOBAL_JAMDB=true
+    export RUN_GLOBAL_NON_JAMDB=false
 fi
 
 echo "================================================================================"

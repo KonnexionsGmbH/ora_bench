@@ -30,6 +30,19 @@ if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 fi
 
+if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
+    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+fi
+
+if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
+    if [ "$OSTYPE" = "msys" ]; then
+        export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    else
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+    fi
+    export PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
+fi
+
 if [ -z "$RUN_GLOBAL_JAMDB" ]; then
     export RUN_GLOBAL_JAMDB=true
 fi
@@ -55,6 +68,11 @@ echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
+echo "FILE_CONFIGURATION_NAME    : $ORA_BENCH_FILE_CONFIGURATION_NAME"
+echo "--------------------------------------------------------------------------------"
+echo "JAVA_CLASSPATH             : $ORA_BENCH_JAVA_CLASSPATH"
+echo "PATH                       : $PATH"
+echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
@@ -72,18 +90,22 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
         echo "Setup C - Start ============================================================" 
         if [ "$OSTYPE" = "msys" ]; then
+            echo nmake -f src_c/Makefile.win32 clean
             nmake -f src_c/Makefile.win32 clean
             if [ $? -ne 0 ]; then
                 echo "ERRORLEVEL : $?"
                 exit $?
             fi
+            echo nmake -f src_c/Makefile.win32
             nmake -f src_c/Makefile.win32
         else
+            echo make -f src_c/Makefile clean
             make -f src_c/Makefile clean
             if [ $? -ne 0 ]; then
                 echo "ERRORLEVEL : $?"
                 exit $?
             fi
+            echo make -f src_c/Makefile
             make -f src_c/Makefile
         fi
         if [ $? -ne 0 ]; then
@@ -91,6 +113,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
             exit $?
         fi
 
+        echo java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
         java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
         if [ $? -ne 0 ]; then
             echo "ERRORLEVEL : $?"

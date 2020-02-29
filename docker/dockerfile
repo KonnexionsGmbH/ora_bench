@@ -8,16 +8,16 @@ ARG VERSION_ORACLE_INSTANT_CLIENT=19_5
 RUN export DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
- && apt-get install -y \ 
- && apt-get install -y lsb-core
+ && apt-get install -qy \ 
+ && apt-get install -qy lsb-core
 
-RUN apt-get install -y software-properties-common
+RUN apt-get install -qy software-properties-common
 
-RUN apt-get install -y wget \
+RUN apt-get install -qy wget \
  && wget -q https://packages.erlang-solutions.com/erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb \
  && dpkg -i erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
 
-RUN apt-get install -y autoconf \
+RUN apt-get install -qy autoconf \
                        autotools-dev \ 
                        build-essential
 
@@ -26,42 +26,42 @@ RUN wget -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz \
  && mv go /usr/local
 
 RUN apt-get remove -y docker docker-engine docker.io \
- && apt-get install -y docker.io
+ && apt-get install -qy docker.io
 
-RUN apt-get install -y default-jdk
+RUN apt-get install -qy default-jdk
 
 RUN wget -q https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp \
- && apt-get install -y unzip \
+ && apt-get install -qy unzip \
  && unzip -d /opt/gradle /tmp/gradle-*.zip
 
-RUN apt-get install -y git \
+RUN apt-get install -qy git \
  && git config --global credential.helper 'cache --timeout 3600'
 
-RUN apt-get install -y iputils-ping \
+RUN apt-get install -qy iputils-ping \
                        language-pack-de
 
 RUN ln -fs /usr/share/zoneinfo/Europe/Zurich /etc/localtime \
- && apt-get install -y tzdata \
+ && apt-get install -qy tzdata \
  && dpkg-reconfigure --frontend noninteractive tzdata
 
 RUN wget -q https://s3.amazonaws.com/rebar3/rebar3 \
  && chmod +x rebar3 \
  && mv rebar3 /usr/bin \
- && apt-get install -y erlang
+ && apt-get install -qy erlang
 
-RUN apt-get install -y elixir \
+RUN apt-get install -qy elixir \
  && mix local.hex --force \
  && mix local.rebar --force
 
-RUN apt-get install -y libaio1
+RUN apt-get install -qy libaio1
 
-RUN apt-get install -y python3 \
- && apt-get install -y python3-venv \
+RUN apt-get install -qy python3 \
+ && apt-get install -qy python3-venv \
  && wget -q https://bootstrap.pypa.io/get-pip.py \
  && python3 get-pip.py \
  && python3 -m pip install --upgrade cx_Oracle
 
-RUN apt-get install -y dos2unix \
+RUN apt-get install -qy dos2unix \
                        htop \
                        tmux \
                        vim

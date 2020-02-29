@@ -44,7 +44,6 @@ echo ora_bench - Oracle benchmark - all drivers.
 echo --------------------------------------------------------------------------------
 echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
 echo --------------------------------------------------------------------------------
-echo ORA_BENCH_BENCHMARK_JAMDB  : %ORA_BENCH_BENCHMARK_JAMDB%
 echo RUN_GLOBAL_JAMDB           : %RUN_GLOBAL_JAMDB%
 echo RUN_GLOBAL_NON_JAMDB       : %RUN_GLOBAL_NON_JAMDB%
 echo --------------------------------------------------------------------------------

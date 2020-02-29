@@ -21,8 +21,6 @@ if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
     export ORA_BENCH_CONNECTION_PORT=1521
 fi
 
-export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-
 export ORA_BENCH_RUN_DB_12_2_EE=true
 export ORA_BENCH_RUN_DB_18_3_EE=true
 export ORA_BENCH_RUN_DB_19_3_EE=true
@@ -35,15 +33,20 @@ export ORA_BENCH_RUN_ODPI_C=true
 export ORA_BENCH_RUN_ORANIF_ELIXIR=true
 export ORA_BENCH_RUN_ORANIF_ERLANG=true
 
+export ORA_BENCH_PASSWORD_SYS=oracle
+
+if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
+    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+fi
+
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     if [ "$OSTYPE" = "msys" ]; then
         export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
     else
         export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
     fi
+    export PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 fi
-
-export ORA_BENCH_PASSWORD_SYS=oracle
 
 if [ -z "$RUN_GLOBAL_JAMDB" ]; then
     export RUN_GLOBAL_JAMDB=true
@@ -79,7 +82,8 @@ echo "RUN_ODPI_C              : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR       : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG       : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
-echo "JAVA_HOME               : $JAVA_HOME"
+echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
+echo "PATH                    : $PATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"

@@ -30,6 +30,15 @@ if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
 
+if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
+    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
+)
+
+if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
+    set ORA_BENCH_JAVA_CLASSPATH=".;priv\java_jar\*"
+    set PATH="%PATH%;\u01\app\oracle\product\12.2\db_1\jdbc\lib"
+)
+
 if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (
     set RUN_GLOBAL_JAMDB=true
 )    
@@ -54,6 +63,11 @@ echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_ODPI_C                 : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORANIF_ELIXIR          : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
+echo --------------------------------------------------------------------------------
+echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
+echo --------------------------------------------------------------------------------
+echo JAVA_CLASSPATH             : %ORA_BENCH_JAVA_CLASSPATH%
+echo PATH                       : %PATH%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================

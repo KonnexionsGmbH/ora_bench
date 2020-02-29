@@ -27,3 +27,7 @@ plugins {
 repositories {
     jcenter()
 }
+
+tasks.compileJava {
+    options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
+}

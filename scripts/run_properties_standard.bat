@@ -10,18 +10,8 @@ setlocal EnableDelayedExpansion
 
 set ORA_BENCH_MULTIPLE_RUN=true
 
-if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU [""] (
-    set RUN_GLOBAL_JAMDB=true
-    set RUN_GLOBAL_NON_JAMDB=true
-)
-if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["false"] (
-    set RUN_GLOBAL_JAMDB=false
-    set RUN_GLOBAL_NON_JAMDB=true
-)
-if [%ORA_BENCH_BENCHMARK_JAMDB%] EQU ["true"] (
-    set RUN_GLOBAL_JAMDB=true
-    set RUN_GLOBAL_NON_JAMDB=false
-)
+set RUN_GLOBAL_JAMDB=true
+set RUN_GLOBAL_NON_JAMDB=false
 
 echo ================================================================================
 echo Start %0
@@ -30,7 +20,6 @@ echo ora_bench - Oracle benchmark - database setup and Oracle benchmark - standa
 echo --------------------------------------------------------------------------------
 echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
 echo --------------------------------------------------------------------------------
-echo ORA_BENCH_BENCHMARK_JAMDB  : %ORA_BENCH_BENCHMARK_JAMDB%
 echo RUN_GLOBAL_JAMDB           : %RUN_GLOBAL_JAMDB%
 echo RUN_GLOBAL_NON_JAMDB       : %RUN_GLOBAL_NON_JAMDB%
 echo --------------------------------------------------------------------------------
