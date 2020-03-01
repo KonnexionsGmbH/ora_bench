@@ -117,6 +117,7 @@ script:
   - sudo chmod +x *.sh
   - sudo chmod +x scripts/*.sh
   - cd src_java
+  - export PATH=${GOPATH}/bin:${GOROOT}/bin:${GRADLE_HOME}/bin:${PATH}
   - gradle wrapper
   # - sudo chmod +x gradlew
   # - cd ../src_kotlin

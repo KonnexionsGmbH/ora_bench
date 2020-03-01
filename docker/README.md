@@ -12,6 +12,20 @@ The following assumes that the default name `ora_bench_dev' is used for the Dock
 3. Run the script `run_create_image_ora_bench_dev`.
 4. After successful execution (see log file `run_create_image_ora_bench_dev.log`) the Docker container `ora_bench_dev` is running and can be used with the Bash Shell for example (see chapter 6.3).
 
+### 1.1 Script `run_create_image_ora_bench_dev`
+
+This script creates the Docker image `ora_bench_dev` based on `Ubuntu 20.04`.
+The script performs the following tasks:
+
+1. A possibly running Docker container `ora_bench_dev` is stopped and deleted. 
+2. A locally existing Docker image `ora_bench_dev` is deleted. 
+3. A new Docker image `ora_bench_dev` is created based on the Docker file in the directory `priv\docker`.
+4. The new Docker image `ora_bench_dev` is tagged as `konnexionsgmbh/ora_bench_dev` tag.
+5. Then the new Docker image is loaded into the Docker Hub.
+6. Finally any locally existing dangling Docker images are deleted.
+
+The run log is stored in the `run_create_image_ora_bench_dev.log` file.
+
 ## 2 Use Docker image from Docker Hub
 
 An image that already exists on Docker Hub can be downloaded as follows:
@@ -56,22 +70,4 @@ The Docker container with the Oracle database is located on the host computer an
 
 Now any `ora_bench` script can be executed, for example:
 
-    ./scripts/run_properties_standard.sh 
-
-Elixir requires special treatment for 'rebar3'. The question `Shall I install rebar3?` must be answered with `Y`:
-
-	Setup Elixir - Start =======================================================
-	Resolving Hex dependencies...
-	Dependency resolution completed:
-	Unchanged:
-	  connection 1.0.4
-	  db_connection 2.2.0
-	  decimal 1.8.1
-	  ecto 3.2.5
-	  ecto_sql 3.2.2
-	  telemetry 0.4.1
-	All dependencies are up to date
-	Could not find "rebar3", which is needed to build dependency :telemetry
-	I can install a local copy which is just used by Mix
-	Shall I install rebar3? (if running non-interactively, use "mix local.rebar --force") [Yn]
-
+    ./scripts/run_properties_standard.sh > run_properties_standard.log 2>&1
