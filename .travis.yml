@@ -16,11 +16,6 @@ env:
     - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_BENCHMARK_JAMDB=false
     - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_BENCHMARK_JAMDB=true
 
-addons:
-  apt:
-    packages:
-      - oracle-java11-set-default
-        
 script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
@@ -60,11 +55,11 @@ script:
   - export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}
   - travis_fold end   "Setting_up_Go"
 
-#  # Java -------------------------------------------------------------------------
-#  - travis_fold start "Setting_up_Java"
-#  - sudo apt-get remove “package-name”
-#  - sudo apt install -q openjdk-${VERSION_JAVA}-jdk
-#  - travis_fold end   "Setting_up_Java"
+  # Java -------------------------------------------------------------------------
+  - travis_fold start "Setting_up_Java"
+# - sudo apt-get remove “package-name”
+  - sudo apt install -q openjdk-${VERSION_JAVA}-jdk
+  - travis_fold end   "Setting_up_Java"
     
   # Gradle -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Gradle"
