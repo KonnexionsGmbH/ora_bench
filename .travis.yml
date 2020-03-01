@@ -19,7 +19,6 @@ env:
 script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
-  - export VERSION_ERLANG_SOLUTIONS=2.0
   - export VERSION_GO=1.14
   - export VERSION_GRADLE=6.2
   - export VERSION_ORACLE_INSTANT_CLIENT=19_5
@@ -30,10 +29,16 @@ script:
 
   # Elixir -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Elixir"
-  - wget -q https://packages.erlang-solutions.com/erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
-  - sudo apt update
-  - sudo dpkg -i erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
-  - sudo apt-get install -q elixir
+  - git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+  - cd ~/.asdf
+  - git checkout "$(git describe --abbrev=0 --tags)"
+  - echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+  - echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+  - cd /home/travis/build/KonnexionsGmbH/ora_bench
+  - . ~/.bashrc
+  - asdf plugin-add Elixir https://github.com/asdf-vm/asdf-elixir
+  - asdf install Elixir 1.9.4   
+  - asdf global Elixir 1.9.4
   - mix local.hex --force
   - mix local.rebar --force
   - travis_fold end   "Setting_up_Elixir"
@@ -46,8 +51,6 @@ script:
   - sudo mv go /usr/local
   - export GOPATH=/ora_bench/src_go
   - export GOROOT=/usr/local/go
-  - export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}
-  - echo $PATH
   - travis_fold end   "Setting_up_Go"
 
   # Java -------------------------------------------------------------------------
@@ -61,15 +64,11 @@ script:
   - sudo apt update
   - sudo unzip -d /opt/gradle /tmp/gradle-*.zip
   - export GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}
-  - export PATH=${GRADLE_HOME}/bin:${PATH}
-  - echo $PATH
   - travis_fold end   "Setting_up_Gradle"
 
   # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
   - travis_fold start "Setting_up_Oracle Instant Client"
   - sudo apt-get install -q libaio1
-  - export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}:$LD_LIBRARY_PATH
-  - echo $LD_LIBRARY_PATH
   - sudo chmod +x $PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}/sqlplus
   - travis_fold end   "Setting_up_Oracle Instant Client"
 
@@ -124,7 +123,10 @@ script:
   # - gradle wrapper
   # - sudo chmod +x gradlew
   - cd ..
-  - . ~/.bashrc
+  - export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}:$LD_LIBRARY_PATH
+  - echo $LD_LIBRARY_PATH
+  - export PATH=${GOPATH}/bin:${GOROOT}/bin:${GRADLE_HOME}/bin:${PATH}
+  - echo $PATH
   - sudo ./scripts/run_properties_variations.sh
   - travis_fold end   "Running_ora_bench"
 
