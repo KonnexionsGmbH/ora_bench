@@ -24,6 +24,7 @@ script:
   - export VERSION_GRADLE=6.2
   - export VERSION_ORACLE_INSTANT_CLIENT=19_5
   - sudo apt update
+  - sudo apt-get install -qy
   - sudo apt install -q software-properties-common
   - sudo apt-get install -q lsb-core
   - travis_fold end   "Prepare_installation_process"
@@ -47,7 +48,6 @@ script:
   # Go ---------------------------------------------------------------------------
   - travis_fold start "Setting_up_Go"
   - wget -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
-  - sudo apt update
   - tar -xf go${VERSION_GO}.linux-amd64.tar.gz
   - sudo mv go /usr/local
   - export GOPATH=/ora_bench/src_go
@@ -63,7 +63,6 @@ script:
   # Gradle -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Gradle"
   - wget -q https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp
-  - sudo apt update
   - sudo unzip -d /opt/gradle /tmp/gradle-*.zip
   - export GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}
   - export PATH=${GRADLE_HOME}/bin:${PATH}
