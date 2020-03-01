@@ -123,10 +123,6 @@ script:
   # - gradle wrapper
   # - sudo chmod +x gradlew
   - cd ..
-  - export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}:$LD_LIBRARY_PATH
-  - echo $LD_LIBRARY_PATH
-  - export PATH=${GOPATH}/bin:${GOROOT}/bin:${GRADLE_HOME}/bin:${PATH}
-  - echo $PATH
   - sudo ./scripts/run_properties_variations.sh
   - travis_fold end   "Running_ora_bench"
 
