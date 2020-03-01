@@ -59,11 +59,6 @@ if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "true" ]; then
     export RUN_GLOBAL_NON_JAMDB=false
 fi
 
-if [ -z "$LD_LIBRARY_PATH" ]; then
-    export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}
-    export PATH=${GOPATH}/bin:${GOROOT}/bin:${GRADLE_HOME}/bin:${PATH}
-fi
-
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"

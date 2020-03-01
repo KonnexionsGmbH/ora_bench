@@ -19,6 +19,7 @@ env:
 script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
+  - export VERSION_ELIXIR=1.9.4
   - export VERSION_GO=1.14
   - export VERSION_GRADLE=6.2
   - export VERSION_ORACLE_INSTANT_CLIENT=19_5
@@ -37,8 +38,8 @@ script:
   - cd /home/travis/build/KonnexionsGmbH/ora_bench
   - . ~/.bashrc
   - asdf plugin-add Elixir https://github.com/asdf-vm/asdf-elixir
-  - asdf install Elixir 1.9.4   
-  - asdf global Elixir 1.9.4
+  - asdf install Elixir ${VERSION_ELIXIR}   
+  - asdf global Elixir ${VERSION_ELIXIR}
   - mix local.hex --force
   - mix local.rebar --force
   - travis_fold end   "Setting_up_Elixir"
@@ -51,6 +52,7 @@ script:
   - sudo mv go /usr/local
   - export GOPATH=/ora_bench/src_go
   - export GOROOT=/usr/local/go
+  - export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}
   - travis_fold end   "Setting_up_Go"
 
   # Java -------------------------------------------------------------------------
@@ -64,12 +66,14 @@ script:
   - sudo apt update
   - sudo unzip -d /opt/gradle /tmp/gradle-*.zip
   - export GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}
+  - export PATH=${GRADLE_HOME}/bin:${PATH}
   - travis_fold end   "Setting_up_Gradle"
 
   # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
   - travis_fold start "Setting_up_Oracle Instant Client"
   - sudo apt-get install -q libaio1
   - sudo chmod +x $PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}/sqlplus
+  - export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}
   - travis_fold end   "Setting_up_Oracle Instant Client"
 
   # Python -----------------------------------------------------------------------
@@ -117,14 +121,13 @@ script:
   - sudo chmod +x *.sh
   - sudo chmod +x scripts/*.sh
   - cd src_java
-  - export PATH=${GOPATH}/bin:${GOROOT}/bin:${GRADLE_HOME}/bin:${PATH}
   - gradle wrapper
   # - sudo chmod +x gradlew
   # - cd ../src_kotlin
   # - gradle wrapper
   # - sudo chmod +x gradlew
   - cd ..
-  - sudo ./scripts/run_properties_variations.sh
+  - ./scripts/run_properties_variations.sh
   - travis_fold end   "Running_ora_bench"
 
 after_success:
