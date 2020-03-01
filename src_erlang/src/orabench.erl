@@ -1,4 +1,5 @@
 -module(orabench).
+-include_lib("kernel/include/file.hrl").
 
 %% API exports
 -export([main/1, insert_partition/5, select_partition/4]).
@@ -9,9 +10,11 @@
 %%====================================================================
 %% API functions
 %%====================================================================
+-define(TRACE, io:format("----> ~p ~ps~n", [{?MODULE, ?FUNCTION_NAME, ?LINE}, timer:now_diff(os:timestamp(), S) div 1000000])).
 
 %% escript Entry point
 main([ConfigFile, Driver]) ->
+S = os:timestamp(),  
   io:format(
     "~n[~p:~p] Start ~p (~s)~n", [?FUNCTION_NAME, ?LINE, ?MODULE, Driver]
   ),
@@ -48,13 +51,19 @@ main([ConfigFile, Driver]) ->
     sql_insert := SqlInsert,
     sql_select := SqlSelect
   } = Config,
+  {ok, FI} = file:read_file_info(BulkFile),
   {ok, Fd} = file:open(BulkFile, [read, raw, binary, {read_ahead, 1024 * 1024}]),
+?TRACE,
+  io:format("[~p:~p:~p] Loading data...", [?MODULE, ?FUNCTION_NAME, ?LINE]),
   Rows = load_data(
-    Driver, Fd, list_to_binary(Header), BulkDelimiter, Partitions, #{}
+    S, Driver, FI, Fd, list_to_binary(Header), BulkDelimiter, Partitions, #{}, 0, 0
   ),
+?TRACE,
   put(rows, Rows),
   put(conf, Config),
+?TRACE,
   RowCount = length(lists:merge(maps:values(Rows))),
+?TRACE,
   if RowCount /= FBulkSz ->
       io:format("First = ~p~nLast = ~p~n", [hd(Rows), lists:last(Rows)]),
       error({loaded_rows, length(Rows), 'of', FBulkSz});
@@ -71,10 +80,12 @@ main([ConfigFile, Driver]) ->
     end,
     Rows
   ),
+?TRACE,
   #{
     startTime := StartTs,
     endTime := EndTs
   } = Results = run_trials(Trials),
+?TRACE,
   BMDrv = case Driver of
     "oranif" ->
       ok = application:load(oranif),
@@ -85,12 +96,14 @@ main([ConfigFile, Driver]) ->
       {ok, JamDBVsn} = application:get_key(jamdb_oracle, vsn),
       lists:flatten(io_lib:format("jamdb_oracle (Version ~s)", [JamDBVsn]))
   end,
+?TRACE,
   BMMod = lists:flatten(
     io_lib:format(
       "OTP ~s, erts-~s",
       [erlang:system_info(otp_release), erlang:system_info(version)]
     )
   ),
+?TRACE,
   RowFmt = string:join(
     [
       BMRelease, BMId, BMComment, BMHost, integer_to_list(BMCores), BMOs,
@@ -108,11 +121,13 @@ main([ConfigFile, Driver]) ->
     ],
     ResultDelim
   ),
+?TRACE,
   case filelib:is_regular(ResultFile) of
     false -> ok = file:write_file(ResultFile, ResultHeader ++ "\n");
     _ -> ok
   end,
   {ok, RFd} = file:open(ResultFile, [append, binary]),
+?TRACE,
   DurationMicros = timer:now_diff(EndTs, StartTs),
   maps:map(
     fun(
@@ -129,6 +144,7 @@ main([ConfigFile, Driver]) ->
         end,
         {[], [], 0}, maps:without([startTime, endTime], Insrts)
       ),
+?TRACE,
       InsMaxET = lists:max(InsETs),
       InsMinST = lists:min(InsSTs),
       InsDur = timer:now_diff(InsMaxET, InsMinST),
@@ -147,6 +163,7 @@ main([ConfigFile, Driver]) ->
         end,
         {[], [], 0}, maps:without([startTime, endTime], Slcts)
       ),
+?TRACE,
       SelMaxET = lists:max(SelETs),
       SelMinST = lists:min(SelSTs),
       SelDur = timer:now_diff(SelMaxET, SelMinST),
@@ -155,6 +172,7 @@ main([ConfigFile, Driver]) ->
         [Trial, SqlSelect, 'query', ts_str(SelMinST), ts_str(SelMaxET),
         round(SelDur / 1000000), SelDur * 1000]
       ),
+?TRACE,
       DMs = timer:now_diff(ETs, STs),
       ok = io:format(
         RFd, RowFmt,
@@ -529,13 +547,27 @@ select_partition(
     }
   }.
 
-load_data(Driver, Fd, Header, BulkDelimiter, Partitions, Rows) ->
+load_data(
+  S, Driver, FI, Fd, Header, BulkDelimiter, Partitions, Rows, BytesReadCount,
+  ReadPerCent
+) ->  
   case file:read_line(Fd) of
-    eof -> Rows;
+    eof ->
+      io:format("~n"),
+      Rows;
     {ok, Line0} ->
+      BytesReadCount1 = BytesReadCount + byte_size(Line0),
+      ReadPerCent1 = (BytesReadCount1 / FI#file_info.size) * 100,
+      if round(ReadPerCent1) /= round(ReadPerCent) ->
+        io:format("~p% (~ps)...", [round(ReadPerCent1), timer:now_diff(os:timestamp(), S) div 1000000]);
+      true -> ok
+      end,
       case string:trim(Line0, both, "\r\n") of
         Header ->
-          load_data(Driver, Fd, Header, BulkDelimiter, Partitions, Rows);
+          load_data(
+            S, Driver, FI, Fd, Header, BulkDelimiter, Partitions, Rows,
+            BytesReadCount1, ReadPerCent1
+          );
         Line ->
           [<<KeyByte1:8, KeyByte2:8, _/binary>> = Key, Data] = string:split(
             Line, BulkDelimiter, all
@@ -543,13 +575,14 @@ load_data(Driver, Fd, Header, BulkDelimiter, Partitions, Rows) ->
           Partition = (KeyByte1 * 256 + KeyByte2) rem Partitions,
           OldData = maps:get(Partition, Rows, []),
           load_data(
-            Driver, Fd, Header, BulkDelimiter, Partitions,
+            S, Driver, FI, Fd, Header, BulkDelimiter, Partitions,
             Rows#{
               Partition => case Driver of
                 "oranif" -> [{Key, Data} | OldData];
                 "jamdb" -> [[Key, Data] | OldData]
               end
-            }
+            },
+            BytesReadCount1, ReadPerCent1
           )
       end
   end.
