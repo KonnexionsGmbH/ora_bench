@@ -55,30 +55,33 @@ S = os:timestamp(),
   {ok, Fd} = file:open(BulkFile, [read, raw, binary, {read_ahead, 1024 * 1024}]),
 ?TRACE,
   io:format("[~p:~p:~p] Loading data...", [?MODULE, ?FUNCTION_NAME, ?LINE]),
-  Rows = load_data(
+  ets:new(bulk_data, [set, protected, named_table]),
+  load_data(
     S, Driver, FI, Fd, list_to_binary(Header), BulkDelimiter, Partitions, #{}, 0, 0
   ),
 ?TRACE,
-  put(rows, Rows),
   put(conf, Config),
 ?TRACE,
-  RowCount = length(lists:merge(maps:values(Rows))),
+  RowCount = ets:info(bulk_data, size),
 ?TRACE,
   if RowCount /= FBulkSz ->
-      io:format("First = ~p~nLast = ~p~n", [hd(Rows), lists:last(Rows)]),
-      error({loaded_rows, length(Rows), 'of', FBulkSz});
+      io:format(
+        "First = ~p~nLast = ~p~n",
+        [ets:lookup(bulk_data, ets:first(bulk_data)),
+         ets:lookup(bulk_data, ets:first(bulk_data))]
+      ),
+      error({loaded_rows, RowCount, 'of', FBulkSz});
     true -> ok
   end,
   ok = file:close(Fd),
-  _ = maps:map(
-    fun(Partition, PartitionRows) ->
+  lists:foreach(
+    fun(Partition) ->
       io:format(
         "[~p:~p:~p] Partition ~p contains ~p rows~n",
-      [?MODULE, ?FUNCTION_NAME, ?LINE, Partition, length(PartitionRows)]
-      ),
-      PartitionRows
-    end,
-    Rows
+        [?MODULE, ?FUNCTION_NAME, ?LINE, Partition + 1,
+         ets:select_count(bulk_data, [{{'_', Partition, '_'}, [], [true]}])]
+      )
+    end, lists:seq(0, Partitions - 1)
   ),
 ?TRACE,
   #{
@@ -363,13 +366,12 @@ run_trials(Trial, Trials, Ctx, Stats) ->
   ).
 
 run_insert(Ctx) ->  
-  Rows = get(rows),
   #{benchmark_number_partitions := Partitions} = Config = get(conf),
   Master = self(),
   Threads = [
     spawn_link(
       ?MODULE, insert_partition,
-      [Partition, maps:get(Partition, Rows), Ctx, Master, Config]
+      [Partition, Ctx, Master, Config]
     ) || Partition <- lists:seq(0, Partitions - 1)
   ],
   thread_join(Threads).
@@ -385,7 +387,7 @@ run_select(Ctx) ->
   thread_join(Threads).
 
 insert_partition(
-  Partition, Rows, Ctx, Master,
+  Partition, Ctx, Master,
   #{
     connection_user := User,
     connection_password := Password,
@@ -573,15 +575,16 @@ load_data(
             Line, BulkDelimiter, all
           ),
           Partition = (KeyByte1 * 256 + KeyByte2) rem Partitions,
-          OldData = maps:get(Partition, Rows, []),
+          true = ets:insert(bulk_data, {Key, Partition, Data}),
+          %OldData = maps:get(Partition, Rows, []),
           load_data(
-            S, Driver, FI, Fd, Header, BulkDelimiter, Partitions,
-            Rows#{
-              Partition => case Driver of
-                "oranif" -> [{Key, Data} | OldData];
-                "jamdb" -> [[Key, Data] | OldData]
-              end
-            },
+            S, Driver, FI, Fd, Header, BulkDelimiter, Partitions, Rows,
+            %Rows#{
+            %  Partition => case Driver of
+            %    "oranif" -> [{Key, Data} | OldData];
+            %    "jamdb" -> [[Key, Data] | OldData]
+            %  end
+            %},
             BytesReadCount1, ReadPerCent1
           )
       end
