@@ -16,6 +16,11 @@ env:
     - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_BENCHMARK_JAMDB=false
     - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_BENCHMARK_JAMDB=true
 
+before_install:
+  - sudo add-apt-repository -y ppa:openjdk-r/ppa
+  - sudo apt update -q
+  - sudo apt install -q openjdk-${VERSION_JAVA}-jdk
+
 script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
