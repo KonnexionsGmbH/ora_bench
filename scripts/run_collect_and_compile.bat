@@ -83,6 +83,12 @@ if NOT ["%ORA_BENCH_BULKFILE_EXISTING%"] == ["true"] (
 if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
         echo Setup C - Start ============================================================ 
+        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
+
         nmake -f src_c\Makefile.win32 clean
         if %ERRORLEVEL% NEQ 0 (
             echo ERRORLEVEL : %ERRORLEVEL%
@@ -90,12 +96,6 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         )
         
         nmake -f src_c\Makefile.win32
-        if %ERRORLEVEL% NEQ 0 (
-            echo ERRORLEVEL : %ERRORLEVEL%
-            GOTO EndOfScript
-        )
-    
-        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
         if %ERRORLEVEL% NEQ 0 (
             echo ERRORLEVEL : %ERRORLEVEL%
             GOTO EndOfScript
@@ -166,17 +166,6 @@ if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
 )    
 
 if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
-    if ["%ORA_BENCH_RUN_GODROR_GO%"] == ["true"] (
-        echo Setup Go - Start =========================================================== 
-        echo go get github.com/godror/godror
-        go get github.com/godror/godror
-        if %ERRORLEVEL% NEQ 0 (
-            echo ERRORLEVEL : %ERRORLEVEL%
-            GOTO EndOfScript
-        )
-        echo Setup Go - End   =========================================================== 
-    )    
-    
     if ["%ORA_BENCH_RUN_GODROR_GO%"] == ["true"] (
         echo Setup Go - Start =========================================================== 
         go get github.com/godror/godror

@@ -89,32 +89,27 @@ fi
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
         echo "Setup C - Start ============================================================" 
-        if [ "$OSTYPE" = "msys" ]; then
-            echo nmake -f src_c/Makefile.win32 clean
-            nmake -f src_c/Makefile.win32 clean
-            if [ $? -ne 0 ]; then
-                echo "ERRORLEVEL : $?"
-                exit $?
-            fi
-            echo nmake -f src_c/Makefile.win32
-            nmake -f src_c/Makefile.win32
-        else
-            echo make -f src_c/Makefile clean
-            make -f src_c/Makefile clean
-            if [ $? -ne 0 ]; then
-                echo "ERRORLEVEL : $?"
-                exit $?
-            fi
-            echo make -f src_c/Makefile
-            make -f src_c/Makefile
-        fi
+        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
         if [ $? -ne 0 ]; then
             echo "ERRORLEVEL : $?"
             exit $?
         fi
 
-        echo java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
-        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
+        if [ "$OSTYPE" = "msys" ]; then
+            nmake -f src_c/Makefile.win32 clean
+            if [ $? -ne 0 ]; then
+                echo "ERRORLEVEL : $?"
+                exit $?
+            fi
+            nmake -f src_c/Makefile.win32
+        else
+            make -f src_c/Makefile clean
+            if [ $? -ne 0 ]; then
+                echo "ERRORLEVEL : $?"
+                exit $?
+            fi
+            make -f src_c/Makefile
+        fi
         if [ $? -ne 0 ]; then
             echo "ERRORLEVEL : $?"
             exit $?
