@@ -135,119 +135,19 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
     - `python -m pip install --upgrade pip`
     - `python -m pip install --upgrade cx_Oracle`
 
-##### 2.2.1.2 `run_properties_standard`
+##### 2.2.1.2 `run_bench_all_dbs_props_std`
 
-This script executes the `run_properties_standard` script for each of the databases listed in chapter [Introduction](#introduction) with standard properties.
-At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark.
-The run log is stored in the `run_properties_standard.log` file.
+This script executes the `run_properties_standard` script for each of the databases listed in chapter Introduction with standard properties. 
+At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark. 
+The run log is stored in the `run_bench_all_dbs_props_std.log` file.
 
-##### 2.2.1.3 `run_properties_variations`
+##### 2.2.1.3 `run_bench_all_dbs_props_var`
 
-This script executes the `run_properties_variations` script for each of the databases listed in chapter [Introduction](#introduction) with variations of properties.
-At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark.
-The run log is stored in the `run_properties_variations.log` file.
+This script executes the `run_properties_variations` script for each of the databases listed in chapter Introduction with variations of properties. 
+At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark. 
+The run log is stored in the `run_bench_all_dbs_props_var.log` file.
 
-##### 2.2.1.4 `run_bench_all_drivers`
-
-This script executes the following driver specific sub-scripts:
-
-- `run_bench_cx_oracle`
-- `run_bench_godror`
-- `run_bench_jamdb_oracle`
-- `run_bench_jdbc`
-- `run_bench_odpi`
-- `run_bench_oranif`
-
-The possible exclusion of drivers made before is taken into account.
-
-##### 2.2.1.5 `run_create_bulk_file`
-
-This scripts is used to create a bulk file (see chapter 2.4).
-
-##### 2.2.1.6 `run_create_image_ora_bench_dev`
-
-This script creates the Docker image `ora_bench_dev` based on `Ubuntu 19.10`.
-The script performs the following tasks:
-
-1. A possibly running Docker container `ora_bench_dev` is stopped and deleted. 
-2. A locally existing Docker image `ora_bench_dev` is deleted. 
-3. A new Docker image `ora_bench_dev` is created based on the Docker file in the directory `priv\docker`.
-4. The new Docker image `ora_bench_dev` is tagged as `konnexionsgmbh/ora_bench_dev` tag.
-5. Then the new Docker image is loaded into the Docker Hub.
-6. Subsequently, any locally existing dangling Docker images are deleted.
-7. Finally the Docker container `ora_bench_dev` is created.
-
-The run log is stored in the `run_create_image_ora_bench_dev.log` file.
-
-##### 2.2.1.7 `run_properties_standard`
-
-This script is executed for one of the databases listed in in chapter [Introduction](#introduction) with standard properties. 
-The script performs the following tasks:
-
-1. Depending on the selected drivers, any necessary compilations for the programming languages C, Elixir and Erlang are performed.
-2. A possibly running Docker container is stopped and deleted. 
-3. The Docker container for the selected database version is started.
-4. Then the database is prepared for the benchmark run with the following steps:
-
-  - If not yet available, create the database user according to the parameters `connection.user` and `connection.password`.
-  - Grant this database user the following rights:
-
-    - `ALTER SYSTEM`.
-    - `CREATE PROCEDURE`
-    - `CREATE SESSION`
-    - `CREATE TABLE`
-    - `UNLIMITED TABLESPACE`
-
-5. Finally the following sub-script `run_bench_all_drivers` is running.
-
-##### 2.2.1.8 `run_properties_variations`
-
-This script is executed for one of the databases listed in in chapter [Introduction](#introduction). 
-The script performs the following tasks:
-
-1. Depending on the selected drivers, any necessary compilations for the programming languages C, Elixir and Erlang are performed.
-2. A possibly running Docker container is stopped and deleted. 
-3. The Docker container for the selected database version is started.
-4. Then the database is prepared for the benchmark run with the following steps:
-
-  - If not yet available, create the database user according to the parameters `connection.user` and `connection.password`.
-  - Grant this database user the following rights:
-
-    - `ALTER SYSTEM`.
-    - `CREATE PROCEDURE`
-    - `CREATE SESSION`
-    - `CREATE TABLE`
-    - `UNLIMITED TABLESPACE`
-
-5. Finally the sub-script `run_bench_all_drivers` is running for each of the following parameter combinations:
-
-| batch.size    | core.multiplier | transaction.size | 
-| :---          | :---            | :---             | 
-| default value | default value   | default value    |
-| default value | 1               | default value    |
-| 0             | default value   | default value    |
-| 0             | default value   | 0                |
-| 0             | 1               | default value    |
-| 0             | 1               | 0                |
-
-
-##### 2.2.1.9 `run_finalise_benchmark`
-
-In this script, OraBench.java is used to reset the following configuration parameters to the value 'n/a':
-
-- `benchmark.comment`
-- `benchmark.database`
-- `benchmark.driver`
-- `benchmark.host.name`
-- `benchmark.id`
-- `benchmark.language`
-- `benchmark.number.cores`
-- `benchmark.os`
-- `benchmark.user.name`
-- `connection.service`
-- `sql.create`
-
-##### 2.2.1.10 `run_bench_<driver>_<programming language>`
+##### 2.2.1.4 `run_bench_<driver>_<programming language>`
 
 The driver and programming language related scripts, such as `run_bench_jdbc` in the `src_java` directory, 
 first execute the insert statements and then the select statements in each trial with the data from the bulk file.
