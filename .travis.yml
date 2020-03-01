@@ -58,7 +58,7 @@ script:
   # Java -------------------------------------------------------------------------
   - travis_fold start "Setting_up_Java"
   - sudo add-apt-repository ppa:openjdk-r/ppa
-  - sudo apt-get update -q \
+  - sudo apt-get update -q
   - sudo apt install -q openjdk-${VERSION_JAVA}-jdk
   - travis_fold end   "Setting_up_Java"
     
