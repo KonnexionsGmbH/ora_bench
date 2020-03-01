@@ -31,6 +31,7 @@ script:
   # Elixir -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Elixir"
   - wget -q https://packages.erlang-solutions.com/erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
+  - sudo apt update
   - sudo dpkg -i erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
   - sudo apt-get install -q elixir
   - mix local.hex --force
@@ -40,11 +41,13 @@ script:
   # Go ---------------------------------------------------------------------------
   - travis_fold start "Setting_up_Go"
   - wget -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
+  - sudo apt update
   - tar -xf go${VERSION_GO}.linux-amd64.tar.gz
   - sudo mv go /usr/local
   - export GOPATH=/ora_bench/src_go
   - export GOROOT=/usr/local/go
   - export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}
+  - echo $PATH
   - travis_fold end   "Setting_up_Go"
 
   # Java -------------------------------------------------------------------------
@@ -54,16 +57,19 @@ script:
     
   # Gradle -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Gradle"
-  - wget -q https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp  
+  - wget -q https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp
+  - sudo apt update
   - sudo unzip -d /opt/gradle /tmp/gradle-*.zip
   - export GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}
   - export PATH=${GRADLE_HOME}/bin:${PATH}
+  - echo $PATH
   - travis_fold end   "Setting_up_Gradle"
 
   # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
   - travis_fold start "Setting_up_Oracle Instant Client"
   - sudo apt-get install -q libaio1
   - export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}:$LD_LIBRARY_PATH
+  - echo $LD_LIBRARY_PATH
   - sudo chmod +x $PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}/sqlplus
   - travis_fold end   "Setting_up_Oracle Instant Client"
 
