@@ -8,6 +8,44 @@
 
 export ORA_BENCH_MULTIPLE_RUN=true
 
+if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
+fi
+if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
+    export ORA_BENCH_CONNECTION_HOST=0.0.0.0
+fi
+if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
+    export ORA_BENCH_CONNECTION_PORT=1521
+fi
+if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
+    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+fi
+if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
+    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+fi
+if [ -z "$ORA_BENCH_PASSWORD_SYS" ]; then
+    export ORA_BENCH_PASSWORD_SYS=oracle
+fi
+
+if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
+    export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
+fi
+if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" ]; then
+    export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
+fi
+if [ -z "$ORA_BENCH_RUN_JDBC_JAVA" ]; then
+    export ORA_BENCH_RUN_JDBC_JAVA=true
+fi
+if [ -z "$ORA_BENCH_RUN_ODPI_C" ]; then
+    export ORA_BENCH_RUN_ODPI_C=true
+fi
+if [ -z "$ORA_BENCH_RUN_ORANIF_ELIXIR" ]; then
+    export ORA_BENCH_RUN_ORANIF_ELIXIR=true
+fi
+if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
+    export ORA_BENCH_RUN_ORANIF_ERLANG=true
+fi
+
 if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
     export RUN_GLOBAL_JAMDB=true
     export RUN_GLOBAL_NON_JAMDB=true

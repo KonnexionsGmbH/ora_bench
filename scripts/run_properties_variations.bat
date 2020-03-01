@@ -10,8 +10,50 @@ setlocal EnableDelayedExpansion
 
 set ORA_BENCH_MULTIPLE_RUN=true
 
-set RUN_GLOBAL_JAMDB=true
-set RUN_GLOBAL_NON_JAMDB=true
+if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (
+    set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
+)
+if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
+    set ORA_BENCH_CONNECTION_HOST=0.0.0.0
+)
+if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
+    set ORA_BENCH_CONNECTION_PORT=1521
+)
+if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
+    set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+)
+if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
+    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+)
+if ["%ORA_BENCH_PASSWORD_SYS%"] EQU [""] (
+    set ORA_BENCH_PASSWORD_SYS=oracle
+)
+
+if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
+    set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
+)
+if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU [""] (
+    set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
+)
+if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU [""] (
+    set ORA_BENCH_RUN_JDBC_JAVA=true
+)
+if ["%ORA_BENCH_RUN_ODPI_C%"] EQU [""] (
+    set ORA_BENCH_RUN_ODPI_C=true
+)
+if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU [""] (
+    set ORA_BENCH_RUN_ORANIF_ELIXIR=true
+)
+if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
+    set ORA_BENCH_RUN_ORANIF_ERLANG=true
+)
+
+if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (
+    set RUN_GLOBAL_JAMDB=true
+)    
+if ["%RUN_GLOBAL_NON_JAMDB%"] EQU [""] (
+    set RUN_GLOBAL_NON_JAMDB=true
+)
 
 echo ================================================================================
 echo Start %0
