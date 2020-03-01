@@ -31,7 +31,7 @@ script:
   # Elixir -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Elixir"
   - wget -q https://packages.erlang-solutions.com/erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
-  - dpkg -i erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
+  - sudo dpkg -i erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
   - sudo apt-get install -q elixir
   - mix local.hex --force
   - mix local.rebar --force
