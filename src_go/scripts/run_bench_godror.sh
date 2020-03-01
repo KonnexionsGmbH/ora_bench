@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_oranif.sh: Oracle Benchmark based on Erlang.
+# run_bench_godror.sh: Oracle Benchmark based on Go.
 #
 # ------------------------------------------------------------------------------
 
@@ -18,12 +18,6 @@ fi
 if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
-if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
-    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-fi
-if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"    
-fi
 
 echo "================================================================================"
 echo "Start $0"
@@ -31,6 +25,7 @@ echo "--------------------------------------------------------------------------
 echo "ora_bench - Oracle benchmark - godror and GO."
 echo "--------------------------------------------------------------------------------"
 echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
+echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE         : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST            : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT            : $ORA_BENCH_CONNECTION_PORT"
@@ -45,7 +40,19 @@ echo "==========================================================================
 
 EXITCODE="0"
 
+if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
+    go get github.com/godror/godror
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
+fi
+
 go run src_go/orabench.go priv/properties/ora_bench.properties
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
 
 EXITCODE=$?
 

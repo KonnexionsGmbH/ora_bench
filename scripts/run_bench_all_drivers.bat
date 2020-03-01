@@ -8,10 +8,11 @@ rem ----------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
-set ORA_BENCH_MULTIPLE_RUN=true
-
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
+)
+if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU [""] (
+    set ORA_BENCH_RUN_GODROR_GO=true
 )
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU [""] (
     set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
@@ -41,11 +42,13 @@ echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - all drivers.
 echo --------------------------------------------------------------------------------
-echo ORA_BENCH_BENCHMARK_JAMDB  : %ORA_BENCH_BENCHMARK_JAMDB%
+echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
+echo --------------------------------------------------------------------------------
 echo RUN_GLOBAL_JAMDB           : %RUN_GLOBAL_JAMDB%
 echo RUN_GLOBAL_NON_JAMDB       : %RUN_GLOBAL_NON_JAMDB%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
+echo RUN_GODROR_GO              : %ORA_BENCH_RUN_GODROR_GO%
 echo RUN_JAMDB_ORACLE_ERLANG    : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
 echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_ODPI_C                 : %ORA_BENCH_RUN_ODPI_C%
@@ -55,15 +58,17 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-call scripts\run_create_bulk_file.bat
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
-)
-
 if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
         call src_python\scripts\run_bench_cx_oracle.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo ERRORLEVEL : %ERRORLEVEL%
+            GOTO EndOfScript
+        )
+    )
+    
+    if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU ["true"] (
+        call src_go\scripts\run_bench_godror.bat
         if %ERRORLEVEL% NEQ 0 (
             echo ERRORLEVEL : %ERRORLEVEL%
             GOTO EndOfScript

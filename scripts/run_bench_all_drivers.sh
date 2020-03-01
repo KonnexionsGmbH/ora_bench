@@ -6,10 +6,11 @@
 #
 # ------------------------------------------------------------------------------
 
-export ORA_BENCH_MULTIPLE_RUN=true
-
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
+fi
+if [ -z "$ORA_BENCH_RUN_GODROR_GO" ]; then
+    export ORA_BENCH_RUN_GODROR_GO=true
 fi
 if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" ]; then
     export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
@@ -27,11 +28,17 @@ if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 fi
 
-if [ -z "$RUN_GLOBAL_JAMDB" ]; then
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
     export RUN_GLOBAL_JAMDB=true
-fi
-if [ -z "$RUN_GLOBAL_NON_JAMDB" ]; then
     export RUN_GLOBAL_NON_JAMDB=true
+fi
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "false" ]; then
+    export RUN_GLOBAL_JAMDB=false
+    export RUN_GLOBAL_NON_JAMDB=true
+fi
+if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "true" ]; then
+    export RUN_GLOBAL_JAMDB=true
+    export RUN_GLOBAL_NON_JAMDB=false
 fi
 
 echo "================================================================================"
@@ -39,11 +46,14 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - all drivers."
 echo "--------------------------------------------------------------------------------"
+echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
+echo "--------------------------------------------------------------------------------"
 echo "ORA_BENCH_BENCHMARK_JAMDB  : $ORA_BENCH_BENCHMARK_JAMDB"
 echo "RUN_GLOBAL_JAMDB           : $RUN_GLOBAL_JAMDB"
 echo "RUN_GLOBAL_NON_JAMDB       : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
+echo "RUN_GODROR_GO              : $ORA_BENCH_RUN_GODROR_GO"
 echo "RUN_JAMDB_ORACLE_ERLANG    : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
@@ -55,15 +65,17 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-{ /bin/bash scripts/run_create_bulk_file.sh; }
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
-fi
-
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
         { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }
+        if [ $? -ne 0 ]; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+    fi
+    
+    if [ "$ORA_BENCH_RUN_GODROR_GO" = "true" ]; then
+        { /bin/bash src_go/scripts/run_bench_godror.sh; }
         if [ $? -ne 0 ]; then
             echo "ERRORLEVEL : $?"
             exit $?
@@ -116,6 +128,12 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
 fi
 
 { /bin/bash scripts/run_finalise_benchmark.sh; }
+if [ $? -ne 0 ]; then
+    echo "ERRORLEVEL : $?"
+    exit $?
+fi
+
+EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -123,3 +141,5 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
+
+exit $EXITCODE

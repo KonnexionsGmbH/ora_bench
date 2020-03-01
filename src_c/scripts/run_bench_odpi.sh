@@ -18,12 +18,18 @@ fi
 if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
-if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
-fi
 
 if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+fi
+
+if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
+    if [ "$OSTYPE" = "msys" ]; then
+        export ORA_BENCH_JAVA_CLASSPATH=".;priv/java_jar/*"
+    else
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+    fi
+    export PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 fi
 
 echo "================================================================================"
@@ -32,6 +38,7 @@ echo "--------------------------------------------------------------------------
 echo "ora_bench - Oracle benchmark - ODPI-C."
 echo "--------------------------------------------------------------------------------"
 echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
+echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE         : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CONNECTION_HOST            : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT            : $ORA_BENCH_CONNECTION_PORT"
@@ -42,7 +49,9 @@ echo "BENCHMARK_CORE_MULTIPLIER  : $ORA_BENCH_BENCHMARK_CORE_MULTIPLIER"
 echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
 echo "FILE_CONFIGURATION_NAME    : $ORA_BENCH_FILE_CONFIGURATION_NAME"
+echo "--------------------------------------------------------------------------------"
 echo "JAVA_CLASSPATH             : $ORA_BENCH_JAVA_CLASSPATH"
+echo "PATH                       : $PATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
@@ -69,12 +78,18 @@ if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
-fi
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    { /bin/bash src_java/scripts/run_gradle.sh; }
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
+
+    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
+    if [ $? -ne 0 ]; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
 fi
 
 if [ "$OSTYPE" = "msys" ]; then

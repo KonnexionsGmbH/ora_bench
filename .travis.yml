@@ -16,11 +16,22 @@ env:
     - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_BENCHMARK_JAMDB=false
     - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_BENCHMARK_JAMDB=true
 
+before_install:
+  - export VERSION_JAVA=11
+  - sudo add-apt-repository -y ppa:openjdk-r/ppa
+  - sudo apt update -q
+  - sudo apt install -q openjdk-${VERSION_JAVA}-jdk
+
 script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
-  - sudo apt update
-  - sudo apt install software-properties-common
+  - export VERSION_ELIXIR=1.9.4
+  - export VERSION_GO=1.14
+  - export VERSION_GRADLE=6.2
+  - export VERSION_ORACLE_INSTANT_CLIENT=19_5
+  - sudo apt update -q
+  - sudo apt install -q software-properties-common
+  - sudo apt-get install -q lsb-core
   - travis_fold end   "Prepare_installation_process"
 
   # Elixir -----------------------------------------------------------------------
@@ -33,45 +44,52 @@ script:
   - cd /home/travis/build/KonnexionsGmbH/ora_bench
   - . ~/.bashrc
   - asdf plugin-add Elixir https://github.com/asdf-vm/asdf-elixir
-  - asdf install Elixir 1.9.4   
-  - asdf global Elixir 1.9.4
-  - elixir -v
+  - asdf install Elixir ${VERSION_ELIXIR}   
+  - asdf global Elixir ${VERSION_ELIXIR}
   - mix local.hex --force
   - mix local.rebar --force
-  - rebar3 version
   - travis_fold end   "Setting_up_Elixir"
+
+  # Go ---------------------------------------------------------------------------
+  - travis_fold start "Setting_up_Go"
+  - wget -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
+  - tar -xf go${VERSION_GO}.linux-amd64.tar.gz
+  - sudo mv go /usr/local
+  - export GOPATH=$HOME/build/KonnexionsGmbH/ora_bench/src_go/go
+  - export GOROOT=/usr/local/go
+  - export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}
+  - travis_fold end   "Setting_up_Go"
 
   # Java -------------------------------------------------------------------------
   - travis_fold start "Setting_up_Java"
-  - sudo apt install default-jdk
-  - java -version
+# - sudo apt-get remove “package-name”
+  - sudo apt install -q openjdk-${VERSION_JAVA}-jdk
   - travis_fold end   "Setting_up_Java"
     
   # Gradle -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Gradle"
-  - wget https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp  
+  - wget -q https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp
   - sudo unzip -d /opt/gradle /tmp/gradle-*.zip
-  - export GRADLE_HOME=/opt/gradle/gradle-6.2
+  - export GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}
   - export PATH=${GRADLE_HOME}/bin:${PATH}
   - travis_fold end   "Setting_up_Gradle"
 
   # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
   - travis_fold start "Setting_up_Oracle Instant Client"
-  - sudo apt-get install libaio1
-  - export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_19_5:$LD_LIBRARY_PATH
-  - sudo chmod +x $PWD/priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus
+  - sudo apt-get install -q libaio1
+  - sudo chmod +x $PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}/sqlplus
+  - export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}
   - travis_fold end   "Setting_up_Oracle Instant Client"
 
   # Python -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Python"
   - sudo add-apt-repository -y ppa:deadsnakes/ppa
-  - sudo apt install python3
-  - python3 --version
-  - sudo apt install python3-venv
+  - sudo apt install -q python3
+  - sudo apt install -q python3-venv
   - python3 -m venv _build/ora_bench-env
   - source _build/ora_bench-env/bin/activate
-  - python -m pip install --upgrade pip
-  - python -m pip install --upgrade cx_Oracle
+  - python -m pip install -q --upgrade pip
+  - python -m pip install -q --upgrade cx_Oracle
   - travis_fold end   "Setting_up_Python"
 
   # Setting up environment variables ---------------------------------------------
@@ -91,38 +109,16 @@ script:
   - export ORA_BENCH_RUN_DB_19_3_EE=true
 
   - export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
+  - export ORA_BENCH_RUN_GODROR_GO=true
   - export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
   - export ORA_BENCH_RUN_JDBC_JAVA=true
   - export ORA_BENCH_RUN_ODPI_C=true
   - export ORA_BENCH_RUN_ORANIF_ERLANG=true
-  - export ORA_BENCH_RUN_SERIES=true
 
   - export ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
   - export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
   - export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
   - travis_fold end   "Setting_up_environment_variables"
-
-  - travis_fold start "Environment_Variables"
-  # Show Environment Variables ---------------------------------------------------
-  - echo GRADLE_HOME=$GRADLE_HOME
-  - echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH
-  - echo PATH=$PATH
-  - travis_fold end   "Environment_Variables"
-    
-  - travis_fold start "Software_versions"
-  # Show component versions ------------------------------------------------------
-  - echo $(autoconf -V)
-  - echo $(automake --version)
-  - echo $(elixir -v)
-  - echo $(gcc --version)
-  - echo $(git --version)
-  - echo $(gradle --version)
-  - echo $(java -version)
-  - echo $(mix --version)
-  - echo $(python3 --version)
-  - echo $(rebar3 version)
-  - echo $(lsb_release -a) 
-  - travis_fold end   "Software_Versions"
 
   # Running ora_bench ------------------------------------------------------------
   - travis_fold start "Running_ora_bench"
@@ -136,7 +132,7 @@ script:
   # - gradle wrapper
   # - sudo chmod +x gradlew
   - cd ..
-  - ./scripts/run_db_setup_benchmark_props_var.sh
+  - ./scripts/run_properties_variations.sh
   - travis_fold end   "Running_ora_bench"
 
 after_success:

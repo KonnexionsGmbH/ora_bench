@@ -18,12 +18,14 @@ if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
 if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
     set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 )
-if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
-    set ORA_BENCH_JAVA_CLASSPATH=".;priv\java_jar\*"
-)
 
 if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
+)
+
+if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
+    set ORA_BENCH_JAVA_CLASSPATH=".;priv\java_jar\*"
+    set PATH="%PATH%;\u01\app\oracle\product\12.2\db_1\jdbc\lib"
 )
 
 echo ================================================================================
@@ -32,6 +34,7 @@ echo ---------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - ODPI-C.
 echo --------------------------------------------------------------------------------
 echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
+echo --------------------------------------------------------------------------------
 echo BENCHMARK_DATABASE         : %ORA_BENCH_BENCHMARK_DATABASE%
 echo CONNECTION_HOST            : %ORA_BENCH_CONNECTION_HOST%
 echo CONNECTION_PORT            : %ORA_BENCH_CONNECTION_PORT%
@@ -42,7 +45,9 @@ echo BENCHMARK_CORE_MULTIPLIER  : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
 echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
+echo --------------------------------------------------------------------------------
 echo JAVA_CLASSPATH             : %ORA_BENCH_JAVA_CLASSPATH%
+echo PATH                       : %PATH%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
@@ -58,12 +63,18 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         echo ERRORLEVEL : %ERRORLEVEL%
         GOTO EndOfScript
     )
-)
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    call src_java\scripts\run_gradle
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
+
+    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
+    if %ERRORLEVEL% NEQ 0 (
+        echo ERRORLEVEL : %ERRORLEVEL%
+        GOTO EndOfScript
+    )
 )
 
 .\OraBench.exe priv\properties\ora_bench_c.properties

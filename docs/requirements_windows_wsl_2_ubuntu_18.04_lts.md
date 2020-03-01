@@ -32,10 +32,10 @@ Next the Linux distribution Ubuntu must be updated:
 ### 3 Installing Oracle Instant Client for Linux x86-64 (64-bit)
 
     sudo apt-get install libaio1
-    sudo sh -c "echo /opt/oracle/instantclient_19_3 > /etc/ld.so.conf.d/oracle-instantclient.conf"
+    sudo sh -c "echo /opt/oracle/instantclient_${VERSION_ORACLE_INSTANT_CLIENT} > /etc/ld.so.conf.d/oracle-instantclient.conf"
     sudo ldconfig
-    echo "export LD_LIBRARY_PATH=priv/oracle/instantclient-linux.x64/instantclient_19_5" >> ~/.bashrc && source ~/.bashrc
-    sudo chmod +x priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus
+    echo "export LD_LIBRARY_PATH=priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}" >> ~/.bashrc && source ~/.bashrc
+    sudo chmod +x priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}/sqlplus
 
 ### 4 Installing the Build Essentials
 
@@ -59,16 +59,32 @@ Next the Linux distribution Ubuntu must be updated:
 
 #### 5.2 Installing Erlang (optional)
 
-    wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb
-	sudo dpkg -i erlang-solutions_2.0_all.deb
+    wget https://packages.erlang-solutions.com/erlang-solutions_${VERSION_ERLANG_SOLUTION}_all.deb
+	sudo dpkg -i erlang-solutions_${VERSION_ERLANG_SOLUTION}_all.deb
 	sudo apt-get update
 	sudo apt-get install erlang
 
-#### 5.3 Installing Java
+#### 5.3 Installing Go (optional)
+
+    wget https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
+    tar -xvf go${VERSION_GO}.linux-amd64.tar.gz
+    mv go /usr/local
+    export GOPATH=/ora_bench/src_go/go
+    export GOROOT=/usr/local/go
+    export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}
+
+#### 5.4 Installing Java
 
     sudo apt install default-jdk
 
-#### 5.4 Installing Python (optional)
+#### 5.5 Installing Gradle (optional)
+
+    wget https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp  
+    sudo unzip -d /opt/gradle /tmp/gradle-*.zip
+    export GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}
+    export PATH=${GRADLE_HOME}/bin:${PATH}
+
+#### 5.6 Installing Python (optional)
 
     sudo apt-get install software-properties-common
     sudo add-apt-repository -y ppa:deadsnakes/ppa
