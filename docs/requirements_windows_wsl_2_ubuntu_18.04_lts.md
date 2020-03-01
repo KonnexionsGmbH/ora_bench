@@ -69,7 +69,7 @@ Next the Linux distribution Ubuntu must be updated:
     wget https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
     tar -xvf go${VERSION_GO}.linux-amd64.tar.gz
     mv go /usr/local
-    export GOPATH=/ora_bench/src_go
+    export GOPATH=/ora_bench/src_go/go
     export GOROOT=/usr/local/go
     export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}
 
