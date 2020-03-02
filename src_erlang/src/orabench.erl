@@ -2,7 +2,7 @@
 -include_lib("kernel/include/file.hrl").
 
 %% API exports
--export([main/1, insert_partition/5, select_partition/4]).
+-export([main/1, insert_partition/4, select_partition/4]).
 
 -define(DPI_MAJOR_VERSION, 3).
 -define(DPI_MINOR_VERSION, 0).
@@ -10,11 +10,10 @@
 %%====================================================================
 %% API functions
 %%====================================================================
--define(TRACE, io:format("----> ~p ~ps~n", [{?MODULE, ?FUNCTION_NAME, ?LINE}, timer:now_diff(os:timestamp(), S) div 1000000])).
+%-define(TRACE, io:format("----> ~p ~ps~n", [{?MODULE, ?FUNCTION_NAME, ?LINE}, timer:now_diff(os:timestamp(), S) div 1000000])).
 
 %% escript Entry point
 main([ConfigFile, Driver]) ->
-S = os:timestamp(),  
   io:format(
     "~n[~p:~p] Start ~p (~s)~n", [?FUNCTION_NAME, ?LINE, ?MODULE, Driver]
   ),
@@ -53,17 +52,11 @@ S = os:timestamp(),
   } = Config,
   {ok, FI} = file:read_file_info(BulkFile),
   {ok, Fd} = file:open(BulkFile, [read, raw, binary, {read_ahead, 1024 * 1024}]),
-?TRACE,
-  io:format("[~p:~p:~p] Loading data...", [?MODULE, ?FUNCTION_NAME, ?LINE]),
+  io:format("[~p:~p:~p] Loading data...~n", [?MODULE, ?FUNCTION_NAME, ?LINE]),
   ets:new(bulk_data, [set, protected, named_table]),
-  load_data(
-    S, Driver, FI, Fd, list_to_binary(Header), BulkDelimiter, Partitions, #{}, 0, 0
-  ),
-?TRACE,
+  load_data(Driver, FI, Fd, list_to_binary(Header), BulkDelimiter, Partitions),
   put(conf, Config),
-?TRACE,
   RowCount = ets:info(bulk_data, size),
-?TRACE,
   if RowCount /= FBulkSz ->
       io:format(
         "First = ~p~nLast = ~p~n",
@@ -83,12 +76,10 @@ S = os:timestamp(),
       )
     end, lists:seq(0, Partitions - 1)
   ),
-?TRACE,
   #{
     startTime := StartTs,
     endTime := EndTs
   } = Results = run_trials(Trials),
-?TRACE,
   BMDrv = case Driver of
     "oranif" ->
       ok = application:load(oranif),
@@ -99,14 +90,12 @@ S = os:timestamp(),
       {ok, JamDBVsn} = application:get_key(jamdb_oracle, vsn),
       lists:flatten(io_lib:format("jamdb_oracle (Version ~s)", [JamDBVsn]))
   end,
-?TRACE,
   BMMod = lists:flatten(
     io_lib:format(
       "OTP ~s, erts-~s",
       [erlang:system_info(otp_release), erlang:system_info(version)]
     )
   ),
-?TRACE,
   RowFmt = string:join(
     [
       BMRelease, BMId, BMComment, BMHost, integer_to_list(BMCores), BMOs,
@@ -124,13 +113,11 @@ S = os:timestamp(),
     ],
     ResultDelim
   ),
-?TRACE,
   case filelib:is_regular(ResultFile) of
     false -> ok = file:write_file(ResultFile, ResultHeader ++ "\n");
     _ -> ok
   end,
   {ok, RFd} = file:open(ResultFile, [append, binary]),
-?TRACE,
   DurationMicros = timer:now_diff(EndTs, StartTs),
   maps:map(
     fun(
@@ -147,7 +134,6 @@ S = os:timestamp(),
         end,
         {[], [], 0}, maps:without([startTime, endTime], Insrts)
       ),
-?TRACE,
       InsMaxET = lists:max(InsETs),
       InsMinST = lists:min(InsSTs),
       InsDur = timer:now_diff(InsMaxET, InsMinST),
@@ -166,7 +152,6 @@ S = os:timestamp(),
         end,
         {[], [], 0}, maps:without([startTime, endTime], Slcts)
       ),
-?TRACE,
       SelMaxET = lists:max(SelETs),
       SelMinST = lists:min(SelSTs),
       SelDur = timer:now_diff(SelMaxET, SelMinST),
@@ -175,7 +160,6 @@ S = os:timestamp(),
         [Trial, SqlSelect, 'query', ts_str(SelMinST), ts_str(SelMaxET),
         round(SelDur / 1000000), SelDur * 1000]
       ),
-?TRACE,
       DMs = timer:now_diff(ETs, STs),
       ok = io:format(
         RFd, RowFmt,
@@ -224,7 +208,6 @@ run_trials(Trials) ->
 
     benchmark_driver := Driver
   } = Config = get(conf),
-
   Ctx = case Driver of
     "oranif" ->
       ok = dpi:load_unsafe(),
@@ -441,29 +424,9 @@ insert_partition(
   case Driver of
     "oranif" ->
       #{insertStmt := InsStmt, keyVar := KV, dataVar := DV} = Params,
-      {NIE, _} = lists:foldl(
-        fun({Key, Data}, {NIE, RowCount}) ->
-          NewNIE = if
-            NumItersExec == 0 orelse NIE < NumItersExec ->
-              ok = dpi:var_setFromBytes(KV, NIE, Key),
-              ok = dpi:var_setFromBytes(DV, NIE, Data),
-              NIE + 1;
-            true ->
-              ok = dpi:stmt_executeMany(
-                InsStmt, [],
-                if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end
-              ),
-              ok = dpi:var_setFromBytes(KV, 0, Key),
-              ok = dpi:var_setFromBytes(DV, 0, Data),
-              1
-          end,
-          if NumItersCommit > 0 andalso RowCount rem NumItersCommit == 0 ->
-              ok = dpi:conn_commit(Conn);
-            true -> ok
-          end,
-          {NewNIE, RowCount + 1}
-        end,
-        {0, 0}, Rows
+      {NIE, _} = insert_oranif(
+        ets:match(bulk_data, {'$1', Partition, '$2'}, 1), Conn, InsStmt, KV, DV,
+        NumItersCommit, NumItersExec, FBulkSz, {0, 0}
       ),
       if NIE > 0 -> ok = dpi:stmt_executeMany(InsStmt, [], NIE);
       true -> ok end,
@@ -474,6 +437,7 @@ insert_partition(
       ok = dpi:conn_close(Conn, [], <<>>);
     "jamdb" ->
       #{insertSql := InsSql} = Params,
+      Rows = ets:match(bulk_data, {'$1', Partition, '$2'}),
       if
         NumItersExec == 0 ->
           {ok, [{affected_rows, FBulkSz}]} = jamdb_oracle:sql_query(
@@ -489,7 +453,8 @@ insert_partition(
   Master ! {
     result, self(),
     #{
-      start => Start, 'end' => os:timestamp(), rows => length(Rows),
+      start => Start, 'end' => os:timestamp(),
+      rows => ets:select_count(bulk_data, [{{'_', Partition, '_'}, [], [true]}]),
       partition => Partition
     }
   }.
@@ -549,44 +514,20 @@ select_partition(
     }
   }.
 
-load_data(
-  S, Driver, FI, Fd, Header, BulkDelimiter, Partitions, Rows, BytesReadCount,
-  ReadPerCent
-) ->  
+load_data(Driver, FI, Fd, Header, BulkDelimiter, Partitions) ->  
   case file:read_line(Fd) of
-    eof ->
-      io:format("~n"),
-      Rows;
+    eof -> done;
     {ok, Line0} ->
-      BytesReadCount1 = BytesReadCount + byte_size(Line0),
-      ReadPerCent1 = (BytesReadCount1 / FI#file_info.size) * 100,
-      if round(ReadPerCent1) /= round(ReadPerCent) ->
-        io:format("~p% (~ps)...", [round(ReadPerCent1), timer:now_diff(os:timestamp(), S) div 1000000]);
-      true -> ok
-      end,
       case string:trim(Line0, both, "\r\n") of
         Header ->
-          load_data(
-            S, Driver, FI, Fd, Header, BulkDelimiter, Partitions, Rows,
-            BytesReadCount1, ReadPerCent1
-          );
+          load_data(Driver, FI, Fd, Header, BulkDelimiter, Partitions);
         Line ->
           [<<KeyByte1:8, KeyByte2:8, _/binary>> = Key, Data] = string:split(
             Line, BulkDelimiter, all
           ),
           Partition = (KeyByte1 * 256 + KeyByte2) rem Partitions,
           true = ets:insert(bulk_data, {Key, Partition, Data}),
-          %OldData = maps:get(Partition, Rows, []),
-          load_data(
-            S, Driver, FI, Fd, Header, BulkDelimiter, Partitions, Rows,
-            %Rows#{
-            %  Partition => case Driver of
-            %    "oranif" -> [{Key, Data} | OldData];
-            %    "jamdb" -> [[Key, Data] | OldData]
-            %  end
-            %},
-            BytesReadCount1, ReadPerCent1
-          )
+          load_data(Driver, FI, Fd, Header, BulkDelimiter, Partitions)
       end
   end.
 
@@ -656,3 +597,34 @@ insert_jamdb(Conn, Rows, InsSql, _NumItersExec, _NumItersCommit, _RowCount)
         {batch, InsSql, Rows}
       ),
       {ok,[]} = jamdb_oracle:sql_query(Conn, "COMMIT;").
+
+insert_oranif(
+  '$end_of_table', _Conn, _InsStmt, _KV, _DV, _NumItersCommit, _NumItersExec,
+  _FBulkSz, {NIE, RowCount}
+) -> {NIE, RowCount};
+insert_oranif(
+  {[[Key, Data]], Contd}, Conn, InsStmt, KV, DV, NumItersCommit, NumItersExec,
+  FBulkSz, {NIE, RowCount}
+) ->
+  NewNIE = if
+    NumItersExec == 0 orelse NIE < NumItersExec ->
+      ok = dpi:var_setFromBytes(KV, NIE, Key),
+      ok = dpi:var_setFromBytes(DV, NIE, Data),
+      NIE + 1;
+    true ->
+      ok = dpi:stmt_executeMany(
+        InsStmt, [],
+        if NumItersExec > 0 -> NumItersExec; true -> FBulkSz end
+      ),
+      ok = dpi:var_setFromBytes(KV, 0, Key),
+      ok = dpi:var_setFromBytes(DV, 0, Data),
+      1
+  end,
+  if NumItersCommit > 0 andalso RowCount rem NumItersCommit == 0 ->
+      ok = dpi:conn_commit(Conn);
+    true -> ok
+  end,
+  insert_oranif(
+    ets:match(Contd), Conn, InsStmt, KV, DV, NumItersCommit, NumItersExec,
+    FBulkSz, {NewNIE, RowCount + 1}
+  ).
