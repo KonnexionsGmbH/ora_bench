@@ -16,29 +16,26 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-(
-    cd src_java
-    
-    call gradlew clean
-    if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
-    )
-    
-    call gradlew assemble
-    if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
-    )
-    
-    copy /Y build\libs\ora_bench.jar ..\priv\java_jar
-    
-    call gradlew javadoc
-    if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
-    )
-)
+cd src_java
+
+call gradlew clean
 if %ERRORLEVEL% NEQ 0 (
     exit /B %ERRORLEVEL%
 )
+
+call gradlew assemble
+if %ERRORLEVEL% NEQ 0 (
+    exit /B %ERRORLEVEL%
+)
+
+copy /Y build\libs\ora_bench.jar ..\priv\java_jar
+
+call gradlew javadoc
+if %ERRORLEVEL% NEQ 0 (
+    exit /B %ERRORLEVEL%
+)
+
+cd ..
 
 echo --------------------------------------------------------------------------------
 echo:| TIME

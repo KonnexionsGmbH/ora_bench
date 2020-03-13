@@ -202,16 +202,7 @@ defmodule OraBench do
         {:ok, file} = File.open(result_file_name, [:append])
         file
       _ ->
-        {:ok, file} = File.open(result_file_name, [:write])
-        :ok = IO.puts(
-          file,
-          String.replace(
-            config["file.result.header"],
-            ";",
-            config["file.result.delimiter"]
-          )
-        )
-        file
+        Process.exit(self(), ~s(fatal error: program abort =====> result file ") <> result_file_name <> ~s(" is missing <=====))
     end
   end
 

@@ -75,20 +75,17 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-{ /bin/bash scripts/run_collect_and_compile.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_collect_and_compile.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
 
-{ /bin/bash scripts/run_db_setup.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_db_setup.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
 
-{ /bin/bash scripts/run_bench_all_drivers.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi

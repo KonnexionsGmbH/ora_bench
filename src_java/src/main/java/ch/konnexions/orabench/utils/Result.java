@@ -146,7 +146,7 @@ public class Result {
             boolean isFileExisting = Files.exists(Paths.get(resultName));
 
             if (!(isFileExisting)) {
-                log.error("Program abort =====> result file \"" + resultName + "\" is missing <=====");
+                log.error("fatal error: program abort =====> result file \"" + resultName + "\" is missing <=====");
                 System.exit(1);
             }
 

@@ -44,7 +44,6 @@ if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     else
         export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
     fi
-    export PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 fi
 
 if [ -z "$RUN_GLOBAL_JAMDB" ]; then
@@ -84,15 +83,13 @@ echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
 echo "JAVA_CLASSPATH             : $ORA_BENCH_JAVA_CLASSPATH"
-echo "PATH                       : $PATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
 
-{ /bin/bash scripts/run_create_bulk_file.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_create_bulk_file.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
@@ -102,8 +99,7 @@ export ORA_BENCH_BULKFILE_EXISTING=true
  if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_properties_standard.sh; }
-    if [ $? -ne 0 ]; then
+    if ! { /bin/bash scripts/run_properties_standard.sh; }; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
@@ -112,8 +108,7 @@ fi
 if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_properties_standard.sh; }
-    if [ $? -ne 0 ]; then
+    if ! { /bin/bash scripts/run_properties_standard.sh; }; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
@@ -122,8 +117,7 @@ fi
 if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_properties_standard.sh; }
-    if [ $? -ne 0 ]; then
+    if ! { /bin/bash scripts/run_properties_standard.sh; }; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi

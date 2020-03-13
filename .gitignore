@@ -10,7 +10,6 @@
 .fetch
 .gradle
 .rebar
-/OraBench
 /priv/Gammadyne/timer.txt
 /src_elixir/deps/
 /src_elixir/mix.lock

@@ -48,7 +48,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU [""] (
 )
 
 echo.
-echo Skript %0 is now running
+echo Script %0 is now running
 echo.
 echo You can find the run log in the file run_bench_all_dbs_props_var.log
 echo.

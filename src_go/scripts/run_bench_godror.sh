@@ -20,7 +20,8 @@ if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
 fi
 
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
-    export GOPATH=$(pwd)/src_go/go
+    GOPATH=$(pwd)/src_go/go
+    export GOPATH
 fi
 
 echo "================================================================================"
@@ -48,15 +49,13 @@ echo "==========================================================================
 EXITCODE="0"
 
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
-    go get github.com/godror/godror
-    if [ $? -ne 0 ]; then
+    if ! go get github.com/godror/godror; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
 fi
 
-go run src_go/orabench.go priv/properties/ora_bench.properties
-if [ $? -ne 0 ]; then
+if ! go run src_go/orabench.go priv/properties/ora_bench.properties; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi

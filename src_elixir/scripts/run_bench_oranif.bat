@@ -62,39 +62,36 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     )
 )
 
-(
-    cd src_elixir
-    
-    if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
-        call mix local.hex --force
-        if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
-        )
+cd src_elixir
 
-        call mix deps.clean --all
-        if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
-        )
-
-        call mix deps.get
-        if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
-        )
-
-        call mix deps.compile
-        if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
-        )
+if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    call mix local.hex --force
+    if %ERRORLEVEL% NEQ 0 (
+        exit /B %ERRORLEVEL%
     )
-        
-    call mix run -e "OraBench.CLI.main(["oranif"])"
+
+    call mix deps.clean --all
+    if %ERRORLEVEL% NEQ 0 (
+        exit /B %ERRORLEVEL%
+    )
+
+    call mix deps.get
+    if %ERRORLEVEL% NEQ 0 (
+        exit /B %ERRORLEVEL%
+    )
+
+    call mix deps.compile
     if %ERRORLEVEL% NEQ 0 (
         exit /B %ERRORLEVEL%
     )
 )
+    
+call mix run -e "OraBench.CLI.main(["oranif"])"
 if %ERRORLEVEL% NEQ 0 (
     exit /B %ERRORLEVEL%
 )
+
+cd ..
 
 echo --------------------------------------------------------------------------------
 echo:| TIME

@@ -34,20 +34,17 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-{ /bin/bash scripts/run_show_environment.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_show_environment.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
 
-{ /bin/bash src_java/scripts/run_gradle.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
 
-java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup
-if [ $? -ne 0 ]; then
+if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi

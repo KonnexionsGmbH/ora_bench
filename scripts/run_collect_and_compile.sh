@@ -80,9 +80,8 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-if [ "$$BULKFILE_EXISTING" != "true" ]; then
-    { /bin/bash scripts/run_create_bulk_file.sh; }
-    if [ $? -ne 0 ]; then
+if [ "$BULKFILE_EXISTING" != "true" ]; then
+    if ! { /bin/bash scripts/run_create_bulk_file.sh; }; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
@@ -91,94 +90,87 @@ fi
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
         echo "Setup C - Start ============================================================" 
-        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
-        if [ $? -ne 0 ]; then
+        if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c; then
             echo "ERRORLEVEL : $?"
             exit $?
         fi
 
         if [ "$OSTYPE" = "msys" ]; then
-            nmake -f src_c/Makefile.win32 clean
-            if [ $? -ne 0 ]; then
+            if ! nmake -f src_c/Makefile.win32 clean; then
                 echo "ERRORLEVEL : $?"
                 exit $?
             fi
-            nmake -f src_c/Makefile.win32
+            if ! nmake -f src_c/Makefile.win32; then
+                echo "ERRORLEVEL : $?"
+                exit $?
+            fi
         else
-            make -f src_c/Makefile clean
-            if [ $? -ne 0 ]; then
+            if ! make -f src_c/Makefile clean; then
                 echo "ERRORLEVEL : $?"
                 exit $?
             fi
-            make -f src_c/Makefile
-        fi
-        if [ $? -ne 0 ]; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            if ! make -f src_c/Makefile; then
+                echo "ERRORLEVEL : $?"
+                exit $?
+            fi
         fi
         echo "Setup C - End   ============================================================" 
     fi
     
     if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
         echo "Setup Elixir - Start =======================================================" 
-        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
-        if [ $? -ne 0 ]; then
+        if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir; then
             echo "ERRORLEVEL : $?"
             exit $?
         fi
 
-        cd src_elixir
-        mix local.hex --force
-        if [ $? -ne 0 ]; then
-            echo "ERRORLEVEL : $?"
-            exit $?
-        fi
-        
-        mix deps.clean --all
-        if [ $? -ne 0 ]; then
-            echo "ERRORLEVEL : $?"
-            exit $?
-        fi
-        
-        mix deps.get
-        if [ $? -ne 0 ]; then
-            echo "ERRORLEVEL : $?"
-            exit $?
-        fi
-        
-        mix deps.compile
-        if [ $? -ne 0 ]; then
-            echo "ERRORLEVEL : $?"
-            exit $?
-        fi
-        cd ..
+        (
+            cd src_elixir || exit $?
+            if ! mix local.hex --force; then
+                echo "ERRORLEVEL : $?"
+                exit $?
+            fi
+            
+            if ! mix deps.clean --all; then
+                echo "ERRORLEVEL : $?"
+                exit $?
+            fi
+            
+            if ! mix deps.get; then
+                echo "ERRORLEVEL : $?"
+                exit $?
+            fi
+            
+            if ! mix deps.compile; then
+                echo "ERRORLEVEL : $?"
+                exit $?
+            fi
+        )
         echo "Setup Elixir - End   =======================================================" 
     fi
 fi    
     
 if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
     echo "Setup Erlang - Start ======================================================="
-    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
-    if [ $? -ne 0 ]; then
+    if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
     
-    cd src_erlang
-    rebar3 escriptize
-    if [ $? -ne 0 ]; then
-        echo "ERRORLEVEL : $?"
-        exit $?
-    fi
+    (
+        cd src_erlang || exit $?
+        if ! rebar3 escriptize; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+    )
     echo "Setup Erlang - End   =======================================================" 
-    cd ..
 fi
 
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_GODROR_GO" == "true" ]; then
         echo "Setup Go - Start ===========================================================" 
-        go get github.com/godror/godror
-        if [ $? -ne 0 ]; then
+        if ! go get github.com/godror/godror; then
             echo "ERRORLEVEL : $?"
             exit $?
         fi
@@ -187,8 +179,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
 
     if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" == "true" ]; then
         echo "Setup Python - Start =======================================================" 
-        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
-        if [ $? -ne 0 ]; then
+        if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python; then
             echo "ERRORLEVEL : $?"
             exit $?
         fi

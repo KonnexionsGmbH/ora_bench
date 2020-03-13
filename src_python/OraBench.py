@@ -105,9 +105,8 @@ def create_result_file(config):
     result_file = Path(config['file.result.name'])
 
     if not result_file.is_file():
-        result_file = open(os.path.abspath(config['file.result.name']), 'w')
-        result_file.write(config['file.result.header'] + '\n')
-        result_file.close()
+        logging.error('fatal error: program abort =====> result file "' + config['file.result.name'] + '" is missing <=====')
+        sys.exit(1)
 
     result_file = open(os.path.abspath(config['file.result.name']), 'a')
 

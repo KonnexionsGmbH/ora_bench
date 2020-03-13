@@ -61,16 +61,14 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         exit /B %ERRORLEVEL%
     )
 
-    (
-        cd src_erlang
-        call rebar3 escriptize
-        if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
-        )
-    )    
+    cd src_erlang
+    
+    call rebar3 escriptize
     if %ERRORLEVEL% NEQ 0 (
         exit /B %ERRORLEVEL%
     )
+
+    cd ..
 )    
 
 src_erlang\_build\default\bin\orabench priv\properties\ora_bench_erlang.properties oranif
