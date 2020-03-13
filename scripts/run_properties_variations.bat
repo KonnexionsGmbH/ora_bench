@@ -70,14 +70,12 @@ echo ===========================================================================
 
 call scripts\run_collect_and_compile.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
 
 call scripts\run_db_setup.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
 
 rem #01
@@ -86,8 +84,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DE
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
 
 rem #02
@@ -96,8 +93,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
 
 rem #03
@@ -106,8 +102,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DE
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
 
 rem #04
@@ -116,8 +111,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DE
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
 
 rem #05
@@ -126,8 +120,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
 
 rem #06
@@ -136,10 +129,9 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
+    exit /B %ERRORLEVEL%
 )
 
-:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

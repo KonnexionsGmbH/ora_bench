@@ -19,6 +19,10 @@ if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
 
+if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
+    export GOPATH=$(pwd)/src_go/go
+fi
+
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -34,6 +38,9 @@ echo "--------------------------------------------------------------------------
 echo "BENCHMARK_BATCH_SIZE       : $ORA_BENCH_BENCHMARK_BATCH_SIZE"
 echo "BENCHMARK_CORE_MULTIPLIER  : $ORA_BENCH_BENCHMARK_CORE_MULTIPLIER"
 echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
+echo "--------------------------------------------------------------------------------"
+echo "GOPATH                     : $GOPATH"
+echo "GOROOT                     : $GOROOT"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"

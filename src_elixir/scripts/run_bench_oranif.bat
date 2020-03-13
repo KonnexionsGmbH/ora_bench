@@ -25,7 +25,6 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
 
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
     set ORA_BENCH_JAVA_CLASSPATH=.;priv\java_jar\*
-    set PATH="%PATH%;\u01\app\oracle\product\12.2\db_1\jdbc\lib"
 )
 
 echo ================================================================================
@@ -47,7 +46,6 @@ echo ---------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo --------------------------------------------------------------------------------
 echo JAVA_CLASSPATH             : %ORA_BENCH_JAVA_CLASSPATH%
-echo PATH                       : %PATH%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
@@ -55,50 +53,49 @@ echo ===========================================================================
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     call src_java\scripts\run_gradle
     if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+        exit /B %ERRORLEVEL%
     )
 
     java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
     if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+        exit /B %ERRORLEVEL%
     )
 )
 
-cd src_elixir
-
-if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
-    call mix local.hex --force
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
-    )
-    call mix deps.clean --all
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
-    )
-    call mix deps.get
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
-    )
-    call mix deps.compile
-    if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
-    )
-)
+(
+    cd src_elixir
     
-call mix run -e "OraBench.CLI.main(["oranif"])"
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
-)
-cd ..
+    if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+        call mix local.hex --force
+        if %ERRORLEVEL% NEQ 0 (
+            exit /B %ERRORLEVEL%
+        )
 
-:EndOfScript
+        call mix deps.clean --all
+        if %ERRORLEVEL% NEQ 0 (
+            exit /B %ERRORLEVEL%
+        )
+
+        call mix deps.get
+        if %ERRORLEVEL% NEQ 0 (
+            exit /B %ERRORLEVEL%
+        )
+
+        call mix deps.compile
+        if %ERRORLEVEL% NEQ 0 (
+            exit /B %ERRORLEVEL%
+        )
+    )
+        
+    call mix run -e "OraBench.CLI.main(["oranif"])"
+    if %ERRORLEVEL% NEQ 0 (
+        exit /B %ERRORLEVEL%
+    )
+)
+if %ERRORLEVEL% NEQ 0 (
+    exit /B %ERRORLEVEL%
+)
+
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

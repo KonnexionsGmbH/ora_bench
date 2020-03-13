@@ -1,8 +1,8 @@
 /*
- * Licensed to the Konnexions GmbH under one or more contributor license 
- * agreements.  The Konnexions GmbH licenses this file to You under the 
- * Apache License, Version 2.0 (the "License"); you may not use this file 
- * except in compliance with the License.  You may obtain a copy of the 
+ * Licensed to the Konnexions GmbH under one or more contributor license
+ * agreements.  The Konnexions GmbH licenses this file to You under the
+ * Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a copy of the
  * License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -20,6 +20,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.csv.CSVFormat;
@@ -31,7 +34,9 @@ import org.apache.commons.lang3.RandomStringUtils;
  */
 public class Setup {
 
-    /** The Constant LENGTH_DIGEST. */
+    /**
+     * The Constant LENGTH_DIGEST.
+     */
     static final int LENGTH_DIGEST = 32;
 
     /**
@@ -102,10 +107,46 @@ public class Setup {
 
             log.info("bulk file written: file name=" + config.getFileBulkName() + " size=" + fileBulkSize + " length=" + fileBulkLength);
 
+            createResultFile();
+
         } catch (IOException e) {
             log.error("bulk file name  =: " + config.getFileBulkName());
             log.error("bulk file length=: " + fileBulkLength);
             log.error("bulk file size  =: " + fileBulkSize);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Creates a new result file if none exists yet.
+     */
+    public final void createResultFile() {
+
+        String resultDelimiter = config.getFileResultDelimiter();
+        String resultName = config.getFileResultName();
+
+        try {
+            Path resultPath = Paths.get(resultName);
+
+            boolean isFileExisting = Files.exists(Paths.get(resultName));
+
+            if (!(isFileExisting)) {
+                Files.createFile(resultPath);
+
+                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(resultName, false));
+
+                new CSVPrinter(bufferedWriter,
+                        CSVFormat.EXCEL.withDelimiter(resultDelimiter.charAt(0)).withHeader(config.getFileResultHeader().split(resultDelimiter)));
+
+                bufferedWriter.close();
+
+                log.info("missing result file created: file name=" + config.getFileResultName());
+            }
+        } catch (IOException e) {
+            log.error("file result delimiter=: " + resultDelimiter);
+            log.error("file result header   =: " + config.getFileResultHeader());
+            log.error("file result name     =: " + resultName);
+            log.error("-----------------------");
             e.printStackTrace();
         }
     }
