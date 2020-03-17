@@ -15,101 +15,69 @@ echo GOPATH                     : %GOPATH%
 echo GOROOT                     : %GOROOT%
 echo GRADLE_HOME                : %GRADLE_HOME%
 echo LD_LIBRARY_PATH            : %LD_LIBRARY_PATH%
-echo PATH                       : %PATH%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-echo ===============================================================================> Version autoconf:
-autoconf -V
+echo "===============================================================================> Version Elixir:"
+call elixir -v
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
     
-echo ===============================================================================> Version automake:
-automake --version
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
-)
-    
-echo ===============================================================================> Version Elixir:
-elixir -v
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
-)
-    
-echo ===============================================================================> Version gcc:
-gcc --version
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
-)
-    
-echo ===============================================================================> Version Git:
+echo "===============================================================================> Version Git:"
 git --version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
     
-echo ===============================================================================> Version Go:
+echo "===============================================================================> Version Go:"
 go version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
 
 go env
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
     
-echo ===============================================================================> Version Gradle:
-gradle --version
+echo "===============================================================================> Version Gradle:"
+call gradle --version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
     
-echo ===============================================================================> Version Java:
+echo "===============================================================================> Version Java:"
 java -version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
     
-echo ===============================================================================> Version Mix:
-mix --version
+echo "===============================================================================> Version Mix:"
+call mix --version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
     
-echo ===============================================================================> Version Python3:
-python3 --version
+echo "===============================================================================> Version Python3:"
+python --version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
     
-echo ===============================================================================> Version Rebar3:
-rebar3 version
+echo "===============================================================================> Version Rebar3:"
+call rebar3 version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    exit /B %ERRORLEVEL%
 )
     
-echo ===============================================================================> Version Ubuntu:
-lsb_release -a 
+echo "===============================================================================> Version Windows:"
+systeminfo | findstr Build 
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
+    exit /B %ERRORLEVEL%
 )
 
-:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------

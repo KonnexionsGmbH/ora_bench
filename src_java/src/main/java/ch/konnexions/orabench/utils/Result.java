@@ -20,7 +20,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
@@ -144,24 +143,15 @@ public class Result {
         String resultName = config.getFileResultName();
 
         try {
-            Path resultPath = Paths.get(resultName);
-
             boolean isFileExisting = Files.exists(Paths.get(resultName));
 
             if (!(isFileExisting)) {
-                Files.createFile(resultPath);
+                log.error("fatal error: program abort =====> result file \"" + resultName + "\" is missing <=====");
+                System.exit(1);
             }
 
-            BufferedWriter bufferedWriter;
-
-            if (isFileExisting) {
-                bufferedWriter = new BufferedWriter(new FileWriter(resultName, true));
-                resultFile = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.withDelimiter(resultDelimiter.charAt(0)));
-            } else {
-                bufferedWriter = new BufferedWriter(new FileWriter(resultName, false));
-                resultFile = new CSVPrinter(bufferedWriter,
-                        CSVFormat.EXCEL.withDelimiter(resultDelimiter.charAt(0)).withHeader(config.getFileResultHeader().split(resultDelimiter)));
-            }
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(resultName, true));
+            resultFile = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.withDelimiter(resultDelimiter.charAt(0)));
         } catch (IOException e) {
             log.error("file result delimiter=: " + resultDelimiter);
             log.error("file result header   =: " + config.getFileResultHeader());

@@ -29,7 +29,6 @@ if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     else
         export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
     fi
-    export PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 fi
 
 echo "================================================================================"
@@ -51,7 +50,6 @@ echo "--------------------------------------------------------------------------
 echo "FILE_CONFIGURATION_NAME    : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "--------------------------------------------------------------------------------"
 echo "JAVA_CLASSPATH             : $ORA_BENCH_JAVA_CLASSPATH"
-echo "PATH                       : $PATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
@@ -59,50 +57,45 @@ echo "==========================================================================
 EXITCODE="0"
 
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
-    { /bin/bash src_java/scripts/run_gradle.sh; }
-    if [ $? -ne 0 ]; then
+    if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
 
-    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
-    if [ $? -ne 0 ]; then
+    if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
 fi    
 
-cd src_elixir
-
-if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
-    mix local.hex --force
-    if [ $? -ne 0 ]; then
+(
+    cd src_elixir || exit $?
+    
+    if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
+        if ! mix local.hex --force; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+        
+        if ! mix deps.clean --all; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+        if ! mix deps.get; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+        if ! mix deps.compile; then
+            echo "ERRORLEVEL : $?"
+            exit $?
+        fi
+    fi    
+    
+    if ! mix run -e "OraBench.CLI.main([\"oranif\"])"; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
-    mix deps.clean --all
-    if [ $? -ne 0 ]; then
-        echo "ERRORLEVEL : $?"
-        exit $?
-    fi
-    mix deps.get
-    if [ $? -ne 0 ]; then
-        echo "ERRORLEVEL : $?"
-        exit $?
-    fi
-    mix deps.compile
-    if [ $? -ne 0 ]; then
-        echo "ERRORLEVEL : $?"
-        exit $?
-    fi
-fi    
-
-mix run -e "OraBench.CLI.main([\"oranif\"])"
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
-fi
-cd ..
+)
 
 EXITCODE=$?
 

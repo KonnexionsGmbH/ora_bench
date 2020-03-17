@@ -18,29 +18,26 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-cd src_java
-
-{ ./gradlew clean; }
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
-fi
-
-{ ./gradlew assemble; }
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
-fi
-
-cp build/libs/ora_bench.jar ../priv/java_jar
-
-{ ./gradlew javadoc; }
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
-fi
-
-cd ..
+(
+    cd src_java || exit
+    
+    if ! { ./gradlew clean; }; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
+    
+    if ! { ./gradlew assemble; }; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
+    
+    cp build/libs/ora_bench.jar ../priv/java_jar
+    
+    if ! { ./gradlew javadoc; }; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
+)
 
 EXITCODE=$?
 

@@ -38,7 +38,6 @@ if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
 
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
     set ORA_BENCH_JAVA_CLASSPATH=".;priv\java_jar\*"
-    set PATH="%PATH%;\u01\app\oracle\product\12.2\db_1\jdbc\lib"
 )
 
 if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (
@@ -49,7 +48,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU [""] (
 )
 
 echo.
-echo Skript %0 is now running
+echo Script %0 is now running
 echo.
 echo You can find the run log in the file run_bench_all_dbs_props_std.log
 echo.
@@ -88,15 +87,13 @@ echo.
     echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
     echo --------------------------------------------------------------------------------
     echo JAVA_CLASSPATH             : %ORA_BENCH_JAVA_CLASSPATH%
-    echo PATH                       : %PATH%
     echo --------------------------------------------------------------------------------
     echo:| TIME
     echo ================================================================================
     
     call scripts\run_create_bulk_file.bat
     if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+        exit /B %ERRORLEVEL%
     )
     
     set ORA_BENCH_BULKFILE_EXISTING=true
@@ -106,8 +103,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_standard.bat
         if %ERRORLEVEL% NEQ 0 (
-            echo ERRORLEVEL : %ERRORLEVEL%
-            GOTO EndOfScript
+            exit /B %ERRORLEVEL%
         )
     )
     
@@ -116,8 +112,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_standard.bat
         if %ERRORLEVEL% NEQ 0 (
-            echo ERRORLEVEL : %ERRORLEVEL%
-            GOTO EndOfScript
+            exit /B %ERRORLEVEL%
         )
     )
     
@@ -126,11 +121,10 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_standard.bat
         if %ERRORLEVEL% NEQ 0 (
-            echo ERRORLEVEL : %ERRORLEVEL%
+            exit /B %ERRORLEVEL%
         )
     )
     
-    :EndOfScript
     echo --------------------------------------------------------------------------------
     echo:| TIME
     echo --------------------------------------------------------------------------------

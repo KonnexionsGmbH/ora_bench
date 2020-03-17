@@ -29,7 +29,6 @@ if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     else
         export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
     fi
-    export PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 fi
 
 echo "================================================================================"
@@ -51,15 +50,20 @@ echo "--------------------------------------------------------------------------
 echo "FILE_CONFIGURATION_NAME    : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "--------------------------------------------------------------------------------"
 echo "JAVA_CLASSPATH             : $ORA_BENCH_JAVA_CLASSPATH"
-echo "PATH                       : $PATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 EXITCODE="0"
 
-java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench runBenchmark
-if [ $? -ne 0 ]; then
+if ! [ "$ORA_BENCH_MULTIPLE_RUN" = "true" ]; then
+    if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
+        echo "ERRORLEVEL : $?"
+        exit $?
+    fi
+fi
+
+if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench runBenchmark; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi

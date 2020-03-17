@@ -236,16 +236,12 @@ public class Config {
 
         try {
 
-            List<String> list = getNumericProperties();
-
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameJson(), false));
 
             String value;
 
             JSONObject obj = new JSONObject();
-            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
-                final String key = iterator.next();
-
+            for (final String key : keysSorted) {
                 if ("file.result.header".contentEquals(key)) {
                     value = propertiesConfiguration.getString(key).replace(";", fileResultDelimiter);
                 } else {

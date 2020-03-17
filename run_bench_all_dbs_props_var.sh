@@ -45,7 +45,6 @@ if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     else
         export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
     fi
-    export PATH=$PATH:/u01/app/oracle/product/12.2/db_1/jdbc/lib
 fi
 
 if [ -z "$RUN_GLOBAL_JAMDB" ]; then
@@ -83,7 +82,6 @@ echo "RUN_ORANIF_ELIXIR       : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG       : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
 echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
-echo "PATH                    : $PATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
@@ -94,8 +92,7 @@ export ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
 
-{ /bin/bash scripts/run_create_bulk_file.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_create_bulk_file.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
@@ -105,8 +102,7 @@ export ORA_BENCH_BULKFILE_EXISTING=true
 if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_properties_variations.sh; }
-    if [ $? -ne 0 ]; then
+    if ! { /bin/bash scripts/run_properties_variations.sh; }; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
@@ -115,8 +111,7 @@ fi
 if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_properties_variations.sh; }
-    if [ $? -ne 0 ]; then
+    if ! { /bin/bash scripts/run_properties_variations.sh; }; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
@@ -125,8 +120,7 @@ fi
 if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    { /bin/bash scripts/run_properties_variations.sh; }
-    if [ $? -ne 0 ]; then
+    if ! { /bin/bash scripts/run_properties_variations.sh; }; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
@@ -136,8 +130,6 @@ export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
 
-EXITCODE=$?
-
 echo ""
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
@@ -145,8 +137,7 @@ echo "--------------------------------------------------------------------------
 echo "End   $0"
 echo "================================================================================"
 
-start priv/audio/end_of_series.mp3
-if [ $? -ne 0 ]; then
+if ! start priv/audio/end_of_series.mp3; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi

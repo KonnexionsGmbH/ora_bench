@@ -75,14 +75,12 @@ echo "==========================================================================
 
 EXITCODE="0"
 
-{ /bin/bash scripts/run_collect_and_compile.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_collect_and_compile.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
 
-{ /bin/bash scripts/run_db_setup.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_db_setup.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
@@ -91,8 +89,7 @@ fi
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-{ /bin/bash scripts/run_bench_all_drivers.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
@@ -101,8 +98,7 @@ fi
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-{ /bin/bash scripts/run_bench_all_drivers.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
@@ -111,8 +107,7 @@ fi
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-{ /bin/bash scripts/run_bench_all_drivers.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
@@ -121,8 +116,7 @@ fi
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-{ /bin/bash scripts/run_bench_all_drivers.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
@@ -131,8 +125,7 @@ fi
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
-{ /bin/bash scripts/run_bench_all_drivers.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
@@ -141,8 +134,7 @@ fi
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-{ /bin/bash scripts/run_bench_all_drivers.sh; }
-if [ $? -ne 0 ]; then
+if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
     echo "ERRORLEVEL : $?"
     exit $?
 fi
