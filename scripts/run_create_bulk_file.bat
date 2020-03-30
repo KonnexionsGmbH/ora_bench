@@ -13,7 +13,7 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
 )
 
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
-    set ORA_BENCH_JAVA_CLASSPATH=".;priv\java_jar\*"
+    set ORA_BENCH_JAVA_CLASSPATH=.;priv/java_jar/*;JAVA_HOME/lib;
 )
 
 echo ================================================================================
@@ -40,7 +40,7 @@ if %ERRORLEVEL% NEQ 0 (
     exit /B %ERRORLEVEL%
 )
 
-java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup
+java -cp %ORA_BENCH_JAVA_CLASSPATH% ch.konnexions.orabench.OraBench setup
 if %ERRORLEVEL% NEQ 0 (
     exit /B %ERRORLEVEL%
 )

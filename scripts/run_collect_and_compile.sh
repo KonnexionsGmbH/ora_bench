@@ -90,7 +90,7 @@ fi
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
         echo "Setup C - Start ============================================================" 
-        if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c; then
+        if ! java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_c; then
             echo "ERRORLEVEL : $?"
             exit $?
         fi
@@ -119,7 +119,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     
     if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
         echo "Setup Elixir - Start =======================================================" 
-        if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir; then
+        if ! java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_elixir; then
             echo "ERRORLEVEL : $?"
             exit $?
         fi
@@ -152,7 +152,7 @@ fi
     
 if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
     echo "Setup Erlang - Start ======================================================="
-    if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang; then
+    if ! java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_erlang; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi
