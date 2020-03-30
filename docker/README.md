@@ -4,11 +4,9 @@ Benchmark Framework for Oracle Database Drivers
 
 This image supports the use of a Docker container for the further development of `ora_bench` in a Ubuntu environment. 
 
-## 1 Introduction
+## 1. Creating a new `ora_bench_dev` Docker container
 
-## 2. Creating a new `ora_bench_dev` Docker container
-
-## 2.1 Getting started
+## 1.1 Getting started
 
     > REM Assuming the path prefix for the local repository mapping is //C/ora_bench
     > docker run -it \
@@ -26,7 +24,7 @@ This image supports the use of a Docker container for the further development of
     > REM Entering a running container
     > docker exec -it ora_bench_dev
 
-## 2.2 Detailed Syntax
+## 1.2 Detailed Syntax
 
 A new container can be created with the `docker run` command.
 
@@ -57,9 +55,9 @@ Detailed documentation for the command `docker run` can be found [here](https://
 
     `docker run -it --name ora_bench_dev -v //D/SoftDevelopment/Projects/Konnexions/ora_bench_idea/ora_bench:/ora_bench konnexionsgmbh/ora_bench_dev`
 
-## 3 Working with an existing `ora_bench_dev` Docker container
+## 2 Working with an existing `ora_bench_dev` Docker container
 
-### 3.1 Starting a stopped container
+### 2.1 Starting a stopped container
 
 A previously stopped container can be started with the `docker start` command.
 
@@ -73,7 +71,7 @@ A previously stopped container can be started with the `docker start` command.
 
 Detailed documentation for the command `docker start` can be found [here](https://docs.docker.com/engine/reference/commandline/start/).
 
-### 3.2 Entering a running container
+### 2.2 Entering a running container
 
 A running container can be entered with the `docker exec` command.
 
@@ -88,9 +86,9 @@ A running container can be entered with the `docker exec` command.
 
 Detailed documentation for the command `docker exec` can be found [here](https://docs.docker.com/engine/reference/commandline/exec/).
 
-## 4 Working inside a running Docker container
+## 3 Working inside a running Docker container
 
-### 4.1 `ora_bench_dev` development
+### 3.1 `ora_bench_dev` development
 
 Inside the Docker container you can either clone a `ora_bench` repository or switch to an existing `ora_bench` repository. 
 If a Docker container with an Oracle database is located on the host computer it can be accessed by using the IP address of the host computer.
@@ -104,7 +102,7 @@ Any `ora_bench` script can be executed inside the Docker container, for example:
 - `src_elixir/mix.lock`  
 - `src_erlang/_build` 
 
-### 4.2 Available software
+### 3.2 Available software
 
 The Docker Image is based on the latest official Ubunutu Image on Docker Hub, which is currently `20.04`.
 The following software components are thus available for development (`apt list --installed`):
