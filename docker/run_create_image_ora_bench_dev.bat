@@ -18,7 +18,7 @@ echo.
 echo Please wait ...
 echo.
 
-> run_create_image_ora_bench_dev.log 2>&1 (
+> docker\run_create_image_ora_bench_dev.log 2>&1 (
 
     echo =======================================================================
     echo Start %0

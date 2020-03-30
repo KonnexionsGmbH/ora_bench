@@ -1,7 +1,6 @@
 *.beam
 *.class
 *.exe
-*.log
 *.o
 *.plt
 *.swp
