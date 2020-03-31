@@ -62,7 +62,7 @@ if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
         exit $?
     fi
 
-    if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python; then
+    if ! java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_python; then
         echo "ERRORLEVEL : $?"
         exit $?
     fi

@@ -1,73 +1,110 @@
-# Docker Usage
+Benchmark Framework for Oracle Database Drivers
 
-This project supports the use of Docker for development in a current Ubuntu environment. 
-For this purpose, either the script `run_create_image_ora_bench_dev` and the Docker file in the directory `priv/docker` can be used to create a special Docker image or the existing Docker image `konnexionsgmbh/ora_bench_dev` available in the Docker Hub can be downloaded and used.
+# Development Environment `ora_bench_dev` Image
 
-The following assumes that the default name `ora_bench_dev' is used for the Docker image and for the Docker container.
+This image supports the use of a Docker container for the further development of `ora_bench` in a Ubuntu environment. 
 
-## 1 Create Docker image from scratch
+## 1. Creating a new `ora_bench_dev` Docker container
 
-1. If required, the Docker file in the directory `docker` can be customized.
-2. If uploading the Docker image to the Docker Hub is not desired, then the `docker push konnexionsgmbh/%REPOSITORY%` command must be commented out in the script `run_create_image_ora_bench_dev`.
-3. Run the script `run_create_image_ora_bench_dev`.
-4. After successful execution (see log file `run_create_image_ora_bench_dev.log`) the Docker container `ora_bench_dev` is running and can be used with the Bash Shell for example (see chapter 6.3).
+## 1.1 Getting started
 
-### 1.1 Script `run_create_image_ora_bench_dev`
+    > REM Assuming the path prefix for the local repository mapping is //C/ora_bench
+    > docker run -it \
+            --name ora_bench_dev \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v //C/ora_bench:ora_bench \
+            konnexionsgmbh/ora_bench_dev
+            
+    > REM Stopping the container
+    > docker stop ora_bench_dev
+    
+    > REM Restarting the container
+    > docker start ora_bench_dev
 
-This script creates the Docker image `ora_bench_dev` based on `Ubuntu 20.04`.
-The script performs the following tasks:
+    > REM Entering a running container
+    > docker exec -it ora_bench_dev
 
-1. A possibly running Docker container `ora_bench_dev` is stopped and deleted. 
-2. A locally existing Docker image `ora_bench_dev` is deleted. 
-3. A new Docker image `ora_bench_dev` is created based on the Docker file in the directory `priv\docker`.
-4. The new Docker image `ora_bench_dev` is tagged as `konnexionsgmbh/ora_bench_dev` tag.
-5. Then the new Docker image is loaded into the Docker Hub.
-6. Finally any locally existing dangling Docker images are deleted.
+## 1.2 Detailed Syntax
 
-The run log is stored in the `run_create_image_ora_bench_dev.log` file.
+A new container can be created with the `docker run` command.
 
-## 2 Use Docker image from Docker Hub
+##### Syntax:
 
-An image that already exists on Docker Hub can be downloaded as follows:
+    docker run -it 
+               [--name <container_name>] \
+               -v /var/run/docker.sock:/var/run/docker.sock \
+               [-v <directory_repository>:ora_bench] \
+               konnexionsgmbh/ora_bench_dev 
+               <cmd>
+ 
+##### Parameters:
 
-    docker pull konnexionsgmbh/ora_bench_dev
+- **container_name** - an optional container identification 
+- **directory_repository** - an optional local repository directory - the default value is expecting the repository inside the container 
+- **cmd** - the command to be executed in the container, e.g. `bash` for running the `bash` shell
 
-## 3 Working with an existing Docker image
+Detailed documentation for the command `docker run` can be found [here](https://docs.docker.com/engine/reference/run/).
 
-### 3.1 Creating the Docker container
+##### Examples:
 
-First the Docker container must be created and started  (Example for a data directory: `D:\SoftDevelopment\Projects\Konnexions\ora_bench_idea\ora_bench`):
+1. Creating a new Docker container named `ora_bench_dev` using a repository inside the Docker container:  
 
-    docker run -it --name ora_bench_dev -v /var/run/docker.sock:/var/run/docker.sock -v <data directory path>:/ora_bench konnexionsgmbh/ora_bench_dev bash
+    `docker run -it --name ora_bench_dev konnexionsgmbh/ora_bench_dev`
 
-Afterwards you are inside the Docker container.
+2. Creating a new Docker container named `ora_bench_dev` using the local repository in the local Windows directory `D:\SoftDevelopment\Projects\Konnexions\ora_bench_idea\ora_bench`:  
 
-### 3.2 Starting an existing Docker container
+    `docker run -it --name ora_bench_dev -v //D/SoftDevelopment/Projects/Konnexions/ora_bench_idea/ora_bench:/ora_bench konnexionsgmbh/ora_bench_dev`
 
-You can start an existing Docker container as follows
+## 2 Working with an existing `ora_bench_dev` Docker container
 
-    docker start ora_bench_dev
+### 2.1 Starting a stopped container
 
-This command switches into the running Docker container:
+A previously stopped container can be started with the `docker start` command.
 
-    docker exec -it ora_bench_dev bash
+##### Syntax:
 
-## 4 Working inside a running Docker container
+    docker start <container_name>
 
-Inside the Docker container you can switch to the ora_bench repository with the following command:
+##### Parameter:
 
-    cd ora_bench
+- **container_name** - the mandatory container identification, that is an UUID long identifier, an UUID short identifier or a previously given name 
 
+Detailed documentation for the command `docker start` can be found [here](https://docs.docker.com/engine/reference/commandline/start/).
+
+### 2.2 Entering a running container
+
+A running container can be entered with the `docker exec` command.
+
+##### Syntax:
+
+    docker exec -it <container_name> <cmd>
+
+##### Parameter:
+
+- **container_name** - the mandatory container identification, that is an UUID long identifier, an UUID short identifier or a previously given name 
+- **cmd** - the command to be executed in the container, e.g. `bash` for running the `bash` shell
+
+Detailed documentation for the command `docker exec` can be found [here](https://docs.docker.com/engine/reference/commandline/exec/).
+
+## 3 Working inside a running Docker container
+
+### 3.1 `ora_bench_dev` development
+
+Inside the Docker container you can either clone a `ora_bench` repository or switch to an existing `ora_bench` repository. 
+If a Docker container with an Oracle database is located on the host computer it can be accessed by using the IP address of the host computer.
+Any `ora_bench` script can be executed inside the Docker container, for example:
+
+    ./scripts/run_properties_standard.sh > run_properties_standard.log 2>&1
+    
 **Important:** If the repository was previously used on Windows, then all files in the following directories must also be deleted from Windows first:
 
 - `src_elixir/deps`  
 - `src_elixir/mix.lock`  
 - `src_erlang/_build` 
 
-The Docker container with the Oracle database is located on the host computer and can be accessed using the IP address of the host computer:
+### 3.2 Available software
 
-    export ORA_BENCH_CONNECTION_HOST=<IP address of the host computer> 
+The Docker Image is based on the latest official Ubunutu Image on Docker Hub, which is currently `20.04`.
+With the following command you can check which other software versions are included in the Docker image:
 
-Now any `ora_bench` script can be executed, for example:
-
-    ./scripts/run_properties_standard.sh > run_properties_standard.log 2>&1
+    apt list --installed

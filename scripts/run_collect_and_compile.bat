@@ -35,7 +35,7 @@ if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
 )
 
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
-    set ORA_BENCH_JAVA_CLASSPATH=".;priv\java_jar\*"
+    set ORA_BENCH_JAVA_CLASSPATH=.;priv/java_jar/*;JAVA_HOME/lib;
 )
 
 if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (
@@ -84,7 +84,7 @@ if NOT ["%ORA_BENCH_BULKFILE_EXISTING%"] == ["true"] (
 if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
         echo Setup C - Start ============================================================ 
-        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c
+        java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_c
         if %ERRORLEVEL% NEQ 0 (
             exit /B %ERRORLEVEL%
         )
@@ -103,7 +103,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
 
     if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
         echo Setup Elixir - Start ======================================================= 
-        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
+        java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_elixir
         if %ERRORLEVEL% NEQ 0 (
             exit /B %ERRORLEVEL%
         )
@@ -142,7 +142,7 @@ if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] == ["true"] (
 )
 if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
     echo Setup Erlang - Start ======================================================= 
-    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang
+    java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_erlang
     if %ERRORLEVEL% NEQ 0 (
         exit /B %ERRORLEVEL%
     )
@@ -168,7 +168,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     
     if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] == ["true"] (
         echo Setup Python - Start ======================================================= 
-        java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python
+        java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_python
         if %ERRORLEVEL% NEQ 0 (
             exit /B %ERRORLEVEL%
         )

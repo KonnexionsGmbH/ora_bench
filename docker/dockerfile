@@ -1,12 +1,12 @@
 FROM ubuntu:20.04 as base
 
+ARG DEBIAN_FRONTEND=noninteractive
 ARG VERSION_ERLANG_SOLUTIONS=2.0
 ARG VERSION_GO=1.14
 ARG VERSION_GRADLE=6.2
 ARG VERSION_ORACLE_INSTANT_CLIENT=19_5
 
-RUN export DEBIAN_FRONTEND=noninteractive
-
+# Supplement necessary system software -----------------------------------------
 RUN apt-get update \
  && apt-get install -qy \ 
  && apt-get install -qy lsb-core
@@ -62,10 +62,11 @@ RUN apt-get install -qy python3 \
  && python3 -m pip install --upgrade cx_Oracle
 
 RUN apt-get install -qy dos2unix \
-                       htop \
-                       tmux \
-                       vim
+                        htop \
+                        tmux \
+                        vim
 
+# Setting Environment Variables ------------------------------------------------
 ENV GOPATH=/ora_bench/src_go/go \
     GOROOT=/usr/local/go \
     GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}
@@ -73,30 +74,56 @@ ENV GOPATH=/ora_bench/src_go/go \
 ENV LD_LIBRARY_PATH="/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}:$LD_LIBRARY_PATH" \
     PATH="${GOPATH}/bin:${GOROOT}/bin:${GRADLE_HOME}/bin:/ora_bench/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}:/usr/local/lib/nodejs/bin:${PATH}"
 
+RUN echo "=====================================================================> Curent Date: " \
+ && date \
 # Show Environment Variables ---------------------------------------------------
-RUN echo GOPATH=$GOPATH \
- && echo GOROOT=$GOROOT \
- && echo GRADLE_HOME=$GRADLE_HOME \
- && echo LD_LIBRARY_PATH=$LD_LIBRARY_PATH \
- && echo PATH=$PATH
- 
+ && echo "=====================================================================> Environment variable GOPATH: " \
+ && echo $GOPATH \
+ && echo "=====================================================================> Environment variable GOROOT: " \
+ && echo $GOROOT \
+ && echo "=====================================================================> Environment variable GRADLE_HOME: " \
+ && echo $GRADLE_HOME \
+ && echo "=====================================================================> Environment variable LD_LIBRARY_PATH: " \
+ && echo $LD_LIBRARY_PATH \
+ && echo "=====================================================================> Environment variable PATH: " \
+ && echo $PATH \
 # Show component versions ------------------------------------------------------
-RUN echo $(autoconf -V) \
- && echo $(automake --version) \
- && echo $(dos2unix --version) \
- && echo $(elixir -v) \
- && echo $(gcc --version) \
- && echo $(git --version) \
- && echo $(go version) \
- && echo $(go env) \
- && echo $(gradle --version) \
- && echo $(htop --version) \
- && echo $(java -version) \
- && echo $(mix --version) \
- && echo $(python3 --version) \
- && echo $(rebar3 version) \
- && echo $(tmux -V) \
- && echo $(lsb_release -a) \
- && echo $(vim --version)
+ && echo "=====================================================================> Version  autoconf: " \
+ && autoconf -V \
+ && echo "=====================================================================> Version  automake: " \
+ && automake --version \
+ && echo "=====================================================================> Version  dos2unix: " \
+ && dos2unix --version \
+ && echo "=====================================================================> Version  elixir: " \
+ && elixir -v \
+ && mix --version \
+ && echo "=====================================================================> Version  gcc: " \
+ && gcc --version \
+ && echo "=====================================================================> Version  git: " \
+ && git --version \
+ && echo "=====================================================================> Version  go: " \
+ && go version \
+ && go env \
+ && echo "=====================================================================> Version  gradle: " \
+ && gradle --version \
+ && echo "=====================================================================> Version  htop: " \
+ && htop --version \
+ && echo "=====================================================================> Version  java: " \
+ && java -version \
+ && echo "=====================================================================> Version  openssl: " \
+ && openssl version -a \
+ && echo "=====================================================================> Version  python3: " \
+ && python3 --version \
+ && pip --version \
+ && echo "=====================================================================> Version  rebar3: " \
+ && rebar3 version \
+ && echo "=====================================================================> Version  tmux: " \
+ && tmux -V \
+ && echo "=====================================================================> Version  ubuntu: " \
+ && lsb_release -a \
+ && echo "=====================================================================> Version  vim: " \
+ && vim --version \
+ && echo "=====================================================================> Version  wget: " \
+ && wget --version
 
 CMD ["/bin/bash"]

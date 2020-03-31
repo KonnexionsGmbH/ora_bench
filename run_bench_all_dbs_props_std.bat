@@ -37,7 +37,7 @@ if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
 )
 
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
-    set ORA_BENCH_JAVA_CLASSPATH=".;priv\java_jar\*"
+    set ORA_BENCH_JAVA_CLASSPATH=.;priv/java_jar/*;JAVA_HOME/lib;
 )
 
 if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (

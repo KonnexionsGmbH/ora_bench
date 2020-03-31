@@ -127,10 +127,8 @@ script:
   - sudo chmod +x scripts/*.sh
   - cd src_java
   - gradle wrapper
-  # - sudo chmod +x gradlew
   # - cd ../src_kotlin
   # - gradle wrapper
-  # - sudo chmod +x gradlew
   - cd ..
   - ./scripts/run_properties_variations.sh
   - travis_fold end   "Running_ora_bench"
