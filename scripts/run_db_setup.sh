@@ -49,7 +49,7 @@ if ! docker start ora_bench_db; then
     exit $?
 fi
 
-while [ "$(docker inspect -f "{.State.Health.Status}" ora_bench_db)" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
+while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
 if [ $? -ne 0 ]; then
     echo "ERRORLEVEL : $?"
     exit $?
