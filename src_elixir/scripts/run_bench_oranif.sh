@@ -67,6 +67,13 @@ fi
 (
     cd src_elixir || exit 255
     
+    if [ -f "mix.lock" ]; then
+        rm -f mix.lock
+    fi         
+    if [ -f "deps" ]; then
+        rm -rf deps
+    fi         
+
     if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
         if ! mix local.hex --force; then
             exit 255

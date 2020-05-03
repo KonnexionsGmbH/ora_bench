@@ -123,6 +123,14 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
 
         (
             cd src_elixir || exit 255
+
+            if [ -f "mix.lock" ]; then
+                rm -f mix.lock
+            fi         
+            if [ -f "deps" ]; then
+                rm -rf deps
+            fi         
+
             if ! mix local.hex --force; then
                 exit 255
             fi
@@ -151,6 +159,11 @@ if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANI
     
     (
         cd src_erlang || exit 255
+
+        if [ -d "_build" ]; then
+            rm -rf _build
+        fi         
+
         if ! rebar3 escriptize; then
             exit 255
         fi

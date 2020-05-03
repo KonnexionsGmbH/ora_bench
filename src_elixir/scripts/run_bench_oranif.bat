@@ -65,6 +65,11 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
 cd src_elixir
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    if EXIST deps\ 
+        rd /Q/S deps 
+    if EXIST mix.lock 
+        del /s mix.lock 
+
     call mix local.hex --force
     if %ERRORLEVEL% NEQ 0 (
         exit %ERRORLEVEL%

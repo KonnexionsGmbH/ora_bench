@@ -113,6 +113,12 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         )
     
         cd src_elixir
+
+        if EXIST deps\ 
+            rd /Q/S deps 
+        if EXIST mix.lock 
+            del /s mix.lock 
+
         call mix local.hex --force
         if %ERRORLEVEL% NEQ 0 (
             exit %ERRORLEVEL%
@@ -152,6 +158,10 @@ if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
     )
 
     cd src_erlang
+
+    if EXIST _build\ 
+        rd /Q/S _build 
+
     call rebar3 escriptize
     if %ERRORLEVEL% NEQ 0 (
         exit %ERRORLEVEL%

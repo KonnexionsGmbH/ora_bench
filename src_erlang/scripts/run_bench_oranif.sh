@@ -66,6 +66,10 @@ if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
     (
         cd src_erlang || exit 255
         
+        if [ -d "_build" ]; then
+            rm -rf _build
+        fi         
+
         if ! rebar3 escriptize; then
             exit 255
         fi

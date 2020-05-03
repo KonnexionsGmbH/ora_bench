@@ -63,6 +63,9 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
 
     cd src_erlang
     
+    if EXIST _build\ 
+        rd /Q/S _build 
+        
     call rebar3 escriptize
     if %ERRORLEVEL% NEQ 0 (
         exit %ERRORLEVEL%
