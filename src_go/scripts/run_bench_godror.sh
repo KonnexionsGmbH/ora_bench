@@ -46,21 +46,15 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
     if ! go get github.com/godror/godror; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 fi
 
 if ! go run src_go/orabench.go priv/properties/ora_bench.properties; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -68,5 +62,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

@@ -34,6 +34,10 @@ if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 )
 
+if ["%GOPATH%"] EQU [""] (
+    set GOPATH=%cd%\src_go\go
+)
+
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
     set ORA_BENCH_JAVA_CLASSPATH=.;priv/java_jar/*;JAVA_HOME/lib;
 )
@@ -77,56 +81,56 @@ echo ===========================================================================
 if NOT ["%ORA_BENCH_BULKFILE_EXISTING%"] == ["true"] (
     call scripts\run_create_bulk_file.bat
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 )
 
 if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
         echo Setup C - Start ============================================================ 
-        java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_c
+        java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_c
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
 
         nmake -f src_c\Makefile.win32 clean
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
         
         nmake -f src_c\Makefile.win32
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
         echo Setup C - End   ============================================================ 
     )
 
     if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
         echo Setup Elixir - Start ======================================================= 
-        java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_elixir
+        java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_elixir
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
     
         cd src_elixir
         call mix local.hex --force
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
         
         call mix deps.clean --all
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
         
         call mix deps.get
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
         
         call mix deps.compile
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
         cd ..
         echo Setup Elixir - End   ======================================================= 
@@ -142,15 +146,15 @@ if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] == ["true"] (
 )
 if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
     echo Setup Erlang - Start ======================================================= 
-    java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_erlang
+    java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_erlang
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 
     cd src_erlang
     call rebar3 escriptize
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
     cd ..
     echo Setup Erlang - End   ======================================================= 
@@ -161,16 +165,16 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         echo Setup Go - Start =========================================================== 
         go get github.com/godror/godror
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
         echo Setup Go - End   =========================================================== 
     )    
     
     if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] == ["true"] (
         echo Setup Python - Start ======================================================= 
-        java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_python
+        java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_python
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
         echo Setup Python - End   ======================================================= 
     )    
@@ -182,4 +186,4 @@ echo ---------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
 
-exit /B %ERRORLEVEL%
+exit %ERRORLEVEL%

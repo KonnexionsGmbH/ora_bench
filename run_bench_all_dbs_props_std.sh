@@ -1,8 +1,9 @@
 #!/bin/bash
 
+set -e
+
 exec &> >(tee -i run_bench_all_dbs_props_std.log)
 sleep .1
-
 
 # ------------------------------------------------------------------------------
 #
@@ -87,11 +88,8 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 if ! { /bin/bash scripts/run_create_bulk_file.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
 
 export ORA_BENCH_BULKFILE_EXISTING=true
@@ -100,8 +98,7 @@ export ORA_BENCH_BULKFILE_EXISTING=true
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     if ! { /bin/bash scripts/run_properties_standard.sh; }; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 fi
 
@@ -109,8 +106,7 @@ if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     if ! { /bin/bash scripts/run_properties_standard.sh; }; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 fi
 
@@ -118,12 +114,9 @@ if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     if ! { /bin/bash scripts/run_properties_standard.sh; }; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 fi
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -131,5 +124,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

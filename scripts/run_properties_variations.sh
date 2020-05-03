@@ -6,6 +6,8 @@
 #
 # ------------------------------------------------------------------------------
 
+set -e
+
 export ORA_BENCH_MULTIPLE_RUN=true
 
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
@@ -73,16 +75,12 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 if ! { /bin/bash scripts/run_collect_and_compile.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
 
 if ! { /bin/bash scripts/run_db_setup.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
 
 # #01
@@ -90,8 +88,7 @@ export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
 if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
 
 # #02
@@ -99,8 +96,7 @@ export ORA_BENCH_BENCHMARK_BATCH_SIZE=$ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
 if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
 
 # #03
@@ -108,8 +104,7 @@ export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
 if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
 
 # #04
@@ -117,8 +112,7 @@ export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=$ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
 
 # #05
@@ -126,8 +120,7 @@ export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
 if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
 
 # #06
@@ -135,11 +128,8 @@ export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -147,5 +137,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

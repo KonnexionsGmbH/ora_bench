@@ -70,17 +70,17 @@ echo ===========================================================================
 
 call scripts\run_collect_and_compile.bat
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 call scripts\run_db_setup.bat
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 echo --------------------------------------------------------------------------------
@@ -89,4 +89,4 @@ echo ---------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
 
-exit /B %ERRORLEVEL%
+exit %ERRORLEVEL%

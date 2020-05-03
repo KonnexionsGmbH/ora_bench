@@ -54,50 +54,39 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
     if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 
     if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 fi    
 
 (
-    cd src_elixir || exit $?
+    cd src_elixir || exit 255
     
     if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
         if ! mix local.hex --force; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
         
         if ! mix deps.clean --all; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
         if ! mix deps.get; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
         if ! mix deps.compile; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
     fi    
     
     if ! mix run -e "OraBench.CLI.main([\"oranif\"])"; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 )
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -105,5 +94,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

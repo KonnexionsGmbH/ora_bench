@@ -32,7 +32,7 @@ echo ===========================================================================
 
 java -cp %ORA_BENCH_JAVA_CLASSPATH% ch.konnexions.orabench.OraBench finalise
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 echo --------------------------------------------------------------------------------
@@ -41,4 +41,4 @@ echo ---------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
 
-exit /B %ERRORLEVEL%
+exit %ERRORLEVEL%

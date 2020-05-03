@@ -54,21 +54,15 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 if ! [ "$ORA_BENCH_MULTIPLE_RUN" = "true" ]; then
     if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 fi
 
 if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench runBenchmark; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -76,5 +70,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

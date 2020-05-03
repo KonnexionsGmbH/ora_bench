@@ -6,6 +6,8 @@
 #
 # ------------------------------------------------------------------------------
 
+set -e
+
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
@@ -63,20 +65,16 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
         if ! { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
     fi
     
     if [ "$ORA_BENCH_RUN_GODROR_GO" = "true" ]; then
         if ! { /bin/bash src_go/scripts/run_bench_godror.sh; }; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
     fi
 fi
@@ -84,8 +82,7 @@ fi
 if [ "$RUN_GLOBAL_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" = "true" ]; then
         if ! { /bin/bash src_erlang/scripts/run_bench_jamdb_oracle.sh; }; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
     fi
 fi
@@ -93,39 +90,32 @@ fi
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
         if ! { /bin/bash src_java/scripts/run_bench_jdbc.sh; }; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
     fi
     
     if [ "$ORA_BENCH_RUN_ODPI_C" = "true" ]; then
         if ! { /bin/bash src_c/scripts/run_bench_odpi.sh; }; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
     fi
     
     if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" = "true" ]; then
         if ! { /bin/bash src_elixir/scripts/run_bench_oranif.sh; }; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
     fi
     
     if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
         if ! { /bin/bash src_erlang/scripts/run_bench_oranif.sh; }; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
     fi
 fi
 
 if ! { /bin/bash scripts/run_finalise_benchmark.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -133,5 +123,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

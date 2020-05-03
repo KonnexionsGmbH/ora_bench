@@ -54,53 +54,41 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
     if [ "$OSTYPE" = "msys" ]; then
         if ! nmake -f src_c/Makefile.win32 clean; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
         if ! nmake -f src_c/Makefile.win32; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
     else
         if ! make -f src_c/Makefile clean; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
         if ! make -f src_c/Makefile; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
     fi
 
     if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 
     if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_c; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 fi
 
 if [ "$OSTYPE" = "msys" ]; then
     if ! ./OraBench.exe priv/properties/ora_bench_c.properties; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 else
     if ! ./OraBench priv/properties/ora_bench_c.properties; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 fi
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -108,5 +96,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

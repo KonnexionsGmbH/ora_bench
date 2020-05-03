@@ -46,7 +46,7 @@ docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-si
 echo Docker started ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%)...
 docker start ora_bench_db
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 for /f "delims=" %%A in ('priv\Gammadyne\timer.exe /s') do set "CONSUMED=%%A"
 echo DOCKER ready in %CONSUMED%
@@ -61,12 +61,12 @@ if NOT ["%DOCKER_HEALTH_STATUS%"] == ["healthy"] (
     goto :check_health_status
 )
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 priv\oracle\instantclient-windows.x64\instantclient_19_5\sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE% AS SYSDBA @scripts/run_db_setup.sql
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 echo --------------------------------------------------------------------------------
@@ -75,4 +75,4 @@ echo ---------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
 
-exit /B %ERRORLEVEL%
+exit %ERRORLEVEL%

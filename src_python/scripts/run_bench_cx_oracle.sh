@@ -54,33 +54,25 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
     if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 
-    if ! java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_python; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+    if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup_python; then
+        exit 255
     fi
 fi
 
 if [ "$OSTYPE" = "msys" ]; then
     if ! python src_python/OraBench.py; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 else
     if ! python3 src_python/OraBench.py; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 fi
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -88,5 +80,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

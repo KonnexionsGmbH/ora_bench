@@ -53,18 +53,18 @@ echo ===========================================================================
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     call src_java\scripts\run_gradle
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 
-    java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_python
+    java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_python
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 )    
 
 python src_python/OraBench.py
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 echo --------------------------------------------------------------------------------
@@ -73,4 +73,4 @@ echo ---------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
 
-exit /B %ERRORLEVEL%
+exit %ERRORLEVEL%

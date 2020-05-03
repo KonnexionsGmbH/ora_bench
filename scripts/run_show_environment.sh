@@ -6,6 +6,8 @@
 #
 # ------------------------------------------------------------------------------
 
+set -e
+
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -19,92 +21,74 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 echo "===============================================================================> Version autoconf:"
 if ! autoconf -V; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
 echo "===============================================================================> Version automake:"
 if ! automake --version; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
 echo "===============================================================================> Version Elixir:"
 if ! elixir -v; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
 echo "===============================================================================> Version gcc:"
 if ! gcc --version; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
 echo "===============================================================================> Version Git:"
 if ! git --version; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
 echo "===============================================================================> Version Go:"
 if ! go version; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
 if ! go env; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
 echo "===============================================================================> Version Gradle:"
+gradle wrapper
 if ! gradle --version; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
 echo "===============================================================================> Version Java:"
 if ! java -version; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
 echo "===============================================================================> Version Mix:"
 if ! mix --version; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
 echo "===============================================================================> Version Python3:"
 if ! python3 --version; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
 echo "===============================================================================> Version Rebar3:"
 if ! rebar3 version; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
 echo "===============================================================================> Version Ubuntu:"
 if ! lsb_release -a; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
     
-EXITCODE=$?
-
 echo ""
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE
