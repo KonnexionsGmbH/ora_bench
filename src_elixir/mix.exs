@@ -30,7 +30,7 @@ defmodule OraBench.MixProject do
   defp deps do
     [
       {:ecto_sql, "~> 3.2.2"},
-      {:oranif, git: "https://github.com/c-bik/oranif"}
+      {:oranif, git: "https://github.com/konnexionsgmbh/oranif"}
     ]
   end
 

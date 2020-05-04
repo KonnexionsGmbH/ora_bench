@@ -16,7 +16,7 @@ public class Select implements Runnable {
 
     private final Config config;
 
-    public final Logger log;
+    private final Logger log;
 
     private final int partitionKey;
 

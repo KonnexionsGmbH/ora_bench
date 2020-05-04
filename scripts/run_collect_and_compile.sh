@@ -6,6 +6,8 @@
 #
 # ------------------------------------------------------------------------------
 
+set -e
+
 export ORA_BENCH_MULTIPLE_RUN=true
 
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
@@ -32,6 +34,10 @@ fi
 
 if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+fi
+
+if [ -z "$GOPATH" ]; then
+    GOPATH=$(pwd)/src_go/go
 fi
 
 if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
@@ -78,40 +84,32 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 if [ "$BULKFILE_EXISTING" != "true" ]; then
     if ! { /bin/bash scripts/run_create_bulk_file.sh; }; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 fi
 
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
         echo "Setup C - Start ============================================================" 
-        if ! java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_c; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+        if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup_c; then
+            exit 255
         fi
 
         if [ "$OSTYPE" = "msys" ]; then
             if ! nmake -f src_c/Makefile.win32 clean; then
-                echo "ERRORLEVEL : $?"
-                exit $?
+                exit 255
             fi
             if ! nmake -f src_c/Makefile.win32; then
-                echo "ERRORLEVEL : $?"
-                exit $?
+                exit 255
             fi
         else
             if ! make -f src_c/Makefile clean; then
-                echo "ERRORLEVEL : $?"
-                exit $?
+                exit 255
             fi
             if ! make -f src_c/Makefile; then
-                echo "ERRORLEVEL : $?"
-                exit $?
+                exit 255
             fi
         fi
         echo "Setup C - End   ============================================================" 
@@ -119,31 +117,34 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     
     if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
         echo "Setup Elixir - Start =======================================================" 
-        if ! java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_elixir; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+        if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup_elixir; then
+            exit 255
         fi
 
         (
-            cd src_elixir || exit $?
+            cd src_elixir || exit 255
+
+            if [ -f "mix.lock" ]; then
+                rm -f mix.lock
+            fi         
+            if [ -f "deps" ]; then
+                rm -rf deps
+            fi         
+
             if ! mix local.hex --force; then
-                echo "ERRORLEVEL : $?"
-                exit $?
+                exit 255
             fi
             
             if ! mix deps.clean --all; then
-                echo "ERRORLEVEL : $?"
-                exit $?
+               exit 255
             fi
             
             if ! mix deps.get; then
-                echo "ERRORLEVEL : $?"
-                exit $?
+                exit 255
             fi
             
             if ! mix deps.compile; then
-                echo "ERRORLEVEL : $?"
-                exit $?
+                exit 255
             fi
         )
         echo "Setup Elixir - End   =======================================================" 
@@ -152,16 +153,19 @@ fi
     
 if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
     echo "Setup Erlang - Start ======================================================="
-    if ! java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_erlang; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+    if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup_erlang; then
+        exit 255
     fi
     
     (
-        cd src_erlang || exit $?
+        cd src_erlang || exit 255
+
+        if [ -d "_build" ]; then
+            rm -rf _build
+        fi         
+
         if ! rebar3 escriptize; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
     )
     echo "Setup Erlang - End   =======================================================" 
@@ -171,8 +175,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_GODROR_GO" == "true" ]; then
         echo "Setup Go - Start ===========================================================" 
         if ! go get github.com/godror/godror; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
         echo "Setup Go - End   ===========================================================" 
     fi    
@@ -180,14 +183,11 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" == "true" ]; then
         echo "Setup Python - Start =======================================================" 
         if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
         echo "Setup Python - End   =======================================================" 
     fi    
 fi    
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -195,5 +195,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

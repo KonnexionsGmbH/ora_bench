@@ -48,13 +48,13 @@ echo ===========================================================================
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     go get github.com/godror/godror
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 )    
 
 go run src_go\orabench.go priv\properties\ora_bench.properties
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 echo --------------------------------------------------------------------------------
@@ -63,4 +63,4 @@ echo ---------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
 
-exit /B %ERRORLEVEL%
+exit %ERRORLEVEL%

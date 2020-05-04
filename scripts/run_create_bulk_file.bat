@@ -32,17 +32,17 @@ echo ===========================================================================
 
 call scripts\run_show_environment.bat
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 call src_java\scripts\run_gradle
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 java -cp %ORA_BENCH_JAVA_CLASSPATH% ch.konnexions.orabench.OraBench setup
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 echo --------------------------------------------------------------------------------
@@ -51,4 +51,4 @@ echo ---------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
 
-exit /B %ERRORLEVEL%
+exit %ERRORLEVEL%

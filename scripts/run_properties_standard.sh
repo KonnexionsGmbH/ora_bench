@@ -6,6 +6,8 @@
 #
 # ------------------------------------------------------------------------------
 
+set -e
+
 export ORA_BENCH_MULTIPLE_RUN=true
 
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
@@ -73,24 +75,17 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 if ! { /bin/bash scripts/run_collect_and_compile.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
 
 if ! { /bin/bash scripts/run_db_setup.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
 
 if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -98,5 +93,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

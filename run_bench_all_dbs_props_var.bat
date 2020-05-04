@@ -92,19 +92,12 @@ echo.
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
     
-    call scripts\run_create_bulk_file.bat
-    if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
-    )
-    
-    set ORA_BENCH_BULKFILE_EXISTING=true
-
     if ["%ORA_BENCH_RUN_DB_12_2_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_variations.bat
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
     )
     
@@ -113,7 +106,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_variations.bat
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
     )
     
@@ -122,7 +115,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_variations.bat
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
     )
     
@@ -138,5 +131,5 @@ echo.
     
     start priv\audio\end_of_series.mp3
     
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )

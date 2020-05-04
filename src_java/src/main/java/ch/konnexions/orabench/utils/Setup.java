@@ -120,7 +120,8 @@ public class Setup {
     /**
      * Creates a new result file if none exists yet.
      */
-    public final void createResultFile() {
+    @SuppressWarnings("resource")
+	public final void createResultFile() {
 
         String resultDelimiter = config.getFileResultDelimiter();
         String resultName = config.getFileResultName();

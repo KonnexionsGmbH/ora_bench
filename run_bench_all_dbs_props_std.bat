@@ -93,7 +93,7 @@ echo.
     
     call scripts\run_create_bulk_file.bat
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
     
     set ORA_BENCH_BULKFILE_EXISTING=true
@@ -103,7 +103,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_standard.bat
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
     )
     
@@ -112,7 +112,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_standard.bat
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
     )
     
@@ -121,7 +121,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_standard.bat
         if %ERRORLEVEL% NEQ 0 (
-            exit /B %ERRORLEVEL%
+            exit %ERRORLEVEL%
         )
     )
     
@@ -131,5 +131,5 @@ echo.
     echo End   %0
     echo ================================================================================
     
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )

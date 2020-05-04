@@ -53,42 +53,47 @@ echo ===========================================================================
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     call src_java\scripts\run_gradle
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 
-    java -cp priv/java_jar/* ch.konnexions.orabench.OraBench setup_elixir
+    java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_elixir
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 )
 
 cd src_elixir
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    if EXIST deps\ 
+        rd /Q/S deps 
+    if EXIST mix.lock 
+        del /s mix.lock 
+
     call mix local.hex --force
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 
     call mix deps.clean --all
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 
     call mix deps.get
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 
     call mix deps.compile
     if %ERRORLEVEL% NEQ 0 (
-        exit /B %ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 )
     
 call mix run -e "OraBench.CLI.main(["oranif"])"
 if %ERRORLEVEL% NEQ 0 (
-    exit /B %ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 cd ..
@@ -99,4 +104,4 @@ echo ---------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
 
-exit /B %ERRORLEVEL%
+exit %ERRORLEVEL%

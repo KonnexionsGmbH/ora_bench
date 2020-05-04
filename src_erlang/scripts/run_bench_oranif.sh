@@ -54,35 +54,31 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
     if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 
     if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+        exit 255
     fi
 
     (
-        cd src_erlang || exit $?
+        cd src_erlang || exit 255
         
+        if [ -d "_build" ]; then
+            rm -rf _build
+        fi         
+
         if ! rebar3 escriptize; then
-            echo "ERRORLEVEL : $?"
-            exit $?
+            exit 255
         fi
     )
 fi
 
 if ! src_erlang/_build/default/bin/orabench priv/properties/ora_bench_erlang.properties oranif; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -90,5 +86,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE
