@@ -1,4 +1,6 @@
-# Konnexions Public License (KX-PL) #                         ![](priv/logo/Logo.png)
+![](priv/logo/Logo.png)
+
+# Konnexions Public License (KX-PL) #
 
 **Version 2020.05**
 
