@@ -38,4 +38,4 @@ A "**contributor**" is any person that distributes its contribution under this l
 (**f**)  Source code usage under this License is limited to review, compilation and contributions. Contributions to Konnexions software products under this License may only be made in consultation with Konnexions GmbH and through the appropriate Konnexions software repositories.
 
 
-[PDF version](https://github.com/KonnexionsGmbH/docker_images_pub/blob/master/License/KX-PL-2020.05.pdf)
+[PDF version](https://github.com/KonnexionsGmbH/shared_resources/blob/master/License/KX-PL-2020.05.pdf)
