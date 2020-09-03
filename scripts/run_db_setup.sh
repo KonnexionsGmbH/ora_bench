@@ -68,11 +68,11 @@ end=$(date +%s)
 echo "DOCKER ready in $((end - start)) seconds ......................................."
 
 if [ "$OSTYPE" = "msys" ]; then
-  if ! priv/oracle/instantclient-windows.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT_1}_${VERSION_ORACLE_INSTANT_CLIENT_2}/sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql; then
+  if ! sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql; then
         exit 255
   fi      
 else
-  if ! priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT_1}_${VERSION_ORACLE_INSTANT_CLIENT_2}/sqlplus sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql; then
+  if ! sqlplus sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql; then
         exit 255
   fi      
 fi  

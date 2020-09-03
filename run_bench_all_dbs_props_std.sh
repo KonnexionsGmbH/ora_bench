@@ -17,9 +17,6 @@ export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (locally)'
 export ORA_BENCH_CHOICE_DB_DEFAULT=complete
 export ORA_BENCH_CHOICE_DRIVER_DEFAULT=complete
 
-export VERSION_ORACLE_INSTANT_CLIENT_1=19
-export VERSION_ORACLE_INSTANT_CLIENT_2=5
-
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
     export ORA_BENCH_CONNECTION_HOST=ora_bench_db
 fi
