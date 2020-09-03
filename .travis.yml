@@ -44,8 +44,8 @@ script:
   - git clone https://github.com/asdf-vm/asdf.git ~/.asdf
   - cd ~/.asdf
   - git checkout "$(git describe --abbrev=0 --tags)"
-  - echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
-  - echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+  - echo -e '\n. ${HOME}/.asdf/asdf.sh' >> ~/.bashrc
+  - echo -e '\n. ${HOME}/.asdf/completions/asdf.bash' >> ~/.bashrc
   - cd /home/travis/build/KonnexionsGmbH/ora_bench
   - . ~/.bashrc
   - asdf plugin-add Elixir https://github.com/asdf-vm/asdf-elixir
@@ -60,7 +60,7 @@ script:
   - wget -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
   - tar -xf go${VERSION_GO}.linux-amd64.tar.gz
   - sudo mv go /usr/local
-  - export GOPATH=$HOME/build/KonnexionsGmbH/ora_bench/src_go/go
+  - export GOPATH=${HOME}/build/KonnexionsGmbH/ora_bench/src_go/go
   - export GOROOT=/usr/local/go
   - export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}
   - travis_fold end   "Setting_up_Go"
@@ -71,7 +71,7 @@ script:
   - tar -xf openjdk-${VERSION_JAVA}_linux-x64_bin.tar.gz 
   - mv jdk-${VERSION_JAVA} /opt/
   - export JAVA_HOME=/opt/jdk-${VERSION_JAVA}
-  - export PATH="$JAVA_HOME/bin:${PATH}"
+  - export PATH="${JAVA_HOME}/bin:${PATH}"
   - travis_fold end   "Setting_up_Java"
     
   # Gradle -----------------------------------------------------------------------
@@ -84,8 +84,10 @@ script:
 
   # Oracle Instant Client --------------------------------------------------------
   - travis_fold start "Setting_up_Oracle_Instant_Client"
-  - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}00/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-basic-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
-  - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}00/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-sqlplus-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
+# - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}00/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-basic-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
+  - wget -q https://download.oracle.com/otn_software/linux/instantclient/19800/oracle-instantclient19.8-basic-19.8.0.0.0-1.x86_64.rpm
+# - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}00/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-sqlplus-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
+  - wget -q https://download.oracle.com/otn_software/linux/instantclient/19800/oracle-instantclient19.8-sqlplus-19.8.0.0.0-1.x86_64.rpm
   - alien -i *.rpm
   - export ORACLE_HOME=/usr/lib/oracle/${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}/client64
   - export LD_LIBRARY_PATH="$ORACLE_HOME/lib:$LD_LIBRARY_PATH"
