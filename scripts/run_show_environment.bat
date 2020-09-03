@@ -22,23 +22,27 @@ echo ===========================================================================
 echo "===============================================================================> Version Elixir:"
 call elixir -v
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
     
 echo "===============================================================================> Version Git:"
 git --version
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
     
 echo "===============================================================================> Version Go:"
 go version
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 go env
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
     
@@ -46,36 +50,42 @@ echo "==========================================================================
 call gradle wrapper
 call gradle --version
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
     
 echo "===============================================================================> Version Java:"
 java -version
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
     
 echo "===============================================================================> Version Mix:"
 call mix --version
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
     
 echo "===============================================================================> Version Python3:"
 python --version
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
     
 echo "===============================================================================> Version Rebar3:"
 call rebar3 version
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
     
 echo "===============================================================================> Version Windows:"
 systeminfo | findstr Build 
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -84,5 +94,3 @@ echo:| TIME
 echo --------------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
-
-exit %ERRORLEVEL%

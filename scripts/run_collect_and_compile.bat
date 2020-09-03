@@ -80,7 +80,8 @@ echo ===========================================================================
 
 if NOT ["%ORA_BENCH_BULKFILE_EXISTING%"] == ["true"] (
     call scripts\run_create_bulk_file.bat
-    if %ERRORLEVEL% NEQ 0 (
+    if %ERRORLEVEL% NEQ 0 call script\run_abort
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 )
@@ -90,18 +91,22 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         echo Setup C - Start ============================================================ 
         java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_c
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
 
         nmake -f src_c\Makefile.win32 clean
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
         
         nmake -f src_c\Makefile.win32
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
+    
         echo Setup C - End   ============================================================ 
     )
 
@@ -109,33 +114,36 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         echo Setup Elixir - Start ======================================================= 
         java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_elixir
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
     
         cd src_elixir
 
-        if EXIST deps\ 
-            rd /Q/S deps 
-        if EXIST mix.lock 
-            del /s mix.lock 
+        if exist deps\ rd /Q/S deps 
+        if exist mix.lock del /s mix.lock 
 
         call mix local.hex --force
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
         
         call mix deps.clean --all
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
         
         call mix deps.get
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
         
         call mix deps.compile
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
         cd ..
@@ -147,25 +155,29 @@ set ORA_BENCH_RUN_ERLANG=false
 if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] == ["true"] (
     set ORA_BENCH_RUN_ERLANG=true
 )
+
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] == ["true"] (
     set ORA_BENCH_RUN_ERLANG=true
 )
+
 if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
     echo Setup Erlang - Start ======================================================= 
     java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_erlang
     if %ERRORLEVEL% NEQ 0 (
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 
     cd src_erlang
 
-    if EXIST _build\ 
-        rd /Q/S _build 
+    if exist _build\ rd /Q/S _build 
 
     call rebar3 escriptize
     if %ERRORLEVEL% NEQ 0 (
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
+    
     cd ..
     echo Setup Erlang - End   ======================================================= 
 )    
@@ -175,8 +187,10 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         echo Setup Go - Start =========================================================== 
         go get github.com/godror/godror
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
+
         echo Setup Go - End   =========================================================== 
     )    
     
@@ -184,8 +198,10 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         echo Setup Python - Start ======================================================= 
         java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_python
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
+
         echo Setup Python - End   ======================================================= 
     )    
 )
@@ -195,5 +211,3 @@ echo:| TIME
 echo --------------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
-
-exit %ERRORLEVEL%

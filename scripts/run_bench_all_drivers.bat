@@ -62,6 +62,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
         call src_python\scripts\run_bench_cx_oracle.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
     )
@@ -69,6 +70,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU ["true"] (
         call src_go\scripts\run_bench_godror.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
     )
@@ -78,6 +80,7 @@ if ["%RUN_GLOBAL_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU ["true"] (
         call src_erlang\scripts\run_bench_jamdb_oracle.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
     )
@@ -87,6 +90,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
         call src_java\scripts\run_bench_jdbc.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
     )
@@ -94,6 +98,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
         call src_c\scripts\run_bench_odpi.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
     )
@@ -101,6 +106,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
         call src_elixir\scripts\run_bench_oranif.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
     )
@@ -108,6 +114,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
         call src_erlang\scripts\run_bench_oranif.bat
         if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
     )
@@ -115,6 +122,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
 
 call scripts\run_finalise_benchmark.bat
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -123,5 +131,3 @@ echo:| TIME
 echo --------------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
-
-exit %ERRORLEVEL%

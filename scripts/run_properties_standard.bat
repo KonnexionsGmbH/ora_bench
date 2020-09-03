@@ -14,7 +14,7 @@ if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 )
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_HOST=0.0.0.0
+    set ORA_BENCH_CONNECTION_HOST=ora_bench_db
 )
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_CONNECTION_PORT=1521
@@ -70,16 +70,19 @@ echo ===========================================================================
 
 call scripts\run_collect_and_compile.bat
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 call scripts\run_db_setup.bat
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -88,5 +91,3 @@ echo:| TIME
 echo --------------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
-
-exit %ERRORLEVEL%
