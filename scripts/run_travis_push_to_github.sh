@@ -6,7 +6,7 @@
 #
 # ------------------------------------------------------------------------------
 
-if [ ${ORA_BENCH_CHOICE_DRIVER} = "complete" ]; then
+if [ "${ORA_BENCH_CHOICE_DRIVER}" = "complete" ]; then
   setup_git() {
     git config --global user.email "travis@travis-ci.org"
     git config --global user.name "Travis CI"

@@ -32,6 +32,9 @@ fi
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
+if [ -z "$ORA_BENCH_RUN_GODROR_GO" ]; then
+    export ORA_BENCH_RUN_GODROR_GO=true
+fi
 if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" ]; then
     export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
 fi
