@@ -31,6 +31,8 @@ script:
   - export VERSION_GO=1.15.1
   - export VERSION_GRADLE=6.6.1
   - export VERSION_JAVA=14.0.2
+  - export VERSION_ORACLE_INSTANT_CLIENT_1=19
+  - export VERSION_ORACLE_INSTANT_CLIENT_2=5
     
   - sudo apt update -q
   - sudo apt install -q software-properties-common
