@@ -31,7 +31,8 @@ script:
   - export VERSION_GO=1.15.1
   - export VERSION_GRADLE=6.6.1
   - export VERSION_JAVA=14.0.2
-  - export VERSION_ORACLE_INSTANT_CLIENT=19_8
+  - export VERSION_ORACLE_INSTANT_CLIENT_1=19
+  - export VERSION_ORACLE_INSTANT_CLIENT_2=8
     
   - sudo apt update -q
   - sudo apt install -q software-properties-common
@@ -66,8 +67,11 @@ script:
 
   # Java -------------------------------------------------------------------------
   - travis_fold start "Setting_up_Java"
-  - sudo add-apt-repository -y ppa:openjdk-r/ppa
-  - sudo apt install -q openjdk-${VERSION_JAVA}-jdk
+  - wget -q https://download.java.net/java/GA/jdk${VERSION_JAVA}/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-${VERSION_JAVA}_linux-x64_bin.tar.gz 
+  - tar -xf openjdk-${VERSION_JAVA}_linux-x64_bin.tar.gz 
+  - mv jdk-${VERSION_JAVA} /opt/
+  - export JAVA_HOME=/opt/jdk-${VERSION_JAVA}
+  - export PATH="$JAVA_HOME/bin:${PATH}"
   - travis_fold end   "Setting_up_Java"
     
   # Gradle -----------------------------------------------------------------------
@@ -80,9 +84,9 @@ script:
 
   # Oracle Instant Client for Linux x86-64 (64-bit) ------------------------------
   - travis_fold start "Setting_up_Oracle Instant Client"
-  - sudo apt-get install -q libaio1
-  - sudo chmod +x $PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}/sqlplus
-  - export LD_LIBRARY_PATH=$PWD/priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT}
+  - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}00/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-basic-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm 
+  - alien -i *.rpm
+  - export LD_LIBRARY_PATH="$ORACLE_HOME/lib:$LD_LIBRARY_PATH" 
   - travis_fold end   "Setting_up_Oracle Instant Client"
 
   # Python -----------------------------------------------------------------------
