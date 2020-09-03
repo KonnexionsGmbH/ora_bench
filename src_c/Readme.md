@@ -9,7 +9,7 @@ C++ Win toolchains
 Oracle Instant Client Installation
 1. Download Basic Light zip from https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html
 1. Unzip at C:/Oracle (create the directory if it doesn't exit). You can also choose a different instal folder. The folloing instructions assumes you choose C:/Oracle
-1. Add C:\Oracle\instantclient_19_5 to PATH environment variable
+1. Add C:\Oracle\instantclient_v...v_v...v to PATH environment variable
 
 ```cmd
 ora_bench\src_c> nmake -f Makefile.win32

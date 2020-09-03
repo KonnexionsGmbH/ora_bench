@@ -11,8 +11,11 @@ setlocal EnableDelayedExpansion
 
 set ORA_BENCH_BENCHMARK_COMMENT="Standard tests (locally)"
 
+set ORA_BENCH_CHOICE_DB_DEFAULT=complete
 set ORA_BENCH_CHOICE_DRIVER_DEFAULT=complete
-set  ORA_BENCH_CHOICE_DB_DEFAULT=complete
+
+set VERSION_ORACLE_INSTANT_CLIENT_1=19
+set VERSION_ORACLE_INSTANT_CLIENT_2=8
 
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
     set ORA_BENCH_CONNECTION_HOST=ora_bench_db
