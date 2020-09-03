@@ -33,10 +33,10 @@ before_install:
 script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
-  - export VERSION_ELIXIR=1.9.4
-  - export VERSION_GO=1.14
-  - export VERSION_GRADLE=6.2
-  - export VERSION_ORACLE_INSTANT_CLIENT=19_5
+  - export VERSION_ELIXIR=1.10.4
+  - export VERSION_GO=1.15.1
+  - export VERSION_GRADLE=6.6.1
+  - export VERSION_ORACLE_INSTANT_CLIENT=19_8
   - sudo apt update -q
   - sudo apt install -q software-properties-common
   - sudo apt-get install -q lsb-core
@@ -132,8 +132,10 @@ script:
   - travis_fold start "Running_ora_bench"
   - git pull
   - sudo chmod +x *.sh
+  - sudo chmod +x */scripts/*.sh
   - sudo chmod +x scripts/*.sh
   - cd src_java
+  - chmod +x gradlew
   - gradle wrapper
   # - cd ../src_kotlin
   # - gradle wrapper
