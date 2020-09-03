@@ -32,7 +32,7 @@ script:
   - export VERSION_GRADLE=6.6.1
   - export VERSION_JAVA=14.0.2
   - export VERSION_ORACLE_INSTANT_CLIENT_1=19
-  - export VERSION_ORACLE_INSTANT_CLIENT_2=5
+  - export VERSION_ORACLE_INSTANT_CLIENT_2=8
     
   - sudo apt update -q
   - sudo apt install -q software-properties-common
@@ -84,13 +84,9 @@ script:
 
   # Oracle Instant Client --------------------------------------------------------
   - travis_fold start "Setting_up_Oracle_Instant_Client"
-  - echo "VERSION_ORACLE_INSTANT_CLIENT_1=${VERSION_ORACLE_INSTANT_CLIENT_1}"
-  - echo "VERSION_ORACLE_INSTANT_CLIENT_2=${VERSION_ORACLE_INSTANT_CLIENT_2}"
-# - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}00/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-basic-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
-  - wget -q https://download.oracle.com/otn_software/linux/instantclient/19800/oracle-instantclient19.8-basic-19.8.0.0.0-1.x86_64.rpm
-# - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}00/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-sqlplus-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
-  - wget -q https://download.oracle.com/otn_software/linux/instantclient/19800/oracle-instantclient19.8-sqlplus-19.8.0.0.0-1.x86_64.rpm
-  - sudo alien -i *.rpm
+  - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}00/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-basic-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
+  - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}00/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-sqlplus-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
+  - sudo alien -i --scripts *.rpm
   - export ORACLE_HOME=/usr/lib/oracle/${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}/client64
   - export LD_LIBRARY_PATH="$ORACLE_HOME/lib:$LD_LIBRARY_PATH"
   - export PATH="$ORACLE_HOME::${PATH}"
@@ -122,13 +118,6 @@ script:
   - export ORA_BENCH_RUN_DB_12_2_EE=true
   - export ORA_BENCH_RUN_DB_18_3_EE=true
   - export ORA_BENCH_RUN_DB_19_3_EE=true
-
-  - export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
-  - export ORA_BENCH_RUN_GODROR_GO=true
-  - export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
-  - export ORA_BENCH_RUN_JDBC_JAVA=true
-  - export ORA_BENCH_RUN_ODPI_C=true
-  - export ORA_BENCH_RUN_ORANIF_ERLANG=true
 
   - export ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
   - export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
