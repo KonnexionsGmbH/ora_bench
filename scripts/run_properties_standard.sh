@@ -61,16 +61,25 @@ if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "true" ]; then
     export RUN_GLOBAL_NON_JAMDB=false
 fi
 
+if [ "$VERSION_ORACLE_INSTANT_CLIENT_1" = "" ]; then
+    export VERSION_ORACLE_INSTANT_CLIENT_1=19
+fi
+if [ "$VERSION_ORACLE_INSTANT_CLIENT_2" = "" ]; then
+    export VERSION_ORACLE_INSTANT_CLIENT_2=5
+fi
+
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - run with standard properties."
 echo "--------------------------------------------------------------------------------"
-echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
+echo "MULTIPLE_RUN                  : $ORA_BENCH_MULTIPLE_RUN"
 echo "--------------------------------------------------------------------------------"
-echo "ORA_BENCH_BENCHMARK_JAMDB  : $ORA_BENCH_BENCHMARK_JAMDB"
-echo "RUN_GLOBAL_JAMDB           : $RUN_GLOBAL_JAMDB"
-echo "RUN_GLOBAL_NON_JAMDB       : $RUN_GLOBAL_NON_JAMDB"
+echo "ORA_BENCH_BENCHMARK_JAMDB     : $ORA_BENCH_BENCHMARK_JAMDB"
+echo "RUN_GLOBAL_JAMDB              : $RUN_GLOBAL_JAMDB"
+echo "RUN_GLOBAL_NON_JAMDB          : $RUN_GLOBAL_NON_JAMDB"
+echo "--------------------------------------------------------------------------------"
+echo "VERSION_ORACLE_INSTANT_CLIENT : ${VERSION_ORACLE_INSTANT_CLIENT_1}_${VERSION_ORACLE_INSTANT_CLIENT_2}"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"

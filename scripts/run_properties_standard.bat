@@ -55,15 +55,24 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU [""] (
     set RUN_GLOBAL_NON_JAMDB=true
 )
 
+if ["%VERSION_ORACLE_INSTANT_CLIENT_1%"] EQU [""] (
+    set VERSION_ORACLE_INSTANT_CLIENT_1=19
+)
+if ["%VERSION_ORACLE_INSTANT_CLIENT_2%"] EQU [""] (
+    set VERSION_ORACLE_INSTANT_CLIENT_2=5
+)
+
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - database setup and Oracle benchmark - standard.
 echo --------------------------------------------------------------------------------
-echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
+echo MULTIPLE_RUN                  : %ORA_BENCH_MULTIPLE_RUN%
 echo --------------------------------------------------------------------------------
-echo RUN_GLOBAL_JAMDB           : %RUN_GLOBAL_JAMDB%
-echo RUN_GLOBAL_NON_JAMDB       : %RUN_GLOBAL_NON_JAMDB%
+echo RUN_GLOBAL_JAMDB              : %RUN_GLOBAL_JAMDB%
+echo RUN_GLOBAL_NON_JAMDB          : %RUN_GLOBAL_NON_JAMDB%
+echo --------------------------------------------------------------------------------
+echo VERSION_ORACLE_INSTANT_CLIENT : %VERSION_ORACLE_INSTANT_CLIENT_1%_%VERSION_ORACLE_INSTANT_CLIENT_2%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
