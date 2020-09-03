@@ -51,6 +51,7 @@ if [ -z "$ORA_BENCH_RUN_ORANIF_ELIXIR" ]; then
 fi
 if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
+    export ORA_BENCH_RUN_ORANIF_ERLANG=false
 fi
 
 if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
