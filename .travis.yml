@@ -136,7 +136,6 @@ script:
   - git pull
   - sudo chmod +x *.sh
   - sudo chmod +x */scripts/*.sh
-  - sudo chmod +x priv/oracle/instantclient-linux.x64/instantclient_${VERSION_ORACLE_INSTANT_CLIENT_1}_${VERSION_ORACLE_INSTANT_CLIENT_2}/sqlplus
   - sudo chmod +x scripts/*.sh
   - cd src_java
   - chmod +x gradlew
