@@ -5,7 +5,7 @@ sudo: true
 
 language: erlang
 otp_release:
-  - 20.3
+  - 23.0
 
 env:
   matrix:
@@ -24,19 +24,15 @@ env:
     - oranif    Elixir ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_RUN_CX_ORACLE_PYTHON=false ORA_BENCH_RUN_GODROR_GO=false ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false ORA_BENCH_RUN_JDBC_JAVA=false ORA_BENCH_RUN_ODPI_C=false ORA_BENCH_RUN_ORANIF_ELIXIR=true  ORA_BENCH_RUN_ORANIF_ERLANG=false
     - oranif    Erlang ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_RUN_CX_ORACLE_PYTHON=false ORA_BENCH_RUN_GODROR_GO=false ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false ORA_BENCH_RUN_JDBC_JAVA=false ORA_BENCH_RUN_ODPI_C=false ORA_BENCH_RUN_ORANIF_ELIXIR=false ORA_BENCH_RUN_ORANIF_ERLANG=true
 
-before_install:
-  - export VERSION_JAVA=11
-  - sudo add-apt-repository -y ppa:openjdk-r/ppa
-  - sudo apt update -q
-  - sudo apt install -q openjdk-${VERSION_JAVA}-jdk
-
 script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
   - export VERSION_ELIXIR=1.10.4
   - export VERSION_GO=1.15.1
   - export VERSION_GRADLE=6.6.1
+  - export VERSION_JAVA=14.0.2
   - export VERSION_ORACLE_INSTANT_CLIENT=19_8
+    
   - sudo apt update -q
   - sudo apt install -q software-properties-common
   - sudo apt-get install -q lsb-core
@@ -70,7 +66,7 @@ script:
 
   # Java -------------------------------------------------------------------------
   - travis_fold start "Setting_up_Java"
-# - sudo apt-get remove “package-name”
+  - sudo add-apt-repository -y ppa:openjdk-r/ppa
   - sudo apt install -q openjdk-${VERSION_JAVA}-jdk
   - travis_fold end   "Setting_up_Java"
     
