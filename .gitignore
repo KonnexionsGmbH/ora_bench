@@ -6,6 +6,7 @@
 *.obj
 *.plt
 *.swp
+.idea
 .concrete/DEV_MODE
 .eunit
 .fetch
