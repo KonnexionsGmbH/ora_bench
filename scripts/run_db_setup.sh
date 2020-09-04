@@ -6,6 +6,8 @@
 #
 # ------------------------------------------------------------------------------
 
+set -e
+
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
@@ -35,46 +37,49 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 start=$(date +%s)
-echo "Docker stop/rm ora_bench_db"
-docker stop ora_bench_db
-docker rm -f ora_bench_db
-echo "Docker create ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)"
-docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/$ORA_BENCH_BENCHMARK_DATABASE
-echo "Docker started ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE)..."
-docker start ora_bench_db
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+echo "Docker stop/rm ora_bench_db ...................................................."
+docker ps    | grep "ora_bench_db" && docker stop ora_bench_db
+docker ps -a | grep "ora_bench_db" && docker rm ora_bench_db
+
+echo "Docker setup network ..........................................................."
+docker network prune --force
+! docker network ls | grep "ora_bench_net" && docker network create ora_bench_net
+docker network ls
+
+echo "Docker create ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE) ......................"
+docker create -e         ORACLE_PWD=oracle \
+              --name     ora_bench_db \
+              --network  ora_bench_net \
+              -p         1521:1521/tcp \
+              --shm-size 1G \
+              konnexionsgmbh/$ORA_BENCH_BENCHMARK_DATABASE
+
+echo "Docker started ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE) ....................."
+if ! docker start ora_bench_db; then
+    exit 255
 fi
 
 while [ "`docker inspect -f {{.State.Health.Status}} ora_bench_db`" != "healthy" ]; do docker ps --filter "name=ora_bench_db"; sleep 60; done
 if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+    exit 255
 fi
 end=$(date +%s)
-echo "DOCKER ready in $((end - start)) seconds"
+echo "DOCKER ready in $((end - start)) seconds ......................................."
 
 if [ "$OSTYPE" = "msys" ]; then
-  priv/oracle/instantclient-windows.x64/instantclient_19_5/sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql
+  if ! sqlplus.exe sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql; then
+        exit 255
+  fi      
 else
-  priv/oracle/instantclient-linux.x64/instantclient_19_5/sqlplus sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql
+  if ! sqlplus sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql; then
+        exit 255
+  fi      
 fi  
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
-fi
     
-EXITCODE=$?
-
 echo ""
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

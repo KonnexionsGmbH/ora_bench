@@ -1,4 +1,4 @@
-## ora_bench - Auxillary Scripts.
+## ora_bench - Auxiliary Scripts.
 
 ### 1 `run_bench_all_drivers`
 

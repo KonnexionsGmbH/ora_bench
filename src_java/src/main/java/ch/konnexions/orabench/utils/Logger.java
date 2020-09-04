@@ -33,49 +33,55 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Logger {
 
-    private final Log log;
+  private final Log log;
 
-    /**
-     * Constructs a Logger object using the given class.
-     *
-     * @param classToBelogged Class for which a suitable Log name will be derived
-     */
-    public Logger(Class<?> classToBelogged) {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-        System.setProperty("org.apache.commons.logging.simplelog.dateTimeFormat", "yyyy-MM-dd HH:mm:ss:SSS");
-        System.setProperty("org.apache.commons.logging.simplelog.defaultlog", "info");
-        System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
-        System.setProperty("org.apache.commons.logging.simplelog.showlogname", "true");
-        System.setProperty("org.apache.commons.logging.simplelog.showShortLogname", "true");
+  /**
+   * Constructs a Logger object using the given class.
+   *
+   * @param classToBelogged Class for which a suitable Log name will be derived
+   */
+  public Logger(Class<?> classToBelogged) {
+    System.setProperty("org.apache.commons.logging.Log",
+                       "org.apache.commons.logging.impl.SimpleLog");
+    System.setProperty("org.apache.commons.logging.simplelog.dateTimeFormat",
+                       "yyyy-MM-dd HH:mm:ss:SSS");
+    System.setProperty("org.apache.commons.logging.simplelog.defaultlog",
+                       "info");
+    System.setProperty("org.apache.commons.logging.simplelog.showdatetime",
+                       "true");
+    System.setProperty("org.apache.commons.logging.simplelog.showlogname",
+                       "true");
+    System.setProperty("org.apache.commons.logging.simplelog.showShortLogname",
+                       "true");
 
-        log = LogFactory.getLog(classToBelogged);
-    }
+    log = LogFactory.getLog(classToBelogged);
+  }
 
-    /**
-     * Logs a message with debug log level.
-     *
-     * @param message log this message
-     */
-    public final void debug(Object message) {
-        log.debug(message);
-    }
+  /**
+   * Logs a message with debug log level.
+   *
+   * @param message log this message
+   */
+  public final void debug(Object message) {
+    log.debug(message);
+  }
 
-    /**
-     * Logs a message with error log level..
-     *
-     * @param message log this message
-     */
-    public final void error(Object message) {
-        log.error(message);
-    }
+  /**
+   * Logs a message with error log level..
+   *
+   * @param message log this message
+   */
+  public final void error(Object message) {
+    log.error(message);
+  }
 
-    /**
-     * Logs a message with info log level..
-     *
-     * @param message log this message
-     */
-    public final void info(Object message) {
-        log.info(message);
-    }
+  /**
+   * Logs a message with info log level..
+   *
+   * @param message log this message
+   */
+  public final void info(Object message) {
+    log.info(message);
+  }
 
 }

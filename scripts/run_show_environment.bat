@@ -15,105 +15,89 @@ echo GOPATH                     : %GOPATH%
 echo GOROOT                     : %GOROOT%
 echo GRADLE_HOME                : %GRADLE_HOME%
 echo LD_LIBRARY_PATH            : %LD_LIBRARY_PATH%
-echo PATH                       : %PATH%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-echo ===============================================================================> Version autoconf:
-autoconf -V
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
-)
-    
-echo ===============================================================================> Version automake:
-automake --version
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
-)
-    
 echo ===============================================================================> Version Elixir:
-elixir -v
+call elixir -v
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
-)
-    
-echo ===============================================================================> Version gcc:
-gcc --version
-if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
     
 echo ===============================================================================> Version Git:
 git --version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
     
 echo ===============================================================================> Version Go:
 go version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 go env
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
     
 echo ===============================================================================> Version Gradle:
-gradle --version
+call gradle wrapper
+call gradle --version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
     
 echo ===============================================================================> Version Java:
 java -version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
     
 echo ===============================================================================> Version Mix:
-mix --version
+call mix --version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
+)
+    
+echo ===============================================================================> Version Oracle Instant client:
+sqlplus -V
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
     
 echo ===============================================================================> Version Python3:
-python3 --version
+python --version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
     
 echo ===============================================================================> Version Rebar3:
-rebar3 version
+call rebar3 version
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
     
-echo ===============================================================================> Version Ubuntu:
-lsb_release -a 
+echo ===============================================================================> Version Windows:
+systeminfo | findstr Build 
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
-:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
-
-exit /B %ERRORLEVEL%

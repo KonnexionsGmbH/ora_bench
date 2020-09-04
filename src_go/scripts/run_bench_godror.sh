@@ -19,6 +19,11 @@ if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
 
+if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
+    GOPATH=$(pwd)/src_go/go
+    export GOPATH
+fi
+
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -35,26 +40,21 @@ echo "BENCHMARK_BATCH_SIZE       : $ORA_BENCH_BENCHMARK_BATCH_SIZE"
 echo "BENCHMARK_CORE_MULTIPLIER  : $ORA_BENCH_BENCHMARK_CORE_MULTIPLIER"
 echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
+echo "GOPATH                     : $GOPATH"
+echo "GOROOT                     : $GOROOT"
+echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
-    go get github.com/godror/godror
-    if [ $? -ne 0 ]; then
-        echo "ERRORLEVEL : $?"
-        exit $?
+    if ! go get github.com/godror/godror; then
+        exit 255
     fi
 fi
 
-go run src_go/orabench.go priv/properties/ora_bench.properties
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+if ! go run src_go/orabench.go priv/properties/ora_bench.properties; then
+    exit 255
 fi
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -62,5 +62,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

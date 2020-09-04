@@ -38,19 +38,33 @@ echo:| TIME
 echo ================================================================================
 
 priv\Gammadyne\timer.exe
-echo Docker stop/rm ora_bench_db
-docker stop ora_bench_db
-docker rm -f ora_bench_db
-echo Docker create ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%)
-docker create -e ORACLE_PWD=oracle --name ora_bench_db -p 1521:1521/tcp --shm-size 1G konnexionsgmbh/%ORA_BENCH_BENCHMARK_DATABASE%
-echo Docker started ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%)...
+echo Docker stop/rm ora_bench_db ....................................................
+docker ps    | grep "ora_bench_db" && docker stop ora_bench_db
+docker ps -a | grep "ora_bench_db" && docker rm ora_bench_db
+
+echo Docker setup network ...........................................................
+docker network prune --force
+docker network ls | grep "ora_bench_net" > tmp\_ora_bench_net
+set /p _ora_bench_net=<tmp\_ora_bench_net
+if [%_ora_bench_net%] EQU [""] (docker network create ora_bench_net)
+docker network ls
+
+echo Docker create ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%) .....................
+docker create -e         ORACLE_PWD=oracle ^
+              --name     ora_bench_db ^
+              --network  ora_bench_net ^
+              -p         1521:1521/tcp ^
+              --shm-size 1G ^
+              konnexionsgmbh/%ORA_BENCH_BENCHMARK_DATABASE%
+
+echo Docker started ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%) ....................
 docker start ora_bench_db
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 for /f "delims=" %%A in ('priv\Gammadyne\timer.exe /s') do set "CONSUMED=%%A"
-echo DOCKER ready in %CONSUMED%
+echo DOCKER ready in %CONSUMED% .....................................................
 
 :check_health_status:
 mkdir tmp >nul 2>&1
@@ -62,21 +76,18 @@ if NOT ["%DOCKER_HEALTH_STATUS%"] == ["healthy"] (
     goto :check_health_status
 )
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
-priv\oracle\instantclient-windows.x64\instantclient_19_5\sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE% AS SYSDBA @scripts/run_db_setup.sql
+sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE% AS SYSDBA @scripts/run_db_setup.sql
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
-:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
-
-exit /B %ERRORLEVEL%

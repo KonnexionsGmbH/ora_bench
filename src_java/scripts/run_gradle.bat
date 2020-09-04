@@ -20,31 +20,38 @@ cd src_java
 
 call gradlew clean
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 call gradlew assemble
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 copy /Y build\libs\ora_bench.jar ..\priv\java_jar
 
 call gradlew javadoc
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
+set ORA_BENCH_FILE_CONFIGURATION_NAME_ORIGINAL=%ORA_BENCH_FILE_CONFIGURATION_NAME%
+set ORA_BENCH_FILE_CONFIGURATION_NAME=..\priv\properties\ora_bench.properties
+call gradlew test
+set ERRORLEVEL_ORIGINAL=%ERRORLEVEL%
+set ORA_BENCH_FILE_CONFIGURATION_NAME=%ORA_BENCH_FILE_CONFIGURATION_NAME_ORIGINAL%
 cd ..
+set ERRORLEVEL=%ERRORLEVEL_ORIGINAL%
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
+)
 
-:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
-
-exit /B %ERRORLEVEL%

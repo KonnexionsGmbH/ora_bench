@@ -6,13 +6,15 @@
 #
 # ------------------------------------------------------------------------------
 
+set -e
+
 export ORA_BENCH_MULTIPLE_RUN=true
 
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
-    export ORA_BENCH_CONNECTION_HOST=0.0.0.0
+    export ORA_BENCH_CONNECTION_HOST=ora_bench_db
 fi
 if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
     export ORA_BENCH_CONNECTION_PORT=1521
@@ -29,6 +31,9 @@ fi
 
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
+fi
+if [ -z "$ORA_BENCH_RUN_GODROR_GO" ]; then
+    export ORA_BENCH_RUN_GODROR_GO=true
 fi
 if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" ]; then
     export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
@@ -64,36 +69,26 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - run with standard properties."
 echo "--------------------------------------------------------------------------------"
-echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
+echo "MULTIPLE_RUN                  : $ORA_BENCH_MULTIPLE_RUN"
 echo "--------------------------------------------------------------------------------"
-echo "ORA_BENCH_BENCHMARK_JAMDB  : $ORA_BENCH_BENCHMARK_JAMDB"
-echo "RUN_GLOBAL_JAMDB           : $RUN_GLOBAL_JAMDB"
-echo "RUN_GLOBAL_NON_JAMDB       : $RUN_GLOBAL_NON_JAMDB"
+echo "ORA_BENCH_BENCHMARK_JAMDB     : $ORA_BENCH_BENCHMARK_JAMDB"
+echo "RUN_GLOBAL_JAMDB              : $RUN_GLOBAL_JAMDB"
+echo "RUN_GLOBAL_NON_JAMDB          : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
-{ /bin/bash scripts/run_collect_and_compile.sh; }
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+if ! { /bin/bash scripts/run_collect_and_compile.sh; }; then
+    exit 255
 fi
 
-{ /bin/bash scripts/run_db_setup.sh; }
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+if ! { /bin/bash scripts/run_db_setup.sh; }; then
+    exit 255
 fi
 
-{ /bin/bash scripts/run_bench_all_drivers.sh; }
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
+if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
+    exit 255
 fi
-
-EXITCODE=$?
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -101,5 +96,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

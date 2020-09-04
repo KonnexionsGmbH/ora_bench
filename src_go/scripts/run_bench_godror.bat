@@ -19,6 +19,10 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
     set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 )
 
+if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    set GOPATH=%cd%\src_go\go
+)    
+
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
@@ -35,27 +39,28 @@ echo BENCHMARK_BATCH_SIZE       : %ORA_BENCH_BENCHMARK_BATCH_SIZE%
 echo BENCHMARK_CORE_MULTIPLIER  : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
 echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
+echo GOPATH                     : %GOPATH%
+echo GOROOT                     : %GOROOT%
+echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     go get github.com/godror/godror
     if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 )    
 
 go run src_go\orabench.go priv\properties\ora_bench.properties
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
-:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
-
-exit /B %ERRORLEVEL%

@@ -24,8 +24,7 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
 )
 
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
-    set ORA_BENCH_JAVA_CLASSPATH=.;priv\java_jar\*
-    set PATH="%PATH%;\u01\app\oracle\product\12.2\db_1\jdbc\lib"
+    set ORA_BENCH_JAVA_CLASSPATH=.;priv/java_jar/*;JAVA_HOME/lib;
 )
 
 echo ================================================================================
@@ -47,7 +46,6 @@ echo ---------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo --------------------------------------------------------------------------------
 echo JAVA_CLASSPATH             : %ORA_BENCH_JAVA_CLASSPATH%
-echo PATH                       : %PATH%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
@@ -55,54 +53,58 @@ echo ===========================================================================
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     call src_java\scripts\run_gradle
     if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 
-    java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_elixir
+    java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_elixir
     if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 )
 
 cd src_elixir
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    if EXIST deps\    rd /Q/S deps 
+    if EXIST mix.lock del /s mix.lock 
+
     call mix local.hex --force
     if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
+
     call mix deps.clean --all
     if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
+
     call mix deps.get
     if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
+
     call mix deps.compile
     if %ERRORLEVEL% NEQ 0 (
-        echo ERRORLEVEL : %ERRORLEVEL%
-        GOTO EndOfScript
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
     )
 )
     
 call mix run -e "OraBench.CLI.main(["oranif"])"
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRORLEVEL : %ERRORLEVEL%
-    GOTO EndOfScript
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
+
 cd ..
 
-:EndOfScript
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo --------------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
-
-exit /B %ERRORLEVEL%

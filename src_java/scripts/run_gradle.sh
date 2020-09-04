@@ -16,33 +16,23 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-EXITCODE="0"
-
-cd src_java
-
-{ ./gradlew clean; }
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
-fi
-
-{ ./gradlew assemble; }
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
-fi
-
-cp build/libs/ora_bench.jar ../priv/java_jar
-
-{ ./gradlew javadoc; }
-if [ $? -ne 0 ]; then
-    echo "ERRORLEVEL : $?"
-    exit $?
-fi
-
-cd ..
-
-EXITCODE=$?
+(
+    cd src_java || exit
+    
+    if ! { ./gradlew clean; }; then
+        exit 255
+    fi
+    
+    if ! { ./gradlew assemble; }; then
+        exit 255
+    fi
+    
+    cp build/libs/ora_bench.jar ../priv/java_jar
+    
+    if ! { ./gradlew javadoc; }; then
+        exit 255
+    fi
+)
 
 echo ""
 echo "--------------------------------------------------------------------------------"
@@ -50,5 +40,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"
 echo "End   $0"
 echo "================================================================================"
-
-exit $EXITCODE

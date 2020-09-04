@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src_java/src/main/java"/>
+	<classpathentry kind="src" path="src_java/src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-beanutils-1.9.4.jar"/>
+	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-codec-1.15.jar"/>
+	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-configuration2-2.6.jar"/>
+	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-csv-1.7.jar"/>
+	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-lang3-3.9.jar"/>
+	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-text-1.8.jar"/>
+	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="priv/java_jar/ojdbc10.jar"/>
+	<classpathentry kind="lib" path="priv/java_jar/ora_bench.jar"/>
+	<classpathentry kind="lib" path="priv/oracle/instantclient-linux.x64/instantclient_19_5/ojdbc8.jar"/>
+	<classpathentry kind="lib" path="priv/oracle/instantclient-linux.x64/instantclient_19_5/ucp.jar"/>
+	<classpathentry kind="lib" path="priv/oracle/instantclient-linux.x64/instantclient_19_5/xstreams.jar"/>
+	<classpathentry kind="lib" path="priv/oracle/instantclient-windows.x64/instantclient_19_5/ojdbc8.jar"/>
+	<classpathentry kind="lib" path="priv/oracle/instantclient-windows.x64/instantclient_19_5/ucp.jar"/>
+	<classpathentry kind="lib" path="priv/oracle/instantclient-windows.x64/instantclient_19_5/xstreams.jar"/>
+	<classpathentry kind="lib" path="src_java/build/libs/ora_bench.jar"/>
+	<classpathentry kind="lib" path="src_java/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="output" path="src_java/build/classes/java/main"/>
+</classpath>
