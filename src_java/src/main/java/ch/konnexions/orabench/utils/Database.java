@@ -28,51 +28,53 @@ import java.sql.SQLException;
  */
 public class Database {
 
-    private final Config config;
-    private Connection connection;
-    private final String connectionHost;
-    private final String connectionPassword;
-    private final int connectionPort;
-    private final String connectionService;
-    private final String connectionUser;
+  private final Config config;
+  private Connection   connection;
+  private final String connectionHost;
+  private final String connectionPassword;
+  private final int    connectionPort;
+  private final String connectionService;
+  private final String connectionUser;
 
-    private final Logger log = new Logger(Database.class);
+  private final Logger log = new Logger(Database.class);
 
-    /**
-     * Constructs a Database object using the given {@link Config} object.
-     *
-     * @param config the {@link Config} object
-     */
-    public Database(Config config) {
-        this.config = config;
-        connectionHost = config.getConnectionHost();
-        connectionPassword = config.getConnectionPassword();
-        connectionPort = config.getConnectionPort();
-        connectionService = config.getConnectionService();
-        connectionUser = config.getConnectionUser();
+  /**
+   * Constructs a Database object using the given {@link Config} object.
+   *
+   * @param config the {@link Config} object
+   */
+  public Database(Config config) {
+    this.config        = config;
+    connectionHost     = config.getConnectionHost();
+    connectionPassword = config.getConnectionPassword();
+    connectionPort     = config.getConnectionPort();
+    connectionService  = config.getConnectionService();
+    connectionUser     = config.getConnectionUser();
+  }
+
+  /**
+   * Creates a database connection.
+   *
+   * @return the database connection
+   */
+  public final Connection connect() {
+    final String url = "jdbc:oracle:thin:@//" + connectionHost + ":" + connectionPort + "/" + connectionService;
+
+    if (connection == null) {
+      try {
+        connection = DriverManager.getConnection(url,
+                                                 connectionUser,
+                                                 connectionPassword);
+        DatabaseMetaData meta = connection.getMetaData();
+        config.setBenchmarkDriver("JDBC (Version " + meta.getDriverVersion() + ")");
+      } catch (SQLException ec) {
+        log.error("connection parameter url     =: " + url);
+        log.error("connection parameter username=: " + connectionUser);
+        log.error("connection parameter password=: " + connectionPassword);
+        ec.printStackTrace();
+      }
     }
 
-    /**
-     * Creates a database connection.
-     *
-     * @return the database connection
-     */
-    public final Connection connect() {
-        final String url = "jdbc:oracle:thin:@//" + connectionHost + ":" + connectionPort + "/" + connectionService;
-
-        if (connection == null) {
-            try {
-                connection = DriverManager.getConnection(url, connectionUser, connectionPassword);
-                DatabaseMetaData meta = connection.getMetaData();
-                config.setBenchmarkDriver("JDBC (Version " + meta.getDriverVersion() + ")");
-            } catch (SQLException ec) {
-                log.error("connection parameter url     =: " + url);
-                log.error("connection parameter username=: " + connectionUser);
-                log.error("connection parameter password=: " + connectionPassword);
-                ec.printStackTrace();
-            }
-        }
-
-        return connection;
-    }
+    return connection;
+  }
 }

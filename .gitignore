@@ -1,6 +1,7 @@
 *.beam
 *.class
 *.exe
+*.log
 *.o
 *.obj
 *.plt
@@ -11,12 +12,13 @@
 .fetch
 .git-credentials
 .gitconfig
-.gradle
+.idea
 .mix
 .rebar
 /priv/Gammadyne/timer.txt
 /src_elixir/deps/
 /src_elixir/mix.lock
+OraBench
 _build
 build
 erl_crash.dump
@@ -27,7 +29,5 @@ ora_bench_bulk_data.csv
 ora_bench_c.properties
 ora_bench_erlang.properties
 ora_bench_python.properties
-OraBench
 rebar.lock
 tmp
-wrapper

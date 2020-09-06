@@ -32,6 +32,7 @@ echo ===========================================================================
 
 java -cp %ORA_BENCH_JAVA_CLASSPATH% ch.konnexions.orabench.OraBench finalise
 if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -40,5 +41,3 @@ echo:| TIME
 echo --------------------------------------------------------------------------------
 echo End   %0
 echo ================================================================================
-
-exit %ERRORLEVEL%

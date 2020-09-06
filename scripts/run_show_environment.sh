@@ -71,6 +71,11 @@ if ! mix --version; then
     exit 255
 fi
     
+echo "===============================================================================> Version Oracle Instant client:"
+if ! sqlplus -V; then
+    exit 255
+fi
+    
 echo "===============================================================================> Version Python3:"
 if ! python3 --version; then
     exit 255

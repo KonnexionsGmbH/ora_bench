@@ -31,398 +31,444 @@ import ch.konnexions.orabench.utils.Setup;
 
 public class OraBench {
 
-    /**
-     * This is the main method for the Oracle benchmark run. The operations to be
-     * performed are determined with a command line argument:
-     * <ul>
-     * <li>finalise - resets the configuration file to its initial state
-     * <li>runBenchmark - executes all database and driver-related activities of the
-     * benchmark run
-     * <li>setup - creates the bulk file
-     * <li>setup_erlang - creates a configuration parameter file suited for Erlang
-     * <li>setup_json - creates a JSON configuration parameter file
-     * <li>setup_python - creates a configuration parameter file suited for Python
-     * </ul>
-     * 
-     * @param args finalise / runBenchmark / setup / setup_erlang / setup_python / setup_json
-     */
-    public static void main(String[] args) {
+  public static void insertHelper(Connection connection, PreparedStatement preparedStatement, ArrayList<String[]> bulkDataPartition, Config config) {
+    int count = 0;
 
-        final Config config = new Config();
+    try {
+      for (String[] value : bulkDataPartition) {
+        preparedStatement.setString(1,
+                                    value[0]);
+        preparedStatement.setString(2,
+                                    value[1]);
 
-        final Logger log = new Logger(OraBench.class);
+        count += 1;
 
-        log.info("Start OraBench.java");
-
-        String args0 = null;
-        if (args.length > 0) {
-            args0 = args[0];
-        }
-
-        log.info("args[0]=" + args0);
-
-        if (null == args0) {
-            log.error("Command line argument missing");
-        } else if (args0.equals("finalise")) {
-            log.info("Start Finalise OraBench Run");
-            new Config().resetNotAvailables();
-            log.info("End   Finalise OraBench Run");
-        } else if (args0.equals("runBenchmark")) {
-            log.info("Start Running OraBench");
-            new OraBench().runBenchmark();
-            log.info("End   Running OraBench");
-        } else if (args0.equals("setup")) {
-            log.info("Start Setup OraBench Run");
-            new Setup(config).createBulkFile();
-            log.info("End   Setup OraBench Run");
-        } else if (args0.equals("setup_c")) {
-            log.info("Start Setup ODPI-C OraBench Run");
-            config.createConfigurationFileC();
-            log.info("End   Setup ODPI-C OraBench Run");
-        } else if (args0.equals("setup_elixir")) {
-            log.info("Start Setup Elixir OraBench Run");
-            new Config();
-            log.info("End   Setup Elixir OraBench Run");
-        } else if (args0.equals("setup_erlang")) {
-            log.info("Start Setup Erlang OraBench Run");
-            config.createConfigurationFileErlang();
-            log.info("End   Setup Erlang OraBench Run");
-        } else if (args0.equals("setup_json")) {
-            log.info("Start Setup JSON OraBench Run");
-            config.createConfigurationFileJson();
-            log.info("End   Setup Erlang OraBench Run");
-        } else if (args0.equals("setup_python")) {
-            log.info("Start Setup Python OraBench Run");
-            config.createConfigurationFilePython();
-            log.info("End   Setup Python OraBench Run");
-        } else if (args0.contentEquals("")) {
-            log.error("Command line argument missing");
+        if (config.getBenchmarkBatchSize() == 0) {
+          preparedStatement.execute();
         } else {
-            log.error("Unknown command line argument");
+          preparedStatement.addBatch();
+          if (count % config.getBenchmarkBatchSize() == 0) {
+            preparedStatement.executeBatch();
+          }
         }
 
-        log.info("End   OraBench.java");
-        System.exit(0);
+        if ((config.getBenchmarkTransactionSize() > 0) && (count % config.getBenchmarkTransactionSize() == 0)) {
+          connection.commit();
+        }
+      }
+
+      if ((config.getBenchmarkBatchSize() > 0) && (count % config.getBenchmarkBatchSize() != 0)) {
+        preparedStatement.executeBatch();
+      }
+
+      if ((config.getBenchmarkTransactionSize() == 0) || (count % config.getBenchmarkTransactionSize() != 0)) {
+        connection.commit();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * This is the main method for the Oracle benchmark run. The operations to be
+   * performed are determined with a command line argument:
+   * <ul>
+   * <li>finalise - resets the configuration file to its initial state
+   * <li>runBenchmark - executes all database and driver-related activities of the
+   * benchmark run
+   * <li>setup - creates the bulk file
+   * <li>setup_erlang - creates a configuration parameter file suited for Erlang
+   * <li>setup_json - creates a JSON configuration parameter file
+   * <li>setup_python - creates a configuration parameter file suited for Python
+   * </ul>
+   * 
+   * @param args finalise / runBenchmark / setup / setup_erlang / setup_python / setup_json
+   */
+  public static void main(String[] args) {
+
+    final Config config = new Config();
+
+    final Logger log    = new Logger(OraBench.class);
+
+    log.info("Start OraBench.java");
+
+    String args0 = null;
+    if (args.length > 0) {
+      args0 = args[0];
     }
 
-    private final Config config = new Config();
+    log.info("args[0]=" + args0);
 
-    private ExecutorService executorService = null;
-
-    private final Logger log = new Logger(OraBench.class);
-
-    /**
-     * Creates the database objects of type Connection, PreparedStatement, ResultSet
-     * and Statement.
-     *
-     * @return the array list containing the database objects of the classes
-     *         Connection, PreparedStatement and Statement
-     */
-    private ArrayList<Object> createDatabaseObjects() {
-        ArrayList<Connection> connections = new ArrayList<>(config.getBenchmarkNumberPartitions());
-        ArrayList<PreparedStatement> preparedStatements = new ArrayList<>(config.getBenchmarkNumberPartitions());
-        ArrayList<Statement> statements = new ArrayList<>(config.getBenchmarkNumberPartitions());
-
-        Connection connection;
-
-        for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
-            Database database = new Database(config);
-
-            try {
-                connection = database.connect();
-                connection.setAutoCommit(false);
-                connections.add(connection);
-
-                preparedStatements.add(connection.prepareStatement(config.getSqlInsert().replace(":key", "?").replace(":data", "?")));
-
-                statements.add(connection.createStatement());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return new ArrayList<>(Arrays.asList(connections, preparedStatements, statements));
+    if (null == args0) {
+      log.error("Command line argument missing");
+    } else if (args0.equals("finalise")) {
+      log.info("Start Finalise OraBench Run");
+      new Config().resetNotAvailables();
+      log.info("End   Finalise OraBench Run");
+    } else if (args0.equals("runBenchmark")) {
+      log.info("Start Running OraBench");
+      new OraBench().runBenchmark();
+      log.info("End   Running OraBench");
+    } else if (args0.equals("setup")) {
+      log.info("Start Setup OraBench Run");
+      new Setup(config).createBulkFile();
+      log.info("End   Setup OraBench Run");
+    } else if (args0.equals("setup_c")) {
+      log.info("Start Setup ODPI-C OraBench Run");
+      config.createConfigurationFileC();
+      log.info("End   Setup ODPI-C OraBench Run");
+    } else if (args0.equals("setup_elixir")) {
+      log.info("Start Setup Elixir OraBench Run");
+      new Config();
+      log.info("End   Setup Elixir OraBench Run");
+    } else if (args0.equals("setup_erlang")) {
+      log.info("Start Setup Erlang OraBench Run");
+      config.createConfigurationFileErlang();
+      log.info("End   Setup Erlang OraBench Run");
+    } else if (args0.equals("setup_json")) {
+      log.info("Start Setup JSON OraBench Run");
+      config.createConfigurationFileJson();
+      log.info("End   Setup Erlang OraBench Run");
+    } else if (args0.equals("setup_python")) {
+      log.info("Start Setup Python OraBench Run");
+      config.createConfigurationFilePython();
+      log.info("End   Setup Python OraBench Run");
+    } else if (args0.contentEquals("")) {
+      log.error("Command line argument missing");
+    } else {
+      log.error("Unknown command line argument");
     }
 
-    /**
-     * Gets the bulk data partitioned.
-     *
-     * @return the bulk data partitioned
-     */
-    private ArrayList<ArrayList<String[]>> getBulkDataPartitions() {
-        ArrayList<ArrayList<String[]>> bulkDataPartitions = new ArrayList<>(config.getBenchmarkNumberPartitions());
+    log.info("End   OraBench.java");
+    System.exit(0);
+  }
 
-        int expectedBulkDataSize = config.getFileBulkSize() / config.getBenchmarkNumberPartitions();
+  public static void selectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey, Config config, Logger log) {
+    int count = 0;
 
-        for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
-            bulkDataPartitions.add(new ArrayList<>(expectedBulkDataSize));
-        }
+    try {
+      if (config.getConnectionFetchSize() > 0) {
+        statement.setFetchSize(config.getConnectionFetchSize());
+      }
 
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(config.getFileBulkName()));
-            Iterable<CSVRecord> records = CSVFormat.EXCEL.withDelimiter(config.getFileBulkDelimiter().charAt(0))
-                    .withHeader(config.getFileBulkHeader().split(config.getFileBulkDelimiter())).parse(bufferedReader);
+      ResultSet resultSet = statement.executeQuery(config.getSqlSelect() + " WHERE partition_key = " + partitionKey);
 
-            int partitionKey;
+      while (resultSet.next()) {
+        count += 1;
+      }
 
-            for (CSVRecord record : records) {
-                String keyValue = record.get("key");
-                if (!(keyValue.equals("key"))) {
-                    partitionKey = (keyValue.charAt(0) * 256 + keyValue.charAt(1)) % config.getBenchmarkNumberPartitions();
-                    bulkDataPartitions.get(partitionKey).add(new String[] { keyValue, record.get("data") });
-                }
-            }
+      if (count != bulkDataPartition.size()) {
+        log.error("Number rows: expected=" + bulkDataPartition.size() + " - found=" + count);
+      }
 
-            bufferedReader.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
 
-            log.info("Start Distribution of the data in the partitions");
+  private final Config    config          = new Config();
 
-            for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
-                log.info("Partition p" + String.format("%05d", i) + " contains " + String.format("%9d", bulkDataPartitions.get(i).size()) + " rows");
-            }
+  private ExecutorService executorService = null;
 
-            log.info("End   Distribution of the data in the partitions");
+  private final Logger    log             = new Logger(OraBench.class);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+  /**
+   * Creates the database objects of type Connection, PreparedStatement, ResultSet
+   * and Statement.
+   *
+   * @return the array list containing the database objects of the classes
+   *         Connection, PreparedStatement and Statement
+   */
+  private ArrayList<Object> createDatabaseObjects() {
+    ArrayList<Connection>        connections        = new ArrayList<>(config.getBenchmarkNumberPartitions());
+    ArrayList<PreparedStatement> preparedStatements = new ArrayList<>(config.getBenchmarkNumberPartitions());
+    ArrayList<Statement>         statements         = new ArrayList<>(config.getBenchmarkNumberPartitions());
 
-        return bulkDataPartitions;
+    Connection                   connection;
+
+    for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
+      Database database = new Database(config);
+
+      try {
+        connection = database.connect();
+        connection.setAutoCommit(false);
+        connections.add(connection);
+
+        preparedStatements.add(connection.prepareStatement(config.getSqlInsert().replace(":key",
+                                                                                         "?").replace(":data",
+                                                                                                      "?")));
+
+        statements.add(connection.createStatement());
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
     }
 
-    /**
-     * INSERT: single connection and thread.
-     *
-     * @param connection        the database connection
-     * @param preparedStatement the prepared statement
-     * @param bulkDataPartition the bulk data partition
-     */
-    private void insert(Connection connection, PreparedStatement preparedStatement, ArrayList<String[]> bulkDataPartition) {
-        insertHelper(connection, preparedStatement, bulkDataPartition, config);
+    return new ArrayList<>(Arrays.asList(connections,
+                                         preparedStatements,
+                                         statements));
+  }
 
+  /**
+   * Gets the bulk data partitioned.
+   *
+   * @return the bulk data partitioned
+   */
+  private ArrayList<ArrayList<String[]>> getBulkDataPartitions() {
+    ArrayList<ArrayList<String[]>> bulkDataPartitions   = new ArrayList<>(config.getBenchmarkNumberPartitions());
+
+    int                            expectedBulkDataSize = config.getFileBulkSize() / config.getBenchmarkNumberPartitions();
+
+    for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
+      bulkDataPartitions.add(new ArrayList<>(expectedBulkDataSize));
     }
 
-    public static void insertHelper(Connection connection, PreparedStatement preparedStatement, ArrayList<String[]> bulkDataPartition, Config config) {
-        int count = 0;
+    try {
+      BufferedReader      bufferedReader = new BufferedReader(new FileReader(config.getFileBulkName()));
+      Iterable<CSVRecord> records        = CSVFormat.EXCEL.withDelimiter(config.getFileBulkDelimiter().charAt(0)).withHeader(config.getFileBulkHeader().split(
+                                                                                                                                                              config
+                                                                                                                                                                  .getFileBulkDelimiter()))
+          .parse(bufferedReader);
 
-        try {
-            for (String[] value : bulkDataPartition) {
-                preparedStatement.setString(1, value[0]);
-                preparedStatement.setString(2, value[1]);
+      int                 partitionKey;
 
-                count += 1;
-
-                if (config.getBenchmarkBatchSize() == 0) {
-                    preparedStatement.execute();
-                } else {
-                    preparedStatement.addBatch();
-                    if (count % config.getBenchmarkBatchSize() == 0) {
-                        preparedStatement.executeBatch();
-                    }
-                }
-
-                if ((config.getBenchmarkTransactionSize() > 0) && (count % config.getBenchmarkTransactionSize() == 0)) {
-                    connection.commit();
-                }
-            }
-
-            if ((config.getBenchmarkBatchSize() > 0) && (count % config.getBenchmarkBatchSize() != 0)) {
-                preparedStatement.executeBatch();
-            }
-
-            if ((config.getBenchmarkTransactionSize() == 0) || (count % config.getBenchmarkTransactionSize() != 0)) {
-                connection.commit();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+      for (CSVRecord record : records) {
+        String keyValue = record.get("key");
+        if (!(keyValue.equals("key"))) {
+          partitionKey = (keyValue.charAt(0) * 256 + keyValue.charAt(1)) % config.getBenchmarkNumberPartitions();
+          bulkDataPartitions.get(partitionKey).add(new String[] {
+              keyValue,
+              record.get("data") });
         }
+      }
+
+      bufferedReader.close();
+
+      log.info("Start Distribution of the data in the partitions");
+
+      for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
+        log.info("Partition p" + String.format("%05d",
+                                               i) + " contains " + String.format("%9d",
+                                                                                 bulkDataPartitions.get(i).size()) + " rows");
+      }
+
+      log.info("End   Distribution of the data in the partitions");
+
+    } catch (IOException e) {
+      e.printStackTrace();
     }
 
-    /**
-     * Run a benchmark.
-     */
-    public final void runBenchmark() {
-        int benchmarkTrials = config.getBenchmarkTrials();
+    return bulkDataPartitions;
+  }
 
-        Result result = new Result(config);
+  /**
+   * INSERT: single connection and thread.
+   *
+   * @param connection        the database connection
+   * @param preparedStatement the prepared statement
+   * @param bulkDataPartition the bulk data partition
+   */
+  private void insert(Connection connection, PreparedStatement preparedStatement, ArrayList<String[]> bulkDataPartition) {
+    insertHelper(connection,
+                 preparedStatement,
+                 bulkDataPartition,
+                 config);
 
-        ArrayList<ArrayList<String[]>> bulkDataPartitions = getBulkDataPartitions();
+  }
 
-        ArrayList<Object> databaseObjects = createDatabaseObjects();
+  /**
+   * Run a benchmark.
+   */
+  private final void runBenchmark() {
+    int                            benchmarkTrials    = config.getBenchmarkTrials();
 
-        @SuppressWarnings("unchecked")
-        ArrayList<Connection> connections = (ArrayList<Connection>) databaseObjects.get(0);
-        @SuppressWarnings("unchecked")
-        ArrayList<PreparedStatement> preparedStatements = (ArrayList<PreparedStatement>) databaseObjects.get(1);
-        @SuppressWarnings("unchecked")
-        ArrayList<Statement> statements = (ArrayList<Statement>) databaseObjects.get(2);
+    Result                         result             = new Result(config);
 
-        for (int i = 1; i <= benchmarkTrials; i++) {
-            runTrial(connections, preparedStatements, statements, i, bulkDataPartitions, result);
-        }
+    ArrayList<ArrayList<String[]>> bulkDataPartitions = getBulkDataPartitions();
 
-        for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
-            try {
-                preparedStatements.get(i).close();
-                statements.get(i).close();
-                connections.get(i).close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+    ArrayList<Object>              databaseObjects    = createDatabaseObjects();
 
-        result.endBenchmark();
+    @SuppressWarnings("unchecked")
+    ArrayList<Connection>          connections        = (ArrayList<Connection>) databaseObjects.get(0);
+    @SuppressWarnings("unchecked")
+    ArrayList<PreparedStatement>   preparedStatements = (ArrayList<PreparedStatement>) databaseObjects.get(1);
+    @SuppressWarnings("unchecked")
+    ArrayList<Statement>           statements         = (ArrayList<Statement>) databaseObjects.get(2);
+
+    for (int i = 1; i <= benchmarkTrials; i++) {
+      runTrial(connections,
+               preparedStatements,
+               statements,
+               i,
+               bulkDataPartitions,
+               result);
     }
 
-    /**
-     * Run INSERT: multiple connections and eventually multiple threads.
-     *
-     * @param connections        the database connections
-     * @param preparedStatements the prepared statements
-     * @param trialNumber        the trial number
-     * @param bulkDataPartitions the bulk data partitioned
-     * @param result             the result
-     */
-    private void runInsert(ArrayList<Connection> connections, ArrayList<PreparedStatement> preparedStatements, int trialNumber,
-            ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
-        result.startQuery();
-
-        if (config.getBenchmarkCoreMultiplier() != 0) {
-            executorService = Executors.newFixedThreadPool(config.getBenchmarkNumberPartitions());
-        }
-
-        for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
-            if (config.getBenchmarkCoreMultiplier() == 0) {
-                insert(connections.get(i), preparedStatements.get(i), bulkDataPartitions.get(i));
-            } else {
-                executorService.execute(new Insert(config, connections.get(i), preparedStatements.get(i), bulkDataPartitions.get(i)));
-            }
-        }
-
-        if (config.getBenchmarkCoreMultiplier() != 0) {
-            executorService.shutdown();
-            try {
-                while (!executorService.awaitTermination(1, TimeUnit.SECONDS)) {
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        result.endQueryInsert(trialNumber, config.getSqlInsert());
+    for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
+      try {
+        preparedStatements.get(i).close();
+        statements.get(i).close();
+        connections.get(i).close();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
     }
 
-    /**
-     * Run SELECT: multiple connections and eventually multiple threads.
-     *
-     * @param statements         the statements
-     * @param trialNumber        the trial number
-     * @param bulkDataPartitions the bulk data partitioned
-     * @param result             the result
-     */
-    private void runSelect(ArrayList<Statement> statements, int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
-        result.startQuery();
+    result.endBenchmark();
+  }
 
-        if (config.getBenchmarkCoreMultiplier() != 0) {
-            executorService = Executors.newFixedThreadPool(config.getBenchmarkNumberPartitions());
-        }
+  /**
+   * Run INSERT: multiple connections and eventually multiple threads.
+   *
+   * @param connections        the database connections
+   * @param preparedStatements the prepared statements
+   * @param trialNumber        the trial number
+   * @param bulkDataPartitions the bulk data partitioned
+   * @param result             the result
+   */
+  private void runInsert(ArrayList<Connection> connections,
+                         ArrayList<PreparedStatement> preparedStatements,
+                         int trialNumber,
+                         ArrayList<ArrayList<String[]>> bulkDataPartitions,
+                         Result result) {
+    result.startQuery();
 
-        for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
-            if (config.getBenchmarkCoreMultiplier() == 0) {
-                select(statements.get(i), bulkDataPartitions.get(i), i);
-            } else {
-                executorService.execute(new Select(config, log, statements.get(i), bulkDataPartitions.get(i), i));
-            }
-        }
-
-        if (config.getBenchmarkCoreMultiplier() != 0) {
-            executorService.shutdown();
-            try {
-                while (!executorService.awaitTermination(1, TimeUnit.SECONDS)) {
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        result.endQuerySelect(trialNumber, config.getSqlSelect());
+    if (config.getBenchmarkCoreMultiplier() != 0) {
+      executorService = Executors.newFixedThreadPool(config.getBenchmarkNumberPartitions());
     }
 
-    /**
-     * Run a trial.
-     *
-     * @param connections        the database connections
-     * @param statements         the statements
-     * @param preparedStatements the prepared statements
-     * @param trialNumber        the trial number
-     * @param bulkDataPartitions the bulk data partitioned
-     * @param result             the result
-     */
-    private void runTrial(ArrayList<Connection> connections, ArrayList<PreparedStatement> preparedStatements, ArrayList<Statement> statements, int trialNumber,
-            ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
-        result.startTrial();
-
-        log.info("Start trial no. " + trialNumber);
-
-        try {
-            statements.get(0).executeUpdate(config.getSqlCreate());
-            log.debug("last DDL statement=" + config.getSqlCreate());
-        } catch (SQLException es1) {
-            try {
-                statements.get(0).executeUpdate(config.getSqlDrop());
-                statements.get(0).executeUpdate(config.getSqlCreate());
-                log.debug("last DDL statement after DROP=" + config.getSqlCreate());
-            } catch (SQLException es2) {
-                es2.printStackTrace();
-            }
-        }
-
-        runInsert(connections, preparedStatements, trialNumber, bulkDataPartitions, result);
-
-        runSelect(statements, trialNumber, bulkDataPartitions, result);
-
-        try {
-            statements.get(0).executeUpdate(config.getSqlDrop());
-            log.debug("last DDL statement=" + config.getSqlDrop());
-        } catch (SQLException es) {
-            es.printStackTrace();
-        }
-
-        result.endTrial(trialNumber);
+    for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
+      if (config.getBenchmarkCoreMultiplier() == 0) {
+        insert(connections.get(i),
+               preparedStatements.get(i),
+               bulkDataPartitions.get(i));
+      } else {
+        executorService.execute(new Insert(config, connections.get(i), preparedStatements.get(i), bulkDataPartitions.get(i)));
+      }
     }
 
-    /**
-     * SELECT: single connection and thread.
-     *
-     * @param statement         the statement
-     * @param bulkDataPartition the bulk data partition
-     * @param partitionKey      the partition key
-     */
-    private void select(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey) {
-        selectHelper(statement, bulkDataPartition, partitionKey, config, log);
-    }
-
-    public static void selectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey, Config config, Logger log) {
-        int count = 0;
-
-        try {
-            if (config.getConnectionFetchSize() > 0) {
-                statement.setFetchSize(config.getConnectionFetchSize());
-            }
-
-            ResultSet resultSet = statement.executeQuery(config.getSqlSelect() + " WHERE partition_key = " + partitionKey);
-
-            while (resultSet.next()) {
-                count += 1;
-            }
-
-            if (count != bulkDataPartition.size()) {
-                log.error("Number rows: expected=" + bulkDataPartition.size() + " - found=" + count);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+    if (config.getBenchmarkCoreMultiplier() != 0) {
+      executorService.shutdown();
+      try {
+        while (!executorService.awaitTermination(1,
+                                                 TimeUnit.SECONDS)) {
         }
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
     }
+
+    result.endQueryInsert(trialNumber,
+                          config.getSqlInsert());
+  }
+
+  /**
+   * Run SELECT: multiple connections and eventually multiple threads.
+   *
+   * @param statements         the statements
+   * @param trialNumber        the trial number
+   * @param bulkDataPartitions the bulk data partitioned
+   * @param result             the result
+   */
+  private void runSelect(ArrayList<Statement> statements, int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
+    result.startQuery();
+
+    if (config.getBenchmarkCoreMultiplier() != 0) {
+      executorService = Executors.newFixedThreadPool(config.getBenchmarkNumberPartitions());
+    }
+
+    for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
+      if (config.getBenchmarkCoreMultiplier() == 0) {
+        select(statements.get(i),
+               bulkDataPartitions.get(i),
+               i);
+      } else {
+        executorService.execute(new Select(config, log, statements.get(i), bulkDataPartitions.get(i), i));
+      }
+    }
+
+    if (config.getBenchmarkCoreMultiplier() != 0) {
+      executorService.shutdown();
+      try {
+        while (!executorService.awaitTermination(1,
+                                                 TimeUnit.SECONDS)) {
+        }
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+
+    result.endQuerySelect(trialNumber,
+                          config.getSqlSelect());
+  }
+
+  /**
+   * Run a trial.
+   *
+   * @param connections        the database connections
+   * @param statements         the statements
+   * @param preparedStatements the prepared statements
+   * @param trialNumber        the trial number
+   * @param bulkDataPartitions the bulk data partitioned
+   * @param result             the result
+   */
+  private void runTrial(ArrayList<Connection> connections,
+                        ArrayList<PreparedStatement> preparedStatements,
+                        ArrayList<Statement> statements,
+                        int trialNumber,
+                        ArrayList<ArrayList<String[]>> bulkDataPartitions,
+                        Result result) {
+    result.startTrial();
+
+    log.info("Start trial no. " + trialNumber);
+
+    try {
+      statements.get(0).executeUpdate(config.getSqlCreate());
+      log.debug("last DDL statement=" + config.getSqlCreate());
+    } catch (SQLException es1) {
+      try {
+        statements.get(0).executeUpdate(config.getSqlDrop());
+        statements.get(0).executeUpdate(config.getSqlCreate());
+        log.debug("last DDL statement after DROP=" + config.getSqlCreate());
+      } catch (SQLException es2) {
+        es2.printStackTrace();
+      }
+    }
+
+    runInsert(connections,
+              preparedStatements,
+              trialNumber,
+              bulkDataPartitions,
+              result);
+
+    runSelect(statements,
+              trialNumber,
+              bulkDataPartitions,
+              result);
+
+    try {
+      statements.get(0).executeUpdate(config.getSqlDrop());
+      log.debug("last DDL statement=" + config.getSqlDrop());
+    } catch (SQLException es) {
+      es.printStackTrace();
+    }
+
+    result.endTrial(trialNumber);
+  }
+
+  /**
+   * SELECT: single connection and thread.
+   *
+   * @param statement         the statement
+   * @param bulkDataPartition the bulk data partition
+   * @param partitionKey      the partition key
+   */
+  private void select(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey) {
+    selectHelper(statement,
+                 bulkDataPartition,
+                 partitionKey,
+                 config,
+                 log);
+  }
 
 }
