@@ -9,6 +9,8 @@ rem ----------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
+if exist ora_bench.log del /f /q ora_bench.log
+
 set ORA_BENCH_BENCHMARK_COMMENT="Standard tests (locally)"
 
 set ORA_BENCH_CHOICE_DB_DEFAULT=complete

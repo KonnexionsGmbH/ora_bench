@@ -21,6 +21,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 /**
  * The database support class for the Oracle JDBC benchmark tests. This creates
  * a database connection. The database parameters must be provided via an
@@ -28,15 +30,17 @@ import java.sql.SQLException;
  */
 public class Database {
 
-  private final Config config;
-  private Connection   connection;
-  private final String connectionHost;
-  private final String connectionPassword;
-  private final int    connectionPort;
-  private final String connectionService;
-  private final String connectionUser;
+  private static final Logger  logger  = Logger.getLogger(Database.class);
+  private final static boolean isDebug = logger.isDebugEnabled();
+  private final Config         config;
+  private Connection           connection;
+  private final String         connectionHost;
+  private final String         connectionPassword;
+  private final int            connectionPort;
 
-  private final Logger log = new Logger(Database.class);
+  private final String         connectionService;
+
+  private final String         connectionUser;
 
   /**
    * Constructs a Database object using the given {@link Config} object.
@@ -44,12 +48,20 @@ public class Database {
    * @param config the {@link Config} object
    */
   public Database(Config config) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     this.config        = config;
     connectionHost     = config.getConnectionHost();
     connectionPassword = config.getConnectionPassword();
     connectionPort     = config.getConnectionPort();
     connectionService  = config.getConnectionService();
     connectionUser     = config.getConnectionUser();
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
@@ -58,6 +70,10 @@ public class Database {
    * @return the database connection
    */
   public final Connection connect() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     final String url = "jdbc:oracle:thin:@//" + connectionHost + ":" + connectionPort + "/" + connectionService;
 
     if (connection == null) {
@@ -68,11 +84,15 @@ public class Database {
         DatabaseMetaData meta = connection.getMetaData();
         config.setBenchmarkDriver("JDBC (Version " + meta.getDriverVersion() + ")");
       } catch (SQLException ec) {
-        log.error("connection parameter url     =: " + url);
-        log.error("connection parameter username=: " + connectionUser);
-        log.error("connection parameter password=: " + connectionPassword);
+        logger.error("connection parameter url     =: " + url);
+        logger.error("connection parameter username=: " + connectionUser);
+        logger.error("connection parameter password=: " + connectionPassword);
         ec.printStackTrace();
       }
+    }
+
+    if (isDebug) {
+      logger.debug("End");
     }
 
     return connection;
