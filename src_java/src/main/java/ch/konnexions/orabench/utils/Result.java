@@ -27,24 +27,28 @@ import java.time.format.DateTimeFormatter;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.log4j.Logger;
 
 /**
  * This class is used to record the results of the Oracle JDBC benchmark.
  */
 public class Result {
+  private static final Logger     logger            = Logger.getLogger(Result.class);
+
+  private final static boolean    isDebug           = logger.isDebugEnabled();
+
   private final Config            config;
 
   private final DecimalFormat     decimalFormat     = new DecimalFormat("#########");
-
   private final DateTimeFormatter formatter         = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
-
   private final LocalDateTime     lastBenchmark     = LocalDateTime.now();
   private final long              lastBenchmarkNano = System.nanoTime();
   private LocalDateTime           lastQuery;
   private long                    lastQueryNano;
+
   private LocalDateTime           lastTrial;
+
   private long                    lastTrialNano;
-  private final Logger            log               = new Logger(Result.class);
 
   private CSVPrinter              resultFile;
 
@@ -54,21 +58,41 @@ public class Result {
    * @param config the {@link Config} object
    */
   public Result(Config config) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     this.config = config;
 
     openResultFile();
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   private void createMeasuringPoint(int trialNo, LocalDateTime startDateTime, LocalDateTime endDateTime, long duration) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     createMeasuringPoint("trial",
                          trialNo,
                          null,
                          startDateTime,
                          endDateTime,
                          duration);
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   private void createMeasuringPoint(LocalDateTime endDateTime, long duration) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     createMeasuringPoint("benchmark",
                          0,
                          null,
@@ -76,9 +100,16 @@ public class Result {
                          endDateTime,
                          duration);
 
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   private void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime, LocalDateTime endDateTime, long duration) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     try {
       resultFile.printRecord(config.getBenchmarkRelease(),
                              config.getBenchmarkId(),
@@ -104,10 +135,14 @@ public class Result {
                              decimalFormat.format(Math.round(duration / 1000000000.0)),
                              Long.toString(duration));
     } catch (IOException e) {
-      log.error("file result delimiter=: " + config.getFileResultDelimiter());
-      log.error("file result header   =: " + config.getFileResultHeader());
-      log.error("file result name     =: " + config.getFileBulkSize());
+      logger.error("file result delimiter=: " + config.getFileResultDelimiter());
+      logger.error("file result header   =: " + config.getFileResultHeader());
+      logger.error("file result name     =: " + config.getFileBulkSize());
       e.printStackTrace();
+    }
+
+    if (isDebug) {
+      logger.debug("End");
     }
   }
 
@@ -115,6 +150,10 @@ public class Result {
    * End of the whole benchmark run.
    */
   public final void endBenchmark() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     LocalDateTime endDateTime = LocalDateTime.now();
     long          duration    = System.nanoTime() - lastBenchmarkNano;
 
@@ -124,10 +163,14 @@ public class Result {
     try {
       resultFile.close();
     } catch (IOException e) {
-      log.error("file result delimiter=: " + config.getFileResultDelimiter());
-      log.error("file result header   =: " + config.getFileResultHeader());
-      log.error("file result name     =: " + config.getFileBulkSize());
+      logger.error("file result delimiter=: " + config.getFileResultDelimiter());
+      logger.error("file result header   =: " + config.getFileResultHeader());
+      logger.error("file result name     =: " + config.getFileBulkSize());
       e.printStackTrace();
+    }
+
+    if (isDebug) {
+      logger.debug("End");
     }
   }
 
@@ -138,6 +181,10 @@ public class Result {
    * @param sqlStatement the SQL statement to be applied
    */
   public final void endQueryInsert(int trialNo, String sqlStatement) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     LocalDateTime endDateTime = LocalDateTime.now();
     long          duration    = System.nanoTime() - lastQueryNano;
 
@@ -147,6 +194,10 @@ public class Result {
                          lastQuery,
                          endDateTime,
                          duration);
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
@@ -156,6 +207,10 @@ public class Result {
    * @param sqlStatement the SQL statement to be applied
    */
   public final void endQuerySelect(int trialNo, String sqlStatement) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     LocalDateTime endDateTime = LocalDateTime.now();
     long          duration    = System.nanoTime() - lastQueryNano;
 
@@ -165,6 +220,10 @@ public class Result {
                          lastQuery,
                          endDateTime,
                          duration);
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
@@ -173,13 +232,25 @@ public class Result {
    * @param trialNo the current trial number
    */
   public final void endTrial(int trialNo) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     createMeasuringPoint(trialNo,
                          lastTrial,
                          LocalDateTime.now(),
                          System.nanoTime() - lastTrialNano);
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   private void openResultFile() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     String resultDelimiter = config.getFileResultDelimiter();
     String resultName      = config.getFileResultName();
 
@@ -187,18 +258,22 @@ public class Result {
       boolean isFileExisting = Files.exists(Paths.get(resultName));
 
       if (!(isFileExisting)) {
-        log.error("fatal error: program abort =====> result file \"" + resultName + "\" is missing <=====");
+        logger.error("fatal error: program abort =====> result file \"" + resultName + "\" is missing <=====");
         System.exit(1);
       }
 
       BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(resultName, true));
       resultFile = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.withDelimiter(resultDelimiter.charAt(0)));
     } catch (IOException e) {
-      log.error("file result delimiter=: " + resultDelimiter);
-      log.error("file result header   =: " + config.getFileResultHeader());
-      log.error("file result name     =: " + resultName);
-      log.error("-----------------------");
+      logger.error("file result delimiter=: " + resultDelimiter);
+      logger.error("file result header   =: " + config.getFileResultHeader());
+      logger.error("file result name     =: " + resultName);
+      logger.error("-----------------------");
       e.printStackTrace();
+    }
+
+    if (isDebug) {
+      logger.debug("End");
     }
   }
 
@@ -206,16 +281,32 @@ public class Result {
    * Start a new query.
    */
   public final void startQuery() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     lastQuery     = LocalDateTime.now();
     lastQueryNano = System.nanoTime();
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
    * Start a new trial.
    */
   public final void startTrial() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     lastTrial     = LocalDateTime.now();
     lastTrialNano = System.nanoTime();
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
 }
