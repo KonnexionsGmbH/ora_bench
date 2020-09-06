@@ -17,7 +17,7 @@ set ORA_BENCH_CHOICE_DB_DEFAULT=complete
 set ORA_BENCH_CHOICE_DRIVER_DEFAULT=complete
 
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_HOST=ora_bench_db
+    set ORA_BENCH_CONNECTION_HOST=localhost
 )
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_CONNECTION_PORT=1521
@@ -44,13 +44,13 @@ if ["%1"] EQU [""] (
     set ORA_BENCH_CHOICE_DRIVER=%1
 )
 
-set ORA_BENCH_RUN_CX_ORACLE_PYTHON=
-set ORA_BENCH_RUN_GODROR_GO=
-set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=
-set ORA_BENCH_RUN_JDBC_JAVA=
-set ORA_BENCH_RUN_ODPI_C=
-set ORA_BENCH_RUN_ORANIF_ELIXIR=
-set ORA_BENCH_RUN_ORANIF_ERLANG=
+set ORA_BENCH_RUN_CX_ORACLE_PYTHON=false
+set ORA_BENCH_RUN_GODROR_GO=false
+set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
+set ORA_BENCH_RUN_JDBC_JAVA=false
+set ORA_BENCH_RUN_ODPI_C=false
+set ORA_BENCH_RUN_ORANIF_ELIXIR=false
+set ORA_BENCH_RUN_ORANIF_ERLANG=false
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["complete"] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
@@ -155,7 +155,7 @@ echo.
 echo Please wait ...
 echo.
 
-> run_bench_all_dbs_props_std.log 2>&1 (
+REM wwe > run_bench_all_dbs_props_std.log 2>&1 (
 
     echo ================================================================================
     echo Start %0
@@ -238,4 +238,4 @@ echo.
     echo End   %0
     echo ================================================================================
     
-)
+REM wwe )

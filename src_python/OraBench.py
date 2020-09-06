@@ -5,7 +5,6 @@ import datetime
 import locale
 import logging
 import os
-import platform
 import sys
 import threading
 from pathlib import Path
@@ -15,7 +14,7 @@ from pathlib import Path
 # ------------------------------------------------------------------------------
 
 BENCHMARK_DRIVER = 'cx_Oracle (Version v' + cx_Oracle.version + ')'
-BENCHMARK_LANGUAGE = 'Python ' + platform.python_version()
+BENCHMARK_LANGUAGE = 'Python ' + sys.version
 
 FILE_CONFIGURATION_NAME_PYTHON = 'priv/properties/ora_bench_python.properties'
 

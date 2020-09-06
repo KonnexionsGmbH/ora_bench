@@ -15,7 +15,6 @@ echo "ora_bench - Oracle benchmark - show environment variables and software ver
 echo "--------------------------------------------------------------------------------"
 echo "GOPATH                     : $GOPATH"
 echo "GOROOT                     : $GOROOT"
-echo "GRADLE_HOME                : $GRADLE_HOME"
 echo "LD_LIBRARY_PATH            : $LD_LIBRARY_PATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
@@ -52,12 +51,6 @@ if ! go version; then
 fi
     
 if ! go env; then
-    exit 255
-fi
-    
-echo "===============================================================================> Version Gradle:"
-gradle wrapper
-if ! gradle --version; then
     exit 255
 fi
     
