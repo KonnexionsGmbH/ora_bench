@@ -145,11 +145,11 @@ def create_result_measuring_point_end(logger, config, result_file, measurement_d
     global IX_LAST_TRIAL
 
     if action == 'query':
-        create_result(config, result_file, measurement_data, action, trial_number, sql_statement, measurement_data[IX_LAST_QUERY], sql_operation)
+        create_result(logger, config, result_file, measurement_data, action, trial_number, sql_statement, measurement_data[IX_LAST_QUERY], sql_operation)
     elif action == 'trial':
-        create_result(config, result_file, measurement_data, action, trial_number, sql_statement, measurement_data[IX_LAST_TRIAL], sql_operation)
+        create_result(logger, config, result_file, measurement_data, action, trial_number, sql_statement, measurement_data[IX_LAST_TRIAL], sql_operation)
     elif action == 'benchmark':
-        create_result(config, result_file, measurement_data, action, trial_number, sql_statement, measurement_data[IX_LAST_BENCHMARK], sql_operation)
+        create_result(logger, config, result_file, measurement_data, action, trial_number, sql_statement, measurement_data[IX_LAST_BENCHMARK], sql_operation)
         result_file.close()
     else:
         logger.error('action="' + action + '"' + ' state="end"')
@@ -198,7 +198,7 @@ def create_result_measuring_point_start_benchmark(logger, config):
 
     measurement_data[IX_LAST_BENCHMARK] = datetime.datetime.now()
 
-    result_file = create_result_file(config)
+    result_file = create_result_file(logger, config)
 
     measurement_data_result_file = (measurement_data, result_file)
 
@@ -340,10 +340,12 @@ def insert(logger, config, connection, cursor, bulk_data_partition):
 
 def main():
     with open('src_python/logging.yaml', 'r') as f:
-        config = yaml.safe_load(f.read())
-        logging.config.dictConfig(config)
+        log_config = yaml.safe_load(f.read())
 
-    logger = logging.getLogger(__name__)
+    logging.config.dictConfig(log_config)
+
+    logger = logging.getLogger('OraBench.py')
+    logger.setLevel(logging.DEBUG)
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug('Start')
@@ -405,13 +407,13 @@ def run_insert(logger, config, connections, cursors, bulk_data_partitions, resul
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug('Start')
 
-    measurement_data = create_result_measuring_point_start(measurement_data, 'query')
+    measurement_data = create_result_measuring_point_start(logger, measurement_data, 'query')
 
     threads = list()
 
     for partition_key in range(0, config['benchmark.number.partitions']):
         if config['benchmark.core.multiplier'] == 0:
-            insert(config, connections[partition_key], cursors[partition_key], bulk_data_partitions[partition_key])
+            insert(logger, config, connections[partition_key], cursors[partition_key], bulk_data_partitions[partition_key])
         else:
             thread = threading.Thread(target=insert, args=(config, connections[partition_key], cursors[partition_key], bulk_data_partitions[partition_key],))
             threads.append(thread)
@@ -421,7 +423,7 @@ def run_insert(logger, config, connections, cursors, bulk_data_partitions, resul
         for thread in threads:
             thread.join()
 
-    create_result_measuring_point_end(config, result_file, measurement_data, 'query', trial_number, config['sql.insert'], 'insert')
+    create_result_measuring_point_end(logger, config, result_file, measurement_data, 'query', trial_number, config['sql.insert'], 'insert')
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug('End')
@@ -437,13 +439,13 @@ def run_select(logger, config, cursors, bulk_data_partitions, result_file, measu
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug('Start')
 
-    measurement_data = create_result_measuring_point_start(measurement_data, 'query')
+    measurement_data = create_result_measuring_point_start(logger, measurement_data, 'query')
 
     threads = list()
 
     for partition_key in range(0, config['benchmark.number.partitions']):
         if config['benchmark.core.multiplier'] == 0:
-            select(cursors[partition_key], bulk_data_partitions[partition_key], partition_key, config['sql.select'])
+            select(logger, cursors[partition_key], bulk_data_partitions[partition_key], partition_key, config['sql.select'])
         else:
             thread = threading.Thread(target=select, args=(cursors[partition_key], bulk_data_partitions[partition_key], partition_key, config['sql.select'],))
             threads.append(thread)
@@ -453,7 +455,7 @@ def run_select(logger, config, cursors, bulk_data_partitions, result_file, measu
         for thread in threads:
             thread.join()
 
-    create_result_measuring_point_end(config, result_file, measurement_data, 'query', trial_number, config['sql.select'], 'select')
+    create_result_measuring_point_end(logger, config, result_file, measurement_data, 'query', trial_number, config['sql.select'], 'select')
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug('End')
@@ -469,7 +471,7 @@ def run_trial(logger, config, connections, cursors, bulk_data_partitions, measur
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug('Start')
 
-    measurement_data = create_result_measuring_point_start(measurement_data, 'trial')
+    measurement_data = create_result_measuring_point_start(logger, measurement_data, 'trial')
 
     logger.info('Start trial no. ' + str(trial_number))
 
@@ -481,14 +483,14 @@ def run_trial(logger, config, connections, cursors, bulk_data_partitions, measur
         cursors[0].execute(config['sql.create'])
         logger.debug('last DDL statement after DROP=' + config['sql.create'])
 
-    run_insert(config, connections, cursors, bulk_data_partitions, result_file, measurement_data, trial_number)
+    run_insert(logger, config, connections, cursors, bulk_data_partitions, result_file, measurement_data, trial_number)
 
-    run_select(config, cursors, bulk_data_partitions, result_file, measurement_data, trial_number)
+    run_select(logger, config, cursors, bulk_data_partitions, result_file, measurement_data, trial_number)
 
     cursors[0].execute(config['sql.drop'])
     logger.debug('last DDL statement=' + config['sql.drop'])
 
-    create_result_measuring_point_end(config, result_file, measurement_data, 'trial', trial_number)
+    create_result_measuring_point_end(logger, config, result_file, measurement_data, 'trial', trial_number)
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug('End')

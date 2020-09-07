@@ -1,26 +1,25 @@
 version: 1
+
 formatters:
   simple:
-    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format: "%(asctime)s [%(module)s.py  ] %(levelname)-5s %(message)s"
+  extended:
+    format: "%(asctime)s [%(module)s.py  ] %(levelname)-5s %(funcName)s:%(lineno)d \n%(message)s"
+
 handlers:
   console:
-    class : logging.StreamHandler
-    formatter: brief
-    level   : INFO
-    filters: [allow_foo]
-    stream  : ext://sys.stdout
-  file:
-    class : logging.handlers.RotatingFileHandler
-    formatter: precise
-    filename: ora_bench.log
-    level   : INFO
-    maxBytes: 1024
-    backupCount: 3
-loggers:
-  simpleExample:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: simple
+
+  file_handler:
+    class: logging.FileHandler
     level: DEBUG
-    handlers: [console]
-    propagate: no
+    filename: ora_bench.log
+    formatter: extended
+
+loggers:
+  OraBench.py:
+    handlers: [console, file_handler]
 root:
-  level: DEBUG
-  handlers: [console]
+  handlers: [file_handler]
