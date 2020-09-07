@@ -13,7 +13,6 @@ echo ora_bench - Oracle benchmark - show environment variables and software vers
 echo --------------------------------------------------------------------------------
 echo GOPATH                     : %GOPATH%
 echo GOROOT                     : %GOROOT%
-echo GRADLE_HOME                : %GRADLE_HOME%
 echo LD_LIBRARY_PATH            : %LD_LIBRARY_PATH%
 echo --------------------------------------------------------------------------------
 echo:| TIME
@@ -41,14 +40,6 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 go env
-if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
-)
-    
-echo ===============================================================================> Version Gradle:
-call gradle wrapper
-call gradle --version
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%

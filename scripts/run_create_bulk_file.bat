@@ -30,10 +30,12 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-call scripts\run_show_environment.bat
-if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
+if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["complete"] (
+    call scripts\run_show_environment.bat
+    if %ERRORLEVEL% NEQ 0 (
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
+    )
 )
 
 call src_java\scripts\run_gradle

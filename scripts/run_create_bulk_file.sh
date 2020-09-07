@@ -34,8 +34,10 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-if ! { /bin/bash scripts/run_show_environment.sh; }; then
-    exit 255
+if [ "$ORA_BENCH_CHOICE_DRIVER" = "complete" ]; then
+    if ! { /bin/bash scripts/run_show_environment.sh; }; then
+        exit 255
+    fi
 fi
 
 if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then

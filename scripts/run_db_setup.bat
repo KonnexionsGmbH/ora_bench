@@ -46,7 +46,7 @@ echo Docker setup network ......................................................
 docker network prune --force
 docker network ls | grep "ora_bench_net" > tmp\_ora_bench_net
 set /p _ora_bench_net=<tmp\_ora_bench_net
-if [%_ora_bench_net%] EQU [""] (docker network create ora_bench_net)
+if [%_ora_bench_net%] NEQ ["ora_bench_net"] (docker network create ora_bench_net)
 docker network ls
 
 echo Docker create ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%) .....................
