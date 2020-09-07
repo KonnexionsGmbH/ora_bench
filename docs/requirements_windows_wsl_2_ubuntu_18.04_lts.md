@@ -101,6 +101,7 @@ Next the Linux distribution Ubuntu must be updated:
 
     sudo apt-get install python3-pip
     python3 -m pip install --upgrade cx_Oracle
+    python3 -m pip install --upgrade pyyaml
 
 ## Fixing Possible Issues
 
