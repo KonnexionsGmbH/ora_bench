@@ -24,13 +24,11 @@ if %ERRORLEVEL% NEQ 0 (
     exit %ERRORLEVEL%
 )
 
-call gradlew assemble
+call gradlew copyJarToLib
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
-
-copy /Y build\libs\ora_bench.jar ..\priv\java_jar
 
 call gradlew javadoc
 if %ERRORLEVEL% NEQ 0 (

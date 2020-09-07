@@ -23,11 +23,9 @@ echo "==========================================================================
         exit 255
     fi
     
-    if ! { ./gradlew assemble; }; then
+    if ! { ./gradlew copyJarToLib; }; then
         exit 255
     fi
-    
-    cp build/libs/ora_bench.jar ../priv/java_jar
     
     if ! { ./gradlew javadoc; }; then
         exit 255
