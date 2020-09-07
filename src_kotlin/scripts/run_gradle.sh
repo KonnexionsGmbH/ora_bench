@@ -27,7 +27,7 @@ echo "==========================================================================
         exit 255
     fi
     
-    if ! { ./gradlew javadoc; }; then
+    if ! { ./gradlew dokkaHtml; }; then
         exit 255
     fi
 )

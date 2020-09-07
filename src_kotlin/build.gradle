@@ -16,17 +16,18 @@ compileKotlin {
 
 dependencies {
     dokkaHtmlPlugin 'org.jetbrains.dokka:kotlin-as-java-plugin:1.4.0'
+    implementation 'commons-logging:commons-logging:1.2'
+    implementation 'io.github.microutils:kotlin-logging:1.8.3'
+    implementation 'org.slf4j:slf4j-log4j12:1.7.30'
     
 //    implementation 'com.google.guava:guava:29.0-jre'
 //    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 //    implementation 'commons-beanutils:commons-beanutils:1.9.4'
 //    implementation 'commons-codec:commons-codec:1.15'
-//    implementation 'commons-logging:commons-logging:1.2'
 //    implementation 'org.apache.commons:commons-configuration2:2.7'
 //    implementation 'org.apache.commons:commons-csv:1.8'
 //    implementation 'org.apache.commons:commons-lang3:3.11'
 //    implementation 'org.apache.commons:commons-text:1.9'
-//    implementation 'org.slf4j:slf4j-log4j12:1.7.30'
 }
 
 jar {
@@ -34,7 +35,7 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     manifest {
-        attributes 'Main-Class' : 'ch.konnexions.orabench.OraBench'
+        attributes 'Main-Class': 'ch.konnexions.orabench.OraBench'
     }
 }
 
@@ -60,6 +61,6 @@ task copyJarToLib(type: Copy, dependsOn: 'fatJar') {
     description = 'Copy the jar file to the lib directory'
 
     from "$buildDir/libs"
-    rename project.name +'-all.jar', project.name + '.jar'
+    rename project.name + '-all.jar', project.name + '.jar'
     into "../priv/kotlin_jar"
 }

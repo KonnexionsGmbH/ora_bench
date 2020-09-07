@@ -23,10 +23,6 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 )
 
-if ["%ORA_BENCH_KOTLIN_CLASSPATH%"] EQU [""] (
-    set ORA_BENCH_KOTLIN_CLASSPATH=.;priv/kotlin_jar/*;JAVA_HOME/lib;
-)
-
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
@@ -45,8 +41,6 @@ echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo --------------------------------------------------------------------------------
-echo JAVA_CLASSPATH             : %ORA_BENCH_KOTLIN_CLASSPATH%
-echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
@@ -58,7 +52,6 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     )
 )    
 
-rem java -cp %ORA_BENCH_KOTLIN_CLASSPATH% ch.konnexions.orabench.OraBench main
 java -jar priv\kotlin_jar\ora_bench.jar ch.konnexions.orabench.OraBench
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%

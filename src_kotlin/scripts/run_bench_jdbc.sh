@@ -23,14 +23,6 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 
-if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    if [ "$OSTYPE" = "msys" ]; then
-        export ORA_BENCH_JAVA_CLASSPATH=".;priv/kotlin_jar/*"
-    else
-        export ORA_BENCH_JAVA_CLASSPATH=".:priv/kotlin_jar/*"
-    fi
-fi
-
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -49,8 +41,6 @@ echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
 echo "FILE_CONFIGURATION_NAME    : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "--------------------------------------------------------------------------------"
-echo "JAVA_CLASSPATH             : $ORA_BENCH_JAVA_CLASSPATH"
-echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
@@ -60,7 +50,7 @@ if ! [ "$ORA_BENCH_MULTIPLE_RUN" = "true" ]; then
     fi
 fi
 
-if ! kotlin -cp "priv/kotlin_jar/*" ch.konnexions.orabench.OraBench runBenchmark; then
+if ! java -jar priv/kotlin_jar/ora_bench.jar ch.konnexions.orabench.OraBench; then
     exit 255
 fi
 
