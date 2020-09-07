@@ -55,7 +55,7 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 if ! [ "$ORA_BENCH_MULTIPLE_RUN" = "true" ]; then
-    if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
+    if ! { ./src_java/scripts/run_gradle.sh; }; then
         exit 255
     fi
 fi

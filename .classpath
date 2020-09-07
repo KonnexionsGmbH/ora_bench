@@ -12,23 +12,13 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-beanutils-1.9.4.jar"/>
-	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-codec-1.15.jar"/>
-	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-configuration2-2.6.jar"/>
-	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-csv-1.7.jar"/>
-	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-lang3-3.9.jar"/>
-	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/commons-text-1.8.jar"/>
-	<classpathentry kind="lib" path="priv/java_jar/__ARCHIVE__/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="priv/java_jar/ojdbc10.jar"/>
 	<classpathentry kind="lib" path="priv/java_jar/ora_bench.jar"/>
-	<classpathentry kind="lib" path="priv/oracle/instantclient-linux.x64/instantclient_19_5/ojdbc8.jar"/>
-	<classpathentry kind="lib" path="priv/oracle/instantclient-linux.x64/instantclient_19_5/ucp.jar"/>
-	<classpathentry kind="lib" path="priv/oracle/instantclient-linux.x64/instantclient_19_5/xstreams.jar"/>
-	<classpathentry kind="lib" path="priv/oracle/instantclient-windows.x64/instantclient_19_5/ojdbc8.jar"/>
-	<classpathentry kind="lib" path="priv/oracle/instantclient-windows.x64/instantclient_19_5/ucp.jar"/>
-	<classpathentry kind="lib" path="priv/oracle/instantclient-windows.x64/instantclient_19_5/xstreams.jar"/>
 	<classpathentry kind="lib" path="src_java/build/libs/ora_bench.jar"/>
-	<classpathentry kind="lib" path="src_java/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Walter/.gradle/caches/modules-2/files-2.1/log4j/log4j/1.2.17/5af35056b4d257e4b64b9e8069c0746e8b08629f/log4j-1.2.17.jar" sourcepath="C:/Users/Walter/.gradle/caches/modules-2/files-2.1/log4j/log4j/1.2.17/677abe279b68c5e7490d6d50c6951376238d7d3e/log4j-1.2.17-sources.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="src_java/build/classes/java/main"/>
 </classpath>

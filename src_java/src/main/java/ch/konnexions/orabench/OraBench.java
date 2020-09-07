@@ -20,18 +20,26 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.log4j.Logger;
 
 import ch.konnexions.orabench.threads.Insert;
 import ch.konnexions.orabench.threads.Select;
 import ch.konnexions.orabench.utils.Config;
 import ch.konnexions.orabench.utils.Database;
-import ch.konnexions.orabench.utils.Logger;
 import ch.konnexions.orabench.utils.Result;
 import ch.konnexions.orabench.utils.Setup;
 
 public class OraBench {
 
+  private static final Logger  logger  = Logger.getLogger(OraBench.class);
+
+  private final static boolean isDebug = logger.isDebugEnabled();
+
   public static void insertHelper(Connection connection, PreparedStatement preparedStatement, ArrayList<String[]> bulkDataPartition, Config config) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     int count = 0;
 
     try {
@@ -67,6 +75,10 @@ public class OraBench {
     } catch (SQLException e) {
       e.printStackTrace();
     }
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
@@ -85,65 +97,75 @@ public class OraBench {
    * @param args finalise / runBenchmark / setup / setup_erlang / setup_python / setup_json
    */
   public static void main(String[] args) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     final Config config = new Config();
 
-    final Logger log    = new Logger(OraBench.class);
-
-    log.info("Start OraBench.java");
+    logger.info("Start OraBench.java");
 
     String args0 = null;
     if (args.length > 0) {
       args0 = args[0];
     }
 
-    log.info("args[0]=" + args0);
+    logger.info("args[0]=" + args0);
 
     if (null == args0) {
-      log.error("Command line argument missing");
+      logger.error("Command line argument missing");
     } else if (args0.equals("finalise")) {
-      log.info("Start Finalise OraBench Run");
+      logger.info("Start Finalise OraBench Run");
       new Config().resetNotAvailables();
-      log.info("End   Finalise OraBench Run");
+      logger.info("End   Finalise OraBench Run");
     } else if (args0.equals("runBenchmark")) {
-      log.info("Start Running OraBench");
+      logger.info("Start Running OraBench");
       new OraBench().runBenchmark();
-      log.info("End   Running OraBench");
+      logger.info("End   Running OraBench");
     } else if (args0.equals("setup")) {
-      log.info("Start Setup OraBench Run");
+      logger.info("Start Setup OraBench Run");
       new Setup(config).createBulkFile();
-      log.info("End   Setup OraBench Run");
+      logger.info("End   Setup OraBench Run");
     } else if (args0.equals("setup_c")) {
-      log.info("Start Setup ODPI-C OraBench Run");
+      logger.info("Start Setup ODPI-C OraBench Run");
       config.createConfigurationFileC();
-      log.info("End   Setup ODPI-C OraBench Run");
+      logger.info("End   Setup ODPI-C OraBench Run");
     } else if (args0.equals("setup_elixir")) {
-      log.info("Start Setup Elixir OraBench Run");
+      logger.info("Start Setup Elixir OraBench Run");
       new Config();
-      log.info("End   Setup Elixir OraBench Run");
+      logger.info("End   Setup Elixir OraBench Run");
     } else if (args0.equals("setup_erlang")) {
-      log.info("Start Setup Erlang OraBench Run");
+      logger.info("Start Setup Erlang OraBench Run");
       config.createConfigurationFileErlang();
-      log.info("End   Setup Erlang OraBench Run");
+      logger.info("End   Setup Erlang OraBench Run");
     } else if (args0.equals("setup_json")) {
-      log.info("Start Setup JSON OraBench Run");
+      logger.info("Start Setup JSON OraBench Run");
       config.createConfigurationFileJson();
-      log.info("End   Setup Erlang OraBench Run");
+      logger.info("End   Setup Erlang OraBench Run");
     } else if (args0.equals("setup_python")) {
-      log.info("Start Setup Python OraBench Run");
+      logger.info("Start Setup Python OraBench Run");
       config.createConfigurationFilePython();
-      log.info("End   Setup Python OraBench Run");
+      logger.info("End   Setup Python OraBench Run");
     } else if (args0.contentEquals("")) {
-      log.error("Command line argument missing");
+      logger.error("Command line argument missing");
     } else {
-      log.error("Unknown command line argument");
+      logger.error("Unknown command line argument");
     }
 
-    log.info("End   OraBench.java");
+    logger.info("End   OraBench.java");
+
+    if (isDebug) {
+      logger.debug("End");
+    }
+
     System.exit(0);
   }
 
-  public static void selectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey, Config config, Logger log) {
+  public static void selectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey, Config config) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     int count = 0;
 
     try {
@@ -158,19 +180,21 @@ public class OraBench {
       }
 
       if (count != bulkDataPartition.size()) {
-        log.error("Number rows: expected=" + bulkDataPartition.size() + " - found=" + count);
+        logger.error("Number rows: expected=" + bulkDataPartition.size() + " - found=" + count);
       }
 
     } catch (SQLException e) {
       e.printStackTrace();
+    }
+
+    if (isDebug) {
+      logger.debug("End");
     }
   }
 
   private final Config    config          = new Config();
 
   private ExecutorService executorService = null;
-
-  private final Logger    log             = new Logger(OraBench.class);
 
   /**
    * Creates the database objects of type Connection, PreparedStatement, ResultSet
@@ -180,6 +204,10 @@ public class OraBench {
    *         Connection, PreparedStatement and Statement
    */
   private ArrayList<Object> createDatabaseObjects() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     ArrayList<Connection>        connections        = new ArrayList<>(config.getBenchmarkNumberPartitions());
     ArrayList<PreparedStatement> preparedStatements = new ArrayList<>(config.getBenchmarkNumberPartitions());
     ArrayList<Statement>         statements         = new ArrayList<>(config.getBenchmarkNumberPartitions());
@@ -204,6 +232,10 @@ public class OraBench {
       }
     }
 
+    if (isDebug) {
+      logger.debug("End");
+    }
+
     return new ArrayList<>(Arrays.asList(connections,
                                          preparedStatements,
                                          statements));
@@ -215,6 +247,10 @@ public class OraBench {
    * @return the bulk data partitioned
    */
   private ArrayList<ArrayList<String[]>> getBulkDataPartitions() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     ArrayList<ArrayList<String[]>> bulkDataPartitions   = new ArrayList<>(config.getBenchmarkNumberPartitions());
 
     int                            expectedBulkDataSize = config.getFileBulkSize() / config.getBenchmarkNumberPartitions();
@@ -244,18 +280,22 @@ public class OraBench {
 
       bufferedReader.close();
 
-      log.info("Start Distribution of the data in the partitions");
+      logger.info("Start Distribution of the data in the partitions");
 
       for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
-        log.info("Partition p" + String.format("%05d",
-                                               i) + " contains " + String.format("%9d",
-                                                                                 bulkDataPartitions.get(i).size()) + " rows");
+        logger.info("Partition p" + String.format("%05d",
+                                                  i) + " contains " + String.format("%9d",
+                                                                                    bulkDataPartitions.get(i).size()) + " rows");
       }
 
-      log.info("End   Distribution of the data in the partitions");
+      logger.info("End   Distribution of the data in the partitions");
 
     } catch (IOException e) {
       e.printStackTrace();
+    }
+
+    if (isDebug) {
+      logger.debug("End");
     }
 
     return bulkDataPartitions;
@@ -269,17 +309,28 @@ public class OraBench {
    * @param bulkDataPartition the bulk data partition
    */
   private void insert(Connection connection, PreparedStatement preparedStatement, ArrayList<String[]> bulkDataPartition) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     insertHelper(connection,
                  preparedStatement,
                  bulkDataPartition,
                  config);
 
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
    * Run a benchmark.
    */
   private final void runBenchmark() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     int                            benchmarkTrials    = config.getBenchmarkTrials();
 
     Result                         result             = new Result(config);
@@ -315,6 +366,10 @@ public class OraBench {
     }
 
     result.endBenchmark();
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
@@ -331,6 +386,10 @@ public class OraBench {
                          int trialNumber,
                          ArrayList<ArrayList<String[]>> bulkDataPartitions,
                          Result result) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     result.startQuery();
 
     if (config.getBenchmarkCoreMultiplier() != 0) {
@@ -360,6 +419,10 @@ public class OraBench {
 
     result.endQueryInsert(trialNumber,
                           config.getSqlInsert());
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
@@ -371,6 +434,10 @@ public class OraBench {
    * @param result             the result
    */
   private void runSelect(ArrayList<Statement> statements, int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     result.startQuery();
 
     if (config.getBenchmarkCoreMultiplier() != 0) {
@@ -383,7 +450,7 @@ public class OraBench {
                bulkDataPartitions.get(i),
                i);
       } else {
-        executorService.execute(new Select(config, log, statements.get(i), bulkDataPartitions.get(i), i));
+        executorService.execute(new Select(config, statements.get(i), bulkDataPartitions.get(i), i));
       }
     }
 
@@ -400,6 +467,10 @@ public class OraBench {
 
     result.endQuerySelect(trialNumber,
                           config.getSqlSelect());
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
@@ -418,18 +489,26 @@ public class OraBench {
                         int trialNumber,
                         ArrayList<ArrayList<String[]>> bulkDataPartitions,
                         Result result) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     result.startTrial();
 
-    log.info("Start trial no. " + trialNumber);
+    logger.info("Start trial no. " + trialNumber);
 
     try {
       statements.get(0).executeUpdate(config.getSqlCreate());
-      log.debug("last DDL statement=" + config.getSqlCreate());
+      if (isDebug) {
+        logger.debug("last DDL statement=" + config.getSqlCreate());
+      }
     } catch (SQLException es1) {
       try {
         statements.get(0).executeUpdate(config.getSqlDrop());
         statements.get(0).executeUpdate(config.getSqlCreate());
-        log.debug("last DDL statement after DROP=" + config.getSqlCreate());
+        if (isDebug) {
+          logger.debug("last DDL statement after DROP=" + config.getSqlCreate());
+        }
       } catch (SQLException es2) {
         es2.printStackTrace();
       }
@@ -448,12 +527,18 @@ public class OraBench {
 
     try {
       statements.get(0).executeUpdate(config.getSqlDrop());
-      log.debug("last DDL statement=" + config.getSqlDrop());
+      if (isDebug) {
+        logger.debug("last DDL statement=" + config.getSqlDrop());
+      }
     } catch (SQLException es) {
       es.printStackTrace();
     }
 
     result.endTrial(trialNumber);
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
@@ -464,11 +549,18 @@ public class OraBench {
    * @param partitionKey      the partition key
    */
   private void select(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
     selectHelper(statement,
                  bulkDataPartition,
                  partitionKey,
-                 config,
-                 log);
+                 config);
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
 }

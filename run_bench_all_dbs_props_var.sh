@@ -12,6 +12,8 @@ sleep .1
 #
 # ------------------------------------------------------------------------------
 
+rm -f ora_bench.log
+
 export ORA_BENCH_MULTIPLE_RUN=true
 
 export ORA_BENCH_BENCHMARK_COMMENT='Standard series (locally)'

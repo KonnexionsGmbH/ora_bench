@@ -14,6 +14,7 @@ dependencies {
     implementation(group = "org.apache.commons", name = "commons-csv", version = "1.8")
     implementation(group = "org.apache.commons", name = "commons-lang3", version = "3.11")
     implementation(group = "org.apache.commons", name = "commons-text", version = "1.9")
+    implementation(group = "org.slf4j", name = "slf4j-log4j12", version = "1.7.30")
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.6.2")
     testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.6.2")
 }

@@ -23,6 +23,7 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 
 /**
@@ -75,6 +76,8 @@ import org.json.simple.JSONObject;
  */
 public class Config {
 
+  private static final Logger                                          logger     = Logger.getLogger(Config.class);
+  private final static boolean                                         isDebug    = logger.isDebugEnabled();
   private int                                                          benchmarkBatchSize;
   private String                                                       benchmarkComment;
   private int                                                          benchmarkCoreMultiplier;
@@ -88,16 +91,16 @@ public class Config {
   private String                                                       benchmarkOs;
   private String                                                       benchmarkRelease;
   private int                                                          benchmarkTransactionSize;
+
   private int                                                          benchmarkTrials;
   private String                                                       benchmarkUserName;
-
   private int                                                          connectionFetchSize;
   private String                                                       connectionHost;
   private String                                                       connectionPassword;
   private int                                                          connectionPort;
+
   private String                                                       connectionService;
   private String                                                       connectionUser;
-
   private final FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
   private String                                                       fileBulkDelimiter;
   private String                                                       fileBulkHeader;
@@ -111,12 +114,12 @@ public class Config {
   private String                                                       fileConfigurationNamePython;
   private String                                                       fileResultDelimiter;
   private String                                                       fileResultHeader;
+
   private String                                                       fileResultName;
+
   private final DateTimeFormatter                                      formatter  = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
 
   private ArrayList<String>                                            keysSorted = new ArrayList<>();
-
-  private final Logger                                                 log        = new Logger(Config.class);
 
   private PropertiesConfiguration                                      propertiesConfiguration;
 
@@ -130,6 +133,10 @@ public class Config {
    */
   public Config() {
     super();
+
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     fileBasedConfigurationBuilder = new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class);
 
@@ -146,12 +153,19 @@ public class Config {
 
     storeConfiguration();
     validateProperties();
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
    * Creates the C version of the configuration file.
    */
   public final void createConfigurationFileC() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     try {
       BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameC(), false));
@@ -185,12 +199,19 @@ public class Config {
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
    * Creates the Erlang version of the configuration file.
    */
   public final void createConfigurationFileErlang() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     try {
       List<String>   list           = getNumericProperties();
@@ -232,6 +253,10 @@ public class Config {
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
@@ -239,6 +264,9 @@ public class Config {
    */
   @SuppressWarnings("unchecked")
   public final void createConfigurationFileJson() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     try {
 
@@ -269,12 +297,19 @@ public class Config {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
    * Creates the Python version of the configuration file.
    */
   public final void createConfigurationFilePython() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     try {
 
@@ -302,6 +337,10 @@ public class Config {
       bufferedWriter.close();
     } catch (IOException e) {
       e.printStackTrace();
+    }
+
+    if (isDebug) {
+      logger.debug("End");
     }
   }
 
@@ -544,6 +583,9 @@ public class Config {
   }
 
   private ArrayList<String> getKeysSorted() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
       keysSorted.add(iterator.next());
@@ -551,10 +593,17 @@ public class Config {
 
     Collections.sort(keysSorted);
 
+    if (isDebug) {
+      logger.debug("End");
+    }
+
     return keysSorted;
   }
 
   private List<String> getNotAvailables() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     List<String> list = new ArrayList<>();
 
@@ -570,10 +619,17 @@ public class Config {
     list.add("connection.service");
     list.add("sql.create");
 
+    if (isDebug) {
+      logger.debug("End");
+    }
+
     return list;
   }
 
   private List<String> getNumericProperties() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     List<String> list = new ArrayList<>();
 
@@ -589,16 +645,27 @@ public class Config {
     list.add("file.bulk.length");
     list.add("file.bulk.size");
 
+    if (isDebug) {
+      logger.debug("End");
+    }
+
     return list;
   }
 
   private CharSequence getPartitionString() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     StringBuilder stringBuffer = new StringBuilder();
 
     for (int i = 2; i <= benchmarkNumberPartitions; i++) {
       stringBuffer.append(", PARTITION p").append(String.format("%05d",
                                                                 i - 1)).append(" VALUES LESS THAN (").append(i).append(")");
+    }
+
+    if (isDebug) {
+      logger.debug("End");
     }
 
     return stringBuffer.toString();
@@ -637,6 +704,9 @@ public class Config {
    * value.
    */
   public final void resetNotAvailables() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     List<String> list      = getNotAvailables();
 
@@ -677,6 +747,10 @@ public class Config {
         e.printStackTrace();
       }
     }
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   /**
@@ -687,6 +761,9 @@ public class Config {
   }
 
   private void storeConfiguration() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     propertiesConfiguration.setThrowExceptionOnMissing(true);
 
@@ -734,9 +811,16 @@ public class Config {
     sqlSelect                   = propertiesConfiguration.getString("sql.select");
 
     benchmarkLanguage           = "Java " + System.getProperty("java.version");
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   private void updatePropertiesFromOs() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     Map<String, String> environmentVariables = System.getenv();
 
@@ -835,14 +919,21 @@ public class Config {
         e.printStackTrace();
       }
     }
+
+    if (isDebug) {
+      logger.debug("End");
+    }
   }
 
   private void validateProperties() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
 
     boolean isChanged = false;
 
     if (benchmarkBatchSize < 0) {
-      log.error("Attention: The value of the configuration parameter 'benchmark.batch.size' [" + benchmarkBatchSize
+      logger.error("Attention: The value of the configuration parameter 'benchmark.batch.size' [" + benchmarkBatchSize
           + "] must not be less than 0, the specified value is replaced by 0.");
       benchmarkBatchSize = 0;
       propertiesConfiguration.setProperty("benchmark.batch.size",
@@ -851,7 +942,7 @@ public class Config {
     }
 
     if (benchmarkCoreMultiplier < 0) {
-      log.error("Attention: The value of the core multiplier parameter 'benchmark.core.multiplier' [" + benchmarkCoreMultiplier
+      logger.error("Attention: The value of the core multiplier parameter 'benchmark.core.multiplier' [" + benchmarkCoreMultiplier
           + "] must not be less than 0, the specified value is replaced by 0.");
       benchmarkCoreMultiplier = 0;
       propertiesConfiguration.setProperty("benchmark.core.multiplier",
@@ -899,7 +990,7 @@ public class Config {
     }
 
     if (benchmarkTransactionSize < benchmarkBatchSize) {
-      log.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' [" + benchmarkTransactionSize
+      logger.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' [" + benchmarkTransactionSize
           + "] must not be less than value of the configuration parameter 'benchmark.batch.size' [" + benchmarkBatchSize
           + "], the specified value of the configuration parameter 'benchmark.transaction.size' is replaced by " + benchmarkBatchSize + "");
       benchmarkTransactionSize = benchmarkBatchSize;
@@ -910,7 +1001,7 @@ public class Config {
     }
 
     if (benchmarkTransactionSize < 0) {
-      log.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' [" + benchmarkTransactionSize
+      logger.error("Attention: The value of the configuration parameter 'benchmark.transaction.size' [" + benchmarkTransactionSize
           + "] must not be less than 0, the specified value is replaced by 0.");
 
       benchmarkTransactionSize = 0;
@@ -921,7 +1012,7 @@ public class Config {
     }
 
     if (benchmarkTrials < 1) {
-      log.error("Attention: The value of the configuration parameter 'benchmark.trials' [" + benchmarkTrials
+      logger.error("Attention: The value of the configuration parameter 'benchmark.trials' [" + benchmarkTrials
           + "] must not be less than 1, the specified value is replaced by 1.");
       benchmarkTrials = 1;
       propertiesConfiguration.setProperty("benchmark.trials",
@@ -945,7 +1036,7 @@ public class Config {
     }
 
     if (connectionFetchSize < 0) {
-      log.error("Attention: The value of the configuration parameter 'connection.fetch.size' [" + connectionFetchSize
+      logger.error("Attention: The value of the configuration parameter 'connection.fetch.size' [" + connectionFetchSize
           + "] must not be less than 0, the specified value is replaced by 0.");
       connectionFetchSize = 0;
       propertiesConfiguration.setProperty("connection.fetch.size",
@@ -954,7 +1045,7 @@ public class Config {
     }
 
     if (fileBulkLength < 80) {
-      log.error("Attention: The value of the configuration parameter 'file.bulk.length' [" + fileBulkLength
+      logger.error("Attention: The value of the configuration parameter 'file.bulk.length' [" + fileBulkLength
           + "] must not be less than 80, the specified value is replaced by 80.");
       fileBulkLength = 80;
       propertiesConfiguration.setProperty("file.bulk.length",
@@ -962,7 +1053,7 @@ public class Config {
 
       isChanged = true;
     } else if (fileBulkLength > 4000) {
-      log.error("Attention: The value of the configuration parameter 'file.bulk.length' [" + fileBulkLength
+      logger.error("Attention: The value of the configuration parameter 'file.bulk.length' [" + fileBulkLength
           + "] must not be greater than 4000, the specified value is replaced by 4000.");
       fileBulkLength = 80;
       propertiesConfiguration.setProperty("file.bulk.length",
@@ -971,7 +1062,7 @@ public class Config {
     }
 
     if (fileBulkSize < 1) {
-      log.error("Attention: The value of the configuration parameter 'file.bulk.size' [" + fileBulkSize
+      logger.error("Attention: The value of the configuration parameter 'file.bulk.size' [" + fileBulkSize
           + "] must not be less than 1, the specified value is replaced by 1.");
       fileBulkSize = 1;
       propertiesConfiguration.setProperty("file.bulk.size",
@@ -1002,6 +1093,10 @@ public class Config {
         e.printStackTrace();
       }
 
+    }
+
+    if (isDebug) {
+      logger.debug("End");
     }
   }
 
