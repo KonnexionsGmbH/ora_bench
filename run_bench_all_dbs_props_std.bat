@@ -155,7 +155,7 @@ echo.
 echo Please wait ...
 echo.
 
-REM wwe > run_bench_all_dbs_props_std.log 2>&1 (
+> run_bench_all_dbs_props_std.log 2>&1 (
 
     echo ================================================================================
     echo Start %0
@@ -238,4 +238,4 @@ REM wwe > run_bench_all_dbs_props_std.log 2>&1 (
     echo End   %0
     echo ================================================================================
     
-REM wwe )
+)
