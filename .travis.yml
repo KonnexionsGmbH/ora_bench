@@ -135,10 +135,7 @@ script:
   # - cd ../src_kotlin
   # - gradle wrapper
   - cd ..
-  - cd src_python
-  - ls -ll
-  - python -m pip install -e ./requirements.txt
-  - cd ..
+  - python -m pip install -r src_python/requirements.txt
   - ./scripts/run_properties_variations.sh
   - travis_fold end   "Running_ora_bench"
 
