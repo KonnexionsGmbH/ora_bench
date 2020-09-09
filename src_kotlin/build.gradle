@@ -16,8 +16,8 @@ compileKotlin {
 
 dependencies {
     dokkaHtmlPlugin 'org.jetbrains.dokka:kotlin-as-java-plugin:1.4.0'
+
     implementation 'commons-logging:commons-logging:1.2'
-    implementation 'io.github.microutils:kotlin-logging:1.8.3'
     implementation 'org.slf4j:slf4j-log4j12:1.7.30'
     
 //    implementation 'com.google.guava:guava:29.0-jre'
@@ -35,7 +35,7 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     manifest {
-        attributes 'Main-Class': 'ch.konnexions.orabench.OraBench'
+        attributes 'Main-Class': 'ch.konnexions.orabench.OraBenchKt'
     }
 }
 

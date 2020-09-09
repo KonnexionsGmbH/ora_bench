@@ -30,11 +30,12 @@ if %ERRORLEVEL% NEQ 0 (
     exit %ERRORLEVEL%
 )
 
-call gradlew dokkaHtml
-if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
-)
+rem wwe
+rem call gradlew dokkaHtml
+rem if %ERRORLEVEL% NEQ 0 (
+rem     echo Processing of the script was aborted, error code=%ERRORLEVEL%
+rem     exit %ERRORLEVEL%
+rem )
 
 echo --------------------------------------------------------------------------------
 echo:| TIME
