@@ -8,8 +8,6 @@
 
 set -e
 
-export ORA_BENCH_MULTIPLE_RUN=true
-
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi

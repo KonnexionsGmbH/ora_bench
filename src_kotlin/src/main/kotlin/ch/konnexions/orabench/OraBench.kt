@@ -28,14 +28,22 @@ class OraBench {
  *
  * @param args n/a
  */
-fun main(@Suppress("UNUSED_PARAMETER") args: Array<String>) {
+fun main(args: Array<String>) {
     val oraBench = OraBench()
 
     if (oraBench.isDebug) {
         oraBench.logger.debug("Start")
     }
 
-    obj.runBenchmark()
+    oraBench.logger.info("Start OraBench.kt");
+
+    if (args.size != 0) {
+        oraBench.logger.error("Unknown command line argument(s): " + args.joinToString(" "));
+    }
+
+    oraBench.runBenchmark()
+
+    oraBench.logger.info("End   OraBench.kt");
 
     if (oraBench.isDebug) {
         oraBench.logger.debug("End")

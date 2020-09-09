@@ -8,8 +8,6 @@
 
 set -e
 
-export ORA_BENCH_MULTIPLE_RUN=true
-
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
