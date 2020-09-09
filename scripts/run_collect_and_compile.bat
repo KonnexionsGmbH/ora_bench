@@ -198,6 +198,17 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         echo Setup Go - End   =========================================================== 
     )    
     
+    if ["%ORA_BENCH_RUN_EXPOSED_KOTLIN%"] == ["true"] (
+        echo Setup Kotlin - Start ======================================================= 
+        call src_kotlin\scripts\run_gradle.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script was aborted, error code=%ERRORLEVEL%
+            exit %ERRORLEVEL%
+        )
+
+        echo Setup Kotlin - End   ======================================================= 
+    )    
+    
     if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] == ["true"] (
         echo Setup Python - Start ======================================================= 
         java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_python

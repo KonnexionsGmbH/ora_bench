@@ -182,6 +182,14 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
         echo "Setup Go - End   ===========================================================" 
     fi    
 
+    if [ "$ORA_BENCH_RUN_EXPOSED_KOTLIN" == "true" ]; then
+        echo "Setup Kotlin - Start =======================================================" 
+        if ! ./src_kotlin/scripts/run_gradle.sh; then
+            exit 255
+        fi
+        echo "Setup Kotlin - End   =======================================================" 
+    fi    
+
     if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" == "true" ]; then
         echo "Setup Python - Start =======================================================" 
         if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python; then
