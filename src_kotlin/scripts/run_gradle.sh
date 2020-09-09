@@ -27,6 +27,7 @@ echo "==========================================================================
         exit 255
     fi
     
+    mkdir -p ../priv/kotlin_jar
     mv build/libs/ora_bench.jar ../priv/kotlin_jar
 
     if ! { ./gradlew dokkaHtml; }; then
