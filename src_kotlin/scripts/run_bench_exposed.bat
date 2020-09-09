@@ -52,7 +52,9 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     )
 )    
 
-java -jar ../priv/kotlin_jar/ora_bench.jar
+rem wwe
+echo pwd=%cd%
+java -jar priv/kotlin_jar/ora_bench.jar
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%

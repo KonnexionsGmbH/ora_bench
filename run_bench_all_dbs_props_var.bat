@@ -36,10 +36,10 @@ if ["%1"] EQU [""] (
     echo kotlin             - Kotlin and Exposed
     echo python             - Python and cx_Oracle
     echo ---------------------------------------------------------
-    set /P ORA_BENCH_CHOICE_DRIVER="Enter the desired programming lanuage (and database driver) [default: %ORA_BENCH_DRIVER_DEFAULT%] "
+    set /P ORA_BENCH_CHOICE_DRIVER="Enter the desired programming lanuage (and database driver) [default: %ORA_BENCH_CHOICE_DRIVER_DEFAULT%] "
 
-    if ["!ORA_BENCH_DRIVER!"] EQU [""] (
-        set ORA_BENCH_CHOICE_DRIVER=%ORA_BENCH_CHOICE_DRIVER%
+    if ["!ORA_BENCH_CHOICE_DRIVER!"] EQU [""] (
+        set ORA_BENCH_CHOICE_DRIVER=%ORA_BENCH_CHOICE_DRIVER_DEFAULT%
     )
 ) else (
     set ORA_BENCH_CHOICE_DRIVER=%1
@@ -106,13 +106,13 @@ if ["%2"] EQU [""] (
     echo 18                 - Oracle Database 18c 
     echo 19                 - Oracle Database 19c 
     echo ---------------------------------------------------------
-    set /P  ORA_BENCH_CHOICE_DB="Enter the desired database version [default: %ORA_BENCH_DRIVER_DEFAULT%] "
+    set /P  ORA_BENCH_CHOICE_DB="Enter the desired database version [default: %ORA_BENCH_CHOICE_DB_DEFAULT%] "
 
-    if ["! ORA_BENCH_CHOICE_DB!"] EQU [""] (
-        set  ORA_BENCH_CHOICE_DB=% ORA_BENCH_CHOICE_DB%
+    if ["!ORA_BENCH_CHOICE_DB!"] EQU [""] (
+        set ORA_BENCH_CHOICE_DB=%ORA_BENCH_CHOICE_DB_DEFAULT%
     )
 ) else (
-    set  ORA_BENCH_CHOICE_DB=%2
+    set ORA_BENCH_CHOICE_DB=%2
 )
 
 set ORA_BENCH_RUN_DB_12_2_EE=
