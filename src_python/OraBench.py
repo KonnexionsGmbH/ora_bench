@@ -4,10 +4,11 @@ import cx_Oracle
 import datetime
 import locale
 import logging
+import logging.config
 import os
-import platform
 import sys
 import threading
+import yaml
 from pathlib import Path
 
 # ------------------------------------------------------------------------------
@@ -15,7 +16,7 @@ from pathlib import Path
 # ------------------------------------------------------------------------------
 
 BENCHMARK_DRIVER = 'cx_Oracle (Version v' + cx_Oracle.version + ')'
-BENCHMARK_LANGUAGE = 'Python ' + platform.python_version()
+BENCHMARK_LANGUAGE = 'Python ' + sys.version
 
 FILE_CONFIGURATION_NAME_PYTHON = 'priv/properties/ora_bench_python.properties'
 
@@ -30,7 +31,10 @@ IX_LAST_TRIAL = 1
 # Creating the database objects connection and cursor.
 # ------------------------------------------------------------------------------
 
-def create_database_objects(config):
+def create_database_objects(logger, config):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
     connections = list()
     cursors = list()
 
@@ -40,17 +44,20 @@ def create_database_objects(config):
                                            config['connection.host'] + ':' + str(config['connection.port']) + '/' + config['connection.service'])
             connection.autocommit = False
         except cx_Oracle.DatabaseError as reason:
-            logging.info('connection.host    =' + config['connection.host'])
-            logging.info('connection.port    =' + str(config['connection.port']))
-            logging.info('connection.service =' + config['connection.service'])
-            logging.info('connection.user    =' + config['connection.user'])
-            logging.info('connection.password=' + config['connection.password'])
+            logger.info('connection.host    =' + config['connection.host'])
+            logger.info('connection.port    =' + str(config['connection.port']))
+            logger.info('connection.service =' + config['connection.service'])
+            logger.info('connection.user    =' + config['connection.user'])
+            logger.info('connection.password=' + config['connection.password'])
             sys.exit('database connect error: ' + str(reason))
 
         connections.append(connection)
         cursors.append(connection.cursor())
 
     connections_cursors = (connections, cursors)
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
 
     return connections_cursors
 
@@ -59,7 +66,10 @@ def create_database_objects(config):
 # Writing the results.
 # ------------------------------------------------------------------------------
 
-def create_result(config, result_file, measurement_data, action, trial_number, sql_statement, start_date_time, sql_operation):
+def create_result(logger, config, result_file, measurement_data, action, trial_number, sql_statement, start_date_time, sql_operation):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
     global IX_DURATION_INSERT_SUM
     global IX_DURATION_SELECT_SUM
 
@@ -96,19 +106,28 @@ def create_result(config, result_file, measurement_data, action, trial_number, s
                       str(round((end_date_time - start_date_time).total_seconds())) + config['file.result.delimiter'] +
                       str(round(duration_ns)) + '\n')
 
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
+
 
 # ------------------------------------------------------------------------------
 # Creating the result file.
 # ------------------------------------------------------------------------------
 
-def create_result_file(config):
+def create_result_file(logger, config):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
     result_file = Path(config['file.result.name'])
 
     if not result_file.is_file():
-        logging.error('fatal error: program abort =====> result file "' + config['file.result.name'] + '" is missing <=====')
+        logger.error('fatal error: program abort =====> result file "' + config['file.result.name'] + '" is missing <=====')
         sys.exit(1)
 
     result_file = open(os.path.abspath(config['file.result.name']), 'a')
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
 
     return result_file
 
@@ -117,28 +136,41 @@ def create_result_file(config):
 # Recording the results of the benchmark - end processing.
 # ------------------------------------------------------------------------------
 
-def create_result_measuring_point_end(config, result_file, measurement_data, action, trial_number=0, sql_statement='', sql_operation=''):
+def create_result_measuring_point_end(logger, config, result_file, measurement_data, action, trial_number=0, sql_statement='', sql_operation=''):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
     global IX_LAST_BENCHMARK
     global IX_LAST_QUERY
     global IX_LAST_TRIAL
 
     if action == 'query':
-        create_result(config, result_file, measurement_data, action, trial_number, sql_statement, measurement_data[IX_LAST_QUERY], sql_operation)
+        create_result(logger, config, result_file, measurement_data, action, trial_number, sql_statement, measurement_data[IX_LAST_QUERY], sql_operation)
     elif action == 'trial':
-        create_result(config, result_file, measurement_data, action, trial_number, sql_statement, measurement_data[IX_LAST_TRIAL], sql_operation)
+        create_result(logger, config, result_file, measurement_data, action, trial_number, sql_statement, measurement_data[IX_LAST_TRIAL], sql_operation)
     elif action == 'benchmark':
-        create_result(config, result_file, measurement_data, action, trial_number, sql_statement, measurement_data[IX_LAST_BENCHMARK], sql_operation)
+        create_result(logger, config, result_file, measurement_data, action, trial_number, sql_statement, measurement_data[IX_LAST_BENCHMARK], sql_operation)
         result_file.close()
     else:
-        logging.error('action="' + action + '"' + ' state="end"')
+        logger.error('action="' + action + '"' + ' state="end"')
+
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('End')
+
         sys.exit(1)
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
 
 
 # ------------------------------------------------------------------------------
 # Recording the results of the benchmark - start processing.
 # ------------------------------------------------------------------------------
 
-def create_result_measuring_point_start(measurement_data, action):
+def create_result_measuring_point_start(logger, measurement_data, action):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
     global IX_LAST_QUERY
     global IX_LAST_TRIAL
 
@@ -147,22 +179,31 @@ def create_result_measuring_point_start(measurement_data, action):
     elif action == 'trial':
         measurement_data[IX_LAST_TRIAL] = datetime.datetime.now()
     else:
-        logging.error('Unknown action="' + action + '"' + ' state="start"')
+        logger.error('Unknown action="' + action + '"' + ' state="start"')
         sys.exit(1)
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
 
     return measurement_data
 
 
-def create_result_measuring_point_start_benchmark(config):
+def create_result_measuring_point_start_benchmark(logger, config):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
     global IX_LAST_BENCHMARK
 
     measurement_data = [None, None, None, 0, 0]
 
     measurement_data[IX_LAST_BENCHMARK] = datetime.datetime.now()
 
-    result_file = create_result_file(config)
+    result_file = create_result_file(logger, config)
 
     measurement_data_result_file = (measurement_data, result_file)
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
 
     return measurement_data_result_file
 
@@ -171,7 +212,10 @@ def create_result_measuring_point_start_benchmark(config):
 # Loading the bulk file into memory.
 # ------------------------------------------------------------------------------
 
-def get_bulk_data_partitions(config):
+def get_bulk_data_partitions(logger, config):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
     with open(os.path.abspath(config['file.bulk.name'])) as csv_file:
         bulk_data = [tuple(line) for line in csv.reader(csv_file, delimiter=config['file.bulk.delimiter'])]
 
@@ -186,12 +230,15 @@ def get_bulk_data_partitions(config):
         bulk_data_partition.append([key_data_tuple])
         bulk_data_partitions[partition_key] = bulk_data_partition
 
-    logging.info('Start Distribution of the data in the partitions')
+    logger.info('Start Distribution of the data in the partitions')
 
     for partition_key in range(0, config['benchmark.number.partitions']):
-        logging.info('Partition p' + '{:0>5d}'.format(partition_key) + ' contains ' + '{0:n}'.format(len(bulk_data_partitions[partition_key])) + ' rows')
+        logger.info('Partition p' + '{:0>5d}'.format(partition_key) + ' contains ' + '{0:n}'.format(len(bulk_data_partitions[partition_key])) + ' rows')
 
-    logging.info('End   Distribution of the data in the partitions')
+    logger.info('End   Distribution of the data in the partitions')
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
 
     return bulk_data_partitions
 
@@ -200,7 +247,10 @@ def get_bulk_data_partitions(config):
 # Loading the configuration parameters into memory.
 # ------------------------------------------------------------------------------
 
-def get_config():
+def get_config(logger):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
     global FILE_CONFIGURATION_NAME_PYTHON
 
     config_parser = configparser.ConfigParser()
@@ -243,6 +293,9 @@ def get_config():
     config['sql.insert'] = config_parser['DEFAULT']['sql.insert'].replace(':key', ':1').replace(':data', ':2')
     config['sql.select'] = config_parser['DEFAULT']['sql.select']
 
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
+
     return config
 
 
@@ -250,7 +303,10 @@ def get_config():
 # Performing the insert operations.
 # ------------------------------------------------------------------------------
 
-def insert(config, connection, cursor, bulk_data_partition):
+def insert(logger, config, connection, cursor, bulk_data_partition):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
     count = 0
     batch_data = list()
 
@@ -274,43 +330,62 @@ def insert(config, connection, cursor, bulk_data_partition):
     if config['benchmark.transaction.size'] == 0 or count % config['benchmark.transaction.size'] != 0:
         connection.commit()
 
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
+
 
 # ------------------------------------------------------------------------------
 # Main routine.
 # ------------------------------------------------------------------------------
 
 def main():
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
-    logging.info('Start OraBench.py')
+    with open('src_python/logging.yaml', 'r') as f:
+        log_config = yaml.safe_load(f.read())
+
+    logging.config.dictConfig(log_config)
+
+    logger = logging.getLogger('OraBench.py')
+    logger.setLevel(logging.DEBUG)
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
+    logger.info('Start OraBench.py')
 
     locale.setlocale(locale.LC_ALL, 'de_DE.utf8')
 
-    run_benchmark()
+    run_benchmark(logger)
 
-    logging.info('End   OraBench.py')
+    logger.info('End   OraBench.py')
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
 
 
 # ------------------------------------------------------------------------------
 # Performing the benchmark run.
 # ------------------------------------------------------------------------------
 
-def run_benchmark():
-    config = get_config()
+def run_benchmark(logger):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
 
-    measurement_data_result_file = create_result_measuring_point_start_benchmark(config)
+    config = get_config(logger)
+
+    measurement_data_result_file = create_result_measuring_point_start_benchmark(logger, config)
 
     measurement_data = measurement_data_result_file[0]
     result_file = measurement_data_result_file[1]
 
-    bulk_data_partitions = get_bulk_data_partitions(config)
+    bulk_data_partitions = get_bulk_data_partitions(logger, config)
 
-    connections_cursors = create_database_objects(config)
+    connections_cursors = create_database_objects(logger, config)
 
     connections = connections_cursors[0]
     cursors = connections_cursors[1]
 
     for trial_number in range(0, config['benchmark.trials']):
-        run_trial(config, connections, cursors, bulk_data_partitions, measurement_data, result_file, trial_number + 1)
+        run_trial(logger, config, connections, cursors, bulk_data_partitions, measurement_data, result_file, trial_number + 1)
 
     for cursor in cursors:
         cursor.close()
@@ -318,21 +393,27 @@ def run_benchmark():
     for connection in connections:
         connection.close()
 
-    create_result_measuring_point_end(config, result_file, measurement_data, 'benchmark')
+    create_result_measuring_point_end(logger, config, result_file, measurement_data, 'benchmark')
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
 
 
 # ------------------------------------------------------------------------------
 # Performing the insert operations.
 # ------------------------------------------------------------------------------
 
-def run_insert(config, connections, cursors, bulk_data_partitions, result_file, measurement_data, trial_number):
-    measurement_data = create_result_measuring_point_start(measurement_data, 'query')
+def run_insert(logger, config, connections, cursors, bulk_data_partitions, result_file, measurement_data, trial_number):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
+    measurement_data = create_result_measuring_point_start(logger, measurement_data, 'query')
 
     threads = list()
 
     for partition_key in range(0, config['benchmark.number.partitions']):
         if config['benchmark.core.multiplier'] == 0:
-            insert(config, connections[partition_key], cursors[partition_key], bulk_data_partitions[partition_key])
+            insert(logger, config, connections[partition_key], cursors[partition_key], bulk_data_partitions[partition_key])
         else:
             thread = threading.Thread(target=insert, args=(config, connections[partition_key], cursors[partition_key], bulk_data_partitions[partition_key],))
             threads.append(thread)
@@ -342,7 +423,10 @@ def run_insert(config, connections, cursors, bulk_data_partitions, result_file, 
         for thread in threads:
             thread.join()
 
-    create_result_measuring_point_end(config, result_file, measurement_data, 'query', trial_number, config['sql.insert'], 'insert')
+    create_result_measuring_point_end(logger, config, result_file, measurement_data, 'query', trial_number, config['sql.insert'], 'insert')
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
 
     return measurement_data
 
@@ -351,14 +435,17 @@ def run_insert(config, connections, cursors, bulk_data_partitions, result_file, 
 # Performing the select operations.
 # ------------------------------------------------------------------------------
 
-def run_select(config, cursors, bulk_data_partitions, result_file, measurement_data, trial_number):
-    measurement_data = create_result_measuring_point_start(measurement_data, 'query')
+def run_select(logger, config, cursors, bulk_data_partitions, result_file, measurement_data, trial_number):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
+    measurement_data = create_result_measuring_point_start(logger, measurement_data, 'query')
 
     threads = list()
 
     for partition_key in range(0, config['benchmark.number.partitions']):
         if config['benchmark.core.multiplier'] == 0:
-            select(cursors[partition_key], bulk_data_partitions[partition_key], partition_key, config['sql.select'])
+            select(logger, cursors[partition_key], bulk_data_partitions[partition_key], partition_key, config['sql.select'])
         else:
             thread = threading.Thread(target=select, args=(cursors[partition_key], bulk_data_partitions[partition_key], partition_key, config['sql.select'],))
             threads.append(thread)
@@ -368,7 +455,10 @@ def run_select(config, cursors, bulk_data_partitions, result_file, measurement_d
         for thread in threads:
             thread.join()
 
-    create_result_measuring_point_end(config, result_file, measurement_data, 'query', trial_number, config['sql.select'], 'select')
+    create_result_measuring_point_end(logger, config, result_file, measurement_data, 'query', trial_number, config['sql.select'], 'select')
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
 
     return measurement_data
 
@@ -377,27 +467,33 @@ def run_select(config, cursors, bulk_data_partitions, result_file, measurement_d
 # Performing one trial.
 # ------------------------------------------------------------------------------
 
-def run_trial(config, connections, cursors, bulk_data_partitions, measurement_data, result_file, trial_number):
-    measurement_data = create_result_measuring_point_start(measurement_data, 'trial')
+def run_trial(logger, config, connections, cursors, bulk_data_partitions, measurement_data, result_file, trial_number):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
 
-    logging.info('Start trial no. ' + str(trial_number))
+    measurement_data = create_result_measuring_point_start(logger, measurement_data, 'trial')
+
+    logger.info('Start trial no. ' + str(trial_number))
 
     try:
         cursors[0].execute(config['sql.create'])
-        logging.debug('last DDL statement=' + config['sql.create'])
+        logger.debug('last DDL statement=' + config['sql.create'])
     except cx_Oracle.DatabaseError:
         cursors[0].execute(config['sql.drop'])
         cursors[0].execute(config['sql.create'])
-        logging.debug('last DDL statement after DROP=' + config['sql.create'])
+        logger.debug('last DDL statement after DROP=' + config['sql.create'])
 
-    run_insert(config, connections, cursors, bulk_data_partitions, result_file, measurement_data, trial_number)
+    run_insert(logger, config, connections, cursors, bulk_data_partitions, result_file, measurement_data, trial_number)
 
-    run_select(config, cursors, bulk_data_partitions, result_file, measurement_data, trial_number)
+    run_select(logger, config, cursors, bulk_data_partitions, result_file, measurement_data, trial_number)
 
     cursors[0].execute(config['sql.drop'])
-    logging.debug('last DDL statement=' + config['sql.drop'])
+    logger.debug('last DDL statement=' + config['sql.drop'])
 
-    create_result_measuring_point_end(config, result_file, measurement_data, 'trial', trial_number)
+    create_result_measuring_point_end(logger, config, result_file, measurement_data, 'trial', trial_number)
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
 
     return measurement_data
 
@@ -406,7 +502,10 @@ def run_trial(config, connections, cursors, bulk_data_partitions, measurement_da
 # Performing the select operations.
 # ------------------------------------------------------------------------------
 
-def select(cursor, bulk_size_partition, partition_key, sql_statement):
+def select(logger, cursor, bulk_size_partition, partition_key, sql_statement):
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('Start')
+
     count = 0
 
     cursor.execute(sql_statement + ' where partition_key = ' + str(partition_key))
@@ -415,8 +514,11 @@ def select(cursor, bulk_size_partition, partition_key, sql_statement):
         count += 1
 
     if count != len(bulk_size_partition):
-        logging.error('Number rows: expected=' + str(len(bulk_size_partition)) + ' - found=' + str(count))
+        logger.error('Number rows: expected=' + str(len(bulk_size_partition)) + ' - found=' + str(count))
         sys.exit(1)
+
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug('End')
 
 
 # ------------------------------------------------------------------------------

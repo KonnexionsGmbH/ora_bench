@@ -100,7 +100,6 @@ script:
   - python3 -m venv _build/ora_bench-env
   - source _build/ora_bench-env/bin/activate
   - python -m pip install -q --upgrade pip
-  - python -m pip install -q --upgrade cx_Oracle
   - travis_fold end   "Setting_up_Python"
 
   # Setting up environment variables ---------------------------------------------
@@ -136,6 +135,7 @@ script:
   # - cd ../src_kotlin
   # - gradle wrapper
   - cd ..
+  - python -m pip install -r src_python/requirements.txt
   - ./scripts/run_properties_variations.sh
   - travis_fold end   "Running_ora_bench"
 
