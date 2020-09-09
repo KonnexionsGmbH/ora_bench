@@ -46,6 +46,13 @@ if %ERRORLEVEL% NEQ 0 (
 )
     
 echo ===============================================================================> Version Java:
+kotlin -version
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
+)
+    
+echo ===============================================================================> Version Kotlin:
 java -version
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%

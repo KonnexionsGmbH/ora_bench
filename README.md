@@ -30,6 +30,7 @@ The currently supported database drivers are:
 | Driver    | Programming Languages |
 | :---      | :---                  |
 | cx_Oracle | Python                |
+| Exposed   | Kotlin                |
 | godror    | Go                    |
 | JamDB     | Erlang                |
 | JDBC      | Java                  |
@@ -84,6 +85,8 @@ All the file names specified here are also part of the configuration file and ca
 
 - Gradle from [here](https://gradle.org/releases/) 
 
+- Kotlin from [here](https://kotlinlang.org/docs/tutorials/command-line.html)
+
 - Python 3 from [here](https://www.python.org/downloads/)
 
 ##### 2.2.1.1.2 Windows Subsystem for Linux (WSL 2 and Ubuntu 18.04 LTS)
@@ -121,6 +124,12 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
     - `export GRADLE_HOME=/opt/gradle/gradle-6.2`
     - `export PATH=${GRADLE_HOME}/bin:${PATH}`
 
+- Kotlin, e.g.
+    - `curl -s https://get.sdkman.io | bash`
+    - `chmod a+x "$HOME/.sdkman/bin/sdkman-init.sh"`
+    - `source "$HOME/.sdkman/bin/sdkman-init.sh"`
+    - `sdk install kotlin`
+
 - Python 3, e.g.:
     - `sudo apt install software-properties-common`
     - `sudo add-apt-repository -y ppa:deadsnakes/ppa`
@@ -131,9 +140,8 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
 
 ##### 2.2.1.1.4 Platform-independent Installation
 
-- Install [cx_Oracle](https://oracle.github.io/python-cx_Oracle/):
-    - `python -m pip install --upgrade pip`
-    - `python -m pip install --upgrade cx_Oracle`
+- Install [cx_Oracle](https://oracle.github.io/python-cx_Oracle/ and [PyYAML](https://pypi.org/project/PyYAML/)):
+    - `python -m pip install -r src_python/requirements.txt`
 
 ##### 2.2.1.2 `run_bench_all_dbs_props_std`
 
@@ -374,7 +382,22 @@ The data column in the bulk file is randomly generated with a unique key column 
 - Python uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
 - the value fetch size (`connection.fetch.size`) is not used because the operation `SELECT` uses the operation `Cursor.fetchall()`
 
-### 4.2 JDBC and Java
+### 4.2 Exposed and Kotlin
+
+- the following data in the configuration parameters is determined at runtime: 
+    - Kotlin version (`benchmark.driver`),
+    - benchmark identifier (`benchmark.id`),
+    - host name (`benchmark.host.name`), 
+    - number of cores (`benchmark.number.cores`), 
+    - JRE version (`benchmark.language`), 
+    - operating system environment (`benchmark.os`), 
+    - user name (`benchmark.user.name`) and 
+    - SQL create statement (`sql.create`). 
+- the Kotlin source code is compiled with the help of Gradle
+? wwe - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
+? wwe - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
+
+### 4.3 JDBC and Java
 
 - the following data in the configuration parameters is determined at runtime: 
     - JDBC version (`benchmark.driver`),
@@ -389,20 +412,20 @@ The data column in the bulk file is randomly generated with a unique key column 
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
-### 4.3 ODPI and C
+### 4.4 ODPI and C
 
 - the following data in the configuration parameters is determined at runtime: 
     - ODPI version (`benchmark.driver`) and
     - C version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.c`) 
 
-### 4.4 oranif and Elixir
+### 4.5 oranif and Elixir
 
 - the following data in the configuration parameters is determined at runtime: 
     - oranif version (`benchmark.driver`) and
     - Elixir version (`benchmark.language`). 
 
-### 4.5 oranif and Erlang
+### 4.6 oranif and Erlang
 
 - the following data in the configuration parameters is determined at runtime: 
     - oranif version (`benchmark.driver`) and

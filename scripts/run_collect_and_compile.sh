@@ -13,6 +13,9 @@ export ORA_BENCH_MULTIPLE_RUN=true
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
+if [ -z "$ORA_BENCH_RUN_EXPOSED_KOTLIN" ]; then
+    export ORA_BENCH_RUN_EXPOSED_KOTLIN=true
+fi
 if [ -z "$ORA_BENCH_RUN_GODROR_GO" ]; then
     export ORA_BENCH_RUN_GODROR_GO=true
 fi
@@ -66,6 +69,7 @@ echo "RUN_GLOBAL_JAMDB           : $RUN_GLOBAL_JAMDB"
 echo "RUN_GLOBAL_NON_JAMDB       : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
+echo "RUN_EXPOSED_KOTLIN         : $ORA_BENCH_RUN_EXPOSED_KOTLIN"
 echo "RUN_GODROR_GO              : $ORA_BENCH_RUN_GODROR_GO"
 echo "RUN_JAMDB_ORACLE_ERLANG    : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"

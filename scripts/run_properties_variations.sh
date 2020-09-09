@@ -32,6 +32,9 @@ fi
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
+if [ -z "$ORA_BENCH_RUN_EXPOSED_KOTLIN" ]; then
+    export ORA_BENCH_RUN_EXPOSED_KOTLIN=true
+fi
 if [ -z "$ORA_BENCH_RUN_GODROR_GO" ]; then
     export ORA_BENCH_RUN_GODROR_GO=true
     export ORA_BENCH_RUN_GODROR_GO=false
@@ -42,6 +45,9 @@ if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" ]; then
 fi
 if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" ]; then
     export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
+fi
+if [ -z "$ORA_BENCH_RUN_JDBC_JAVA" ]; then
+    export ORA_BENCH_RUN_JDBC_JAVA=true
 fi
 if [ -z "$ORA_BENCH_RUN_ODPI_C" ]; then
     export ORA_BENCH_RUN_ODPI_C=true

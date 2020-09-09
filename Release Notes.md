@@ -5,6 +5,7 @@ Release Date: dd.mm.yyyy
 ### New Features
 
 - Database driver `cx_Oracle` and programming language `Python` 
+- Database driver `Exposed` and programming language `Kotlin` 
 - Database driver `godror` and programming language `Go` 
 - Database driver `jamdb_oracle` and programming language `Erlang` 
 - Database driver `JDBC` and programming language `Java` 

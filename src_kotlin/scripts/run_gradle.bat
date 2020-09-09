@@ -24,18 +24,19 @@ if %ERRORLEVEL% NEQ 0 (
     exit %ERRORLEVEL%
 )
 
-call gradlew copyJarToLib
+call gradlew jar
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
-rem wwe
-rem call gradlew dokkaHtml
-rem if %ERRORLEVEL% NEQ 0 (
-rem     echo Processing of the script was aborted, error code=%ERRORLEVEL%
-rem     exit %ERRORLEVEL%
-rem )
+move build\libs\ora_bench.jar ..\priv\kotlin_jar
+
+call gradlew dokkaHtml
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
+)
 
 echo --------------------------------------------------------------------------------
 echo:| TIME

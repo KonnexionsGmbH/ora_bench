@@ -9,6 +9,9 @@ class OraBench {
     val logger: Logger = Logger.getLogger(OraBench::class.java)
     val isDebug: Boolean = logger.isDebugEnabled()
 
+    /**
+     * Run a benchmark.
+     */
     fun runBenchmark() {
         if (isDebug) {
             logger.debug("Start")
@@ -18,28 +21,24 @@ class OraBench {
             logger.debug("End")
         }
     }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            val oraBench = OraBench()
-
-            if (oraBench.isDebug) {
-                oraBench.logger.debug("Start")
-            }
-
-            oraBench.runBenchmark()
-
-            if (oraBench.isDebug) {
-                oraBench.logger.debug("End")
-            }
-        }
-    }
 }
 
-fun main(args: Array<String>) {
-    val obj = OraBench()
-    
+/**
+ * This is the main function for the Oracle benchmark run.
+ *
+ * @param args n/a
+ */
+fun main(@Suppress("UNUSED_PARAMETER") args: Array<String>) {
+    val oraBench = OraBench()
+
+    if (oraBench.isDebug) {
+        oraBench.logger.debug("Start")
+    }
+
     obj.runBenchmark()
+
+    if (oraBench.isDebug) {
+        oraBench.logger.debug("End")
+    }
 }
 

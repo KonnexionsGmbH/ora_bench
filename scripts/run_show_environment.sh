@@ -59,6 +59,11 @@ if ! java -version; then
     exit 255
 fi
     
+echo "===============================================================================> Version Kotlin:"
+if ! kotlin -version; then
+    exit 255
+fi
+    
 echo "===============================================================================> Version Mix:"
 if ! mix --version; then
     exit 255

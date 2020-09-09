@@ -18,6 +18,8 @@ export ORA_BENCH_MULTIPLE_RUN=true
 
 export ORA_BENCH_BENCHMARK_COMMENT='Standard series (locally)'
 
+rm -f ora_bench.log
+
 export ORA_BENCH_CHOICE_DB_DEFAULT=complete
 export ORA_BENCH_CHOICE_DRIVER_DEFAULT=complete
 
@@ -38,6 +40,7 @@ if [ -z "$1" ]; then
     echo "erlang_oranif      - Erlang and oranif"
     echo "go                 - Go and GoDROR"
     echo "java               - Java and JDBC"
+    echo "kotlin             - Kotlin and Exposed"
     echo "python             - Python and cx_Oracle"
     echo "---------------------------------------------------------"
     read -p "Enter the desired programming lanuage (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
@@ -51,6 +54,7 @@ else
 fi
 
 export ORA_BENCH_RUN_CX_ORACLE_PYTHON=false
+export ORA_BENCH_RUN_EXPOSED_KOTLIN=false
 export ORA_BENCH_RUN_GODROR_GO=false
 export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
 export ORA_BENCH_RUN_JDBC_JAVA=false
@@ -60,6 +64,7 @@ export ORA_BENCH_RUN_ORANIF_ERLANG=false
 
 if [ ${ORA_BENCH_CHOICE_DRIVER} = "complete" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
+    export ORA_BENCH_RUN_EXPOSED_KOTLIN=true
     export ORA_BENCH_RUN_GODROR_GO=true
     export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
     export ORA_BENCH_RUN_JDBC_JAVA=true
@@ -78,6 +83,8 @@ elif [ ${ORA_BENCH_CHOICE_DRIVER} = "go" ]; then
     export ORA_BENCH_RUN_GODROR_GO=true
 elif [ ${ORA_BENCH_CHOICE_DRIVER} = "java" ]; then
     export ORA_BENCH_RUN_JDBC_JAVA=true
+elif [ ${ORA_BENCH_CHOICE_DRIVER} = "kotlin" ]; then
+    export ORA_BENCH_RUN_EXPOSED_KOTLIN=true
 elif [ ${ORA_BENCH_CHOICE_DRIVER} = "python" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
@@ -142,32 +149,35 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - all databases with property variations."
 echo "--------------------------------------------------------------------------------"
-echo "CHOICE_DB               : $ORA_BENCH_CHOICE_DB"
-echo "CHOICE_DRIVER           : $ORA_BENCH_CHOICE_DRIVER"
+echo "CHOICE_DB                  : $ORA_BENCH_CHOICE_DB"
+echo "CHOICE_DRIVER              : $ORA_BENCH_CHOICE_DRIVER"
 echo "--------------------------------------------------------------------------------"
-echo "BENCHMARK_COMMENT       : $ORA_BENCH_BENCHMARK_COMMENT"
-echo "BULKFILE_EXISTING       : $ORA_BENCH_BULKFILE_EXISTING"
-echo "CONNECTION_HOST         : $ORA_BENCH_CONNECTION_HOST"
-echo "CONNECTION_PORT         : $ORA_BENCH_CONNECTION_PORT"
-echo "FILE_CONFIGURATION_NAME : $ORA_BENCH_FILE_CONFIGURATION_NAME"
-echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
+echo "BENCHMARK_BATCH_SIZE       : $ORA_BENCH_BENCHMARK_BATCH_SIZE"
+echo "BENCHMARK_COMMENT          : $ORA_BENCH_BENCHMARK_COMMENT"
+echo "BULKFILE_EXISTING          : $ORA_BENCH_BULKFILE_EXISTING"
+echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
+echo "CONNECTION_HOST            : $ORA_BENCH_CONNECTION_HOST"
+echo "CONNECTION_PORT            : $ORA_BENCH_CONNECTION_PORT"
+echo "FILE_CONFIGURATION_NAME    : $ORA_BENCH_FILE_CONFIGURATION_NAME"
+echo "JAVA_CLASSPATH             : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
-echo "RUN_DB_12_2_EE          : $ORA_BENCH_RUN_DB_12_2_EE"
-echo "RUN_DB_18_3_EE          : $ORA_BENCH_RUN_DB_18_3_EE"
-echo "RUN_DB_19_3_EE          : $ORA_BENCH_RUN_DB_19_3_EE"
+echo "RUN_DB_12_2_EE             : $ORA_BENCH_RUN_DB_12_2_EE"
+echo "RUN_DB_18_3_EE             : $ORA_BENCH_RUN_DB_18_3_EE"
+echo "RUN_DB_19_3_EE             : $ORA_BENCH_RUN_DB_19_3_EE"
 echo "--------------------------------------------------------------------------------"
-echo "RUN_GLOBAL_JAMDB        : $RUN_GLOBAL_JAMDB"
-echo "RUN_GLOBAL_NON_JAMDB    : $RUN_GLOBAL_NON_JAMDB"
+echo "RUN_GLOBAL_JAMDB           : $RUN_GLOBAL_JAMDB"
+echo "RUN_GLOBAL_NON_JAMDB       : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
-echo "RUN_CX_ORACLE_PYTHON    : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
-echo "RUN_GODROR_GO           : $ORA_BENCH_RUN_GODROR_GO"
-echo "RUN_JAMDB_ORACLE_ERLANG : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
-echo "RUN_JDBC_JAVA           : $ORA_BENCH_RUN_JDBC_JAVA"
-echo "RUN_ODPI_C              : $ORA_BENCH_RUN_ODPI_C"
-echo "RUN_ORANIF_ELIXIR       : $ORA_BENCH_RUN_ORANIF_ELIXIR"
-echo "RUN_ORANIF_ERLANG       : $ORA_BENCH_RUN_ORANIF_ERLANG"
+echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
+echo "RUN_EXPOSED_KOTLIN         : $ORA_BENCH_RUN_EXPOSED_KOTLIN"
+echo "RUN_GODROR_GO              : $ORA_BENCH_RUN_GODROR_GO"
+echo "RUN_JAMDB_ORACLE_ERLANG    : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
+echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
+echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
+echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
+echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
-echo "JAVA_CLASSPATH          : $ORA_BENCH_JAVA_CLASSPATH"
+echo "JAVA_CLASSPATH             : $ORA_BENCH_JAVA_CLASSPATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"

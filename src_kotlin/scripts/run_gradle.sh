@@ -23,10 +23,12 @@ echo "==========================================================================
         exit 255
     fi
     
-    if ! { ./gradlew copyJarToLib; }; then
+    if ! { ./gradlew jar; }; then
         exit 255
     fi
     
+    mv build/libs/ora_bench.jar ../priv/kotlin_jar
+
     if ! { ./gradlew dokkaHtml; }; then
         exit 255
     fi
