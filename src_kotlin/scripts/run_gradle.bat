@@ -30,7 +30,7 @@ if %ERRORLEVEL% NEQ 0 (
     exit %ERRORLEVEL%
 )
 
-if not exist "..\priv\kotlin_jar\" mkdir ..\priv\kotlin_jar
+if not exist "..\priv\kotlin_jar\NUL" mkdir ..\priv\kotlin_jar
 move build\libs\ora_bench.jar ..\priv\kotlin_jar
 
 call gradlew dokkaHtml
