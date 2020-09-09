@@ -89,16 +89,33 @@ All the file names specified here are also part of the configuration file and ca
 
 - Python 3 from [here](https://www.python.org/downloads/)
 
+- rebar3 from [here](https://www.rebar3.org/)
+
 ##### 2.2.1.1.2 Windows Subsystem for Linux (WSL 2 and Ubuntu 18.04 LTS)
 
 See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
 
 ##### 2.2.1.1.3 Linux Platform
 
+- Setting up the environment, e.g.
+    - `sudo apt install curl libaio1`
+    - `sudo ln -fs /usr/share/zoneinfo/Europe/Zurich /etc/localtime`
+    - `sudo apt-get install -qy tzdata`
+    - `sudo dpkg-reconfigure --frontend noninteractive tzdata`
+    - `sudo locale-gen "en_US.UTF-8"`
+    - `sudo dpkg-reconfigure locales`
+    - `export ENV LANG=en_US.UTF-8`
+    - `export LANGUAGE=en_US.UTF-8`
+    - `export LC_ALL=en_US.UTF-8`
+
 - Oracle Instant Client, e.g.
     - `sudo apt-get install alien`
-    - `sudo alien priv/oracle/oracle-instantclient19.3-basiclite-19.3.0.0.0-1.x86_64.rpm`
-    - `sudo dpkg -i oracle-instantclient19.3-basiclite_19.3.0.0.0-2_amd64.deb`
+    - `wget --quiet https://download.oracle.com/otn_software/linux/instantclient/19800/oracle-instantclient19.8-basic-19.8.0.0.0-1.x86_64.rpm`
+    - `wget --quiet https://download.oracle.com/otn_software/linux/instantclient/19800/oracle-instantclient19.8-sqlplus-19.8.0.0.0-1.x86_64.rpm`
+    - `alien -i *.rpm`
+    - `export ORACLE_HOME=/usr/lib/oracle/19.8/client64`
+    - `export LD_LIBRARY_PATH="$ORACLE_HOME/lib:$LD_LIBRARY_PATH"`
+    - `export PATH="$ORACLE_HOME::${PATH}"`
 
 - Erlang
     - `sudo apt -y install erlang`
@@ -108,9 +125,9 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
     - `mix local.hex`
 
 - Go
-    - `wget -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz`
-    - `tar -xf go${VERSION_GO}.linux-amd64.tar.gz`
-    - `mv go /usr/local`
+    - `wget -q https://dl.google.com/go/go1.15.1.linux-amd64.tar.gz`
+    - `tar -xf go1.15.1.linux-amd64.tar.gz`
+    - `sudo mv go /usr/local`
     - `export GOPATH=/ora_bench/src_go/go`
     - `export GOROOT=/usr/local/go`
     - `export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}`
@@ -119,9 +136,9 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
     - `sudo apt install default-jdk`
 
 - Gradle, e.g.
-    - `wget -q https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp`  
+    - `wget -q https://services.gradle.org/distributions/gradle-6.6.1-bin.zip -P /tmp`  
     - `sudo unzip -d /opt/gradle /tmp/gradle-*.zip`
-    - `export GRADLE_HOME=/opt/gradle/gradle-6.2`
+    - `export GRADLE_HOME=/opt/gradle/gradle-6.6.1`
     - `export PATH=${GRADLE_HOME}/bin:${PATH}`
 
 - Kotlin, e.g.
@@ -137,6 +154,11 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
     - `sudo apt install python3-venv`
     - `python3 -m venv my-project-env`
     - `source my-project-env/bin/activate`
+
+- rebar3, e.g.:
+    - `wget https://s3.amazonaws.com/rebar3/rebar3`
+    - `chmod +x rebar3`
+    - `sudo mv rebar3 /usr/bin`
 
 ##### 2.2.1.1.4 Platform-independent Installation
 
