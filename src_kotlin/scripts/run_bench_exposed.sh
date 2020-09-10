@@ -50,7 +50,7 @@ if ! [ "$ORA_BENCH_MULTIPLE_RUN" = "true" ]; then
     fi
 fi
 
-if ! java -jar priv/kotlin_jar/ora_bench.jar; then
+if ! java -jar priv/libs/ora_bench_kotlin.jar; then
     exit 255
 fi
 

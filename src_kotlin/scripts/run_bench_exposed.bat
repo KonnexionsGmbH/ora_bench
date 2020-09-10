@@ -46,17 +46,17 @@ echo ===========================================================================
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     call src_kotlin\scripts\run_gradle
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
-    )
+rem wwe     if %ERRORLEVEL% NEQ 0 (
+rem wwe         echo Processing of the script was aborted, error code=%ERRORLEVEL%
+rem wwe         exit %ERRORLEVEL%
+rem wwe     )
 )    
 
-java -jar priv/kotlin_jar/ora_bench.jar
-if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
-)
+java -jar priv/libs/ora_bench_kotlin.jar
+rem wwe if %ERRORLEVEL% NEQ 0 (
+rem wwe     echo Processing of the script was aborted, error code=%ERRORLEVEL%
+rem wwe     exit %ERRORLEVEL%
+rem wwe )
 
 echo --------------------------------------------------------------------------------
 echo:| TIME

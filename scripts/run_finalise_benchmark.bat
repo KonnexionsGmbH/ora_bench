@@ -13,7 +13,7 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
 )
 
 if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
-    set ORA_BENCH_JAVA_CLASSPATH=.;priv/java_jar/*;JAVA_HOME/lib;
+    set ORA_BENCH_JAVA_CLASSPATH=.;priv/libs/*;JAVA_HOME/lib;
 )
 
 echo ================================================================================

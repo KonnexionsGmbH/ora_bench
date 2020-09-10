@@ -6,7 +6,6 @@
 *.obj
 *.plt
 *.swp
-.idea
 .concrete/DEV_MODE
 .eunit
 .fetch
@@ -24,10 +23,11 @@ build
 erl_crash.dump
 erlcinfo
 odpi
-ora_bench.jar
 ora_bench_bulk_data.csv
 ora_bench_c.properties
 ora_bench_erlang.properties
+ora_bench_java.jar
+ora_bench_kotlin.jar
 ora_bench_python.properties
 rebar.lock
 tmp

@@ -56,8 +56,8 @@ task copyJarToLib(type: Copy, dependsOn: 'fatJar') {
     description = 'Copy the jar file to the lib directory'
 
     from "$buildDir/libs"
-    rename project.name + '-' + version + '-all.jar', project.name + '.jar'
-    into "../priv/java_jar"
+    rename project.name + '-' + version + '-all.jar', project.name + '_java.jar'
+    into "../priv/libs"
 }
 
 tasks.withType(JavaCompile).each {
