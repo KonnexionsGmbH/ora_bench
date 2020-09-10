@@ -16,7 +16,7 @@ if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     if [ "$OSTYPE" = "msys" ]; then
         export ORA_BENCH_JAVA_CLASSPATH=".;priv/libs/*"
     else
-        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/libs/*"
     fi
 fi
 
@@ -34,7 +34,7 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench finalise; then
+if ! java -cp "priv/libs/*" ch.konnexions.orabench.OraBench finalise; then
     exit 255
 fi
 

@@ -27,7 +27,7 @@ if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     if [ "$OSTYPE" = "msys" ]; then
         export ORA_BENCH_JAVA_CLASSPATH=".;priv/libs/*"
     else
-        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/libs/*"
     fi
 fi
 

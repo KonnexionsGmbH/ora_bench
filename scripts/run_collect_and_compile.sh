@@ -45,7 +45,7 @@ if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     if [ "$OSTYPE" = "msys" ]; then
         export ORA_BENCH_JAVA_CLASSPATH=".;priv/libs/*"
     else
-        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/libs/*"
     fi
 fi
 
@@ -192,7 +192,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
 
     if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" == "true" ]; then
         echo "Setup Python - Start =======================================================" 
-        if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_python; then
+        if ! java -cp "priv/libs/*" ch.konnexions.orabench.OraBench setup_python; then
             exit 255
         fi
         echo "Setup Python - End   =======================================================" 

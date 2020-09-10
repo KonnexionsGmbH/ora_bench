@@ -10,6 +10,7 @@ repositories {
 
 dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.0")
+    implementation("org.apache.commons:commons-csv:1.8")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.slf4j:slf4j-log4j12:1.7.30")
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))

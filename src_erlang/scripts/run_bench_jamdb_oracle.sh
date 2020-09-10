@@ -27,7 +27,7 @@ if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
     if [ "$OSTYPE" = "msys" ]; then
         export ORA_BENCH_JAVA_CLASSPATH=".;priv/libs/*"
     else
-        export ORA_BENCH_JAVA_CLASSPATH=".:priv/java_jar/*"
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/libs/*"
     fi
 fi
 
@@ -59,7 +59,7 @@ if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
         exit 255
     fi
 
-    if ! java -cp "priv/java_jar/*" ch.konnexions.orabench.OraBench setup_erlang; then
+    if ! java -cp "priv/libs/*" ch.konnexions.orabench.OraBench setup_erlang; then
         exit 255
     fi
     
