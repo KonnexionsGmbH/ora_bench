@@ -29,10 +29,9 @@ The currently supported database drivers are:
 | Driver    | Programming Languages |
 | :---      | :---                  |
 | cx_Oracle | Python                |
-| JDBC   | Kotlin                |
 | godror    | Go                    |
 | JamDB     | Erlang                |
-| JDBC      | Java                  |
+| JDBC      | Java &amp; Kotlin     |
 | ODPI      | C                     |
 | oranif    | Elixir &amp; Erlang   |
 
@@ -41,8 +40,8 @@ The following Oracle database versions are provided in a benchmark run via Docke
 | Shortcut   | Oracle Database Version |
 | :---       | :--- |
 | db_12_2_ee | Oracle Database 12c Release 2 (12.2.0.1.0) - Enterprise Edition - Linux x86-64 |
-| db_18_3_ee | Oracle Database 18c 18.3 - Linux x86-64 |
-| db_19_3_ee | Oracle Database 19c 19.3 - Linux x86-64 |
+| db_18_3_ee | Oracle Database 18c 18.3 - Linux x86-64                                        |
+| db_19_3_ee | Oracle Database 19c 19.3 - Linux x86-64                                        |
 
 The results of the benchmark runs are collected in either csv (comma-separated values) or tsv (tab-separated values) files.
 
@@ -161,7 +160,7 @@ See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
 
 ##### 2.2.1.1.4 Platform-independent Installation
 
-- Install [cx_Oracle](https://oracle.github.io/python-cx_Oracle/ and [PyYAML](https://pypi.org/project/PyYAML/)):
+- Install [cx_Oracle](https://oracle.github.io/python-cx_Oracle/) and [PyYAML](https://pypi.org/project/PyYAML/):
     - `python -m pip install -r src_python/requirements.txt`
 
 ##### 2.2.1.2 `run_bench_all_dbs_props_std`
