@@ -13,6 +13,7 @@ repositories {
 dependencies {
     implementation 'com.google.guava:guava:29.0-jre'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'com.oracle.database.jdbc:ojdbc10:19.7.0.0'
     implementation 'commons-beanutils:commons-beanutils:1.9.4'
     implementation 'commons-codec:commons-codec:1.15'
     implementation 'commons-logging:commons-logging:1.2'
