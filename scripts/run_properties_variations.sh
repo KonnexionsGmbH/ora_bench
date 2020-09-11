@@ -53,6 +53,10 @@ elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "python" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
 
+export ORA_BENCH_RUN_GODROR_GO=false
+export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
+export ORA_BENCH_RUN_ORANIF_ERLANG=false
+
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
