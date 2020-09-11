@@ -8,31 +8,6 @@ rem ----------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
-if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
-    set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
-)
-if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] EQU [""] (
-    set ORA_BENCH_RUN_JDBC_KOTLIN=true
-)
-if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU [""] (
-    set ORA_BENCH_RUN_GODROR_GO=true
-)
-if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] EQU [""] (
-    set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
-)
-if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU [""] (
-    set ORA_BENCH_RUN_JDBC_JAVA=true
-)
-if ["%ORA_BENCH_RUN_ODPI_C%"] EQU [""] (
-    set ORA_BENCH_RUN_ODPI_C=true
-)
-if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU [""] (
-    set ORA_BENCH_RUN_ORANIF_ELIXIR=true
-)
-if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU [""] (
-    set ORA_BENCH_RUN_ORANIF_ERLANG=true
-)
-
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 )

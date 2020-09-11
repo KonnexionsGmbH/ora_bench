@@ -72,37 +72,6 @@ if [ -z "$ORA_BENCH_PASSWORD_SYS" ]; then
     export ORA_BENCH_PASSWORD_SYS=oracle
 fi
 
-if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
-    export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
-fi
-if [ -z "$ORA_BENCH_RUN_JDBC_KOTLIN" ]; then
-    export ORA_BENCH_RUN_JDBC_KOTLIN=true
-fi
-if [ -z "$ORA_BENCH_RUN_GODROR_GO" ]; then
-    export ORA_BENCH_RUN_GODROR_GO=true
-    export ORA_BENCH_RUN_GODROR_GO=false
-fi
-if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" ]; then
-    export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
-    export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
-fi
-if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" ]; then
-    export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
-fi
-if [ -z "$ORA_BENCH_RUN_JDBC_JAVA" ]; then
-    export ORA_BENCH_RUN_JDBC_JAVA=true
-fi
-if [ -z "$ORA_BENCH_RUN_ODPI_C" ]; then
-    export ORA_BENCH_RUN_ODPI_C=true
-fi
-if [ -z "$ORA_BENCH_RUN_ORANIF_ELIXIR" ]; then
-    export ORA_BENCH_RUN_ORANIF_ELIXIR=true
-fi
-if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
-    export ORA_BENCH_RUN_ORANIF_ERLANG=true
-    export ORA_BENCH_RUN_ORANIF_ERLANG=false
-fi
-
 if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
     export RUN_GLOBAL_JAMDB=true
     export RUN_GLOBAL_NON_JAMDB=true
