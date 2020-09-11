@@ -15,8 +15,7 @@
 **[3. Coding Pattern](#coding_pattern)**<br>
 **[4. Driver Specific Features](#driver_specifica)**<br>
 **[5. Reporting](#reporting)**<br>
-**[6. Docker](#docker)**<br>
-**[7. Contributing](#contributing)**<br>
+**[6. Contributing](#contributing)**<br>
 
 ----
 
@@ -30,7 +29,7 @@ The currently supported database drivers are:
 | Driver    | Programming Languages |
 | :---      | :---                  |
 | cx_Oracle | Python                |
-| Exposed   | Kotlin                |
+| JDBC   | Kotlin                |
 | godror    | Go                    |
 | JamDB     | Erlang                |
 | JDBC      | Java                  |
@@ -404,22 +403,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 - Python uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
 - the value fetch size (`connection.fetch.size`) is not used because the operation `SELECT` uses the operation `Cursor.fetchall()`
 
-### 4.2 Exposed and Kotlin
-
-- the following data in the configuration parameters is determined at runtime: 
-    - Kotlin version (`benchmark.driver`),
-    - benchmark identifier (`benchmark.id`),
-    - host name (`benchmark.host.name`), 
-    - number of cores (`benchmark.number.cores`), 
-    - JRE version (`benchmark.language`), 
-    - operating system environment (`benchmark.os`), 
-    - user name (`benchmark.user.name`) and 
-    - SQL create statement (`sql.create`). 
-- the Kotlin source code is compiled with the help of Gradle
-? wwe - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
-? wwe - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
-
-### 4.3 JDBC and Java
+### 4.2 JDBC and Java
 
 - the following data in the configuration parameters is determined at runtime: 
     - JDBC version (`benchmark.driver`),
@@ -433,6 +417,21 @@ The data column in the bulk file is randomly generated with a unique key column 
 - the Java source code is compiled with the help of Gradle
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
+
+### 4.3 JDBC and Kotlin
+
+- the following data in the configuration parameters is determined at runtime: 
+    - Kotlin version (`benchmark.driver`),
+    - benchmark identifier (`benchmark.id`),
+    - host name (`benchmark.host.name`), 
+    - number of cores (`benchmark.number.cores`), 
+    - JRE version (`benchmark.language`), 
+    - operating system environment (`benchmark.os`), 
+    - user name (`benchmark.user.name`) and 
+    - SQL create statement (`sql.create`). 
+- the Kotlin source code is compiled with the help of Gradle
+- Kotlin uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
+- Kotlin uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
 ### 4.4 ODPI and C
 
@@ -458,11 +457,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 [see here](https://konnexionsgmbh.github.io/ora_bench/)
 
-## 6 <a name="docker"></a> Docker
-
-[see here](docker/README.md)
-
-## 7. <a name="contributing"></a> Contributing
+## 6. <a name="contributing"></a> Contributing
 
 1. fork it
 2. create your feature branch (`git checkout -b my-new-feature`)

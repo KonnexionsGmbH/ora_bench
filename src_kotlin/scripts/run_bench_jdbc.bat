@@ -2,7 +2,7 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_exposed.bat: Oracle Benchmark based on Kotlin.
+rem run_bench_jdbc.bat: Oracle Benchmark based on Kotlin.
 rem
 rem ------------------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 )
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_HOST=0.0.0.0
+    set ORA_BENCH_CONNECTION_HOST=ora_bench_db
 )
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_CONNECTION_PORT=1521
@@ -23,10 +23,14 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 )
 
+if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
+    set ORA_BENCH_JAVA_CLASSPATH=.;priv/libs/*;JAVA_HOME/lib;
+)
+
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - Exposed and Kotlin.
+echo ora_bench - Oracle benchmark - JDBC and Kotlin.
 echo --------------------------------------------------------------------------------
 echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
 echo --------------------------------------------------------------------------------
@@ -41,22 +45,36 @@ echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo --------------------------------------------------------------------------------
+echo JAVA_CLASSPATH             : %ORA_BENCH_JAVA_CLASSPATH%
+echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     call src_kotlin\scripts\run_gradle
-rem wwe     if %ERRORLEVEL% NEQ 0 (
-rem wwe         echo Processing of the script was aborted, error code=%ERRORLEVEL%
-rem wwe         exit %ERRORLEVEL%
-rem wwe     )
+    if %ERRORLEVEL% NEQ 0 (
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
+    )
+
+    call src_java\scripts\run_gradle
+    if %ERRORLEVEL% NEQ 0 (
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
+    )
+
+    java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_c
+    if %ERRORLEVEL% NEQ 0 (
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
+    )
 )    
 
 java -jar priv/libs/ora_bench_kotlin.jar
-rem wwe if %ERRORLEVEL% NEQ 0 (
-rem wwe     echo Processing of the script was aborted, error code=%ERRORLEVEL%
-rem wwe     exit %ERRORLEVEL%
-rem wwe )
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
+)
 
 echo --------------------------------------------------------------------------------
 echo:| TIME

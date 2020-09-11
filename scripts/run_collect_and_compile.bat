@@ -11,8 +11,8 @@ setlocal EnableDelayedExpansion
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU [""] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 )
-if ["%ORA_BENCH_RUN_EXPOSED_KOTLIN%"] EQU [""] (
-    set ORA_BENCH_RUN_EXPOSED_KOTLIN=true
+if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] EQU [""] (
+    set ORA_BENCH_RUN_JDBC_KOTLIN=true
 )
 if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU [""] (
     set ORA_BENCH_RUN_GODROR_GO=true
@@ -63,7 +63,7 @@ echo RUN_GLOBAL_JAMDB           : %RUN_GLOBAL_JAMDB%
 echo RUN_GLOBAL_NON_JAMDB       : %RUN_GLOBAL_NON_JAMDB%
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
-echo RUN_EXPOSED_KOTLIN         : %ORA_BENCH_RUN_EXPOSED_KOTLIN%
+echo RUN_JDBC_KOTLIN         : %ORA_BENCH_RUN_JDBC_KOTLIN%
 echo RUN_GODROR_GO              : %ORA_BENCH_RUN_GODROR_GO%
 echo RUN_JAMDB_ORACLE_ERLANG    : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
 echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
@@ -198,7 +198,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         echo Setup Go - End   =========================================================== 
     )    
     
-    if ["%ORA_BENCH_RUN_EXPOSED_KOTLIN%"] == ["true"] (
+    if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] == ["true"] (
         echo Setup Kotlin - Start ======================================================= 
         call src_kotlin\scripts\run_gradle.bat
         if %ERRORLEVEL% NEQ 0 (

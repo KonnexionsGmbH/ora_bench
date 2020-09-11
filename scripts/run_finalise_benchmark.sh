@@ -34,7 +34,7 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-if ! java -cp "priv/libs/*" ch.konnexions.orabench.OraBench finalise; then
+if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench finalise; then
     exit 255
 fi
 

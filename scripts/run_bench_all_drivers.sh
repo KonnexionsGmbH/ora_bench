@@ -11,8 +11,8 @@ set -e
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
-if [ -z "$ORA_BENCH_RUN_EXPOSED_KOTLIN" ]; then
-    export ORA_BENCH_RUN_EXPOSED_KOTLIN=true
+if [ -z "$ORA_BENCH_RUN_JDBC_KOTLIN" ]; then
+    export ORA_BENCH_RUN_JDBC_KOTLIN=true
 fi
 if [ -z "$ORA_BENCH_RUN_GODROR_GO" ]; then
     export ORA_BENCH_RUN_GODROR_GO=true
@@ -58,7 +58,7 @@ echo "RUN_GLOBAL_JAMDB           : $RUN_GLOBAL_JAMDB"
 echo "RUN_GLOBAL_NON_JAMDB       : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
-echo "RUN_EXPOSED_KOTLIN         : $ORA_BENCH_RUN_EXPOSED_KOTLIN"
+echo "RUN_JDBC_KOTLIN         : $ORA_BENCH_RUN_JDBC_KOTLIN"
 echo "RUN_GODROR_GO              : $ORA_BENCH_RUN_GODROR_GO"
 echo "RUN_JAMDB_ORACLE_ERLANG    : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
@@ -76,14 +76,14 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
         fi
     fi
     
-    if [ "$ORA_BENCH_RUN_EXPOSED_KOTLIN" = "true" ]; then
-        if ! { /bin/bash src_kotlin/scripts/run_bench_exposed.sh; }; then
+    if [ "$ORA_BENCH_RUN_GODROR_GO" = "true" ]; then
+        if ! { /bin/bash src_go/scripts/run_bench_godror.sh; }; then
             exit 255
         fi
     fi
     
-    if [ "$ORA_BENCH_RUN_GODROR_GO" = "true" ]; then
-        if ! { /bin/bash src_go/scripts/run_bench_godror.sh; }; then
+    if [ "$ORA_BENCH_RUN_JDBC_KOTLIN" = "true" ]; then
+        if ! { /bin/bash src_kotlin/scripts/run_bench_jdbc.sh; }; then
             exit 255
         fi
     fi

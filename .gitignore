@@ -17,7 +17,6 @@
 /priv/Gammadyne/timer.txt
 /src_elixir/deps/
 /src_elixir/mix.lock
-OraBench
 _build
 build
 erl_crash.dump

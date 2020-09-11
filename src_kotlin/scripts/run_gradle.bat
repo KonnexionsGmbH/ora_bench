@@ -31,7 +31,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 if not exist "..\priv\kotlin_jar\NUL" mkdir ..\priv\kotlin_jar
-move /Y build\libs\ora_bench.jar ..\priv\libs\ora_bench_kotlin.jar
+copy /Y build\libs\ora_bench.jar ..\priv\libs\ora_bench_kotlin.jar
 
 call gradlew dokkaHtml
 if %ERRORLEVEL% NEQ 0 (

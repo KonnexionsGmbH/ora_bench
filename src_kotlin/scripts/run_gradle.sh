@@ -28,7 +28,7 @@ echo "==========================================================================
     fi
     
     mkdir -p ../priv/kotlin_jar
-    mv -fT build/libs/ora_bench.jar ../priv/libs/ora_bench_kotlin.jar
+    cp -f build/libs/ora_bench.jar ../priv/libs/ora_bench_kotlin.jar
 
     if ! { ./gradlew dokkaHtml; }; then
         exit 255

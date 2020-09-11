@@ -17,7 +17,7 @@ set ORA_BENCH_CHOICE_DB_DEFAULT=complete
 set ORA_BENCH_CHOICE_DRIVER_DEFAULT=complete
 
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_HOST=localhost
+    set ORA_BENCH_CONNECTION_HOST=ora_bench_db
 )
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_CONNECTION_PORT=1521
@@ -33,7 +33,7 @@ if ["%1"] EQU [""] (
     echo erlang_oranif      - Erlang and oranif
     echo go                 - Go and GoDROR
     echo java               - Java and JDBC
-    echo kotlin             - Kotlin and Exposed
+    echo kotlin             - Kotlin and JDBC
     echo python             - Python and cx_Oracle
     echo ---------------------------------------------------------
     set /P ORA_BENCH_CHOICE_DRIVER="Enter the desired programming lanuage (and database driver) [default: %ORA_BENCH_CHOICE_DRIVER_DEFAULT%] "
@@ -46,20 +46,20 @@ if ["%1"] EQU [""] (
 )
 
 set ORA_BENCH_RUN_CX_ORACLE_PYTHON=false
-set ORA_BENCH_RUN_EXPOSED_KOTLIN=false
 set ORA_BENCH_RUN_GODROR_GO=false
 set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
 set ORA_BENCH_RUN_JDBC_JAVA=false
+set ORA_BENCH_RUN_JDBC_KOTLIN=false
 set ORA_BENCH_RUN_ODPI_C=false
 set ORA_BENCH_RUN_ORANIF_ELIXIR=false
 set ORA_BENCH_RUN_ORANIF_ERLANG=false
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["complete"] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
-    set ORA_BENCH_RUN_EXPOSED_KOTLIN=true
     set ORA_BENCH_RUN_GODROR_GO=true
     set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
     set ORA_BENCH_RUN_JDBC_JAVA=true
+    set ORA_BENCH_RUN_JDBC_KOTLIN=true
     set ORA_BENCH_RUN_ODPI_C=true
     set ORA_BENCH_RUN_ORANIF_ELIXIR=true
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
@@ -90,7 +90,7 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["java"] (
 )
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["kotlin"] (
-    set ORA_BENCH_RUN_EXPOSED_KOTLIN=true
+    set ORA_BENCH_RUN_JDBC_KOTLIN=true
 )
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["python"] (
@@ -189,10 +189,10 @@ echo.
     echo RUN_GLOBAL_NON_JAMDB       : %RUN_GLOBAL_NON_JAMDB%
     echo --------------------------------------------------------------------------------
     echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
-    echo RUN_EXPOSED_KOTLIN         : %ORA_BENCH_RUN_EXPOSED_KOTLIN%
     echo RUN_GODROR_GO              : %ORA_BENCH_RUN_GODROR_GO%
     echo RUN_JAMDB_ORACLE_ERLANG    : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
     echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
+    echo RUN_JDBC_KOTLIN            : %ORA_BENCH_RUN_JDBC_KOTLIN%
     echo RUN_ODPI_C                 : %ORA_BENCH_RUN_ODPI_C%
     echo RUN_ORANIF_ELIXIR          : %ORA_BENCH_RUN_ORANIF_ELIXIR%
     echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%

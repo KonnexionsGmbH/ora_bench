@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_exposed.sh: Oracle Benchmark based on Kotlin.
+# run_bench_jdbc.sh: Oracle Benchmark based on Kotlin.
 #
 # ------------------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
-    export ORA_BENCH_CONNECTION_HOST=0.0.0.0
+    export ORA_BENCH_CONNECTION_HOST=ora_bench_db
 fi
 if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
     export ORA_BENCH_CONNECTION_PORT=1521
@@ -23,10 +23,18 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 
+if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
+    if [ "$OSTYPE" = "msys" ]; then
+        export ORA_BENCH_JAVA_CLASSPATH=".;priv/libs/*"
+    else
+        export ORA_BENCH_JAVA_CLASSPATH=".:priv/libs/*"
+    fi
+fi
+
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - Exposed and Kotlin."
+echo "ora_bench - Oracle benchmark - JDBC and Kotlin."
 echo "--------------------------------------------------------------------------------"
 echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
 echo "--------------------------------------------------------------------------------"
@@ -41,6 +49,8 @@ echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
 echo "FILE_CONFIGURATION_NAME    : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "--------------------------------------------------------------------------------"
+echo "JAVA_CLASSPATH             : $ORA_BENCH_JAVA_CLASSPATH"
+echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
@@ -48,9 +58,17 @@ if ! [ "$ORA_BENCH_MULTIPLE_RUN" = "true" ]; then
     if ! { ./src_kotlin/scripts/run_gradle.sh; }; then
         exit 255
     fi
+
+    if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
+        exit 255
+    fi
+
+    if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup_c; then
+        exit 255
+    fi
 fi
 
-if ! java -jar priv/libs/ora_bench_kotlin.jar; then
+if ! -jar priv/libs/ora_bench_kotlin.jar; then
     exit 255
 fi
 

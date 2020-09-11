@@ -38,10 +38,10 @@ if [ -z "$1" ]; then
     echo "erlang_oranif      - Erlang and oranif"
     echo "go                 - Go and GoDROR"
     echo "java               - Java and JDBC"
-    echo "kotlin             - Kotlin and Exposed"
+    echo "kotlin             - Kotlin and JDBC"
     echo "python             - Python and cx_Oracle"
     echo "---------------------------------------------------------"
-    read -p "Enter the desired programming lanuage (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
+    read -pr "Enter the desired programming lanuage (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
     export ORA_BENCH_CHOICE_DRIVER=${ORA_BENCH_CHOICE_DRIVER}
 
     if [ -z "${ORA_BENCH_CHOICE_DRIVER}" ]; then
@@ -52,38 +52,38 @@ else
 fi
 
 export ORA_BENCH_RUN_CX_ORACLE_PYTHON=false
-export ORA_BENCH_RUN_EXPOSED_KOTLIN=false
 export ORA_BENCH_RUN_GODROR_GO=false
 export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
 export ORA_BENCH_RUN_JDBC_JAVA=false
+export ORA_BENCH_RUN_JDBC_KOTLIN=false
 export ORA_BENCH_RUN_ODPI_C=false
 export ORA_BENCH_RUN_ORANIF_ELIXIR=false
 export ORA_BENCH_RUN_ORANIF_ERLANG=false
 
-if [ ${ORA_BENCH_CHOICE_DRIVER} = "complete" ]; then
+if [ "${ORA_BENCH_CHOICE_DRIVER}" = "complete" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
-    export ORA_BENCH_RUN_EXPOSED_KOTLIN=true
     export ORA_BENCH_RUN_GODROR_GO=true
     export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
     export ORA_BENCH_RUN_JDBC_JAVA=true
+    export ORA_BENCH_RUN_JDBC_KOTLIN=true
     export ORA_BENCH_RUN_ODPI_C=true
     export ORA_BENCH_RUN_ORANIF_ELIXIR=true
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
-elif [ ${ORA_BENCH_CHOICE_DRIVER} = "c" ]; then
+elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "c" ]; then
     export ORA_BENCH_RUN_ODPI_C=true
-elif [ ${ORA_BENCH_CHOICE_DRIVER} = "elixir" ]; then
+elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "elixir" ]; then
     export ORA_BENCH_RUN_ORANIF_ELIXIR=true
-elif [ ${ORA_BENCH_CHOICE_DRIVER} = "erlang_jamdb" ]; then
+elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "erlang_jamdb" ]; then
     export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
-elif [ ${ORA_BENCH_CHOICE_DRIVER} = "erlang_oranif" ]; then
+elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "erlang_oranif" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
-elif [ ${ORA_BENCH_CHOICE_DRIVER} = "go" ]; then
+elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "go" ]; then
     export ORA_BENCH_RUN_GODROR_GO=true
-elif [ ${ORA_BENCH_CHOICE_DRIVER} = "java" ]; then
+elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "java" ]; then
     export ORA_BENCH_RUN_JDBC_JAVA=true
-elif [ ${ORA_BENCH_CHOICE_DRIVER} = "kotlin" ]; then
-    export ORA_BENCH_RUN_EXPOSED_KOTLIN=true
-elif [ ${ORA_BENCH_CHOICE_DRIVER} = "python" ]; then
+elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "kotlin" ]; then
+    export ORA_BENCH_RUN_JDBC_KOTLIN=true
+elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "python" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
 
@@ -95,7 +95,7 @@ if [ -z "$2" ]; then
     echo "18                 - Oracle Database 18c"
     echo "19                 - Oracle Database 19c"
     echo "---------------------------------------------------------"
-    read -p "Enter the desired database version [default: ${ORA_BENCH_CHOICE_DB_DEFAULT}] " ORA_BENCH_CHOICE_DB
+    read -pr "Enter the desired database version [default: ${ORA_BENCH_CHOICE_DB_DEFAULT}] " ORA_BENCH_CHOICE_DB
     export ORA_BENCH_CHOICE_DB=${ORA_BENCH_CHOICE_DB}
 
     if [ -z "${ORA_BENCH_CHOICE_DB}" ]; then
@@ -109,15 +109,15 @@ export ORA_BENCH_RUN_DB_12_2_EE=false
 export ORA_BENCH_RUN_DB_18_3_EE=false
 export ORA_BENCH_RUN_DB_19_3_EE=false
 
-if [ ${ORA_BENCH_CHOICE_DB} = "complete" ]; then
+if [ "${ORA_BENCH_CHOICE_DB}" = "complete" ]; then
     export ORA_BENCH_RUN_DB_12_2_EE=true
     export ORA_BENCH_RUN_DB_18_3_EE=true
     export ORA_BENCH_RUN_DB_19_3_EE=true
-elif [ ${ORA_BENCH_CHOICE_DB} = "12" ]; then
+elif [ "${ORA_BENCH_CHOICE_DB}" = "12" ]; then
     export ORA_BENCH_RUN_DB_12_2_EE=true
-elif [ ${ORA_BENCH_CHOICE_DB} = "18" ]; then
+elif [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
     export ORA_BENCH_RUN_DB_18_3_EE=true
-elif [ ${ORA_BENCH_CHOICE_DB} = "19" ]; then
+elif [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then
     export ORA_BENCH_RUN_DB_19_3_EE=true
 fi
 
@@ -167,10 +167,10 @@ echo "RUN_GLOBAL_JAMDB           : $RUN_GLOBAL_JAMDB"
 echo "RUN_GLOBAL_NON_JAMDB       : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
-echo "RUN_EXPOSED_KOTLIN         : $ORA_BENCH_RUN_EXPOSED_KOTLIN"
 echo "RUN_GODROR_GO              : $ORA_BENCH_RUN_GODROR_GO"
 echo "RUN_JAMDB_ORACLE_ERLANG    : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
 echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
+echo "RUN_JDBC_KOTLIN            : $ORA_BENCH_RUN_JDBC_KOTLIN"
 echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"

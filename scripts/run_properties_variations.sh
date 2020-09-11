@@ -32,8 +32,8 @@ fi
 if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
-if [ -z "$ORA_BENCH_RUN_EXPOSED_KOTLIN" ]; then
-    export ORA_BENCH_RUN_EXPOSED_KOTLIN=true
+if [ -z "$ORA_BENCH_RUN_JDBC_KOTLIN" ]; then
+    export ORA_BENCH_RUN_JDBC_KOTLIN=true
 fi
 if [ -z "$ORA_BENCH_RUN_GODROR_GO" ]; then
     export ORA_BENCH_RUN_GODROR_GO=true
