@@ -62,10 +62,10 @@ if ! [ "$ORA_BENCH_MULTIPLE_RUN" = "true" ]; then
     if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
         exit 255
     fi
+fi
 
-    if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup_c; then
-        exit 255
-    fi
+if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup; then
+    exit 255
 fi
 
 if ! java -jar priv/libs/ora_bench_kotlin.jar; then

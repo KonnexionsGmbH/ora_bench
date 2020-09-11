@@ -62,12 +62,12 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         echo Processing of the script was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
+)    
 
-    java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_c
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
-    )
+java -cp %ORA_BENCH_JAVA_CLASSPATH% ch.konnexions.orabench.OraBench setup
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )    
 
 java -jar priv/libs/ora_bench_kotlin.jar
