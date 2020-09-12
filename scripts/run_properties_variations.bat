@@ -72,6 +72,28 @@ set ORA_BENCH_RUN_GODROR_GO=false
 set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
 set ORA_BENCH_RUN_ORANIF_ERLANG=false
 
+set ORA_BENCH_RUN_DB_12_2_EE=false
+set ORA_BENCH_RUN_DB_18_3_EE=false
+set ORA_BENCH_RUN_DB_19_3_EE=false
+
+if ["%ORA_BENCH_CHOICE_DB%"] EQU ["complete"] (
+    set ORA_BENCH_RUN_DB_12_2_EE=true
+    set ORA_BENCH_RUN_DB_18_3_EE=true
+    set ORA_BENCH_RUN_DB_19_3_EE=true
+)
+
+if ["%ORA_BENCH_CHOICE_DB%"] EQU ["12"] (
+    set ORA_BENCH_RUN_DB_12_2_EE=true
+)
+
+if ["%ORA_BENCH_CHOICE_DB%"] EQU ["18"] (
+    set ORA_BENCH_RUN_DB_18_3_EE=true
+)
+
+if ["%ORA_BENCH_CHOICE_DB%"] EQU ["19"] (
+    set ORA_BENCH_RUN_DB_19_3_EE=true
+)
+
 if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 )
