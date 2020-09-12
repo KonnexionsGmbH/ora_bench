@@ -116,15 +116,11 @@ script:
   - export ORA_BENCH_MULTIPLE_RUN=true
 
   - export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (Travis CI)'
-  - export ORA_BENCH_CONNECTION_HOST=ora_bench_db
+  - export ORA_BENCH_CONNECTION_HOST=localhost
   - export ORA_BENCH_CONNECTION_PORT=1521
   - export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
   - export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
   - export ORA_BENCH_PASSWORD_SYS=oracle
-
-  - export ORA_BENCH_RUN_DB_12_2_EE=true
-  - export ORA_BENCH_RUN_DB_18_3_EE=true
-  - export ORA_BENCH_RUN_DB_19_3_EE=true
 
   - export ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
   - export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
