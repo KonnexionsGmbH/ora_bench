@@ -112,8 +112,8 @@ echo.
     echo --------------------------------------------------------------------------------
     echo ora_bench - Oracle benchmark - all databases with standard properties.
     echo --------------------------------------------------------------------------------
-    echo CHOICE_DB                     : %ORA_BENCH_CHOICE_DB%
     echo CHOICE_DRIVER                 : %ORA_BENCH_CHOICE_DRIVER%
+    echo CHOICE_DB                     : %ORA_BENCH_CHOICE_DB%
     echo --------------------------------------------------------------------------------
     echo:| TIME
     echo ================================================================================

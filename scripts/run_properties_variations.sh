@@ -58,22 +58,6 @@ export ORA_BENCH_RUN_GODROR_GO=false
 export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
 export ORA_BENCH_RUN_ORANIF_ERLANG=false
 
-export ORA_BENCH_RUN_DB_12_2_EE=false
-export ORA_BENCH_RUN_DB_18_3_EE=false
-export ORA_BENCH_RUN_DB_19_3_EE=false
-
-if [ "${ORA_BENCH_CHOICE_DB}" = "complete" ]; then
-    export ORA_BENCH_RUN_DB_12_2_EE=true
-    export ORA_BENCH_RUN_DB_18_3_EE=true
-    export ORA_BENCH_RUN_DB_19_3_EE=true
-elif [ "${ORA_BENCH_CHOICE_DB}" = "12" ]; then
-    export ORA_BENCH_RUN_DB_12_2_EE=true
-elif [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
-    export ORA_BENCH_RUN_DB_18_3_EE=true
-elif [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then
-    export ORA_BENCH_RUN_DB_19_3_EE=true
-fi
-
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
@@ -113,8 +97,8 @@ echo "ora_bench - Oracle benchmark - Run with variations of properties."
 echo "--------------------------------------------------------------------------------"
 echo "MULTIPLE_RUN                      : $ORA_BENCH_MULTIPLE_RUN"
 echo "--------------------------------------------------------------------------------"
-echo "CHOICE_DB                         : $ORA_BENCH_CHOICE_DB"
 echo "CHOICE_DRIVER                     : $ORA_BENCH_CHOICE_DRIVER"
+echo "BENCHMARK_DATABASE                : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "--------------------------------------------------------------------------------"
 echo "ORA_BENCH_BENCHMARK_JAMDB         : $ORA_BENCH_BENCHMARK_JAMDB"
 echo "RUN_GLOBAL_JAMDB                  : $RUN_GLOBAL_JAMDB"

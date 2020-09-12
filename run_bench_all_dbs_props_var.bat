@@ -45,59 +45,6 @@ if ["%1"] EQU [""] (
     set ORA_BENCH_CHOICE_DRIVER=%1
 )
 
-set ORA_BENCH_RUN_CX_ORACLE_PYTHON=false
-set ORA_BENCH_RUN_GODROR_GO=false
-set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
-set ORA_BENCH_RUN_JDBC_JAVA=false
-set ORA_BENCH_RUN_JDBC_KOTLIN=false
-set ORA_BENCH_RUN_ODPI_C=false
-set ORA_BENCH_RUN_ORANIF_ELIXIR=false
-set ORA_BENCH_RUN_ORANIF_ERLANG=false
-
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["complete"] (
-    set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
-    set ORA_BENCH_RUN_GODROR_GO=true
-    set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
-    set ORA_BENCH_RUN_JDBC_JAVA=true
-    set ORA_BENCH_RUN_JDBC_KOTLIN=true
-    set ORA_BENCH_RUN_ODPI_C=true
-    set ORA_BENCH_RUN_ORANIF_ELIXIR=true
-    set ORA_BENCH_RUN_ORANIF_ERLANG=true
-)
-
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["c"] (
-    set ORA_BENCH_RUN_ODPI_C=true
-)
-
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["elixir"] (
-    set ORA_BENCH_RUN_ORANIF_ELIXIR=true
-)
-
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["erlang_jamdb"] (
-    set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
-)
-
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["erlang_oranif"] (
-    set ORA_BENCH_RUN_ORANIF_ERLANG=true
-)
-
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["go"] (
-    set ORA_BENCH_RUN_GODROR_GO=true
-)
-
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["java"] (
-    set ORA_BENCH_RUN_JDBC_JAVA=true
-)
-
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["kotlin"] (
-    set ORA_BENCH_RUN_JDBC_KOTLIN=true
-)
-
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["python"] (
-    set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
-)
-
-
 if ["%2"] EQU [""] (
     echo =========================================================
     echo complete           - All implemented variations
@@ -165,8 +112,8 @@ echo.
     echo --------------------------------------------------------------------------------
     echo ora_bench - Oracle benchmark - all databases with property variations.
     echo --------------------------------------------------------------------------------
-    echo CHOICE_DB                     : %ORA_BENCH_CHOICE_DB%
     echo CHOICE_DRIVER                 : %ORA_BENCH_CHOICE_DRIVER%
+    echo CHOICE_DB                     : %ORA_BENCH_CHOICE_DB%
     echo --------------------------------------------------------------------------------
     echo:| TIME
     echo ================================================================================

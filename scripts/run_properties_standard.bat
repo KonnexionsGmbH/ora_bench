@@ -72,28 +72,6 @@ set ORA_BENCH_RUN_GODROR_GO=false
 set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
 set ORA_BENCH_RUN_ORANIF_ERLANG=false
 
-set ORA_BENCH_RUN_DB_12_2_EE=false
-set ORA_BENCH_RUN_DB_18_3_EE=false
-set ORA_BENCH_RUN_DB_19_3_EE=false
-
-if ["%ORA_BENCH_CHOICE_DB%"] EQU ["complete"] (
-    set ORA_BENCH_RUN_DB_12_2_EE=true
-    set ORA_BENCH_RUN_DB_18_3_EE=true
-    set ORA_BENCH_RUN_DB_19_3_EE=true
-)
-
-if ["%ORA_BENCH_CHOICE_DB%"] EQU ["12"] (
-    set ORA_BENCH_RUN_DB_12_2_EE=true
-)
-
-if ["%ORA_BENCH_CHOICE_DB%"] EQU ["18"] (
-    set ORA_BENCH_RUN_DB_18_3_EE=true
-)
-
-if ["%ORA_BENCH_CHOICE_DB%"] EQU ["19"] (
-    set ORA_BENCH_RUN_DB_19_3_EE=true
-)
-
 if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 )
@@ -125,8 +103,8 @@ echo Start %0
 echo --------------------------------------------------------------------------------
 echo MULTIPLE_RUN                      : %ORA_BENCH_MULTIPLE_RUN%
 echo --------------------------------------------------------------------------------
-echo CHOICE_DB                         : %ORA_BENCH_CHOICE_DB%
 echo CHOICE_DRIVER                     : %ORA_BENCH_CHOICE_DRIVER%
+echo BENCHMARK_DATABASE                : %ORA_BENCH_BENCHMARK_DATABASE%
 echo --------------------------------------------------------------------------------
 echo RUN_GLOBAL_JAMDB                  : %RUN_GLOBAL_JAMDB%
 echo RUN_GLOBAL_NON_JAMDB              : %RUN_GLOBAL_NON_JAMDB%
