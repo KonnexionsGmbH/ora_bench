@@ -8,16 +8,8 @@ rem ----------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
-if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
-    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
-)
-
 if ["%GOPATH%"] EQU [""] (
     set GOPATH=%cd%\src_go\go
-)
-
-if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
-    set ORA_BENCH_JAVA_CLASSPATH=.;priv/libs/*;JAVA_HOME/lib;
 )
 
 if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (
@@ -32,27 +24,24 @@ echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - collect libraries and compile.
 echo --------------------------------------------------------------------------------
-echo BULKFILE_EXISTING          : %ORA_BENCH_BULKFILE_EXISTING%
+echo BULKFILE_EXISTING                 : %ORA_BENCH_BULKFILE_EXISTING%
 echo --------------------------------------------------------------------------------
-echo RUN_GLOBAL_JAMDB           : %RUN_GLOBAL_JAMDB%
-echo RUN_GLOBAL_NON_JAMDB       : %RUN_GLOBAL_NON_JAMDB%
+echo RUN_GLOBAL_JAMDB                  : %RUN_GLOBAL_JAMDB%
+echo RUN_GLOBAL_NON_JAMDB              : %RUN_GLOBAL_NON_JAMDB%
 echo --------------------------------------------------------------------------------
-echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
-echo RUN_JDBC_KOTLIN            : %ORA_BENCH_RUN_JDBC_KOTLIN%
-echo RUN_GODROR_GO              : %ORA_BENCH_RUN_GODROR_GO%
-echo RUN_JAMDB_ORACLE_ERLANG    : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
-echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
-echo RUN_ODPI_C                 : %ORA_BENCH_RUN_ODPI_C%
-echo RUN_ORANIF_ELIXIR          : %ORA_BENCH_RUN_ORANIF_ELIXIR%
-echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
+echo RUN_CX_ORACLE_PYTHON              : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
+echo RUN_JDBC_KOTLIN                   : %ORA_BENCH_RUN_JDBC_KOTLIN%
+echo RUN_GODROR_GO                     : %ORA_BENCH_RUN_GODROR_GO%
+echo RUN_JAMDB_ORACLE_ERLANG           : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
+echo RUN_JDBC_JAVA                     : %ORA_BENCH_RUN_JDBC_JAVA%
+echo RUN_ODPI_C                        : %ORA_BENCH_RUN_ODPI_C%
+echo RUN_ORANIF_ELIXIR                 : %ORA_BENCH_RUN_ORANIF_ELIXIR%
+echo RUN_ORANIF_ERLANG                 : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------
-echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
-echo --------------------------------------------------------------------------------
-echo GOPATH                     : %GOPATH%
-echo GOROOT                     : %GOROOT%
-echo GRADLE_HOME                : %GRADLE_HOME%
-echo JAVA_CLASSPATH             : %ORA_BENCH_JAVA_CLASSPATH%
-echo LD_LIBRARY_PATH            : %LD_LIBRARY_PATH%
+echo GOPATH                            : %GOPATH%
+echo GOROOT                            : %GOROOT%
+echo GRADLE_HOME                       : %GRADLE_HOME%
+echo LD_LIBRARY_PATH                   : %LD_LIBRARY_PATH%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
@@ -68,7 +57,7 @@ if NOT ["%ORA_BENCH_BULKFILE_EXISTING%"] == ["true"] (
 if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
         echo Setup C - Start ============================================================ 
-        java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_c
+        java -jar priv/libs/ora_bench_java.jar setup_c
         if %ERRORLEVEL% NEQ 0 (
             echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
@@ -91,7 +80,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
 
     if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
         echo Setup Elixir - Start ======================================================= 
-        java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_elixir
+        java -jar priv/libs/ora_bench_java.jar setup_elixir
         if %ERRORLEVEL% NEQ 0 (
             echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
@@ -141,7 +130,7 @@ if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] == ["true"] (
 
 if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
     echo Setup Erlang - Start ======================================================= 
-    java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_erlang
+    java -jar priv/libs/ora_bench_java.jar setup_erlang
     if %ERRORLEVEL% NEQ 0 (
         echo Processing of the script was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
@@ -186,7 +175,7 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     
     if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] == ["true"] (
         echo Setup Python - Start ======================================================= 
-        java -cp "%ORA_BENCH_JAVA_CLASSPATH%" ch.konnexions.orabench.OraBench setup_python
+        java -jar priv/libs/ora_bench_java.jar setup_python
         if %ERRORLEVEL% NEQ 0 (
             echo Processing of the script was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%

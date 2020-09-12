@@ -51,11 +51,16 @@ elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "python" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
 
+# wwe Temporary solution until the driver problems are solved
+export ORA_BENCH_RUN_GODROR_GO=false
+export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
+export ORA_BENCH_RUN_ORANIF_ERLANG=false
+
 if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
-    export ORA_BENCH_CONNECTION_HOST=ora_bench_db
+    export javaORA_BENCH_CONNECTION_HOST=localhost
 fi
 if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
     export ORA_BENCH_CONNECTION_PORT=1521
@@ -88,23 +93,35 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - run with standard properties."
 echo "--------------------------------------------------------------------------------"
-echo "MULTIPLE_RUN                  : $ORA_BENCH_MULTIPLE_RUN"
+echo "MULTIPLE_RUN                      : $ORA_BENCH_MULTIPLE_RUN"
 echo "--------------------------------------------------------------------------------"
-echo "CHOICE_DB                     : $ORA_BENCH_CHOICE_DB"
-echo "CHOICE_DRIVER                 : $ORA_BENCH_CHOICE_DRIVER"
+echo "CHOICE_DB                         : $ORA_BENCH_CHOICE_DB"
+echo "CHOICE_DRIVER                     : $ORA_BENCH_CHOICE_DRIVER"
 echo "--------------------------------------------------------------------------------"
-echo "ORA_BENCH_BENCHMARK_JAMDB     : $ORA_BENCH_BENCHMARK_JAMDB"
-echo "RUN_GLOBAL_JAMDB              : $RUN_GLOBAL_JAMDB"
-echo "RUN_GLOBAL_NON_JAMDB          : $RUN_GLOBAL_NON_JAMDB"
+echo "ORA_BENCH_BENCHMARK_JAMDB         : $ORA_BENCH_BENCHMARK_JAMDB"
+echo "RUN_GLOBAL_JAMDB                  : $RUN_GLOBAL_JAMDB"
+echo "RUN_GLOBAL_NON_JAMDB              : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
-echo "RUN_CX_ORACLE_PYTHON          : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
-echo "RUN_GODROR_GO                 : $ORA_BENCH_RUN_GODROR_GO"
-echo "RUN_JAMDB_ORACLE_ERLANG       : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
-echo "RUN_JDBC_JAVA                 : $ORA_BENCH_RUN_JDBC_JAVA"
-echo "RUN_JDBC_KOTLIN               : $ORA_BENCH_RUN_JDBC_KOTLIN"
-echo "RUN_ODPI_C                    : $ORA_BENCH_RUN_ODPI_C"
-echo "RUN_ORANIF_ELIXIR             : $ORA_BENCH_RUN_ORANIF_ELIXIR"
-echo "RUN_ORANIF_ERLANG             : $ORA_BENCH_RUN_ORANIF_ERLANG"
+echo "RUN_CX_ORACLE_PYTHON              : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
+echo "RUN_GODROR_GO                     : $ORA_BENCH_RUN_GODROR_GO"
+echo "RUN_JAMDB_ORACLE_ERLANG           : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
+echo "RUN_JDBC_JAVA                     : $ORA_BENCH_RUN_JDBC_JAVA"
+echo "RUN_JDBC_KOTLIN                   : $ORA_BENCH_RUN_JDBC_KOTLIN"
+echo "RUN_ODPI_C                        : $ORA_BENCH_RUN_ODPI_C"
+echo "RUN_ORANIF_ELIXIR                 : $ORA_BENCH_RUN_ORANIF_ELIXIR"
+echo "RUN_ORANIF_ERLANG                 : $ORA_BENCH_RUN_ORANIF_ERLANG"
+echo "--------------------------------------------------------------------------------"
+echo "RUN_DB_12_2_EE                    : $ORA_BENCH_RUN_DB_12_2_EE"
+echo "RUN_DB_18_3_EE                    : $ORA_BENCH_RUN_DB_18_3_EE"
+echo "RUN_DB_19_3_EE                    : $ORA_BENCH_RUN_DB_19_3_EE"
+echo "--------------------------------------------------------------------------------"
+echo "BENCHMARK_BATCH_SIZE              : $ORA_BENCH_BENCHMARK_BATCH_SIZE"
+echo "BENCHMARK_COMMENT                 : $ORA_BENCH_BENCHMARK_COMMENT"
+echo "BULKFILE_EXISTING                 : $ORA_BENCH_BULKFILE_EXISTING"
+echo "BENCHMARK_TRANSACTION_SIZE        : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
+echo "CONNECTION_HOST                   : $ORA_BENCH_CONNECTION_HOST"
+echo "CONNECTION_PORT                   : $ORA_BENCH_CONNECTION_PORT"
+echo "FILE_CONFIGURATION_NAME           : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"

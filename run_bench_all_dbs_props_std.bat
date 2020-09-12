@@ -17,7 +17,7 @@ set ORA_BENCH_CHOICE_DB_DEFAULT=complete
 set ORA_BENCH_CHOICE_DRIVER_DEFAULT=complete
 
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_HOST=ora_bench_db
+    set ORA_BENCH_CONNECTION_HOST=localhost
 )
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_CONNECTION_PORT=1521
@@ -62,9 +62,9 @@ if ["%2"] EQU [""] (
     set ORA_BENCH_CHOICE_DB=%2
 )
 
-set ORA_BENCH_RUN_DB_12_2_EE=
-set ORA_BENCH_RUN_DB_18_3_EE=
-set ORA_BENCH_RUN_DB_19_3_EE=
+set ORA_BENCH_RUN_DB_12_2_EE=false
+set ORA_BENCH_RUN_DB_18_3_EE=false
+set ORA_BENCH_RUN_DB_19_3_EE=false
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["complete"] (
     set ORA_BENCH_RUN_DB_12_2_EE=true
@@ -90,10 +90,6 @@ if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 )
 
-if ["%ORA_BENCH_JAVA_CLASSPATH%"] EQU [""] (
-    set ORA_BENCH_JAVA_CLASSPATH=.;priv/libs/*;JAVA_HOME/lib;
-)
-
 if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (
     set RUN_GLOBAL_JAMDB=true
 )
@@ -116,26 +112,8 @@ echo.
     echo --------------------------------------------------------------------------------
     echo ora_bench - Oracle benchmark - all databases with standard properties.
     echo --------------------------------------------------------------------------------
-    echo CHOICE_DB                  : %ORA_BENCH_CHOICE_DB%
-    echo CHOICE_DRIVER              : %ORA_BENCH_CHOICE_DRIVER%
-    echo --------------------------------------------------------------------------------
-    echo BENCHMARK_BATCH_SIZE       : %ORA_BENCH_BENCHMARK_BATCH_SIZE%
-    echo BENCHMARK_COMMENT          : %ORA_BENCH_BENCHMARK_COMMENT%
-    echo BULKFILE_EXISTING          : %ORA_BENCH_BULKFILE_EXISTING%
-    echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
-    echo CONNECTION_HOST            : %ORA_BENCH_CONNECTION_HOST%
-    echo CONNECTION_PORT            : %ORA_BENCH_CONNECTION_PORT%
-    echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
-    echo JAVA_CLASSPATH             : %ORA_BENCH_JAVA_CLASSPATH%
-    echo --------------------------------------------------------------------------------
-    echo RUN_DB_12_2_EE             : %ORA_BENCH_RUN_DB_12_2_EE%
-    echo RUN_DB_18_3_EE             : %ORA_BENCH_RUN_DB_18_3_EE%
-    echo RUN_DB_19_3_EE             : %ORA_BENCH_RUN_DB_19_3_EE%
-    echo --------------------------------------------------------------------------------
-    echo RUN_GLOBAL_JAMDB           : %RUN_GLOBAL_JAMDB%
-    echo RUN_GLOBAL_NON_JAMDB       : %RUN_GLOBAL_NON_JAMDB%
-    echo --------------------------------------------------------------------------------
-    echo JAVA_CLASSPATH             : %ORA_BENCH_JAVA_CLASSPATH%
+    echo CHOICE_DB                     : %ORA_BENCH_CHOICE_DB%
+    echo CHOICE_DRIVER                 : %ORA_BENCH_CHOICE_DRIVER%
     echo --------------------------------------------------------------------------------
     echo:| TIME
     echo ================================================================================

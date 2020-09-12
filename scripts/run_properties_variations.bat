@@ -67,11 +67,16 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["python"] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 )
 
+rem wwe Temporary solution until the driver problems are solved
+set ORA_BENCH_RUN_GODROR_GO=false
+set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
+set ORA_BENCH_RUN_ORANIF_ERLANG=false
+
 if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 )
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_HOST=ora_bench_db
+    set javaORA_BENCH_CONNECTION_HOST=localhost
 )
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_CONNECTION_PORT=1521
@@ -96,22 +101,34 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU [""] (
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo MULTIPLE_RUN                  : %ORA_BENCH_MULTIPLE_RUN%
+echo MULTIPLE_RUN                      : %ORA_BENCH_MULTIPLE_RUN%
 echo --------------------------------------------------------------------------------
-echo CHOICE_DB                     : %ORA_BENCH_CHOICE_DB%
-echo CHOICE_DRIVER                 : %ORA_BENCH_CHOICE_DRIVER%
+echo CHOICE_DB                         : %ORA_BENCH_CHOICE_DB%
+echo CHOICE_DRIVER                     : %ORA_BENCH_CHOICE_DRIVER%
 echo --------------------------------------------------------------------------------
-echo RUN_GLOBAL_JAMDB              : %RUN_GLOBAL_JAMDB%
-echo RUN_GLOBAL_NON_JAMDB          : %RUN_GLOBAL_NON_JAMDB%
+echo RUN_GLOBAL_JAMDB                  : %RUN_GLOBAL_JAMDB%
+echo RUN_GLOBAL_NON_JAMDB              : %RUN_GLOBAL_NON_JAMDB%
 echo --------------------------------------------------------------------------------
-echo RUN_CX_ORACLE_PYTHON          : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
-echo RUN_GODROR_GO                 : %ORA_BENCH_RUN_GODROR_GO%
-echo RUN_JAMDB_ORACLE_ERLANG       : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
-echo RUN_JDBC_JAVA                 : %ORA_BENCH_RUN_JDBC_JAVA%
-echo RUN_JDBC_KOTLIN               : %ORA_BENCH_RUN_JDBC_KOTLIN%
-echo RUN_ODPI_C                    : %ORA_BENCH_RUN_ODPI_C%
-echo RUN_ORANIF_ELIXIR             : %ORA_BENCH_RUN_ORANIF_ELIXIR%
-echo RUN_ORANIF_ERLANG             : %ORA_BENCH_RUN_ORANIF_ERLANG%
+echo RUN_CX_ORACLE_PYTHON              : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
+echo RUN_GODROR_GO                     : %ORA_BENCH_RUN_GODROR_GO%
+echo RUN_JAMDB_ORACLE_ERLANG           : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
+echo RUN_JDBC_JAVA                     : %ORA_BENCH_RUN_JDBC_JAVA%
+echo RUN_JDBC_KOTLIN                   : %ORA_BENCH_RUN_JDBC_KOTLIN%
+echo RUN_ODPI_C                        : %ORA_BENCH_RUN_ODPI_C%
+echo RUN_ORANIF_ELIXIR                 : %ORA_BENCH_RUN_ORANIF_ELIXIR%
+echo RUN_ORANIF_ERLANG                 : %ORA_BENCH_RUN_ORANIF_ERLANG%
+echo --------------------------------------------------------------------------------
+echo RUN_DB_12_2_EE                    : %ORA_BENCH_RUN_DB_12_2_EE%
+echo RUN_DB_18_3_EE                    : %ORA_BENCH_RUN_DB_18_3_EE%
+echo RUN_DB_19_3_EE                    : %ORA_BENCH_RUN_DB_19_3_EE%
+echo --------------------------------------------------------------------------------
+echo BENCHMARK_BATCH_SIZE              : %ORA_BENCH_BENCHMARK_BATCH_SIZE%
+echo BENCHMARK_COMMENT                 : %ORA_BENCH_BENCHMARK_COMMENT%
+echo BULKFILE_EXISTING                 : %ORA_BENCH_BULKFILE_EXISTING%
+echo BENCHMARK_TRANSACTION_SIZE        : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
+echo CONNECTION_HOST                   : %ORA_BENCH_CONNECTION_HOST%
+echo CONNECTION_PORT                   : %ORA_BENCH_CONNECTION_PORT%
+echo FILE_CONFIGURATION_NAME           : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================

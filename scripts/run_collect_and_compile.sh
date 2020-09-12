@@ -8,20 +8,8 @@
 
 set -e
 
-if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
-    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-fi
-
 if [ -z "$GOPATH" ]; then
     GOPATH=$(pwd)/src_go/go
-fi
-
-if [ -z "$ORA_BENCH_JAVA_CLASSPATH" ]; then
-    if [ "$OSTYPE" = "msys" ]; then
-        export ORA_BENCH_JAVA_CLASSPATH=".;priv/libs/*"
-    else
-        export ORA_BENCH_JAVA_CLASSPATH=".:priv/libs/*"
-    fi
 fi
 
 if [ -z "$RUN_GLOBAL_JAMDB" ]; then
@@ -50,12 +38,9 @@ echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
-echo "FILE_CONFIGURATION_NAME    : $ORA_BENCH_FILE_CONFIGURATION_NAME"
-echo "--------------------------------------------------------------------------------"
 echo "GOPATH                     : $GOPATH"
 echo "GOROOT                     : $GOROOT"
 echo "GRADLE_HOME                : $GRADLE_HOME"
-echo "JAVA_CLASSPATH             : $ORA_BENCH_JAVA_CLASSPATH"
 echo "LD_LIBRARY_PATH            : $LD_LIBRARY_PATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
@@ -70,7 +55,7 @@ fi
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
         echo "Setup C - Start ============================================================" 
-        if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup_c; then
+        if ! java -jar priv/libs/ora_bench_java.jar setup_c; then
             exit 255
         fi
 
@@ -94,7 +79,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     
     if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
         echo "Setup Elixir - Start =======================================================" 
-        if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup_elixir; then
+        if ! java -jar priv/libs/ora_bench_java.jar setup_elixir; then
             exit 255
         fi
 
@@ -130,7 +115,7 @@ fi
     
 if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
     echo "Setup Erlang - Start ======================================================="
-    if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup_erlang; then
+    if ! java -jar priv/libs/ora_bench_java.jar setup_erlang; then
         exit 255
     fi
     
@@ -167,7 +152,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
 
     if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" == "true" ]; then
         echo "Setup Python - Start =======================================================" 
-        if ! java -cp "$ORA_BENCH_JAVA_CLASSPATH" ch.konnexions.orabench.OraBench setup_python; then
+        if ! java -jar priv/libs/ora_bench_java.jar; then
             exit 255
         fi
         echo "Setup Python - End   =======================================================" 
