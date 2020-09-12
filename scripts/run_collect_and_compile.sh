@@ -152,7 +152,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
 
     if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" == "true" ]; then
         echo "Setup Python - Start =======================================================" 
-        if ! java -jar priv/libs/ora_bench_java.jar; then
+        if ! java -jar priv/libs/ora_bench_java.jar setup_python; then
             exit 255
         fi
         echo "Setup Python - End   =======================================================" 
