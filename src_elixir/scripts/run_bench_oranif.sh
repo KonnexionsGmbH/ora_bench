@@ -49,7 +49,7 @@ if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
         exit 255
     fi
 
-    if ! -jar priv/libs/ora_bench_java.jar setup_elixir; then
+    if ! java -jar priv/libs/ora_bench_java.jar setup_elixir; then
         exit 255
     fi
 fi    
