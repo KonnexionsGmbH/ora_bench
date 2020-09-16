@@ -66,7 +66,9 @@ All the file names specified here are also part of the configuration file and ca
 
 ##### 2.2.1.1 System Requirements
 
-##### 2.2.1.1.1 Windows Platform
+##### 2.2.1.1.1 Konnexion's Development Image kxn_dev
+
+##### 2.2.1.1.2 Windows Platform
 
 - Docker Desktop for Windows from [here](https://www.docker.com/products/docker-desktop)
 
@@ -75,6 +77,7 @@ All the file names specified here are also part of the configuration file and ca
 - Oracle Instant Client from [here](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
 
 - Erlang from [here](https://www.erlang.org/downloads/)
+
 - Elixir from [here](https://elixir-lang.org/install.html#windows)
 
 - Go from [here](https://golang.org/dl/)
@@ -89,79 +92,15 @@ All the file names specified here are also part of the configuration file and ca
 
 - rebar3 from [here](https://www.rebar3.org/)
 
-##### 2.2.1.1.2 Windows Subsystem for Linux (WSL 2 and Ubuntu 18.04 LTS)
+##### 2.2.1.1.3 Linux Platform including WSL2 (Windows Subsystem for Linux)
 
-See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
+The script `scripts/run_install_environment_ubuntu.sh` enables you to set up a development environment suitable for `ora_bench` in an Ubuntu 20.04 operating system. 
+Ubuntu can be provided either native, via a virtual machine or via the WSL2 of Windows. 
+If Ubuntu runs under WSL2, the installation of Docker Desktop is not necessary.
+The script must be called in the root directory of an ora_bench repository and expects the following two input parameters:
 
-##### 2.2.1.1.3 Linux Platform
-
-- Setting up the environment, e.g.
-    - `sudo apt install curl libaio1`
-    - `sudo ln -fs /usr/share/zoneinfo/Europe/Zurich /etc/localtime`
-    - `sudo apt-get install -qy tzdata`
-    - `sudo dpkg-reconfigure --frontend noninteractive tzdata`
-    - `sudo locale-gen "en_US.UTF-8"`
-    - `sudo dpkg-reconfigure locales`
-    - `export ENV LANG=en_US.UTF-8`
-    - `export LANGUAGE=en_US.UTF-8`
-    - `export LC_ALL=en_US.UTF-8`
-
-- Oracle Instant Client, e.g.
-    - `sudo apt-get install alien`
-    - `wget --quiet https://download.oracle.com/otn_software/linux/instantclient/19800/oracle-instantclient19.8-basic-19.8.0.0.0-1.x86_64.rpm`
-    - `wget --quiet https://download.oracle.com/otn_software/linux/instantclient/19800/oracle-instantclient19.8-sqlplus-19.8.0.0.0-1.x86_64.rpm`
-    - `alien -i *.rpm`
-    - `export ORACLE_HOME=/usr/lib/oracle/19.8/client64`
-    - `export LD_LIBRARY_PATH="$ORACLE_HOME/lib:$LD_LIBRARY_PATH"`
-    - `export PATH="$ORACLE_HOME::${PATH}"`
-
-- Erlang
-    - `sudo apt -y install erlang`
-    
-- Elixir
-    - `sudo apt install elixir`
-    - `mix local.hex`
-
-- Go
-    - `wget -q https://dl.google.com/go/go1.15.1.linux-amd64.tar.gz`
-    - `tar -xf go1.15.1.linux-amd64.tar.gz`
-    - `sudo mv go /usr/local`
-    - `export GOPATH=/ora_bench/src_go/go`
-    - `export GOROOT=/usr/local/go`
-    - `export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}`
-
-- Java SE Development Kit, e.g.
-    - `sudo apt install default-jdk`
-
-- Gradle, e.g.
-    - `wget -q https://services.gradle.org/distributions/gradle-6.6.1-bin.zip -P /tmp`  
-    - `sudo unzip -d /opt/gradle /tmp/gradle-*.zip`
-    - `export GRADLE_HOME=/opt/gradle/gradle-6.6.1`
-    - `export PATH=${GRADLE_HOME}/bin:${PATH}`
-
-- Kotlin, e.g.
-    - `curl -s https://get.sdkman.io | bash`
-    - `chmod a+x "$HOME/.sdkman/bin/sdkman-init.sh"`
-    - `source "$HOME/.sdkman/bin/sdkman-init.sh"`
-    - `sdk install kotlin`
-
-- Python 3, e.g.:
-    - `sudo apt install software-properties-common`
-    - `sudo add-apt-repository -y ppa:deadsnakes/ppa`
-    - `sudo apt install python3`
-    - `sudo apt install python3-venv`
-    - `python3 -m venv my-project-env`
-    - `source my-project-env/bin/activate`
-
-- rebar3, e.g.:
-    - `wget https://s3.amazonaws.com/rebar3/rebar3`
-    - `chmod +x rebar3`
-    - `sudo mv rebar3 /usr/bin`
-
-##### 2.2.1.1.4 Platform-independent Installation
-
-- Install [cx_Oracle](https://oracle.github.io/python-cx_Oracle/) and [PyYAML](https://pypi.org/project/PyYAML/):
-    - `python -m pip install -r src_python/requirements.txt`
+- `ORA_BENCH_HOST_ENVIRONMENT` - input `vm`(default value) or `wsl2`
+- `ORA_BENCH_VERSION_KOTLIN` - the version number of a previously installed Kotlin compiler 
 
 ##### 2.2.1.2 `run_bench_all_dbs_props_std`
 

@@ -39,7 +39,7 @@ if [ -z "$1" ]; then
     echo "kotlin             - Kotlin and JDBC"
     echo "python             - Python and cx_Oracle"
     echo "---------------------------------------------------------"
-    read -pr "Enter the desired programming lanuage (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
+    read -rp "Enter the desired programming lanuage (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
     export ORA_BENCH_CHOICE_DRIVER=${ORA_BENCH_CHOICE_DRIVER}
 
     if [ -z "${ORA_BENCH_CHOICE_DRIVER}" ]; then
@@ -57,11 +57,11 @@ if [ -z "$2" ]; then
     echo "18                 - Oracle Database 18c"
     echo "19                 - Oracle Database 19c"
     echo "---------------------------------------------------------"
-    read -pr "Enter the desired database version [default: ${ORA_BENCH_CHOICE_DB_DEFAULT}] " ORA_BENCH_CHOICE_DB
+    read -rp "Enter the desired database version [default: ${ORA_BENCH_CHOICE_DB_DEFAULT}] " ORA_BENCH_CHOICE_DB
     export ORA_BENCH_CHOICE_DB=${ORA_BENCH_CHOICE_DB}
 
     if [ -z "${ORA_BENCH_CHOICE_DB}" ]; then
-        export ORA_BENCH_CHOICE_DB=${ORA_BENCH_CHOICE_DB}
+        export ORA_BENCH_CHOICE_DB=${ORA_BENCH_CHOICE_DB_DEFAULT}
     fi
 else
     export ORA_BENCH_CHOICE_DB=$2

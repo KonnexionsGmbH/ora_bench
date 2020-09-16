@@ -56,9 +56,16 @@ export ORA_BENCH_RUN_GODROR_GO=false
 export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
 export ORA_BENCH_RUN_ORANIF_ERLANG=false
 
-if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
+if [ "${ORA_BENCH_CHOICE_DB}" = "12" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
+fi
+if [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
+fi
+if [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
+
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
     export javaORA_BENCH_CONNECTION_HOST=localhost
 fi
