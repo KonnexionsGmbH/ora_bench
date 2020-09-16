@@ -29,10 +29,9 @@ script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
   - export VERSION_ELIXIR=1.10.4
-  - export VERSION_GO=1.15.1
+  - export VERSION_GO=1.15.2
   - export VERSION_GRADLE=6.6.1
-  - export VERSION_JAVA=13
-  - export VERSION_KOTLIN=1.4.0
+  - export VERSION_JAVA=15
   - export VERSION_ORACLE_INSTANT_CLIENT_1=19
   - export VERSION_ORACLE_INSTANT_CLIENT_2=8
     
@@ -69,8 +68,8 @@ script:
 
   # Java -------------------------------------------------------------------------
   - travis_fold start "Setting_up_Java"
-  - wget -q https://download.java.net/openjdk/jdk${VERSION_JAVA}/ri/openjdk-${VERSION_JAVA}+33_linux-x64_bin.tar.gz
-  - tar -xf openjdk-${VERSION_JAVA}+33_linux-x64_bin.tar.gz 
+  - wget -q https://download.java.net/java/GA/jdk${VERSION_JAVA}/779bf45e88a44cbd9ea6621d33e33db1/36/GPL/openjdk-${VERSION_JAVA}_linux-x64_bin.tar.gz
+  - tar -xf openjdk-${VERSION_JAVA}_linux-x64_bin.tar.gz
   - mv jdk-${VERSION_JAVA} /opt/
   - export JAVA_HOME=/opt/jdk-${VERSION_JAVA}
   - export PATH="${JAVA_HOME}/bin:${PATH}"

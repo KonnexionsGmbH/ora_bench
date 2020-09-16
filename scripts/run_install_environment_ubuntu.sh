@@ -16,7 +16,7 @@ export ORA_BENCH_VERSION_DOCKER_COMPOSE=1.27.1
 export ORA_BENCH_VERSION_ERLANG_SOLUTIONS=2.0
 export ORA_BENCH_VERSION_GO=1.15.2
 export ORA_BENCH_VERSION_GRADLE=6.6.1
-export ORA_BENCH_VERSION_JAVA=14.0.2
+export ORA_BENCH_VERSION_JAVA=15
 export ORA_BENCH_VERSION_ORACLE_INSTANT_CLIENT_1=19
 export ORA_BENCH_VERSION_ORACLE_INSTANT_CLIENT_2=8
 
@@ -169,7 +169,7 @@ echo "--------------------------------------------------------------------------
 
 (
     cd /
-    sudo wget --quiet https://download.java.net/java/GA/jdk${ORA_BENCH_VERSION_JAVA}/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-${ORA_BENCH_VERSION_JAVA}_linux-x64_bin.tar.gz
+    sudo wget -quiet https://download.java.net/java/GA/jdk${ORA_BENCH_VERSION_JAVA}/779bf45e88a44cbd9ea6621d33e33db1/36/GPL/openjdk-${ORA_BENCH_VERSION_JAVA}_linux-x64_bin.tar.gz
     sudo tar -xf openjdk-${ORA_BENCH_VERSION_JAVA}_linux-x64_bin.tar.gz
     sudo rm -rf /opt/jdk-${ORA_BENCH_VERSION_JAVA}
     sudo mv jdk-${ORA_BENCH_VERSION_JAVA} /opt/

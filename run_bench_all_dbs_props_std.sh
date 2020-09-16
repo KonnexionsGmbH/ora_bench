@@ -2,9 +2,6 @@
 
 set -e
 
-exec &> >(tee -i run_bench_all_dbs_props_std.log)
-sleep .1
-
 # ------------------------------------------------------------------------------
 #
 # run_bench_all_dbs_props_std.sh: Oracle Benchmark for all database versions
@@ -95,6 +92,18 @@ fi
 if [ -z "$RUN_GLOBAL_NON_JAMDB" ]; then
     export RUN_GLOBAL_NON_JAMDB=true
 fi
+
+echo ""
+echo "Script $0 is now running"
+
+export LOG_FILE=run_bench_all_dbs_props_std.log
+
+echo ""
+echo "You can find the run log in the file $LOG_FILE"
+echo ""
+
+exec &> >(tee -i $LOG_FILE) 2>&1
+sleep .1
 
 echo "================================================================================"
 echo "Start $0"
