@@ -8,28 +8,6 @@
 
 set -e
 
-if [ -z "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" ]; then
-    export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
-fi
-if [ -z "$ORA_BENCH_RUN_GODROR_GO" ]; then
-    export ORA_BENCH_RUN_GODROR_GO=true
-fi
-if [ -z "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" ]; then
-    export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
-fi
-if [ -z "$ORA_BENCH_RUN_JDBC_JAVA" ]; then
-    export ORA_BENCH_RUN_JDBC_JAVA=true
-fi
-if [ -z "$ORA_BENCH_RUN_ODPI_C" ]; then
-    export ORA_BENCH_RUN_ODPI_C=true
-fi
-if [ -z "$ORA_BENCH_RUN_ORANIF_ELIXIR" ]; then
-    export ORA_BENCH_RUN_ORANIF_ELIXIR=true
-fi
-if [ -z "$ORA_BENCH_RUN_ORANIF_ERLANG" ]; then
-    export ORA_BENCH_RUN_ORANIF_ERLANG=true
-fi
-
 if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
     export RUN_GLOBAL_JAMDB=true
     export RUN_GLOBAL_NON_JAMDB=true
@@ -48,19 +26,18 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - all drivers."
 echo "--------------------------------------------------------------------------------"
-echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
+echo "ORA_BENCH_BENCHMARK_JAMDB         : $ORA_BENCH_BENCHMARK_JAMDB"
+echo "RUN_GLOBAL_JAMDB                  : $RUN_GLOBAL_JAMDB"
+echo "RUN_GLOBAL_NON_JAMDB              : $RUN_GLOBAL_NON_JAMDB"
 echo "--------------------------------------------------------------------------------"
-echo "ORA_BENCH_BENCHMARK_JAMDB  : $ORA_BENCH_BENCHMARK_JAMDB"
-echo "RUN_GLOBAL_JAMDB           : $RUN_GLOBAL_JAMDB"
-echo "RUN_GLOBAL_NON_JAMDB       : $RUN_GLOBAL_NON_JAMDB"
-echo "--------------------------------------------------------------------------------"
-echo "RUN_CX_ORACLE_PYTHON       : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
-echo "RUN_GODROR_GO              : $ORA_BENCH_RUN_GODROR_GO"
-echo "RUN_JAMDB_ORACLE_ERLANG    : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
-echo "RUN_JDBC_JAVA              : $ORA_BENCH_RUN_JDBC_JAVA"
-echo "RUN_ODPI_C                 : $ORA_BENCH_RUN_ODPI_C"
-echo "RUN_ORANIF_ELIXIR          : $ORA_BENCH_RUN_ORANIF_ELIXIR"
-echo "RUN_ORANIF_ERLANG          : $ORA_BENCH_RUN_ORANIF_ERLANG"
+echo "RUN_CX_ORACLE_PYTHON              : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
+echo "RUN_JDBC_KOTLIN                   : $ORA_BENCH_RUN_JDBC_KOTLIN"
+echo "RUN_GODROR_GO                     : $ORA_BENCH_RUN_GODROR_GO"
+echo "RUN_JAMDB_ORACLE_ERLANG           : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
+echo "RUN_JDBC_JAVA                     : $ORA_BENCH_RUN_JDBC_JAVA"
+echo "RUN_ODPI_C                        : $ORA_BENCH_RUN_ODPI_C"
+echo "RUN_ORANIF_ELIXIR                 : $ORA_BENCH_RUN_ORANIF_ELIXIR"
+echo "RUN_ORANIF_ERLANG                 : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
@@ -74,6 +51,12 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     
     if [ "$ORA_BENCH_RUN_GODROR_GO" = "true" ]; then
         if ! { /bin/bash src_go/scripts/run_bench_godror.sh; }; then
+            exit 255
+        fi
+    fi
+    
+    if [ "$ORA_BENCH_RUN_JDBC_KOTLIN" = "true" ]; then
+        if ! { /bin/bash src_kotlin/scripts/run_bench_jdbc.sh; }; then
             exit 255
         fi
     fi

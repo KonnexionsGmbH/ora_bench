@@ -11,8 +11,6 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - Gradle: clean and assemble the Java part of the project."
 echo "--------------------------------------------------------------------------------"
-echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
-echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
@@ -23,15 +21,17 @@ echo "==========================================================================
         exit 255
     fi
     
-    if ! { ./gradlew assemble; }; then
+    if ! { ./gradlew copyJarToLib; }; then
         exit 255
     fi
-    
-    cp build/libs/ora_bench.jar ../priv/java_jar
     
     if ! { ./gradlew javadoc; }; then
         exit 255
     fi
+
+    rm -rf ../priv/docs_java
+    mkdir ../priv/docs_java
+    cp -R build/docs/* ../priv/docs_java
 )
 
 echo ""

@@ -8,6 +8,7 @@ Release Date: dd.mm.yyyy
 - Database driver `godror` and programming language `Go` 
 - Database driver `jamdb_oracle` and programming language `Erlang` 
 - Database driver `JDBC` and programming language `Java` 
+- Database driver `JDBC` and programming language `Kotlin` 
 - Database driver `ODPI-C` and programming language `C` 
 - Database driver `oranif` and programming language `Elixir`
 - Database driver `oranif` and programming language `Erlang` 

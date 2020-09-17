@@ -12,7 +12,7 @@ if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 )
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_HOST=0.0.0.0
+    set javaORA_BENCH_CONNECTION_HOST=localhost
 )
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_CONNECTION_PORT=1521
@@ -29,10 +29,10 @@ echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - database setup.
 echo --------------------------------------------------------------------------------
-echo BENCHMARK_DATABASE         : %ORA_BENCH_BENCHMARK_DATABASE%
-echo CONNECTION_HOST            : %ORA_BENCH_CONNECTION_HOST%
-echo CONNECTION_PORT            : %ORA_BENCH_CONNECTION_PORT%
-echo CONNECTION_SERVICE         : %ORA_BENCH_CONNECTION_SERVICE%
+echo BENCHMARK_DATABASE                : %ORA_BENCH_BENCHMARK_DATABASE%
+echo CONNECTION_HOST                   : %ORA_BENCH_CONNECTION_HOST%
+echo CONNECTION_PORT                   : %ORA_BENCH_CONNECTION_PORT%
+echo CONNECTION_SERVICE                : %ORA_BENCH_CONNECTION_SERVICE%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================

@@ -15,8 +15,7 @@
 **[3. Coding Pattern](#coding_pattern)**<br>
 **[4. Driver Specific Features](#driver_specifica)**<br>
 **[5. Reporting](#reporting)**<br>
-**[6. Docker](#docker)**<br>
-**[7. Contributing](#contributing)**<br>
+**[6. Contributing](#contributing)**<br>
 
 ----
 
@@ -32,7 +31,7 @@ The currently supported database drivers are:
 | cx_Oracle | Python                |
 | godror    | Go                    |
 | JamDB     | Erlang                |
-| JDBC      | Java                  |
+| JDBC      | Java &amp; Kotlin     |
 | ODPI      | C                     |
 | oranif    | Elixir &amp; Erlang   |
 
@@ -41,8 +40,8 @@ The following Oracle database versions are provided in a benchmark run via Docke
 | Shortcut   | Oracle Database Version |
 | :---       | :--- |
 | db_12_2_ee | Oracle Database 12c Release 2 (12.2.0.1.0) - Enterprise Edition - Linux x86-64 |
-| db_18_3_ee | Oracle Database 18c 18.3 - Linux x86-64 |
-| db_19_3_ee | Oracle Database 19c 19.3 - Linux x86-64 |
+| db_18_3_ee | Oracle Database 18c 18.3 - Linux x86-64                                        |
+| db_19_3_ee | Oracle Database 19c 19.3 - Linux x86-64                                        |
 
 The results of the benchmark runs are collected in either csv (comma-separated values) or tsv (tab-separated values) files.
 
@@ -67,7 +66,9 @@ All the file names specified here are also part of the configuration file and ca
 
 ##### 2.2.1.1 System Requirements
 
-##### 2.2.1.1.1 Windows Platform
+##### 2.2.1.1.1 Konnexion's Development Image kxn_dev
+
+##### 2.2.1.1.2 Windows Platform
 
 - Docker Desktop for Windows from [here](https://www.docker.com/products/docker-desktop)
 
@@ -76,6 +77,7 @@ All the file names specified here are also part of the configuration file and ca
 - Oracle Instant Client from [here](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
 
 - Erlang from [here](https://www.erlang.org/downloads/)
+
 - Elixir from [here](https://elixir-lang.org/install.html#windows)
 
 - Go from [here](https://golang.org/dl/)
@@ -84,56 +86,21 @@ All the file names specified here are also part of the configuration file and ca
 
 - Gradle from [here](https://gradle.org/releases/) 
 
+- Kotlin from [here](https://kotlinlang.org/docs/tutorials/command-line.html)
+
 - Python 3 from [here](https://www.python.org/downloads/)
 
-##### 2.2.1.1.2 Windows Subsystem for Linux (WSL 2 and Ubuntu 18.04 LTS)
+- rebar3 from [here](https://www.rebar3.org/)
 
-See [here](docs/requirements_windows_wsl_2_ubuntu_18.04_lts.md).
+##### 2.2.1.1.3 Linux Platform including WSL2 (Windows Subsystem for Linux)
 
-##### 2.2.1.1.3 Linux Platform
+The script `scripts/run_install_environment_ubuntu.sh` enables you to set up a development environment suitable for `ora_bench` in an Ubuntu 20.04 operating system. 
+Ubuntu can be provided either native, via a virtual machine or via the WSL2 of Windows. 
+If Ubuntu runs under WSL2, the installation of Docker Desktop is not necessary.
+The script must be called in the root directory of an ora_bench repository and expects the following two input parameters:
 
-- Oracle Instant Client, e.g.
-    - `sudo apt-get install alien`
-    - `sudo alien priv/oracle/oracle-instantclient19.3-basiclite-19.3.0.0.0-1.x86_64.rpm`
-    - `sudo dpkg -i oracle-instantclient19.3-basiclite_19.3.0.0.0-2_amd64.deb`
-
-- Erlang
-    - `sudo apt -y install erlang`
-    
-- Elixir
-    - `sudo apt install elixir`
-    - `mix local.hex`
-
-- Go
-    - `wget -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz`
-    - `tar -xf go${VERSION_GO}.linux-amd64.tar.gz`
-    - `mv go /usr/local`
-    - `export GOPATH=/ora_bench/src_go/go`
-    - `export GOROOT=/usr/local/go`
-    - `export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}`
-
-- Java SE Development Kit, e.g.
-    - `sudo apt install default-jdk`
-
-- Gradle, e.g.
-    - `wget -q https://services.gradle.org/distributions/gradle-6.2-bin.zip -P /tmp`  
-    - `sudo unzip -d /opt/gradle /tmp/gradle-*.zip`
-    - `export GRADLE_HOME=/opt/gradle/gradle-6.2`
-    - `export PATH=${GRADLE_HOME}/bin:${PATH}`
-
-- Python 3, e.g.:
-    - `sudo apt install software-properties-common`
-    - `sudo add-apt-repository -y ppa:deadsnakes/ppa`
-    - `sudo apt install python3`
-    - `sudo apt install python3-venv`
-    - `python3 -m venv my-project-env`
-    - `source my-project-env/bin/activate`
-
-##### 2.2.1.1.4 Platform-independent Installation
-
-- Install [cx_Oracle](https://oracle.github.io/python-cx_Oracle/):
-    - `python -m pip install --upgrade pip`
-    - `python -m pip install --upgrade cx_Oracle`
+- `ORA_BENCH_HOST_ENVIRONMENT` - input `vm`(default value) or `wsl2`
+- `ORA_BENCH_VERSION_KOTLIN` - the version number of a previously installed Kotlin compiler 
 
 ##### 2.2.1.2 `run_bench_all_dbs_props_std`
 
@@ -389,20 +356,35 @@ The data column in the bulk file is randomly generated with a unique key column 
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
-### 4.3 ODPI and C
+### 4.3 JDBC and Kotlin
+
+- the following data in the configuration parameters is determined at runtime: 
+    - Kotlin version (`benchmark.driver`),
+    - benchmark identifier (`benchmark.id`),
+    - host name (`benchmark.host.name`), 
+    - number of cores (`benchmark.number.cores`), 
+    - JRE version (`benchmark.language`), 
+    - operating system environment (`benchmark.os`), 
+    - user name (`benchmark.user.name`) and 
+    - SQL create statement (`sql.create`). 
+- the Kotlin source code is compiled with the help of Gradle
+- Kotlin uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
+- Kotlin uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
+
+### 4.4 ODPI and C
 
 - the following data in the configuration parameters is determined at runtime: 
     - ODPI version (`benchmark.driver`) and
     - C version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.c`) 
 
-### 4.4 oranif and Elixir
+### 4.5 oranif and Elixir
 
 - the following data in the configuration parameters is determined at runtime: 
     - oranif version (`benchmark.driver`) and
     - Elixir version (`benchmark.language`). 
 
-### 4.5 oranif and Erlang
+### 4.6 oranif and Erlang
 
 - the following data in the configuration parameters is determined at runtime: 
     - oranif version (`benchmark.driver`) and
@@ -413,11 +395,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 [see here](https://konnexionsgmbh.github.io/ora_bench/)
 
-## 6 <a name="docker"></a> Docker
-
-[see here](docker/README.md)
-
-## 7. <a name="contributing"></a> Contributing
+## 6. <a name="contributing"></a> Contributing
 
 1. fork it
 2. create your feature branch (`git checkout -b my-new-feature`)

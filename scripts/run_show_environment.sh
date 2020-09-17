@@ -13,9 +13,9 @@ echo "Start $0"
 echo "--------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - show environment variables and software versions."
 echo "--------------------------------------------------------------------------------"
-echo "GOPATH                     : $GOPATH"
-echo "GOROOT                     : $GOROOT"
-echo "LD_LIBRARY_PATH            : $LD_LIBRARY_PATH"
+echo "GOPATH                            : $GOPATH"
+echo "GOROOT                            : $GOROOT"
+echo "LD_LIBRARY_PATH                   : $LD_LIBRARY_PATH"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
@@ -56,6 +56,11 @@ fi
     
 echo "===============================================================================> Version Java:"
 if ! java -version; then
+    exit 255
+fi
+    
+echo "===============================================================================> Version Kotlin:"
+if ! kotlin -version; then
     exit 255
 fi
     
