@@ -9,30 +9,29 @@ otp_release:
 
 env:
   matrix:
-    - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee ORA_BENCH_BENCHMARK_JAMDB=false ORA_BENCH_CHOICE_DRIVER=complete
-    - ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete 
-    - ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee ORA_BENCH_BENCHMARK_JAMDB=false ORA_BENCH_CHOICE_DRIVER=complete 
-    - ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete 
-    - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_BENCHMARK_JAMDB=false ORA_BENCH_CHOICE_DRIVER=complete 
-    - ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete 
+    - ORA_BENCH_CHOICE_DB=12 ORA_BENCH_BENCHMARK_JAMDB=false ORA_BENCH_CHOICE_DRIVER=complete
+    - ORA_BENCH_CHOICE_DB=12 ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete
+    - ORA_BENCH_CHOICE_DB=18 ORA_BENCH_BENCHMARK_JAMDB=false ORA_BENCH_CHOICE_DRIVER=complete
+    - ORA_BENCH_CHOICE_DB=18 ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete
+    - ORA_BENCH_CHOICE_DB=19 ORA_BENCH_BENCHMARK_JAMDB=false ORA_BENCH_CHOICE_DRIVER=complete
+    - ORA_BENCH_CHOICE_DB=19 ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete
       
-    - cx_Oracle Python ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CHOICE_DRIVER=python
-#   - GoDROR    Go     ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CHOICE_DRIVER=go
-#   - JamDB     Erlang ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CHOICE_DRIVER=erlang_jamdb
-    - JDBC      Java   ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CHOICE_DRIVER=java
-    - JDBC      Kotlin ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CHOICE_DRIVER=kotlin
-    - ODPI      C      ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CHOICE_DRIVER=c
-    - oranif    Elixir ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CHOICE_DRIVER=elixir
-#   - oranif    Erlang ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee ORA_BENCH_CHOICE_DRIVER=erlang_oranif
+    - cx_Oracle Python ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=python
+#   - GoDROR    Go     ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=go
+#   - JamDB     Erlang ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=erlang_jamdb
+    - JDBC      Java   ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=java
+    - JDBC      Kotlin ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=kotlin
+    - ODPI      C      ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=c
+    - oranif    Elixir ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=elixir
+#   - oranif    Erlang ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=erlang_oranif
 
 script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
   - export VERSION_ELIXIR=1.10.4
-  - export VERSION_GO=1.15.1
+  - export VERSION_GO=1.15.2
   - export VERSION_GRADLE=6.6.1
-  - export VERSION_JAVA=13
-  - export VERSION_KOTLIN=1.4.0
+  - export VERSION_JAVA=15
   - export VERSION_ORACLE_INSTANT_CLIENT_1=19
   - export VERSION_ORACLE_INSTANT_CLIENT_2=8
     
@@ -69,8 +68,8 @@ script:
 
   # Java -------------------------------------------------------------------------
   - travis_fold start "Setting_up_Java"
-  - wget -q https://download.java.net/openjdk/jdk${VERSION_JAVA}/ri/openjdk-${VERSION_JAVA}+33_linux-x64_bin.tar.gz
-  - tar -xf openjdk-${VERSION_JAVA}+33_linux-x64_bin.tar.gz 
+  - wget -q https://download.java.net/java/GA/jdk${VERSION_JAVA}/779bf45e88a44cbd9ea6621d33e33db1/36/GPL/openjdk-${VERSION_JAVA}_linux-x64_bin.tar.gz
+  - tar -xf openjdk-${VERSION_JAVA}_linux-x64_bin.tar.gz
   - mv jdk-${VERSION_JAVA} /opt/
   - export JAVA_HOME=/opt/jdk-${VERSION_JAVA}
   - export PATH="${JAVA_HOME}/bin:${PATH}"
@@ -86,9 +85,9 @@ script:
 
   # Kotlin -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Kotlin"
-  - curl -s https://get.sdkman.io | bash 
-  - chmod a+x "$HOME/.sdkman/bin/sdkman-init.sh" 
-  - source "$HOME/.sdkman/bin/sdkman-init.sh" 
+  - curl -s https://get.sdkman.io | bash
+  - chmod a+x "$HOME/.sdkman/bin/sdkman-init.sh"
+  - source "$HOME/.sdkman/bin/sdkman-init.sh"
   - sdk install kotlin
   - travis_fold end   "Setting_up_Kotlin"
 

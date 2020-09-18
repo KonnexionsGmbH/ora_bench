@@ -4,13 +4,15 @@
 
 This script executes the following driver specific sub-scripts:
 
-- `src_python/scripts/run_bench_cx_oracle`
-- `src_go/scripts/run_bench_godror`
-- `src_erlang/scripts/run_bench_jamdb_oracle`
-- `src_java/scripts/run_bench_jdbc`
 - `src_c/scripts/run_bench_odpi`
 - `src_elixir/scripts/run_bench_oranif`
+- `src_erlang/scripts/run_bench_jamdb_oracle`
 - `src_erlang/scripts/run_bench_oranif`
+- `src_go/scripts/run_bench_godror`
+- `src_java/scripts/run_bench_jdbc`
+- `src_kotlin/scripts/run_bench_jdbc`
+- `src_python/scripts/run_bench_cx_oracle`
+
 - `scripts/run_finalise_benchmark`
 
 The possible exclusion of drivers made before is taken into account.
@@ -46,8 +48,9 @@ This script is used to create a bulk file.
 This script downloads the Docker image with the requested database version from Docker Hub and prepares it for further processing:
 
 - stops a currently running Docker container `ora_bench_db` and deletes it together with its image
+- creates the Docker network `ora_bench_net`
 - Docker image with the requested database version is downloaded from Docker Hub
-- the new Docker container `ora_bench_db` is started
+- the new Docker container `ora_bench_db` is started as part of the network `ora_bench_net`
 - the database schema `SCOTT` is set up in the database with the necessary rights and the corresponding database table
 
 ### 5 `run_finalise_benchmark`
@@ -66,7 +69,11 @@ In this script, OraBench.java is used to reset the following configuration param
 - `connection.service`
 - `sql.create`
 
-### 6 `run_properties_standard`
+### 6 `run_install_environment_ubuntu.sh`
+
+This script installs the necessary components to run `ora_bench` in an Ubuntu 20.04 environment.
+
+### 7 `run_properties_standard`
 
 This script is executed for one of the supported databases with standard properties. 
 The script performs the following tasks:
@@ -75,7 +82,7 @@ The script performs the following tasks:
 - `run_db_setup` - downloads the Docker image from Docker Hub and prepares its database for further processing and
 - `run_bench_all_drivers` - executes the driver specific sub-scripts.
 
-### 7 `run_properties_variations`
+### 8 `run_properties_variations`
 
 This script is executed for one of the supported databases. 
 The script performs the following tasks:
@@ -93,6 +100,6 @@ The script performs the following tasks:
 | 0             | 1               | default value    |
 | 0             | 1               | 0                |
 
-### 8 `run_show_environment`
+### 9 `run_show_environment`
 
 Logs the ora_bench specific environment variables and the installed software versions.

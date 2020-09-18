@@ -49,7 +49,7 @@ if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
         exit 255
     fi
 
-    if ! -jar priv/libs/ora_bench_java.jar setup_elixir; then
+    if ! java -jar priv/libs/ora_bench_java.jar setup_elixir; then
         exit 255
     fi
 fi    
@@ -57,14 +57,15 @@ fi
 (
     cd src_elixir || exit 255
     
-    if [ -f "mix.lock" ]; then
-        rm -f mix.lock
-    fi         
-    if [ -f "deps" ]; then
-        rm -rf deps
-    fi         
-
     if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
+
+        if [ -f "mix.lock" ]; then
+            rm -f mix.lock
+        fi
+        if [ -f "deps" ]; then
+            rm -rf deps
+        fi
+
         if ! mix local.hex --force; then
             exit 255
         fi
@@ -72,9 +73,11 @@ fi
         if ! mix deps.clean --all; then
             exit 255
         fi
+
         if ! mix deps.get; then
             exit 255
         fi
+
         if ! mix deps.compile; then
             exit 255
         fi
