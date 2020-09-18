@@ -9,7 +9,7 @@ rem ----------------------------------------------------------------------------
 setlocal EnableDelayedExpansion
 
 if ["%GOPATH%"] EQU [""] (
-    set GOPATH=%cd%\src_go\go
+    set GOPATH=%cd%\src_go
 )
 
 if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (

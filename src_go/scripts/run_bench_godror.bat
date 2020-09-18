@@ -20,7 +20,7 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
 )
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
-    set GOPATH=%cd%\src_go\go
+    set GOPATH=%cd%\src_go
 )    
 
 echo ================================================================================

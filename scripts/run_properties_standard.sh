@@ -52,7 +52,6 @@ elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "python" ]; then
 fi
 
 # wwe Temporary solution until the driver problems are solved
-export ORA_BENCH_RUN_GODROR_GO=false
 export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
 export ORA_BENCH_RUN_ORANIF_ERLANG=false
 

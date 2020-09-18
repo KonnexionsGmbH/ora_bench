@@ -20,7 +20,7 @@ if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
 fi
 
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
-    GOPATH=$(pwd)/src_go/go
+    GOPATH=$(pwd)/src_go
     export GOPATH
 fi
 

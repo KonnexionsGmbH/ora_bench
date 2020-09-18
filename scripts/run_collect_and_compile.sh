@@ -9,7 +9,7 @@
 set -e
 
 if [ -z "$GOPATH" ]; then
-    GOPATH=$(pwd)/src_go/go
+    GOPATH=$(pwd)/src_go
 fi
 
 if [ -z "$RUN_GLOBAL_JAMDB" ]; then
