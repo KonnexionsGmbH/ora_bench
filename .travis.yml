@@ -85,9 +85,9 @@ script:
 
   # Kotlin -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Kotlin"
-  - curl -s https://get.sdkman.io | bash 
-  - chmod a+x "$HOME/.sdkman/bin/sdkman-init.sh" 
-  - source "$HOME/.sdkman/bin/sdkman-init.sh" 
+  - curl -s https://get.sdkman.io | bash
+  - chmod a+x "$HOME/.sdkman/bin/sdkman-init.sh"
+  - source "$HOME/.sdkman/bin/sdkman-init.sh"
   - sdk install kotlin
   - travis_fold end   "Setting_up_Kotlin"
 
