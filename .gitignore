@@ -11,6 +11,7 @@
 .fetch
 .git-credentials
 .gitconfig
+.gradle
 .idea
 .mix
 .rebar
