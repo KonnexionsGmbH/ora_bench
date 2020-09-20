@@ -17,7 +17,7 @@ env:
     - ORA_BENCH_CHOICE_DB=19 ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete
       
     - cx_Oracle Python ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=python
-#   - GoDROR    Go     ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=go
+    - GoDROR    Go     ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=go
 #   - JamDB     Erlang ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=erlang_jamdb
     - JDBC      Java   ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=java
     - JDBC      Kotlin ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=kotlin
@@ -132,13 +132,6 @@ script:
   - sudo chmod +x *.sh
   - sudo chmod +x */scripts/*.sh
   - sudo chmod +x scripts/*.sh
-  - cd src_java
-  - chmod +x gradlew
-  - gradle wrapper
-  - cd ../src_kotlin
-  - chmod +x gradlew
-  - gradle wrapper
-  - cd ..
   - python -m pip install -r src_python/requirements.txt
   - ./scripts/run_properties_variations.sh
   - travis_fold end   "Running_ora_bench"

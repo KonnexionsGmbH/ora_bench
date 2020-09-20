@@ -253,7 +253,6 @@ echo "--------------------------------------------------------------------------
 sudo chmod +x *.sh
 sudo chmod +x */*.sh
 sudo chmod +x */*/*.sh
-sudo chmod +x */gradlew
 
 sudo sudo dos2unix *.sh
 sudo dos2unix */*.sh
