@@ -179,6 +179,8 @@ func doSelect(ctx context.Context, configs map[string]interface{}, trial int, pa
 }
 
 func loadBulk(benchmarkNumberPartitions int, fileBulkName string, fileBulkDelimiter string) []bulkPartition {
+	log.Println("Start Distribution of the data in the partitions")
+
 	partitions := make([]bulkPartition, benchmarkNumberPartitions)
 
 	bulkFile, err := os.Open(fileBulkName)
@@ -202,6 +204,8 @@ func loadBulk(benchmarkNumberPartitions int, fileBulkName string, fileBulkDelimi
 	for i, p := range partitions {
 		log.Printf("Partition %d has %5d rows\n", i+1, len(p.keys))
 	}
+
+	log.Println("End   Distribution of the data in the partitions")
 
 	return partitions
 }

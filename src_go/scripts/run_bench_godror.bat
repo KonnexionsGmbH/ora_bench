@@ -63,12 +63,12 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         echo Processing of the script was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
+)
 
-    java -jar priv/libs/ora_bench_java.jar setup_default
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
-    )
+java -jar priv/libs/ora_bench_java.jar setup_default
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
 )
 
 go run src_go\orabench.go priv\properties\ora_bench.properties

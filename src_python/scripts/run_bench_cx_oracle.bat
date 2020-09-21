@@ -50,13 +50,13 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         echo Processing of the script was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
+)
 
-    java -jar priv/libs/ora_bench_java.jar setup_python
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
-    )
-)    
+java -jar priv/libs/ora_bench_java.jar setup_python
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
+)
 
 python src_python/OraBench.py
 if %ERRORLEVEL% NEQ 0 (

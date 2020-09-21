@@ -77,46 +77,6 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     
         echo Setup C - End   ============================================================ 
     )
-
-    if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] == ["true"] (
-        echo Setup Elixir - Start ======================================================= 
-        java -jar priv/libs/ora_bench_java.jar setup_elixir
-        if %ERRORLEVEL% NEQ 0 (
-            echo Processing of the script was aborted, error code=%ERRORLEVEL%
-            exit %ERRORLEVEL%
-        )
-    
-        cd src_elixir
-
-        if exist deps\ rd /Q/S deps 
-        if exist mix.lock del /s mix.lock 
-
-        call mix local.hex --force
-        if %ERRORLEVEL% NEQ 0 (
-            echo Processing of the script was aborted, error code=%ERRORLEVEL%
-            exit %ERRORLEVEL%
-        )
-        
-        call mix deps.clean --all
-        if %ERRORLEVEL% NEQ 0 (
-            echo Processing of the script was aborted, error code=%ERRORLEVEL%
-            exit %ERRORLEVEL%
-        )
-        
-        call mix deps.get
-        if %ERRORLEVEL% NEQ 0 (
-            echo Processing of the script was aborted, error code=%ERRORLEVEL%
-            exit %ERRORLEVEL%
-        )
-        
-        call mix deps.compile
-        if %ERRORLEVEL% NEQ 0 (
-            echo Processing of the script was aborted, error code=%ERRORLEVEL%
-            exit %ERRORLEVEL%
-        )
-        cd ..
-        echo Setup Elixir - End   ======================================================= 
-    )
 )
 
 set ORA_BENCH_RUN_ERLANG=false
@@ -127,28 +87,6 @@ if ["%ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%"] == ["true"] (
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] == ["true"] (
     set ORA_BENCH_RUN_ERLANG=true
 )
-
-if ["%ORA_BENCH_RUN_ERLANG%"] == ["true"] (
-    echo Setup Erlang - Start ======================================================= 
-    java -jar priv/libs/ora_bench_java.jar setup_erlang
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
-    )
-
-    cd src_erlang
-
-    if exist _build\ rd /Q/S _build 
-
-    call rebar3 escriptize
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
-    )
-    
-    cd ..
-    echo Setup Erlang - End   ======================================================= 
-)    
 
 if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
     if ["%ORA_BENCH_RUN_GODROR_GO%"] == ["true"] (
@@ -171,17 +109,6 @@ if ["%RUN_GLOBAL_NON_JAMDB%"] EQU ["true"] (
         )
 
         echo Setup Kotlin - End   ======================================================= 
-    )    
-    
-    if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] == ["true"] (
-        echo Setup Python - Start ======================================================= 
-        java -jar priv/libs/ora_bench_java.jar setup_python
-        if %ERRORLEVEL% NEQ 0 (
-            echo Processing of the script was aborted, error code=%ERRORLEVEL%
-            exit %ERRORLEVEL%
-        )
-
-        echo Setup Python - End   ======================================================= 
     )    
 )
 
