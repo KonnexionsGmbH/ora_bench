@@ -105,9 +105,10 @@ script:
   - travis_fold start "Setting_up_Python"
   - sudo apt install -qy python3
   - sudo apt install -qy python3-venv
+  - sudo rm -rf /usr/bin/python
   - sudo ln -s /usr/bin/python3 /usr/bin/python
   - wget --quiet https://bootstrap.pypa.io/get-pip.py
-  - python3 get-pip.py
+  - python get-pip.py
   - travis_fold end   "Setting_up_Python"
 
   # Setting up environment variables ---------------------------------------------
@@ -130,8 +131,8 @@ script:
   - travis_fold start "Running_ora_bench"
   - git pull
   - sudo chmod +x *.sh
-  - sudo chmod +x */scripts/*.sh
   - sudo chmod +x scripts/*.sh
+  - sudo chmod +x */scripts/*.sh
   - python -m pip install -r src_python/requirements.txt
   - ./scripts/run_properties_variations.sh
   - travis_fold end   "Running_ora_bench"
