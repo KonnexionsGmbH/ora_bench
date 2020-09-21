@@ -78,7 +78,6 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 src_go\orabench.exe priv\properties\ora_bench.properties
-echo ERRORLEVEL=%ERRORLEVEL%
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%

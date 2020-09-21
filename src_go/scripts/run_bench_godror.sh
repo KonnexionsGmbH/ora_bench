@@ -56,21 +56,9 @@ if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
     if ! go get github.com/godror/godror; then
         exit 255
     fi
-
-    if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
-        exit 255
-    fi
-
-    if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
-        exit 255
-    fi
 fi
 
-if ! go build -o src_go src_go/orabench.go
-    exit 255
-fi
-
-if ! ./src_go/orabench.exe priv/properties/ora_bench.properties; then
+if ! go run src_go/orabench.go priv/properties/ora_bench.properties; then
     exit 255
 fi
 
