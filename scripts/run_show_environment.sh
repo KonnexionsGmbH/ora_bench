@@ -54,6 +54,11 @@ if ! go env; then
     exit 255
 fi
     
+echo "===============================================================================> Version Gradle:"
+if ! gradle --version; then
+    exit 255
+fi
+
 echo "===============================================================================> Version Java:"
 if ! java -version; then
     exit 255
