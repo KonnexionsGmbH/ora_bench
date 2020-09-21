@@ -105,7 +105,7 @@ script:
   - travis_fold start "Setting_up_Python"
   - sudo apt install -qy python3
   - sudo apt install -qy python3-venv
-  - ln -s /usr/bin/python3 /usr/bin/python
+  - sudo ln -s /usr/bin/python3 /usr/bin/python
   - wget --quiet https://bootstrap.pypa.io/get-pip.py
   - python3 get-pip.py
   - travis_fold end   "Setting_up_Python"
