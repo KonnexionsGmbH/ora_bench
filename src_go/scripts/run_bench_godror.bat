@@ -71,13 +71,7 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     )
 )
 
-go build -o src_go src_go\orabench.go
-if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
-)
-
-src_go\orabench.exe priv\properties\ora_bench.properties
+go run src_go\orabench.go priv\properties\ora_bench.properties
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
