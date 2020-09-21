@@ -30,7 +30,7 @@ type result struct {
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	log.Println("Start")
+	log.Println("Start orabench.go")
 	configs := loadConfig(os.Args[1])
 
 	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
@@ -46,8 +46,9 @@ func main() {
 	go resultWriter(configs, resultChn)
 	var wg sync.WaitGroup
 	startBenchTs := time.Now()
+
 	for t := 0; t <= configs["benchmark.trials"].(int); t++ {
-		log.Println("Trial:", t)
+		log.Println("Start trial no.", t+1)
 		initDb(ctx, configs)
 
 		startTrialTs := time.Now()
@@ -70,6 +71,7 @@ func main() {
 			start:  startTrialTs,
 			end:    endTrialTs}
 	}
+
 	endBenchTs := time.Now()
 	resultChn <- result{trial: 0,
 		sql:    "",
@@ -80,7 +82,9 @@ func main() {
 	close(resultChn)
 
 	d := endBenchTs.Sub(startBenchTs)
-	log.Printf("End (%.0f sec, %d nsec)\n", d.Seconds(), d.Nanoseconds())
+	log.Printf("End   orabench.go (%.0f sec, %d nsec)\n", d.Seconds(), d.Nanoseconds())
+
+	os.Exit(0)
 }
 
 func doInsert(ctx context.Context, configs map[string]interface{}, trial int, partition int, rows bulkPartition, resultChn chan result, wg *sync.WaitGroup) {
@@ -89,6 +93,7 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 	db, err := sql.Open("godror", configs["connection.dsn"].(string))
 	if err != nil {
 		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
+		os.Exit(1)
 	}
 	defer db.Close()
 	sqlInsert := configs["sql.insert"].(string)
@@ -100,6 +105,7 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 			errors.Errorf(
 				"Trial %d, Partition %d, SQL %s -> %w", trial, partition, sqlInsert,
 				err))
+		os.Exit(1)
 	}
 	rowCount, err := resultInsert.RowsAffected()
 	if err != nil {
@@ -124,6 +130,7 @@ func doSelect(ctx context.Context, configs map[string]interface{}, trial int, pa
 	db, err := sql.Open("godror", configs["connection.dsn"].(string))
 	if err != nil {
 		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
+		os.Exit(1)
 	}
 	defer db.Close()
 	selectSQL := configs["sql.select"].(string) + " WHERE partition_key = " +
@@ -174,7 +181,7 @@ func loadBulk(benchmarkNumberPartitions int, fileBulkName string, fileBulkDelimi
 	}
 
 	for i, p := range partitions {
-		log.Printf("Partition %d has %d rows\n", i+1, len(p.keys))
+		log.Printf("Partition %d has %5d rows\n", i+1, len(p.keys))
 	}
 
 	return partitions
@@ -207,26 +214,34 @@ func loadConfig(configFile string) map[string]interface{} {
 		log.Fatal(err)
 	}
 
-	configurations["connection.dsn"] = "oracle://" +
+	configurations["connection.dsn"] = "jdbc:oracle:thin:" +
 		configurations["connection.user"].(string) +
-		":" + configurations["connection.password"].(string) +
-		"@" + configurations["connection.host"].(string) +
+		"/" + configurations["connection.password"].(string) +
+		"@//" + configurations["connection.host"].(string) +
 		":" + fmt.Sprintf("%v", configurations["connection.port"]) +
 		"/" + configurations["connection.service"].(string)
+
+	log.Println("wwe URL", configurations["connection.dsn"])
 
 	return configurations
 }
 
 func initDb(ctx context.Context, configs map[string]interface{}) {
-	db, err := sql.Open("godror", configs["connection.dsn"].(string))
+	db, err := sql.Open("godror",
+		configs["connection.dsn"].(string))
 	if err != nil {
 		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
+		os.Exit(1)
 	}
 	defer db.Close()
 
 	result, err := db.ExecContext(ctx, configs["sql.drop"].(string))
+	log.Println("wwe sql.drop", configs["sql.drop"])
+	log.Println("wwe err     ", err)
 	if err != nil {
 		log.Println(errors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
+		os.Exit(1)
+		//        panic("Program abortion")
 	}
 	rows, err := result.RowsAffected()
 	if err != nil {
@@ -241,6 +256,7 @@ func initDb(ctx context.Context, configs map[string]interface{}) {
 	result, err = db.ExecContext(ctx, configs["sql.create"].(string))
 	if err != nil {
 		log.Fatal(errors.Errorf("%s -> %w", configs["sql.create"].(string), err))
+		os.Exit(1)
 	}
 	rows, err = result.RowsAffected()
 	if err != nil {
@@ -277,7 +293,7 @@ func resultWriter(configs map[string]interface{}, resultChn chan result) {
 		configs["benchmark.os"].(string),
 		configs["benchmark.user.name"].(string),
 		configs["benchmark.database"].(string),
-		runtime.Version(), //	language
+		runtime.Version(), //    language
 		"godror ", godror.Version,
 		"%d", // trial no.
 		"%s", // SQL statement

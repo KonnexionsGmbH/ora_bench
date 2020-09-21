@@ -19,6 +19,10 @@ if [ -z "$ORA_BENCH_CONNECTION_SERVICE" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
 
+if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
+    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+fi
+
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
     GOPATH=$(pwd)/src_go
     export GOPATH
@@ -40,6 +44,8 @@ echo "BENCHMARK_BATCH_SIZE       : $ORA_BENCH_BENCHMARK_BATCH_SIZE"
 echo "BENCHMARK_CORE_MULTIPLIER  : $ORA_BENCH_BENCHMARK_CORE_MULTIPLIER"
 echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
+echo "FILE_CONFIGURATION_NAME    : $ORA_BENCH_FILE_CONFIGURATION_NAME"
+echo "--------------------------------------------------------------------------------"
 echo "GOPATH                     : $GOPATH"
 echo "GOROOT                     : $GOROOT"
 echo "--------------------------------------------------------------------------------"
@@ -50,9 +56,21 @@ if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
     if ! go get github.com/godror/godror; then
         exit 255
     fi
+
+    if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
+        exit 255
+    fi
+
+    if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
+        exit 255
+    fi
 fi
 
-if ! go run src_go/orabench.go priv/properties/ora_bench.properties; then
+if ! go build -o src_go src_go/orabench.go
+    exit 255
+fi
+
+if ! ./src_go/orabench.exe priv/properties/ora_bench.properties; then
     exit 255
 fi
 

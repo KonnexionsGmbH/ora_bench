@@ -19,6 +19,10 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
     set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 )
 
+if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
+    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+)
+
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     set GOPATH=%cd%\src_go
 )    
@@ -39,6 +43,8 @@ echo BENCHMARK_BATCH_SIZE       : %ORA_BENCH_BENCHMARK_BATCH_SIZE%
 echo BENCHMARK_CORE_MULTIPLIER  : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
 echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
+echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
+echo --------------------------------------------------------------------------------
 echo GOPATH                     : %GOPATH%
 echo GOROOT                     : %GOROOT%
 echo --------------------------------------------------------------------------------
@@ -51,9 +57,28 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         echo Processing of the script was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
-)    
 
-go run src_go\orabench.go priv\properties\ora_bench.properties
+    call src_java\scripts\run_gradle
+    if %ERRORLEVEL% NEQ 0 (
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
+    )
+
+    java -jar priv/libs/ora_bench_java.jar setup_default
+    if %ERRORLEVEL% NEQ 0 (
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
+    )
+)
+
+go build -o src_go src_go\orabench.go
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
+)
+
+src_go\orabench.exe priv\properties\ora_bench.properties
+echo ERRORLEVEL=%ERRORLEVEL%
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%

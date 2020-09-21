@@ -29,12 +29,23 @@ import ch.konnexions.orabench.utils.Database;
 import ch.konnexions.orabench.utils.Result;
 import ch.konnexions.orabench.utils.Setup;
 
+/**
+ * The Class OraBench.
+ */
 public class OraBench {
 
   private static final Logger  logger  = Logger.getLogger(OraBench.class);
 
   private final static boolean isDebug = logger.isDebugEnabled();
 
+  /**
+   * Insert helper.
+   *
+   * @param connection        the database connection
+   * @param preparedStatement the prepared statement
+   * @param bulkDataPartition the bulk data partition
+   * @param config            the configuration parameters
+   */
   public static void insertHelper(Connection connection, PreparedStatement preparedStatement, ArrayList<String[]> bulkDataPartition, Config config) {
     if (isDebug) {
       logger.debug("Start");
@@ -130,6 +141,9 @@ public class OraBench {
       logger.info("Start Setup ODPI-C OraBench Run");
       config.createConfigurationFileC();
       logger.info("End   Setup ODPI-C OraBench Run");
+    } else if (args0.equals("setup_default")) {
+      logger.info("Start Setup Properties OraBench Run");
+      logger.info("End   Setup Properties OraBench Run");
     } else if (args0.equals("setup_elixir")) {
       logger.info("Start Setup Elixir OraBench Run");
       new Config();
@@ -161,6 +175,14 @@ public class OraBench {
     System.exit(0);
   }
 
+  /**
+   * Select helper.
+   *
+   * @param statement         the statement
+   * @param bulkDataPartition the bulk data partition
+   * @param partitionKey      the partition key
+   * @param config the config
+   */
   public static void selectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey, Config config) {
     if (isDebug) {
       logger.debug("Start");

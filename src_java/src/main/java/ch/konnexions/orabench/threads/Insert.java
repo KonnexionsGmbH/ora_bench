@@ -13,6 +13,10 @@ import org.apache.log4j.Logger;
 import ch.konnexions.orabench.OraBench;
 import ch.konnexions.orabench.utils.Config;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Insert.
+ */
 public class Insert implements Runnable {
   private static final Logger       logger  = Logger.getLogger(Insert.class);
 
