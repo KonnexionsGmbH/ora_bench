@@ -17,19 +17,19 @@ echo "==========================================================================
 (
     cd src_java || exit
     
-    if ! { ./gradle init; }; then
+    if ! { gradle init; }; then
         exit 255
     fi
 
-    if ! { ./gradle clean; }; then
+    if ! { gradle clean; }; then
         exit 255
     fi
     
-    if ! { ./gradle copyJarToLib; }; then
+    if ! { gradle copyJarToLib; }; then
         exit 255
     fi
     
-    if ! { ./gradle javadoc; }; then
+    if ! { gradle javadoc; }; then
         exit 255
     fi
 
