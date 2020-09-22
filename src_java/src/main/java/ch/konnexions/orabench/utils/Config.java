@@ -76,57 +76,57 @@ import org.json.simple.JSONObject;
  */
 public class Config {
 
-  private static final Logger                                          logger     = Logger.getLogger(Config.class);
-  private final static boolean                                         isDebug    = logger.isDebugEnabled();
-  private int                                                          benchmarkBatchSize;
-  private String                                                       benchmarkComment;
-  private int                                                          benchmarkCoreMultiplier;
-  private String                                                       benchmarkDatabase;
-  private String                                                       benchmarkDriver;
-  private String                                                       benchmarkHostName;
-  private String                                                       benchmarkId;
-  private String                                                       benchmarkLanguage;
-  private String                                                       benchmarkNumberCores;
-  private int                                                          benchmarkNumberPartitions;
-  private String                                                       benchmarkOs;
-  private String                                                       benchmarkRelease;
-  private int                                                          benchmarkTransactionSize;
+  private static final Logger                                    logger     = Logger.getLogger(Config.class);
+  private final static boolean                                   isDebug    = logger.isDebugEnabled();
+  private int                                                    benchmarkBatchSize;
+  private String                                                 benchmarkComment;
+  private int                                                    benchmarkCoreMultiplier;
+  private String                                                 benchmarkDatabase;
+  private String                                                 benchmarkDriver;
+  private String                                                 benchmarkHostName;
+  private String                                                 benchmarkId;
+  private String                                                 benchmarkLanguage;
+  private String                                                 benchmarkNumberCores;
+  private int                                                    benchmarkNumberPartitions;
+  private String                                                 benchmarkOs;
+  private String                                                 benchmarkRelease;
+  private int                                                    benchmarkTransactionSize;
 
-  private int                                                          benchmarkTrials;
-  private String                                                       benchmarkUserName;
-  private int                                                          connectionFetchSize;
-  private String                                                       connectionHost;
-  private String                                                       connectionPassword;
-  private int                                                          connectionPort;
+  private int                                                    benchmarkTrials;
+  private String                                                 benchmarkUserName;
+  private int                                                    connectionFetchSize;
+  private String                                                 connectionHost;
+  private String                                                 connectionPassword;
+  private int                                                    connectionPort;
 
-  private String                                                       connectionService;
-  private String                                                       connectionUser;
-  private final FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
-  private String                                                       fileBulkDelimiter;
-  private String                                                       fileBulkHeader;
-  private int                                                          fileBulkLength;
-  private String                                                       fileBulkName;
-  private int                                                          fileBulkSize;
-  private String                                                       fileConfigurationName;
-  private String                                                       fileConfigurationNameC;
-  private String                                                       fileConfigurationNameErlang;
-  private String                                                       fileConfigurationNameJson;
-  private String                                                       fileConfigurationNamePython;
-  private String                                                       fileResultDelimiter;
-  private String                                                       fileResultHeader;
+  private String                                                 connectionService;
+  private String                                                 connectionUser;
+  private FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
+  private String                                                 fileBulkDelimiter;
+  private String                                                 fileBulkHeader;
+  private int                                                    fileBulkLength;
+  private String                                                 fileBulkName;
+  private int                                                    fileBulkSize;
+  private String                                                 fileConfigurationName;
+  private String                                                 fileConfigurationNameC;
+  private String                                                 fileConfigurationNameErlang;
+  private String                                                 fileConfigurationNameJson;
+  private String                                                 fileConfigurationNamePython;
+  private String                                                 fileResultDelimiter;
+  private String                                                 fileResultHeader;
 
-  private String                                                       fileResultName;
+  private String                                                 fileResultName;
 
-  private final DateTimeFormatter                                      formatter  = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
+  private final DateTimeFormatter                                formatter  = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
 
-  private ArrayList<String>                                            keysSorted = new ArrayList<>();
+  private ArrayList<String>                                      keysSorted = new ArrayList<>();
 
-  private PropertiesConfiguration                                      propertiesConfiguration;
+  private PropertiesConfiguration                                propertiesConfiguration;
 
-  private String                                                       sqlCreate;
-  private String                                                       sqlDrop;
-  private String                                                       sqlInsert;
-  private String                                                       sqlSelect;
+  private String                                                 sqlCreate;
+  private String                                                 sqlDrop;
+  private String                                                 sqlInsert;
+  private String                                                 sqlSelect;
 
   /**
    * Constructs a Config object.
@@ -134,6 +134,21 @@ public class Config {
   public Config() {
     super();
 
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
+    createConfiguration();
+
+    if (isDebug) {
+      logger.debug("End");
+    }
+  }
+
+  /**
+   * Creates the default version of the configuration file.
+   */
+  private final void createConfiguration() {
     if (isDebug) {
       logger.debug("Start");
     }
@@ -733,9 +748,9 @@ public class Config {
       isChanged = true;
     }
 
-    if (!(propertiesConfiguration.getString("connection.host").equals("0.0.0.0"))) {
+    if (!(propertiesConfiguration.getString("connection.host").equals("localhost"))) {
       propertiesConfiguration.setProperty("connection.host",
-                                          "0.0.0.0");
+                                          "localhost");
       isChanged = true;
     }
 

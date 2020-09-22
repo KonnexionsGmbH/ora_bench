@@ -11,12 +11,15 @@
 .fetch
 .git-credentials
 .gitconfig
+.gradle
 .idea
 .mix
 .rebar
 /priv/Gammadyne/timer.txt
 /src_elixir/deps/
 /src_elixir/mix.lock
+/src_go/pkg/
+/src_go/src/
 _build
 build
 erl_crash.dump

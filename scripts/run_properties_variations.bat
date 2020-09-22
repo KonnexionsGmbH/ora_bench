@@ -68,7 +68,6 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["python"] (
 )
 
 rem wwe Temporary solution until the driver problems are solved
-set ORA_BENCH_RUN_GODROR_GO=false
 set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
 set ORA_BENCH_RUN_ORANIF_ERLANG=false
 

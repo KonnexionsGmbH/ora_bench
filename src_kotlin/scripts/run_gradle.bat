@@ -16,13 +16,19 @@ echo ===========================================================================
 
 cd src_kotlin
 
-call gradlew clean
+call gradle init
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
-call gradlew jar
+call gradle clean
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
+)
+
+call gradle jar
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
@@ -31,7 +37,7 @@ if %ERRORLEVEL% NEQ 0 (
 if not exist "..\priv\kotlin_jar\NUL" mkdir ..\priv\kotlin_jar
 copy /Y build\libs\ora_bench.jar ..\priv\libs\ora_bench_kotlin.jar
 
-call gradlew dokkaHtml
+call gradle dokkaHtml
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%

@@ -9,7 +9,7 @@
 set -e
 
 if [ -z "$GOPATH" ]; then
-    GOPATH=$(pwd)/src_go/go
+    GOPATH=$(pwd)/src_go
 fi
 
 if [ -z "$RUN_GLOBAL_JAMDB" ]; then
@@ -76,63 +76,8 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
         fi
         echo "Setup C - End   ============================================================" 
     fi
-    
-    if [ "$ORA_BENCH_RUN_ORANIF_ELIXIR" == "true" ]; then
-        echo "Setup Elixir - Start =======================================================" 
-        if ! java -jar priv/libs/ora_bench_java.jar setup_elixir; then
-            exit 255
-        fi
-
-        (
-            cd src_elixir || exit 255
-
-            if [ -f "mix.lock" ]; then
-                rm -f mix.lock
-            fi         
-            if [ -f "deps" ]; then
-                rm -rf deps
-            fi         
-
-            if ! mix local.hex --force; then
-                exit 255
-            fi
-            
-            if ! mix deps.clean --all; then
-               exit 255
-            fi
-            
-            if ! mix deps.get; then
-                exit 255
-            fi
-            
-            if ! mix deps.compile; then
-                exit 255
-            fi
-        )
-        echo "Setup Elixir - End   =======================================================" 
-    fi
-fi    
-    
-if [ "$ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG" == "true" ] || [ "$ORA_BENCH_RUN_ORANIF_ERLANG" == "true" ]; then
-    echo "Setup Erlang - Start ======================================================="
-    if ! java -jar priv/libs/ora_bench_java.jar setup_erlang; then
-        exit 255
-    fi
-    
-    (
-        cd src_erlang || exit 255
-
-        if [ -d "_build" ]; then
-            rm -rf _build
-        fi         
-
-        if ! rebar3 escriptize; then
-            exit 255
-        fi
-    )
-    echo "Setup Erlang - End   =======================================================" 
 fi
-
+    
 if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
     if [ "$ORA_BENCH_RUN_GODROR_GO" == "true" ]; then
         echo "Setup Go - Start ===========================================================" 
@@ -149,15 +94,7 @@ if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
         fi
         echo "Setup Kotlin - End   =======================================================" 
     fi    
-
-    if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" == "true" ]; then
-        echo "Setup Python - Start =======================================================" 
-        if ! java -jar priv/libs/ora_bench_java.jar setup_python; then
-            exit 255
-        fi
-        echo "Setup Python - End   =======================================================" 
-    fi    
-fi    
+fi
 
 echo ""
 echo "--------------------------------------------------------------------------------"

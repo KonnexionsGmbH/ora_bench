@@ -452,7 +452,7 @@ class OraBench {
         benchmarkDriver = config.getProperty("benchmark.driver")
         benchmarkHostName = config.getProperty("benchmark.host.name")
         benchmarkId = config.getProperty("benchmark.id")
-        benchmarkLanguage = "Kotlin $KotlinVersion.CURRENT"
+        benchmarkLanguage = "Kotlin " + KotlinVersion.CURRENT
         benchmarkNumberCores = config.getProperty("benchmark.number.cores")
         benchmarkNumberPartitions = config.getProperty("benchmark.number.partitions").toInt()
         benchmarkOs = config.getProperty("benchmark.os")

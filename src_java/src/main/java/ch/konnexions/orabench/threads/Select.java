@@ -12,6 +12,10 @@ import org.apache.log4j.Logger;
 import ch.konnexions.orabench.OraBench;
 import ch.konnexions.orabench.utils.Config;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Select.
+ */
 public class Select implements Runnable {
   private static final Logger       logger  = Logger.getLogger(Select.class);
 

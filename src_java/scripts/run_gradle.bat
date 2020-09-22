@@ -16,19 +16,25 @@ echo ===========================================================================
 
 cd src_java
 
-call gradlew clean
+call gradle init
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
-call gradlew copyJarToLib
+call gradle clean
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
-call gradlew javadoc
+call gradle copyJarToLib
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
+)
+
+call gradle javadoc
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
@@ -40,7 +46,7 @@ xcopy /Q /S build\docs\* ..\priv\docs_java
 
 set ORA_BENCH_FILE_CONFIGURATION_NAME_ORIGINAL=%ORA_BENCH_FILE_CONFIGURATION_NAME%
 set ORA_BENCH_FILE_CONFIGURATION_NAME=..\priv\properties\ora_bench.properties
-call gradlew test
+call gradle test
 set ERRORLEVEL_ORIGINAL=%ERRORLEVEL%
 set ORA_BENCH_FILE_CONFIGURATION_NAME=%ORA_BENCH_FILE_CONFIGURATION_NAME_ORIGINAL%
 cd ..
