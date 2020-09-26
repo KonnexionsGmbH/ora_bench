@@ -30,7 +30,6 @@ The currently supported database drivers are:
 | :---      | :---                  |
 | cx_Oracle | Python                |
 | godror    | Go                    |
-| JamDB     | Erlang                |
 | JDBC      | Java &amp; Kotlin     |
 | ODPI      | C                     |
 | oranif    | Elixir &amp; Erlang   |

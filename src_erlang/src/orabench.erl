@@ -79,11 +79,7 @@ main([ConfigFile, Driver]) ->
     "oranif" ->
       ok = application:load(oranif),
       {ok, OranifVsn} = application:get_key(oranif, vsn),
-      lists:flatten(io_lib:format("oranif (Version ~s)", [OranifVsn]));
-    "jamdb" ->
-      ok = application:load(jamdb_oracle),
-      {ok, JamDBVsn} = application:get_key(jamdb_oracle, vsn),
-      lists:flatten(io_lib:format("jamdb_oracle (Version ~s)", [JamDBVsn]))
+      lists:flatten(io_lib:format("oranif (Version ~s)", [OranifVsn]))
   end,
   BMMod = lists:flatten(
     io_lib:format(
@@ -207,8 +203,7 @@ run_trials(Trials) ->
   Ctx = case Driver of
     "oranif" ->
       ok = dpi:load_unsafe(),
-      dpi:context_create(?DPI_MAJOR_VERSION, ?DPI_MINOR_VERSION);
-    "jamdb" -> jamdb
+      dpi:context_create(?DPI_MAJOR_VERSION, ?DPI_MINOR_VERSION)
   end,
   case Driver of
     "oranif" ->
@@ -220,16 +215,6 @@ run_trials(Trials) ->
           connection_string => list_to_binary(
             io_lib:format("~s:~p/~s", [Host, Port, Service])
           )
-        }
-      );
-    "jamdb" ->
-      put(
-        conf,
-        Config#{
-          connection_host := case inet:getaddr(Host, inet) of
-            {ok, {0,0,0,0}} -> "localhost";
-            _ -> Host
-          end
         }
       )
   end,
@@ -277,37 +262,7 @@ run_trials(Trial, Trials, Ctx, Stats) ->
       end,
       ok = dpi:stmt_close(CreateStmt, <<>>),
       ok = dpi:stmt_close(DropStmt, <<>>),
-      ok = dpi:conn_close(Conn, [], <<>>);
-    "jamdb" ->
-      Opts = [
-        {host, Host},
-        {port, Port},
-        {user, User},
-        {password, Password},
-        {service_name, Service},
-        {app_name, "orabench"}
-      ],
-      case jamdb_oracle:start_link(Opts) of
-        {ok, ConnRef} ->
-          put(conf, Conf#{jamdb_opts => Opts}),
-          {ok,[]} = jamdb_oracle:sql_query(ConnRef, "COMON;"),
-          case jamdb_oracle:sql_query(ConnRef, Create) of
-            {ok, [{affected_rows,0}]} -> ok;
-            {ok, [{proc_result,0,[[]]}]} -> ok;
-            {ok, [{proc_result, 955, _}]} ->
-              case jamdb_oracle:sql_query(ConnRef, Drop) of
-                {ok, [{affected_rows,0}]} ->
-                  case jamdb_oracle:sql_query(ConnRef, Create) of
-                    {ok, [{proc_result,0,[[]]}]} -> ok;
-                    Error -> error({?LINE, Error})
-                  end;
-                Error -> error({?LINE, Error})
-              end;
-            Error -> error({?LINE, Error})
-          end,
-          ok = jamdb_oracle:stop(ConnRef);
-        {error, Error} -> error({?LINE, {Opts, Error}})
-      end
+      ok = dpi:conn_close(Conn, [], <<>>)
   end,
   InsertStat = run_insert(Ctx),
   SelectStat = run_select(Ctx),
@@ -384,13 +339,7 @@ insert_partition(
   Conn = case Driver of
     "oranif" ->
       #{connection_string := ConnectString} = Config,
-      dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{});
-    "jamdb" ->
-      #{jamdb_opts := Opts} = Config,
-      case jamdb_oracle:start_link(Opts) of
-        {ok, ConnRef} -> ConnRef;
-        {error, Error} -> error({?LINE, {Opts, Error}})
-      end
+      dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{})
   end,
   Start = os:timestamp(),
   Params = case Driver of
@@ -413,10 +362,7 @@ insert_partition(
       #{
         conn => Conn, insertStmt => InsertStmt, keyVar => KeyVar,
         dataVar => DataVar
-      };
-    "jamdb" ->
-      {ok,[]} = jamdb_oracle:sql_query(Conn, "COMOFF;"),
-      #{conn => Conn, insertSql => Insert}
+      }
   end,
   case Driver of
     "oranif" ->
@@ -451,20 +397,7 @@ insert_partition(
       ok = dpi:var_release(maps:get(keyVar, Params)),
       ok = dpi:var_release(maps:get(dataVar, Params)),
       ok = dpi:stmt_close(InsStmt, <<>>),
-      ok = dpi:conn_close(Conn, [], <<>>);
-    "jamdb" ->
-      #{insertSql := InsSql} = Params,
-      if
-        NumItersExec == 0 ->
-          {ok, [{affected_rows, FBulkSz}]} = jamdb_oracle:sql_query(
-            Conn,
-            {batch, InsSql, Rows}
-          );
-        true ->
-          insert_jamdb(Conn, Rows, InsSql, NumItersExec, NumItersCommit)
-      end,
-      {ok,[]} = jamdb_oracle:sql_query(Conn, "COMMIT;"),
-      ok = jamdb_oracle:stop(Conn)
+      ok = dpi:conn_close(Conn, [], <<>>)
   end,
   Master ! {
     result, self(),
@@ -488,13 +421,7 @@ select_partition(
   Conn = case Driver of
     "oranif" ->
       #{connection_string := ConnectString} = Config,
-      dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{});
-    "jamdb" ->
-      #{jamdb_opts := Opts} = Config,
-      case jamdb_oracle:start_link(Opts) of
-        {ok, ConnRef} -> ConnRef;
-        {error, Error} -> error({?LINE, {Opts, Error}})
-      end
+      dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{})
   end,
   SelectSql = list_to_binary(
     io_lib:format("~s WHERE partition_key = ~p", [Select, Partition])
@@ -505,19 +432,14 @@ select_partition(
       SelectStmt = dpi:conn_prepareStmt(Conn, false, SelectSql, <<>>),
       2 = dpi:stmt_execute(SelectStmt, []),
       ok = dpi:stmt_setFetchArraySize(SelectStmt, FetchSize),
-      #{selectStmt => SelectStmt};
-    "jamdb" ->
-      {ok,[]} = jamdb_oracle:sql_query(Conn, {"FETCH", [FileBulkSize]}),
-      #{conn => Conn, selectSql => binary_to_list(SelectSql)}
+      #{selectStmt => SelectStmt}
   end,
   Selected = select_fetch_all(Driver, Params),
   case Driver of
     "oranif" ->
       #{selectStmt := SelStmt} = Params,
       ok = dpi:stmt_close(SelStmt, <<>>),
-      ok = dpi:conn_close(Conn, [], <<>>);
-    "jamdb" ->
-      ok = jamdb_oracle:stop(Conn)
+      ok = dpi:conn_close(Conn, [], <<>>)
   end,
   Master ! {
     result, self(),
@@ -546,8 +468,7 @@ load_data(Driver, Fd, Header, BulkDelimiter, Partitions, Rows) ->
             Driver, Fd, Header, BulkDelimiter, Partitions,
             Rows#{
               Partition => case Driver of
-                "oranif" -> [{Key, Data} | OldData];
-                "jamdb" -> [[Key, Data] | OldData]
+                "oranif" -> [{Key, Data} | OldData]
               end
             }
           )
@@ -572,8 +493,6 @@ thread_join(Threads, Results) ->
 
 select_fetch_all("oranif", #{selectStmt := SelectStmt}) ->
   select_fetch_all_oranif(SelectStmt, 0);
-select_fetch_all("jamdb", #{conn := Conn, selectSql := SelectSql}) ->
-  select_fetch_all_jamdb(Conn, SelectSql).
 
 select_fetch_all_oranif(SelectStmt, Count) ->
   case dpi:stmt_fetch(SelectStmt) of
@@ -585,38 +504,3 @@ select_fetch_all_oranif(SelectStmt, Count) ->
       select_fetch_all_oranif(SelectStmt, Count+1);
     #{found := false} -> Count
   end.
-
-select_fetch_all_jamdb(Conn, SelectSql) ->
-  {ok,[{result_set,[<<"KEY">>, <<"DATA">>], [], Rows}]} =
-    jamdb_oracle:sql_query(Conn, SelectSql),
-  length(Rows).
-
-insert_jamdb(Conn, Rows, InsSql, NumItersExec, NumItersCommit) ->
-   insert_jamdb(Conn, Rows, InsSql, NumItersExec, NumItersCommit, 0).
-
-insert_jamdb(_, [], _, _, _, _) -> ok;
-insert_jamdb(Conn, Rows, InsSql, NumItersExec, NumItersCommit, RowCount)
-  when length(Rows) >= NumItersExec
-->
-      {Ins, Rest} = lists:split(NumItersExec, Rows),
-      JC = length(Ins),
-      {ok, [{affected_rows, JC}]} = jamdb_oracle:sql_query(
-        Conn,
-        {batch, InsSql, Ins}
-      ),
-      if NumItersCommit > 0 andalso RowCount rem NumItersCommit == 0 ->
-          {ok,[]} = jamdb_oracle:sql_query(Conn, "COMMIT;");
-        true -> ok
-      end,
-      insert_jamdb(
-        Conn, Rest, InsSql, NumItersExec, NumItersCommit, RowCount + JC
-      );
-insert_jamdb(Conn, Rows, InsSql, _NumItersExec, _NumItersCommit, _RowCount)
-  when length(Rows) > 0
-->
-      JC = length(Rows),
-      {ok, [{affected_rows, JC}]} = jamdb_oracle:sql_query(
-        Conn,
-        {batch, InsSql, Rows}
-      ),
-      {ok,[]} = jamdb_oracle:sql_query(Conn, "COMMIT;").

@@ -6,7 +6,6 @@ This script executes the following driver specific sub-scripts:
 
 - `src_c/scripts/run_bench_odpi`
 - `src_elixir/scripts/run_bench_oranif`
-- `src_erlang/scripts/run_bench_jamdb_oracle`
 - `src_erlang/scripts/run_bench_oranif`
 - `src_go/scripts/run_bench_godror`
 - `src_java/scripts/run_bench_jdbc`

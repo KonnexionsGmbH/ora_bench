@@ -17,7 +17,6 @@ fi
 
 export ORA_BENCH_RUN_CX_ORACLE_PYTHON=false
 export ORA_BENCH_RUN_GODROR_GO=false
-export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
 export ORA_BENCH_RUN_JDBC_JAVA=false
 export ORA_BENCH_RUN_JDBC_KOTLIN=false
 export ORA_BENCH_RUN_ODPI_C=false
@@ -27,7 +26,6 @@ export ORA_BENCH_RUN_ORANIF_ERLANG=false
 if [ "${ORA_BENCH_CHOICE_DRIVER}" = "complete" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
     export ORA_BENCH_RUN_GODROR_GO=true
-    export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
     export ORA_BENCH_RUN_JDBC_JAVA=true
     export ORA_BENCH_RUN_JDBC_KOTLIN=true
     export ORA_BENCH_RUN_ODPI_C=true
@@ -37,8 +35,6 @@ elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "c" ]; then
     export ORA_BENCH_RUN_ODPI_C=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "elixir" ]; then
     export ORA_BENCH_RUN_ORANIF_ELIXIR=true
-elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "erlang_jamdb" ]; then
-    export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "erlang_oranif" ]; then
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "go" ]; then
@@ -52,7 +48,6 @@ elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "python" ]; then
 fi
 
 # wwe Temporary solution until the driver problems are solved
-export ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
 export ORA_BENCH_RUN_ORANIF_ERLANG=false
 
 if [ "${ORA_BENCH_CHOICE_DB}" = "12" ]; then
@@ -81,19 +76,6 @@ if [ -z "$ORA_BENCH_PASSWORD_SYS" ]; then
     export ORA_BENCH_PASSWORD_SYS=oracle
 fi
 
-if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "" ]; then
-    export RUN_GLOBAL_JAMDB=true
-    export RUN_GLOBAL_NON_JAMDB=true
-fi
-if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "false" ]; then
-    export RUN_GLOBAL_JAMDB=false
-    export RUN_GLOBAL_NON_JAMDB=true
-fi
-if [ "$ORA_BENCH_BENCHMARK_JAMDB" = "true" ]; then
-    export RUN_GLOBAL_JAMDB=true
-    export RUN_GLOBAL_NON_JAMDB=false
-fi
-
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -104,13 +86,8 @@ echo "--------------------------------------------------------------------------
 echo "CHOICE_DRIVER                     : $ORA_BENCH_CHOICE_DRIVER"
 echo "BENCHMARK_DATABASE                : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "--------------------------------------------------------------------------------"
-echo "ORA_BENCH_BENCHMARK_JAMDB         : $ORA_BENCH_BENCHMARK_JAMDB"
-echo "RUN_GLOBAL_JAMDB                  : $RUN_GLOBAL_JAMDB"
-echo "RUN_GLOBAL_NON_JAMDB              : $RUN_GLOBAL_NON_JAMDB"
-echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON              : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_GODROR_GO                     : $ORA_BENCH_RUN_GODROR_GO"
-echo "RUN_JAMDB_ORACLE_ERLANG           : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
 echo "RUN_JDBC_JAVA                     : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "RUN_JDBC_KOTLIN                   : $ORA_BENCH_RUN_JDBC_KOTLIN"
 echo "RUN_ODPI_C                        : $ORA_BENCH_RUN_ODPI_C"

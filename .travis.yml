@@ -9,16 +9,12 @@ otp_release:
 
 env:
   matrix:
-    - ORA_BENCH_CHOICE_DB=12 ORA_BENCH_BENCHMARK_JAMDB=false ORA_BENCH_CHOICE_DRIVER=complete
-    - ORA_BENCH_CHOICE_DB=12 ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete
-    - ORA_BENCH_CHOICE_DB=18 ORA_BENCH_BENCHMARK_JAMDB=false ORA_BENCH_CHOICE_DRIVER=complete
-    - ORA_BENCH_CHOICE_DB=18 ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete
-    - ORA_BENCH_CHOICE_DB=19 ORA_BENCH_BENCHMARK_JAMDB=false ORA_BENCH_CHOICE_DRIVER=complete
-    - ORA_BENCH_CHOICE_DB=19 ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete
+    - ORA_BENCH_CHOICE_DB=12 ORA_BENCH_CHOICE_DRIVER=complete
+    - ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=complete
+    - ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=complete
 
     - cx_Oracle Python ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=python
     - GoDROR    Go     ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=go
-    #   - JamDB     Erlang ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=erlang_jamdb
     - JDBC      Java   ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=java
     - JDBC      Kotlin ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=kotlin
     - ODPI      C      ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=c
@@ -37,7 +33,7 @@ script:
 
   - sudo apt update -q
   - sudo apt install -q software-properties-common
-  - sudo apt-get install -q lsb-core
+  - sudo apt-get install -qy lsb-core
   - travis_fold end   "Prepare_installation_process"
 
   # Elixir -----------------------------------------------------------------------
@@ -59,7 +55,7 @@ script:
   # Git --------------------------------------------------------------------------
   - travis_fold start "Setting_up_Git"
   - sudo add-apt-repository ppa:git-core/ppa
-  - sudo apt update
+  - sudo apt update -q
   - sudo apt -qy install git
   - sudo git config --global credential.helper 'cache --timeout 3600'
   - travis_fold end   "Setting_up_Git"
