@@ -29,15 +29,6 @@ echo "==========================================================================
         exit 255
     fi
     
-    if ! { gradle javadoc; }; then
-        exit 255
-    fi
-
-    rm -rf ../priv/docs_java
-    mkdir ../priv/docs_java
-    cp -R build/docs/* ../priv/docs_java
-)
-
 echo ""
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"

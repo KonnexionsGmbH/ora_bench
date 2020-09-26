@@ -69,11 +69,7 @@ In this script, OraBench.java is used to reset the following configuration param
 - `connection.service`
 - `sql.create`
 
-### 6 `run_install_environment_ubuntu.sh`
-
-This script installs the necessary components to run `ora_bench` in an Ubuntu 20.04 environment.
-
-### 7 `run_properties_standard`
+### 6 `run_properties_standard`
 
 This script is executed for one of the supported databases with standard properties. 
 The script performs the following tasks:
@@ -82,7 +78,7 @@ The script performs the following tasks:
 - `run_db_setup` - downloads the Docker image from Docker Hub and prepares its database for further processing and
 - `run_bench_all_drivers` - executes the driver specific sub-scripts.
 
-### 8 `run_properties_variations`
+### 7 `run_properties_variations`
 
 This script is executed for one of the supported databases. 
 The script performs the following tasks:
@@ -100,6 +96,6 @@ The script performs the following tasks:
 | 0             | 1               | default value    |
 | 0             | 1               | 0                |
 
-### 9 `run_show_environment`
+### 8 `run_show_environment`
 
 Logs the ora_bench specific environment variables and the installed software versions.

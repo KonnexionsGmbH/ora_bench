@@ -31,14 +31,6 @@ echo "==========================================================================
     
     mkdir -p ../priv/kotlin_jar
     cp -f build/libs/ora_bench.jar ../priv/libs/ora_bench_kotlin.jar
-
-    if ! { gradle dokkaHtml; }; then
-        exit 255
-    fi
-
-    rm -rf ../priv/docs_kotlin
-    mkdir ../priv/docs_kotlin
-    cp -R build/dokka/* ../priv/docs_kotlin
 )
 
 echo ""

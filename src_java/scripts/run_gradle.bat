@@ -34,16 +34,6 @@ if %ERRORLEVEL% NEQ 0 (
     exit %ERRORLEVEL%
 )
 
-call gradle javadoc
-if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
-)
-
-rd /Q /S ..\priv\docs_java
-md ..\priv\docs_java
-xcopy /Q /S build\docs\* ..\priv\docs_java
-
 set ORA_BENCH_FILE_CONFIGURATION_NAME_ORIGINAL=%ORA_BENCH_FILE_CONFIGURATION_NAME%
 set ORA_BENCH_FILE_CONFIGURATION_NAME=..\priv\properties\ora_bench.properties
 call gradle test

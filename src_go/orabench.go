@@ -45,7 +45,7 @@ func main() {
 	trials := configs["benchmark.trials"].(int)
 	resultPos := 0
 
-	resultChn := make([]result, trials*3+1)
+	resultSlice := make([]result, trials*3+1)
 	var wg sync.WaitGroup
 
 	startBenchTs := time.Now()
@@ -64,7 +64,7 @@ func main() {
 		wg.Wait()
 
 		end := time.Now()
-		resultChn[resultPos] = result{trial: t,
+		resultSlice[resultPos] = result{trial: t,
 			sql:    configs["sql.insert"].(string),
 			action: "query",
 			start:  start,
@@ -79,7 +79,7 @@ func main() {
 		wg.Wait()
 
 		end = time.Now()
-		resultChn[resultPos] = result{trial: t,
+		resultSlice[resultPos] = result{trial: t,
 			sql:    configs["sql.select"].(string),
 			action: "query",
 			start:  start,
@@ -87,7 +87,7 @@ func main() {
 		resultPos++
 
 		endTrialTs := time.Now()
-		resultChn[resultPos] = result{trial: t,
+		resultSlice[resultPos] = result{trial: t,
 			sql:    "",
 			action: "trial",
 			start:  startTrialTs,
@@ -96,14 +96,14 @@ func main() {
 	}
 
 	endBenchTs := time.Now()
-	resultChn[resultPos] = result{trial: 0,
+	resultSlice[resultPos] = result{trial: 0,
 		sql:    "",
 		action: "benchmark",
 		start:  startBenchTs,
 		end:    endBenchTs}
 	resultPos++
 
-	resultWriter(configs, resultChn)
+	resultWriter(configs, resultSlice)
 
 	d := endBenchTs.Sub(startBenchTs)
 	log.Printf("End   orabench.go (%.0f sec, %d nsec)\n", d.Seconds(), d.Nanoseconds())

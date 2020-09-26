@@ -92,16 +92,6 @@ All the file names specified here are also part of the configuration file and ca
 
 - rebar3 from [here](https://www.rebar3.org/)
 
-##### 2.2.1.1.3 Linux Platform including WSL2 (Windows Subsystem for Linux)
-
-The script `scripts/run_install_environment_ubuntu.sh` enables you to set up a development environment suitable for `ora_bench` in an Ubuntu 20.04 operating system. 
-Ubuntu can be provided either native, via a virtual machine or via the WSL2 of Windows. 
-If Ubuntu runs under WSL2, the installation of Docker Desktop is not necessary.
-The script must be called in the root directory of an ora_bench repository and expects the following two input parameters:
-
-- `ORA_BENCH_HOST_ENVIRONMENT` - input `vm`(default value) or `wsl2`
-- `ORA_BENCH_VERSION_KOTLIN` - the version number of a previously installed Kotlin compiler 
-
 ##### 2.2.1.2 `run_bench_all_dbs_props_std`
 
 This script executes the `run_properties_standard` script for each of the databases listed in chapter Introduction with standard properties. 
