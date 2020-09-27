@@ -32,4 +32,5 @@ ora_bench_java.jar
 ora_bench_kotlin.jar
 ora_bench_python.properties
 rebar.lock
+rebar3.crashdump
 tmp

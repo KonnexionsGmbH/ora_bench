@@ -12,11 +12,11 @@
 %%====================================================================
 %% escript Entry point
 
-main([ConfigFile, Driver]) ->
-  io:format("~n[~p:~p] Start ~p (~s)~n", [?FUNCTION_NAME, ?LINE, ?MODULE, Driver]),
+main([ConfigFile]) ->
+  io:format("~n[~p:~p] Start ~p~n", [?FUNCTION_NAME, ?LINE, ?MODULE]),
   process_flag(trap_exit, true),
   {ok, [Config0]} = file:consult(ConfigFile),
-  Config = Config0#{benchmark_driver => Driver},
+  Config = Config0#{},
   #{
     benchmark_trials := Trials,
     file_bulk_name := BulkFile,
@@ -55,7 +55,7 @@ main([ConfigFile, Driver]) ->
       )
     ]
   ),
-  Rows = load_data(Driver, Fd, list_to_binary(Header), BulkDelimiter, Partitions, #{}, 0),
+  Rows = load_data(Fd, list_to_binary(Header), BulkDelimiter, Partitions, #{}, 0),
   io:format(
     "[~p:~p]       ~p - End   load_data~n",
     [
@@ -91,13 +91,9 @@ main([ConfigFile, Driver]) ->
       Rows
     ),
   #{startTime := StartTs, endTime := EndTs} = Results = run_trials(Trials),
-  BMDrv =
-    case Driver of
-      "oranif" ->
-        ok = application:load(oranif),
-        {ok, OranifVsn} = application:get_key(oranif, vsn),
-        lists:flatten(io_lib:format("oranif (Version ~s)", [OranifVsn]))
-    end,
+  ok = application:load(oranif),
+  {ok, OranifVsn} = application:get_key(oranif, vsn),
+  BMDrv = lists:flatten(io_lib:format("oranif (Version ~s)", [OranifVsn])),
   BMMod =
     lists:flatten(
       io_lib:format(
@@ -236,7 +232,7 @@ main([ConfigFile, Driver]) ->
       ]
     ),
   ok = file:close(RFd),
-  io:format("[~p:~p] End ~p (~s)~n", [?FUNCTION_NAME, ?LINE, ?MODULE, Driver]),
+  io:format("[~p:~p] End ~p~n", [?FUNCTION_NAME, ?LINE, ?MODULE]),
   halt(0).
 
 %%====================================================================
@@ -256,76 +252,58 @@ run_trials(Trials) ->
     connection_port := Port,
     connection_service := Service,
     connection_user := UserStr,
-    connection_password := PasswordStr,
-    benchmark_driver := Driver
+    connection_password := PasswordStr
   } = Config = get(conf),
-  Ctx =
-    case Driver of
-      "oranif" ->
-        ok = dpi:load_unsafe(),
-        dpi:context_create(?DPI_MAJOR_VERSION, ?DPI_MINOR_VERSION)
-    end,
-  case Driver of
-    "oranif" ->
-      put(
-        conf,
-        Config#{
-          connection_user => list_to_binary(UserStr),
-          connection_password => list_to_binary(PasswordStr),
-          connection_string => list_to_binary(io_lib:format("~s:~p/~s", [Host, Port, Service]))
-        }
-      )
-  end,
+  ok = dpi:load_unsafe(),
+  Ctx = dpi:context_create(?DPI_MAJOR_VERSION, ?DPI_MINOR_VERSION),
+  put(
+    conf,
+    Config#{
+      connection_user => list_to_binary(UserStr),
+      connection_password => list_to_binary(PasswordStr),
+      connection_string => list_to_binary(io_lib:format("~s:~p/~s", [Host, Port, Service]))
+    }
+  ),
   run_trials(1, Trials, Ctx, #{startTime => os:timestamp()}).
 
 
 run_trials(Trial, Trials, Ctx, Stats) when Trial > Trials ->
-  #{benchmark_driver := Driver} = get(conf),
-  if
-    Driver == "oranif" -> ok = dpi:context_destroy(Ctx);
-    true -> nop
-  end,
+  #{} = get(conf),
+  ok = dpi:context_destroy(Ctx),
   Stats#{endTime => os:timestamp()};
 
 run_trials(Trial, Trials, Ctx, Stats) ->
   #{
-    benchmark_driver := Driver,
     connection_user := User,
     connection_password := Password,
-    connection_host := Host,
-    connection_port := Port,
-    connection_service := Service,
     sql_create := Create,
     sql_drop := Drop
   } = Conf = get(conf),
   io:format("[~p:~p:~p] Start trial no ~p... ", [?MODULE, ?FUNCTION_NAME, ?LINE, Trial]),
   StartTime = os:timestamp(),
-  case Driver of
-    "oranif" ->
-      #{connection_string := ConnectString} = Conf,
-      Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
-      CreateStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Create), <<>>),
-      DropStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Drop), <<>>),
-      case catch dpi:stmt_execute(CreateStmt, ['DPI_MODE_EXEC_COMMIT_ON_SUCCESS']) of
-        0 -> ok;
+  #{connection_string := ConnectString} = Conf,
+  Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
+  CreateStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Create), <<>>),
+  DropStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Drop), <<>>),
+  case catch dpi:stmt_execute(CreateStmt, ['DPI_MODE_EXEC_COMMIT_ON_SUCCESS']) of
+    0 -> ok;
 
-        {'EXIT', {{error, _, _, #{code := 955}}, _}} ->
-          case dpi:stmt_execute(DropStmt, ['DPI_MODE_EXEC_COMMIT_ON_SUCCESS']) of
-            0 ->
-              case dpi:stmt_execute(CreateStmt, ['DPI_MODE_EXEC_COMMIT_ON_SUCCESS']) of
-                0 -> ok;
-                Error -> error({?LINE, Error})
-              end;
-
+    {'EXIT', {{error, _, _, #{code := 955}}, _}} ->
+      case dpi:stmt_execute(DropStmt, ['DPI_MODE_EXEC_COMMIT_ON_SUCCESS']) of
+        0 ->
+          case dpi:stmt_execute(CreateStmt, ['DPI_MODE_EXEC_COMMIT_ON_SUCCESS']) of
+            0 -> ok;
             Error -> error({?LINE, Error})
           end;
 
         Error -> error({?LINE, Error})
-      end,
-      ok = dpi:stmt_close(CreateStmt, <<>>),
-      ok = dpi:stmt_close(DropStmt, <<>>),
-      ok = dpi:conn_close(Conn, [], <<>>)
+      end;
+
+    Error -> error({?LINE, Error})
   end,
+  ok = dpi:stmt_close(CreateStmt, <<>>),
+  ok = dpi:stmt_close(DropStmt, <<>>),
+  ok = dpi:conn_close(Conn, [], <<>>),
   InsertStat = run_insert(Ctx),
   SelectStat = run_select(Ctx),
   InsertPR =
@@ -395,102 +373,90 @@ insert_partition(
     benchmark_batch_size := NumItersExec,
     benchmark_transaction_size := NumItersCommit,
     file_bulk_size := FBulkSz,
-    file_bulk_length := Size,
-    benchmark_driver := Driver
+    file_bulk_length := Size
   } = Config
 ) ->
-  Conn =
-    case Driver of
-      "oranif" ->
-        #{connection_string := ConnectString} = Config,
-        dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{})
-    end,
+  #{connection_string := ConnectString} = Config,
+  Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
   Start = os:timestamp(),
-  Params =
-    case Driver of
-      "oranif" ->
-        #{var := KeyVar} =
-          dpi:conn_newVar(
-            Conn,
-            'DPI_ORACLE_TYPE_VARCHAR',
-            'DPI_NATIVE_TYPE_BYTES',
-            if
-              NumItersExec > 0 -> NumItersExec;
-              true -> FBulkSz
-            end,
-            32,
-            false,
-            false,
-            null
-          ),
-        #{var := DataVar} =
-          dpi:conn_newVar(
-            Conn,
-            'DPI_ORACLE_TYPE_VARCHAR',
-            'DPI_NATIVE_TYPE_BYTES',
-            if
-              NumItersExec > 0 -> NumItersExec;
-              true -> FBulkSz
-            end,
-            Size,
-            false,
-            false,
-            null
-          ),
-        InsertStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Insert), <<>>),
-        ok = dpi:stmt_bindByName(InsertStmt, <<"key">>, KeyVar),
-        ok = dpi:stmt_bindByName(InsertStmt, <<"data">>, DataVar),
-        #{conn => Conn, insertStmt => InsertStmt, keyVar => KeyVar, dataVar => DataVar}
-    end,
-  case Driver of
-    "oranif" ->
-      #{insertStmt := InsStmt, keyVar := KV, dataVar := DV} = Params,
-      {NIE, _} =
-        lists:foldl(
-          fun
-            ({Key, Data}, {NIE, RowCount}) ->
-              NewNIE =
-                if
-                  NumItersExec == 0 orelse NIE < NumItersExec ->
-                    ok = dpi:var_setFromBytes(KV, NIE, Key),
-                    ok = dpi:var_setFromBytes(DV, NIE, Data),
-                    NIE + 1;
-
-                  true ->
-                    ok =
-                      dpi:stmt_executeMany(
-                        InsStmt,
-                        [],
-                        if
-                          NumItersExec > 0 -> NumItersExec;
-                          true -> FBulkSz
-                        end
-                      ),
-                    ok = dpi:var_setFromBytes(KV, 0, Key),
-                    ok = dpi:var_setFromBytes(DV, 0, Data),
-                    1
-                end,
-              if
-                NumItersCommit > 0 andalso RowCount rem NumItersCommit == 0 ->
-                  ok = dpi:conn_commit(Conn);
-
-                true -> ok
-              end,
-              {NewNIE, RowCount + 1}
-          end,
-          {0, 0},
-          Rows
-        ),
+  #{var := KeyVar} =
+    dpi:conn_newVar(
+      Conn,
+      'DPI_ORACLE_TYPE_VARCHAR',
+      'DPI_NATIVE_TYPE_BYTES',
       if
-        NIE > 0 -> ok = dpi:stmt_executeMany(InsStmt, [], NIE);
-        true -> ok
+        NumItersExec > 0 -> NumItersExec;
+        true -> FBulkSz
       end,
-      ok = dpi:conn_commit(Conn),
-      ok = dpi:var_release(maps:get(keyVar, Params)),
-      ok = dpi:var_release(maps:get(dataVar, Params)),
-      ok = dpi:stmt_close(InsStmt, <<>>),
-      ok = dpi:conn_close(Conn, [], <<>>)
+      32,
+      false,
+      false,
+      null
+    ),
+  #{var := DataVar} =
+    dpi:conn_newVar(
+      Conn,
+      'DPI_ORACLE_TYPE_VARCHAR',
+      'DPI_NATIVE_TYPE_BYTES',
+      if
+        NumItersExec > 0 -> NumItersExec;
+        true -> FBulkSz
+      end,
+      Size,
+      false,
+      false,
+      null
+    ),
+  InsertStmt = dpi:conn_prepareStmt(Conn, false, list_to_binary(Insert), <<>>),
+  ok = dpi:stmt_bindByName(InsertStmt, <<"key">>, KeyVar),
+  ok = dpi:stmt_bindByName(InsertStmt, <<"data">>, DataVar),
+  Params = #{conn => Conn, insertStmt => InsertStmt, keyVar => KeyVar, dataVar => DataVar},
+  #{insertStmt := InsStmt, keyVar := KV, dataVar := DV} = Params,
+  {NIE, _} =
+    lists:foldl(
+      fun
+        ({Key, Data}, {NIE, RowCount}) ->
+          NewNIE =
+            if
+              NumItersExec == 0 orelse NIE < NumItersExec ->
+                ok = dpi:var_setFromBytes(KV, NIE, Key),
+                ok = dpi:var_setFromBytes(DV, NIE, Data),
+                NIE + 1;
+
+              true ->
+                ok =
+                  dpi:stmt_executeMany(
+                    InsStmt,
+                    [],
+                    if
+                      NumItersExec > 0 -> NumItersExec;
+                      true -> FBulkSz
+                    end
+                  ),
+                ok = dpi:var_setFromBytes(KV, 0, Key),
+                ok = dpi:var_setFromBytes(DV, 0, Data),
+                1
+            end,
+          if
+            NumItersCommit > 0 andalso RowCount rem NumItersCommit == 0 ->
+              ok = dpi:conn_commit(Conn);
+
+            true -> ok
+          end,
+          {NewNIE, RowCount + 1}
+      end,
+      {0, 0},
+      Rows
+    ),
+  if
+    NIE > 0 -> ok = dpi:stmt_executeMany(InsStmt, [], NIE);
+    true -> ok
   end,
+  ok = dpi:conn_commit(Conn),
+  ok = dpi:var_release(maps:get(keyVar, Params)),
+  ok = dpi:var_release(maps:get(dataVar, Params)),
+  ok = dpi:stmt_close(InsStmt, <<>>),
+  ok = dpi:conn_close(Conn, [], <<>>),
   Master
   !
   {
@@ -508,34 +474,21 @@ select_partition(
     connection_user := User,
     connection_password := Password,
     sql_select := Select,
-    connection_fetch_size := FetchSize,
-    file_bulk_size := FileBulkSize,
-    benchmark_driver := Driver
+    connection_fetch_size := FetchSize
   } = Config
 ) ->
-  Conn =
-    case Driver of
-      "oranif" ->
-        #{connection_string := ConnectString} = Config,
-        dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{})
-    end,
+  #{connection_string := ConnectString} = Config,
+  Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
   SelectSql = list_to_binary(io_lib:format("~s WHERE partition_key = ~p", [Select, Partition])),
   Start = os:timestamp(),
-  Params =
-    case Driver of
-      "oranif" ->
-        SelectStmt = dpi:conn_prepareStmt(Conn, false, SelectSql, <<>>),
-        2 = dpi:stmt_execute(SelectStmt, []),
-        ok = dpi:stmt_setFetchArraySize(SelectStmt, FetchSize),
-        #{selectStmt => SelectStmt}
-    end,
-  Selected = select_fetch_all(Driver, Params),
-  case Driver of
-    "oranif" ->
-      #{selectStmt := SelStmt} = Params,
-      ok = dpi:stmt_close(SelStmt, <<>>),
-      ok = dpi:conn_close(Conn, [], <<>>)
-  end,
+  SelectStmt = dpi:conn_prepareStmt(Conn, false, SelectSql, <<>>),
+  2 = dpi:stmt_execute(SelectStmt, []),
+  ok = dpi:stmt_setFetchArraySize(SelectStmt, FetchSize),
+  Params = #{selectStmt => SelectStmt},
+  Selected = select_fetch_all(Params),
+  #{selectStmt := SelStmt} = Params,
+  ok = dpi:stmt_close(SelStmt, <<>>),
+  ok = dpi:conn_close(Conn, [], <<>>),
   Master
   !
   {
@@ -545,13 +498,13 @@ select_partition(
   }.
 
 
-load_data(Driver, Fd, Header, BulkDelimiter, Partitions, Rows, Count) ->
+load_data(Fd, Header, BulkDelimiter, Partitions, Rows, Count) ->
   case file:read_line(Fd) of
     eof -> Rows;
 
     {ok, Line0} ->
       case string:trim(Line0, both, "\r\n") of
-        Header -> load_data(Driver, Fd, Header, BulkDelimiter, Partitions, Rows, Count);
+        Header -> load_data(Fd, Header, BulkDelimiter, Partitions, Rows, Count);
 
         Line ->
           [<<KeyByte1 : 8, KeyByte2 : 8, _/binary>> = Key, Data] =
@@ -576,7 +529,6 @@ load_data(Driver, Fd, Header, BulkDelimiter, Partitions, Rows, Count) ->
             _ -> ok
           end,
           load_data(
-            Driver,
             Fd,
             Header,
             BulkDelimiter,
@@ -603,7 +555,7 @@ thread_join(Threads, Results) ->
   end.
 
 
-select_fetch_all("oranif", #{selectStmt := SelectStmt}) -> select_fetch_all_oranif(SelectStmt, 0).
+select_fetch_all(#{selectStmt := SelectStmt}) -> select_fetch_all_oranif(SelectStmt, 0).
 
 select_fetch_all_oranif(SelectStmt, Count) ->
   case dpi:stmt_fetch(SelectStmt) of

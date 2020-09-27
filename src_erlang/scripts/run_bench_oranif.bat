@@ -76,7 +76,7 @@ if %ERRORLEVEL% NEQ 0 (
 
 cd ..
 
-src_erlang\_build\default\bin\orabench priv\properties\ora_bench_erlang.properties oranif
+src_erlang\_build\default\bin\orabench priv\properties\ora_bench_erlang.properties
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
