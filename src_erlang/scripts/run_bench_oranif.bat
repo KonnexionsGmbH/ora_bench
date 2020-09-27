@@ -62,6 +62,12 @@ cd src_erlang
 
 if EXIST _build\ rd /Q/S _build
 
+call rebar3 steamroll
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
+)
+
 call rebar3 escriptize
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
