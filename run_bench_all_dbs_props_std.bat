@@ -29,7 +29,7 @@ if ["%1"] EQU [""] (
     echo ---------------------------------------------------------
     echo c                  - C and ODPI
     echo elixir             - Elixir and oranif
-    echo erlang_oranif      - Erlang and oranif
+    echo erlang             - Erlang and oranif
     echo go                 - Go and GoDROR
     echo java               - Java and JDBC
     echo kotlin             - Kotlin and JDBC
@@ -97,7 +97,7 @@ echo.
 echo Please wait ...
 echo.
 
-> run_bench_all_dbs_props_std.log 2>&1 (
+rem wwe > run_bench_all_dbs_props_std.log 2>&1 (
 
     echo ================================================================================
     echo Start %0
@@ -154,4 +154,4 @@ echo.
     echo End   %0
     echo ================================================================================
     
-)
+rem wwe )

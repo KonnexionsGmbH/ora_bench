@@ -41,7 +41,7 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["elixir"] (
     set ORA_BENCH_RUN_ORANIF_ELIXIR=true
 )
 
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["erlang_oranif"] (
+if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["erlang"] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
 
@@ -62,7 +62,7 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["python"] (
 )
 
 rem wwe Temporary solution until the driver problems are solved
-set ORA_BENCH_RUN_ORANIF_ERLANG=false
+rem set ORA_BENCH_RUN_ORANIF_ERLANG=false
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["12"] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee

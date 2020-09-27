@@ -19,7 +19,7 @@ env:
     - JDBC      Kotlin ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=kotlin
     - ODPI      C      ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=c
     - oranif    Elixir ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=elixir
-#   - oranif    Erlang ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=erlang_oranif
+#   - oranif    Erlang ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=erlang
 
 script:
   # Prepare installation process -------------------------------------------------

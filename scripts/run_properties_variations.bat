@@ -41,7 +41,7 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["elixir"] (
     set ORA_BENCH_RUN_ORANIF_ELIXIR=true
 )
 
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["erlang_oranif"] (
+if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["erlang"] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
 

@@ -29,7 +29,7 @@ if [ -z "$1" ]; then
     echo "---------------------------------------------------------"
     echo "c                  - C and ODPI"
     echo "elixir             - Elixir and oranif"
-    echo "erlang_oranif      - Erlang and oranif"
+    echo "erlang             - Erlang and oranif"
     echo "go                 - Go and GoDROR"
     echo "java               - Java and JDBC"
     echo "kotlin             - Kotlin and JDBC"
