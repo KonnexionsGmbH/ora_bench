@@ -61,9 +61,6 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["python"] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 )
 
-rem wwe Temporary solution until the driver problems are solved
-set ORA_BENCH_RUN_ORANIF_ERLANG=false
-
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["12"] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
 )

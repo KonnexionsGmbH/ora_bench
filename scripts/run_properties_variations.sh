@@ -49,9 +49,6 @@ elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "python" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
 
-# wwe Temporary solution until the driver problems are solved
-export ORA_BENCH_RUN_ORANIF_ERLANG=false
-
 if [ "${ORA_BENCH_CHOICE_DB}" = "12" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
 fi
