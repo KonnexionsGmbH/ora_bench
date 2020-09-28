@@ -12,7 +12,7 @@ if [ -z "$ORA_BENCH_BENCHMARK_DATABASE" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
-    export javaORA_BENCH_CONNECTION_HOST=localhost
+    export javaORA_BENCH_CONNECTION_HOST=0.0.0.0
 fi
 if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
     export ORA_BENCH_CONNECTION_PORT=1521
