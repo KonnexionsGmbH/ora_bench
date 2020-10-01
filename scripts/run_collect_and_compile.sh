@@ -12,13 +12,6 @@ if [ -z "$GOPATH" ]; then
     GOPATH=$(pwd)/src_go
 fi
 
-if [ -z "$RUN_GLOBAL_JAMDB" ]; then
-    export RUN_GLOBAL_JAMDB=true
-fi
-if [ -z "$RUN_GLOBAL_NON_JAMDB" ]; then
-    export RUN_GLOBAL_NON_JAMDB=true
-fi
-
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -26,13 +19,9 @@ echo "ora_bench - Oracle benchmark - collect libraries and compile."
 echo "--------------------------------------------------------------------------------"
 echo "BULKFILE_EXISTING                 : $BULKFILE_EXISTING"
 echo "--------------------------------------------------------------------------------"
-echo "RUN_GLOBAL_JAMDB                  : $RUN_GLOBAL_JAMDB"
-echo "RUN_GLOBAL_NON_JAMDB              : $RUN_GLOBAL_NON_JAMDB"
-echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON              : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_JDBC_KOTLIN                   : $ORA_BENCH_RUN_JDBC_KOTLIN"
 echo "RUN_GODROR_GO                     : $ORA_BENCH_RUN_GODROR_GO"
-echo "RUN_JAMDB_ORACLE_ERLANG           : $ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG"
 echo "RUN_JDBC_JAVA                     : $ORA_BENCH_RUN_JDBC_JAVA"
 echo "RUN_ODPI_C                        : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR                 : $ORA_BENCH_RUN_ORANIF_ELIXIR"
@@ -52,48 +41,44 @@ if [ "$BULKFILE_EXISTING" != "true" ]; then
     fi
 fi
 
-if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
-    if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
-        echo "Setup C - Start ============================================================" 
-        if ! java -jar priv/libs/ora_bench_java.jar setup_c; then
-            exit 255
-        fi
-
-        if [ "$OSTYPE" = "msys" ]; then
-            if ! nmake -f src_c/Makefile.win32 clean; then
-                exit 255
-            fi
-            if ! nmake -f src_c/Makefile.win32; then
-                exit 255
-            fi
-        else
-            if ! make -f src_c/Makefile clean; then
-                exit 255
-            fi
-            if ! make -f src_c/Makefile; then
-                exit 255
-            fi
-        fi
-        echo "Setup C - End   ============================================================" 
+if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
+    echo "Setup C - Start ============================================================"
+    if ! java -jar priv/libs/ora_bench_java.jar setup_c; then
+        exit 255
     fi
-fi
-    
-if [ "$RUN_GLOBAL_NON_JAMDB" = "true" ]; then
-    if [ "$ORA_BENCH_RUN_GODROR_GO" == "true" ]; then
-        echo "Setup Go - Start ===========================================================" 
-        if ! go get github.com/godror/godror; then
-            exit 255
-        fi
-        echo "Setup Go - End   ===========================================================" 
-    fi    
 
-    if [ "$ORA_BENCH_RUN_JDBC_KOTLIN" == "true" ]; then
-        echo "Setup Kotlin - Start =======================================================" 
-        if ! ./src_kotlin/scripts/run_gradle.sh; then
+    if [ "$OSTYPE" = "msys" ]; then
+        if ! nmake -f src_c/Makefile.win32 clean; then
             exit 255
         fi
-        echo "Setup Kotlin - End   =======================================================" 
-    fi    
+        if ! nmake -f src_c/Makefile.win32; then
+            exit 255
+        fi
+    else
+        if ! make -f src_c/Makefile clean; then
+            exit 255
+        fi
+        if ! make -f src_c/Makefile; then
+            exit 255
+        fi
+    fi
+    echo "Setup C - End   ============================================================"
+fi
+
+if [ "$ORA_BENCH_RUN_GODROR_GO" == "true" ]; then
+    echo "Setup Go - Start ==========================================================="
+    if ! go get github.com/godror/godror; then
+        exit 255
+    fi
+    echo "Setup Go - End   ==========================================================="
+fi
+
+if [ "$ORA_BENCH_RUN_JDBC_KOTLIN" == "true" ]; then
+    echo "Setup Kotlin - Start ======================================================="
+    if ! ./src_kotlin/scripts/run_gradle.sh; then
+        exit 255
+    fi
+    echo "Setup Kotlin - End   ======================================================="
 fi
 
 echo ""

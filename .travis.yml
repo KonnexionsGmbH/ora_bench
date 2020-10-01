@@ -1,5 +1,5 @@
 ---
-dist: xenial
+dist: focal
 
 sudo: true
 
@@ -9,21 +9,17 @@ otp_release:
 
 env:
   matrix:
-    - ORA_BENCH_CHOICE_DB=12 ORA_BENCH_BENCHMARK_JAMDB=false ORA_BENCH_CHOICE_DRIVER=complete
-    - ORA_BENCH_CHOICE_DB=12 ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete
-    - ORA_BENCH_CHOICE_DB=18 ORA_BENCH_BENCHMARK_JAMDB=false ORA_BENCH_CHOICE_DRIVER=complete
-    - ORA_BENCH_CHOICE_DB=18 ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete
-    - ORA_BENCH_CHOICE_DB=19 ORA_BENCH_BENCHMARK_JAMDB=false ORA_BENCH_CHOICE_DRIVER=complete
-    - ORA_BENCH_CHOICE_DB=19 ORA_BENCH_BENCHMARK_JAMDB=true  ORA_BENCH_CHOICE_DRIVER=complete
-      
-    - cx_Oracle Python ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=python
-    - GoDROR    Go     ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=go
-#   - JamDB     Erlang ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=erlang_jamdb
-    - JDBC      Java   ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=java
-    - JDBC      Kotlin ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=kotlin
-    - ODPI      C      ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=c
-    - oranif    Elixir ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=elixir
-#   - oranif    Erlang ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=erlang_oranif
+    - ORA_BENCH_CHOICE_DB=12 ORA_BENCH_CHOICE_DRIVER=complete
+    - ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=complete
+#   - ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=complete
+
+    - cx_Oracle ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=python
+    - GoDROR    ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=go
+    - JDBC      ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=java
+    - JDBC      ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=kotlin
+    - ODPI      ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=c
+    - oranif    ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=elixir
+#   - oranif    ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=erlang
 
 script:
   # Prepare installation process -------------------------------------------------
@@ -34,10 +30,10 @@ script:
   - export VERSION_JAVA=15
   - export VERSION_ORACLE_INSTANT_CLIENT_1=19
   - export VERSION_ORACLE_INSTANT_CLIENT_2=8
-    
-  - sudo apt update -q
-  - sudo apt install -q software-properties-common
-  - sudo apt-get install -q lsb-core
+
+  - sudo apt update
+  - sudo apt-get install -qy software-properties-common
+  - sudo apt-get install -qy lsb-core
   - travis_fold end   "Prepare_installation_process"
 
   # Elixir -----------------------------------------------------------------------
@@ -50,11 +46,19 @@ script:
   - cd /home/travis/build/KonnexionsGmbH/ora_bench
   - . ~/.bashrc
   - asdf plugin-add Elixir https://github.com/asdf-vm/asdf-elixir
-  - asdf install Elixir ${VERSION_ELIXIR}   
+  - asdf install Elixir ${VERSION_ELIXIR}
   - asdf global Elixir ${VERSION_ELIXIR}
   - mix local.hex --force
   - mix local.rebar --force
   - travis_fold end   "Setting_up_Elixir"
+
+  # Git --------------------------------------------------------------------------
+  - travis_fold start "Setting_up_Git"
+  - sudo add-apt-repository ppa:git-core/ppa --yes
+  - sudo apt update
+  - sudo apt-get install -qy git
+  - sudo git config --global credential.helper 'cache --timeout 3600'
+  - travis_fold end   "Setting_up_Git"
 
   # Go ---------------------------------------------------------------------------
   - travis_fold start "Setting_up_Go"
@@ -74,7 +78,7 @@ script:
   - export JAVA_HOME=/opt/jdk-${VERSION_JAVA}
   - export PATH="${JAVA_HOME}/bin:${PATH}"
   - travis_fold end   "Setting_up_Java"
-    
+
   # Gradle -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Gradle"
   - wget -q https://services.gradle.org/distributions/gradle-${VERSION_GRADLE}-bin.zip -P /tmp
@@ -103,13 +107,20 @@ script:
 
   # Python -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Python"
-  - sudo apt install -qy python3
-  - sudo apt install -qy python3-venv
+  - sudo apt-get install -qy python3
+  - sudo apt-get install -qy python3-venv
   - sudo rm -rf /usr/bin/python
   - sudo ln -s /usr/bin/python3 /usr/bin/python
   - wget --quiet https://bootstrap.pypa.io/get-pip.py
   - python get-pip.py
   - travis_fold end   "Setting_up_Python"
+
+  # rebar3 -----------------------------------------------------------------------
+  - travis_fold start "Setting_up_rebar3"
+  - wget -q https://s3.amazonaws.com/rebar3/rebar3
+  - sudo chmod +x rebar3
+  - sudo mv rebar3 /usr/bin
+  - travis_fold end   "Setting_up_rebar3"
 
   # Setting up environment variables ---------------------------------------------
   - travis_fold start "Setting_up_environment_variables"

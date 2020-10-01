@@ -61,12 +61,16 @@ fi
         rm -rf _build
     fi
 
+    if ! rebar3 steamroll; then
+        exit 255
+    fi
+
     if ! rebar3 escriptize; then
         exit 255
     fi
 )
 
-if ! src_erlang/_build/default/bin/orabench priv/properties/ora_bench_erlang.properties oranif; then
+if ! src_erlang/_build/default/bin/orabench priv/properties/ora_bench_erlang.properties; then
     exit 255
 fi
 

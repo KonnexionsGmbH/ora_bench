@@ -29,8 +29,7 @@ if ["%1"] EQU [""] (
     echo ---------------------------------------------------------
     echo c                  - C and ODPI
     echo elixir             - Elixir and oranif
-    echo erlang_jamdb       - Erlang and JamDB
-    echo erlang_oranif      - Erlang and oranif
+    echo erlang             - Erlang and oranif
     echo go                 - Go and GoDROR
     echo java               - Java and JDBC
     echo kotlin             - Kotlin and JDBC
@@ -88,13 +87,6 @@ set ORA_BENCH_PASSWORD_SYS=oracle
 
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
-)
-
-if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (
-    set RUN_GLOBAL_JAMDB=true
-)
-if ["%RUN_GLOBAL_NON_JAMDB%"] EQU [""] (
-    set RUN_GLOBAL_NON_JAMDB=true
 )
 
 echo.
