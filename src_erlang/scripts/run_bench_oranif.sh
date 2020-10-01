@@ -48,25 +48,29 @@ if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
     if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
         exit 255
     fi
+fi
 
-    if ! java -jar priv/libs/ora_bench_java.jar setup_erlang; then
+if ! java -jar priv/libs/ora_bench_java.jar setup_erlang; then
+    exit 255
+fi
+
+(
+    cd src_erlang || exit 255
+
+    if [ -d "_build" ]; then
+        rm -rf _build
+    fi
+
+    if ! rebar3 steamroll; then
         exit 255
     fi
 
-    (
-        cd src_erlang || exit 255
-        
-        if [ -d "_build" ]; then
-            rm -rf _build
-        fi         
+    if ! rebar3 escriptize; then
+        exit 255
+    fi
+)
 
-        if ! rebar3 escriptize; then
-            exit 255
-        fi
-    )
-fi
-
-if ! src_erlang/_build/default/bin/orabench priv/properties/ora_bench_erlang.properties oranif; then
+if ! src_erlang/_build/default/bin/orabench priv/properties/ora_bench_erlang.properties; then
     exit 255
 fi
 

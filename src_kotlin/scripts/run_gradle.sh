@@ -17,24 +17,20 @@ echo "==========================================================================
 (
     cd src_kotlin || exit
     
-    if ! { ./gradlew clean; }; then
+    if ! { gradle init; }; then
+        exit 255
+    fi
+
+    if ! { gradle clean; }; then
         exit 255
     fi
     
-    if ! { ./gradlew jar; }; then
+    if ! { gradle jar; }; then
         exit 255
     fi
     
     mkdir -p ../priv/kotlin_jar
     cp -f build/libs/ora_bench.jar ../priv/libs/ora_bench_kotlin.jar
-
-    if ! { ./gradlew dokkaHtml; }; then
-        exit 255
-    fi
-
-    rm -rf ../priv/docs_kotlin
-    mkdir ../priv/docs_kotlin
-    cp -R build/dokka/* ../priv/docs_kotlin
 )
 
 echo ""

@@ -23,7 +23,7 @@ If the parameter can be overridden by an environment variable (column `Env.`) th
 | benchmark.trials | 10 | no | This determines the number of tests to be performed per database. The specified value must be at least 1. |
 | benchmark.user.name | n/a | no | In the result file, this value is used as a unique identifier of the user account name. This value will be determined during the setup. |
 | connection.fetch.size | 1024 | no | The number determines how much data is pulled from the database across the network. With value 0 the default value of the driver is used. The specified value must not be less than zero. |
-| connection.host | 0.0.0.0 | yes | The IP address or host name of the Oracle server to which you are connecting. |
+| connection.host | localhost | yes | The IP address or host name of the Oracle server to which you are connecting. |
 | connection.password | regit | no | The password corresponding to the connection user name. |
 | connection.port | 1521 | yes | The number of the TCP port that the Oracle server uses to listen for client connections. |
 | connection.service | n/a | yes | The service name of the database to access. |

@@ -17,7 +17,6 @@ if ["%ORA_BENCH_CHOICE_DB%"] EQU [""] (
 
 set ORA_BENCH_RUN_CX_ORACLE_PYTHON=false
 set ORA_BENCH_RUN_GODROR_GO=false
-set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
 set ORA_BENCH_RUN_JDBC_JAVA=false
 set ORA_BENCH_RUN_JDBC_KOTLIN=false
 set ORA_BENCH_RUN_ODPI_C=false
@@ -27,7 +26,6 @@ set ORA_BENCH_RUN_ORANIF_ERLANG=false
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["complete"] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
     set ORA_BENCH_RUN_GODROR_GO=true
-    set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
     set ORA_BENCH_RUN_JDBC_JAVA=true
     set ORA_BENCH_RUN_JDBC_KOTLIN=true
     set ORA_BENCH_RUN_ODPI_C=true
@@ -43,11 +41,7 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["elixir"] (
     set ORA_BENCH_RUN_ORANIF_ELIXIR=true
 )
 
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["erlang_jamdb"] (
-    set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=true
-)
-
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["erlang_oranif"] (
+if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["erlang"] (
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
 
@@ -66,11 +60,6 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["kotlin"] (
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["python"] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 )
-
-rem wwe Temporary solution until the driver problems are solved
-set ORA_BENCH_RUN_GODROR_GO=false
-set ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG=false
-set ORA_BENCH_RUN_ORANIF_ERLANG=false
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["12"] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
@@ -98,13 +87,6 @@ if ["%ORA_BENCH_PASSWORD_SYS%"] EQU [""] (
     set ORA_BENCH_PASSWORD_SYS=oracle
 )
 
-if ["%RUN_GLOBAL_JAMDB%"] EQU [""] (
-    set RUN_GLOBAL_JAMDB=true
-)    
-if ["%RUN_GLOBAL_NON_JAMDB%"] EQU [""] (
-    set RUN_GLOBAL_NON_JAMDB=true
-)
-
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
@@ -113,12 +95,8 @@ echo ---------------------------------------------------------------------------
 echo CHOICE_DRIVER                     : %ORA_BENCH_CHOICE_DRIVER%
 echo BENCHMARK_DATABASE                : %ORA_BENCH_BENCHMARK_DATABASE%
 echo --------------------------------------------------------------------------------
-echo RUN_GLOBAL_JAMDB                  : %RUN_GLOBAL_JAMDB%
-echo RUN_GLOBAL_NON_JAMDB              : %RUN_GLOBAL_NON_JAMDB%
-echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON              : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_GODROR_GO                     : %ORA_BENCH_RUN_GODROR_GO%
-echo RUN_JAMDB_ORACLE_ERLANG           : %ORA_BENCH_RUN_JAMDB_ORACLE_ERLANG%
 echo RUN_JDBC_JAVA                     : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_JDBC_KOTLIN                   : %ORA_BENCH_RUN_JDBC_KOTLIN%
 echo RUN_ODPI_C                        : %ORA_BENCH_RUN_ODPI_C%

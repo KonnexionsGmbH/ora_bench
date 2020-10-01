@@ -54,7 +54,7 @@ if ! [ "$ORA_BENCH_MULTIPLE_RUN" = "true" ]; then
     fi
 fi
 
-if ! java -jar priv/libs/ora_bench_java.jar setup; then
+if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
     exit 255
 fi
 

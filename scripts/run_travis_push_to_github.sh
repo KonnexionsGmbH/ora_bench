@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_travis_push_to_github.sh: Oracle benchmark - push results bach to GitHub.
+# run_travis_push_to_github.sh: Oracle benchmark - push results back to GitHub.
 #
 # ------------------------------------------------------------------------------
 

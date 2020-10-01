@@ -13,8 +13,8 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="priv/libs/ojdbc10.jar"/>
 	<classpathentry kind="lib" path="priv/libs/ora_bench_java.jar"/>
 	<classpathentry kind="lib" path="priv/libs/ora_bench_kotlin.jar"/>
+	<classpathentry kind="lib" path="priv/libs/ojdbc10.jar"/>
 	<classpathentry kind="output" path="src_java/build/classes/java/main"/>
 </classpath>

@@ -11,12 +11,16 @@
 .fetch
 .git-credentials
 .gitconfig
+.gradle
 .idea
 .mix
 .rebar
 /priv/Gammadyne/timer.txt
 /src_elixir/deps/
 /src_elixir/mix.lock
+/src_go/pkg/
+/src_go/src/
+OraBench
 _build
 build
 erl_crash.dump
@@ -28,5 +32,7 @@ ora_bench_erlang.properties
 ora_bench_java.jar
 ora_bench_kotlin.jar
 ora_bench_python.properties
+ora_bench_result.tsv
 rebar.lock
+rebar3.crashdump
 tmp

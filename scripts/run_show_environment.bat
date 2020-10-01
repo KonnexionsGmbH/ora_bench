@@ -45,6 +45,13 @@ if %ERRORLEVEL% NEQ 0 (
     exit %ERRORLEVEL%
 )
     
+echo =============================================================================== Version Gradle:
+gradle -version
+if %ERRORLEVEL% NEQ 0 (
+    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    exit %ERRORLEVEL%
+)
+
 echo =============================================================================== Version Java:
 java -version
 if %ERRORLEVEL% NEQ 0 (

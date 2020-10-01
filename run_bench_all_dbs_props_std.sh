@@ -29,8 +29,7 @@ if [ -z "$1" ]; then
     echo "---------------------------------------------------------"
     echo "c                  - C and ODPI"
     echo "elixir             - Elixir and oranif"
-    echo "erlang_jamdb       - Erlang and JamDB"
-    echo "erlang_oranif      - Erlang and oranif"
+    echo "erlang             - Erlang and oranif"
     echo "go                 - Go and GoDROR"
     echo "java               - Java and JDBC"
     echo "kotlin             - Kotlin and JDBC"
@@ -84,13 +83,6 @@ export ORA_BENCH_PASSWORD_SYS=oracle
 
 if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-fi
-
-if [ -z "$RUN_GLOBAL_JAMDB" ]; then
-    export RUN_GLOBAL_JAMDB=true
-fi
-if [ -z "$RUN_GLOBAL_NON_JAMDB" ]; then
-    export RUN_GLOBAL_NON_JAMDB=true
 fi
 
 echo ""
