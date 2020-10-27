@@ -5,7 +5,7 @@ sudo: true
 
 language: erlang
 otp_release:
-  - 23.1
+  - 23.0
 
 env:
   matrix:
@@ -150,3 +150,6 @@ script:
 
 after_success:
   - ./scripts/run_travis_push_to_github.sh
+
+before_install:
+  - kerl list installations
