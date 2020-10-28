@@ -3,10 +3,6 @@ dist: focal
 
 sudo: true
 
-language: erlang
-otp_release:
-  - 23.0
-
 env:
   matrix:
     - ORA_BENCH_CHOICE_DB=12 ORA_BENCH_CHOICE_DRIVER=complete
@@ -25,6 +21,7 @@ script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
   - export VERSION_ELIXIR=1.10.4
+  - export VERSION_ERLANG_SOLUTIONS=2.0
   - export VERSION_GO=1.15.3
   - export VERSION_GRADLE=6.7
   - export VERSION_JAVA=15
@@ -35,6 +32,12 @@ script:
   - sudo apt-get install -qy software-properties-common
   - sudo apt-get install -qy lsb-core
   - travis_fold end   "Prepare_installation_process"
+
+  # Erlang -----------------------------------------------------------------------
+  - wget -q https://packages.erlang-solutions.com/erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
+  - dpkg -i erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
+  - apt-get update
+  - apt-get install -qy esl-erlang
 
   # Elixir -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Elixir"
@@ -150,6 +153,3 @@ script:
 
 after_success:
   - ./scripts/run_travis_push_to_github.sh
-
-before_install:
-  - kerl list installations
