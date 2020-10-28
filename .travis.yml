@@ -1,8 +1,6 @@
 ---
 dist: focal
 
-sudo: true
-
 env:
   matrix:
     - ORA_BENCH_CHOICE_DB=12 ORA_BENCH_CHOICE_DRIVER=complete
@@ -16,6 +14,12 @@ env:
     - ODPI      ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=c
     - oranif    ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=elixir
 #   - oranif    ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=erlang
+
+sudo: true
+
+before_script:
+  - echo 'Europe/Zurich' | sudo tee /etc/timezone
+  - sudo dpkg-reconfigure --frontend noninteractive tzdata
 
 script:
   # Prepare installation process -------------------------------------------------
@@ -35,9 +39,9 @@ script:
 
   # Erlang -----------------------------------------------------------------------
   - wget -q https://packages.erlang-solutions.com/erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
-  - dpkg -i erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
-  - apt-get update
-  - apt-get install -qy esl-erlang
+  - sudo dpkg -i erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
+  - sudo apt-get update
+  - sudo apt-get install -qy esl-erlang
 
   # Elixir -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Elixir"
