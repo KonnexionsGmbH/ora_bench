@@ -148,6 +148,7 @@ script:
   - sudo chmod +x scripts/*.sh
   - sudo chmod +x */scripts/*.sh
   - python -m pip install -r src_python/requirements.txt
+  - ./scripts/run_show_environment.sh
   - ./scripts/run_properties_variations.sh
   - travis_fold end   "Running_ora_bench"
 
