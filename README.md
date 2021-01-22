@@ -380,7 +380,7 @@ The data column in the bulk file is randomly generated with a unique key column 
     - Erlang version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.erlang`) 
 
-## <a name="execution"> 5. Execution Variations
+## <a name="execution"></a> 5. Execution Variations
 
 ### 5.1 Ubuntu 20.04 LTS (including VMware)
 
@@ -408,7 +408,7 @@ The data column in the bulk file is randomly generated with a unique key column 
   - Trino Distributed Query Engine and Microsoft SQL Connector
   - YugabyteDB and Docker image
 
-#### 4.2.1 Ubuntu 20.04 LTS and [kxn_dev Image](https://hub.docker.com/repository/docker/konnexionsgmbh/kxn_dev)
+#### 5.2 Ubuntu 20.04 LTS and [kxn_dev Image](https://hub.docker.com/repository/docker/konnexionsgmbh/kxn_dev)
 
 - **Requirements**:
   - pull the `kxn_dev` image from DockerHub: `docker pull konnexionsgmbh/kxn_dev:latest`
@@ -423,7 +423,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 - **Issues**:
   - Trino Distributed Query Engine and Microsoft SQL Connector
 
-### 5.2 Ubuntu 20.04 LTS and Windows Subsystem Linux 2
+### 5.3 Ubuntu 20.04 LTS and Windows Subsystem Linux 2
 
 - **Requirements**:
   - install Ubuntu 20.04 from Microsoft Marketplace
@@ -456,7 +456,7 @@ The data column in the bulk file is randomly generated with a unique key column 
   - Trino Distributed Query Engine and Microsoft SQL Connector
   - YugabyteDB and Docker image
 
-### 5.3 Windows 10 Pro
+### 5.4 Windows 10 Pro
 
 - **Requirements**:
   - run `set DOCKER_USERNAME=\<user name\>`
@@ -468,7 +468,7 @@ The data column in the bulk file is randomly generated with a unique key column 
   - Trino Distributed Query Engine and Microsoft SQL Connector
   - YugabyteDB and Docker image
 
-## <a name="reporting"> 6. Reporting
+## <a name="reporting"></a> 6. Reporting
 
 [see here](https://konnexionsgmbh.github.io/ora_bench/)
 
