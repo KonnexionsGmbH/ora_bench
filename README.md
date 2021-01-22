@@ -402,11 +402,7 @@ The data column in the bulk file is randomly generated with a unique key column 
   - run `./scripts/run_install_4_ubuntu_20.04_vm_wsl2.sh` (setting up the WSL2 environment)
   - close the Ubuntu shell and reopen it again
   - run `cd ora_bench`
-  - run `gradle copyJarToLib`
-- **Execution**: run `./run_ora_bench.sh`
-- **Issues**:
-  - Trino Distributed Query Engine and Microsoft SQL Connector
-  - YugabyteDB and Docker image
+- **Execution**: run `./run_bench_all_dbs_props_[std|var].sh`
 
 #### 5.2 Ubuntu 20.04 LTS and [kxn_dev Image](https://hub.docker.com/repository/docker/konnexionsgmbh/kxn_dev)
 
