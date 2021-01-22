@@ -396,14 +396,14 @@ The data column in the bulk file is randomly generated with a unique key column 
 
   - run `export DOCKER_USERNAME=\<user name\>`
   - run `export DOCKER_PASSWORD=\<password\>`
-  - run `git clone https://github.com/KonnexionsGmbH/db_seeder` (cloning the db_seeder repository)
-  - run `cd db_seeder`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the ora_bench repository)
+  - run `cd ora_bench`
   - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
   - run `./scripts/run_install_4_ubuntu_20.04_vm_wsl2.sh` (setting up the WSL2 environment)
   - close the Ubuntu shell and reopen it again
-  - run `cd db_seeder`
+  - run `cd ora_bench`
   - run `gradle copyJarToLib`
-- **Execution**: run `./run_db_seeder.sh`
+- **Execution**: run `./run_ora_bench.sh`
 - **Issues**:
   - Trino Distributed Query Engine and Microsoft SQL Connector
   - YugabyteDB and Docker image
@@ -415,11 +415,11 @@ The data column in the bulk file is randomly generated with a unique key column 
   - create an appropriate container: `docker run -it --name kxn_dev -v /var/run/docker.sock:/var/run/docker.sock konnexionsgmbh/kxn_dev:latest bash`
   - run `export DOCKER_USERNAME=\<user name\>`
   - run `export DOCKER_PASSWORD=\<password\>`
-  - run `git clone https://github.com/KonnexionsGmbH/db_seeder` (cloning the db_seeder repository)
-  - run `cd db_seeder`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the ora_bench repository)
+  - run `cd ora_bench`
   - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
   - run `gradle copyJarToLib`
-- **Execution**: `./run_db_seeder.sh`
+- **Execution**: `./run_ora_bench.sh`
 - **Issues**:
   - Trino Distributed Query Engine and Microsoft SQL Connector
 
@@ -444,14 +444,14 @@ The data column in the bulk file is randomly generated with a unique key column 
 - **Requirements (continued)**:
   - run `export DOCKER_USERNAME=\<user name\>`
   - run `export DOCKER_PASSWORD=\<password\>`
-  - run `git clone https://github.com/KonnexionsGmbH/db_seeder` (cloning the db_seeder repository)
-  - run `cd db_seeder`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the ora_bench repository)
+  - run `cd ora_bench`
   - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
   - run `./scripts/run_install_4_ubuntu_20.04_vm_wsl2.sh` (setting up the WSL2 environment)
   - close the Ubuntu shell and reopen it again
-  - run `cd db_seeder`
+  - run `cd ora_bench`
   - run `gradle copyJarToLib`
-- **Execution**: run `./run_db_seeder.sh`
+- **Execution**: run `./run_ora_bench.sh`
 - **Issues**:
   - Trino Distributed Query Engine and Microsoft SQL Connector
   - YugabyteDB and Docker image
@@ -461,9 +461,9 @@ The data column in the bulk file is randomly generated with a unique key column 
 - **Requirements**:
   - run `set DOCKER_USERNAME=\<user name\>`
   - run `set DOCKER_PASSWORD=\<password\>`
-  - run `git clone https://github.com/KonnexionsGmbH/db_seeder` (cloning the db_seeder repository)
-  - run `cd db_seeder`
-- **Execution**: run `run_db_seeder.bat`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the ora_bench repository)
+  - run `cd ora_bench`
+- **Execution**: run `run_ora_bench.bat`
 - **Issues**:
   - Trino Distributed Query Engine and Microsoft SQL Connector
   - YugabyteDB and Docker image
