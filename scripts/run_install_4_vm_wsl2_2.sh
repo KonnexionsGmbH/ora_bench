@@ -243,7 +243,7 @@ asdf plugin add rust
 # asdf install rust ${VERSION_RUST}
 # asdf global rust ${VERSION_RUST}
 echo "================================================================================"
-# ls -ll /root/.asdf/installs/rust/${VERSION_RUST}
+# ls -ll ~/.asdf/installs/rust
 echo "================================================================================"
 # rustc --version
 echo "================================================================================"

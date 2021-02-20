@@ -212,7 +212,7 @@ eval echo 'export LC_ALL=${LOCALE}' >> ~/.bashrc
 export PATH_ADD_ON=~/.asdf/bin:~/.asdf/shims:${PATH_ADD_ON}
 
 # from dos2unix --------------------------------------------------------------------------
-export PATH_ADD_ON=/root/dos2unix/bin:${PATH_ADD_ON}
+# wwe export PATH_ADD_ON=/root/dos2unix/bin:${PATH_ADD_ON}
 
 # from Eclipse ---------------------------------------------------------------------------
 export PATH_ADD_ON=${HOME_ECLIPSE}/bin:${PATH_ADD_ON}
@@ -248,7 +248,7 @@ eval echo 'export LD_LIBRARY_PATH=${ORACLE_HOME}/lib:${LD_LIBRARY_PATH}' >> ~/.b
 export PATH_ADD_ON=${ORACLE_HOME}:${PATH_ADD_ON}
 
 # from Rust ------------------------------------------------------------------------------
-export PATH_ADD_ON=/root/.cargo/bin:${PATH_ADD_ON}
+export PATH_ADD_ON=${HOME}/.cargo/bin:${PATH_ADD_ON}
 
 echo "--------------------------------------------------------------------------------"
 echo "Step: Setting up the environment: 2. Initializing the interactive shell session"
