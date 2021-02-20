@@ -356,7 +356,7 @@ ls -ll /
 echo "================================================================================"
 
 sudo mkdir -p /usr/opt/dderl
-sudo cp -r dderl/* /usr/opt/dderl/
+sudo cp -r dderl /usr/opt/dderl
 
 echo "=====================================================================> Current Date: "
 date
