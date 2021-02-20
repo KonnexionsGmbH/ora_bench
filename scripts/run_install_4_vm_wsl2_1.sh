@@ -258,7 +258,7 @@ echo 'alias python=python3' >> ~/.bashrc
 echo 'alias vi=vim' >> ~/.bashrc
 # from Stefans privater bash Erweiterung ------------------------------------------------
 echo '' >> ~/.bashrc
-echo '. ~/kxn_dev/.bashrc.stefan' >> ~/.bashrc
+eval echo '. ~/kxn_dev/.bashrc.stefan' >> ~/.bashrc
 # PATH variable -------------------------------------------------------------------------
 echo '' >> ~/.bashrc
 eval echo 'export PATH=${PATH_ORIG}:${PATH_ADD_ON}' >> ~/.bashrc
@@ -496,9 +496,9 @@ sudo apt-get install -qy coreutils \
                          unixodbc \
                          unzip
 sudo rm -rf ~/.asdf
-sudo git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf
 cd ~/.asdf
-sudo git checkout "$(git describe --abbrev=0 --tags)"
+git checkout "$(git describe --abbrev=0 --tags)"
 cd ~/
 echo "================================================================================"
 
