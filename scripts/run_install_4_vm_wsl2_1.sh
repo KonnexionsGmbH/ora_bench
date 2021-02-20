@@ -68,11 +68,11 @@ export VERSION_NODEJS=14.15.5
 export VERSION_OPENSSL=1_1_1j
 export VERSION_ORACLE_INSTANT_CLIENT_1=21
 export VERSION_ORACLE_INSTANT_CLIENT_2=1
-export VERSION_PYTHON=3.9.1
+export VERSION_PYTHON=3.9.2
 export VERSION_REBAR=3.14.3
 export VERSION_RUST=1.50.0
 export VERSION_TMUX=3.1c
-export VERSION_VIM=8.2.2501
+export VERSION_VIM=8.2.2532
 export VERSION_WGET=1.21.1
 export VERSION_YARN=1.22.10
 
@@ -209,40 +209,46 @@ eval echo 'export LANGUAGE=${LOCALE}' >> ~/.bashrc
 eval echo 'export LC_ALL=${LOCALE}' >> ~/.bashrc
 
 # from asdf ------------------------------------------------------------------------------
-export PATH_ADD_ON="/usr/.asdf/bin:/usr/.asdf/shims:${PATH_ADD_ON}"
+export PATH_ADD_ON=/usr/.asdf/bin:/usr/.asdf/shims:${PATH_ADD_ON}
 
 # from dos2unix --------------------------------------------------------------------------
-export PATH_ADD_ON="/root/dos2unix/bin:${PATH_ADD_ON}"
+export PATH_ADD_ON=/root/dos2unix/bin:${PATH_ADD_ON}
 
 # from Eclipse ---------------------------------------------------------------------------
-export PATH_ADD_ON="${HOME_ECLIPSE}/bin:${PATH_ADD_ON}"
+export PATH_ADD_ON=${HOME_ECLIPSE}/bin:${PATH_ADD_ON}
 
 # from Go --------------------------------------------------------------------------------
-export GOROOT="/usr/.asdf/installs/golang/${VERSION_GO}/go"
-export PATH_ADD_ON="${GOROOT}/bin:${PATH_ADD_ON}"
+export GOROOT=/usr/.asdf/installs/golang/${VERSION_GO}/go
+eval echo 'export GOROOT=/usr/.asdf/installs/golang/${VERSION_GO}/go' >> ~/.bashrc
+export PATH_ADD_ON=${GOROOT}/bin:${PATH_ADD_ON}
 
 # from Gradle ----------------------------------------------------------------------------
-export GRADLE_HOME="/opt/gradle/gradle-${VERSION_GRADLE}"
-export PATH_ADD_ON="${GRADLE_HOME}/bin:${PATH_ADD_ON}"
+export GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}
+eval echo 'export GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}'
+export PATH_ADD_ON=${GRADLE_HOME}/bin:${PATH_ADD_ON}
 
 # from Java SE Development Kit ------------------------------------------------------------
-export JAVA_HOME="/usr/.asdf/installs/java/${VERSION_JAVA}"
-export PATH_ADD_ON="${JAVA_HOME}/bin:${PATH_ADD_ON}"
+export JAVA_HOME=/usr/.asdf/installs/java/${VERSION_JAVA}
+eval echo 'export JAVA_HOME=/usr/.asdf/installs/java/${VERSION_JAVA}' >> ~/.bashrc
+export PATH_ADD_ON=${JAVA_HOME}/bin:${PATH_ADD_ON}
 
 # from Kotlin ----------------------------------------------------------------------------
-export KOTLIN_HOME="/usr/.asdf/installs/kotlin/${VERSION_KOTLIN}"
-export PATH_ADD_ON="${KOTLIN_HOME}/bin:${PATH_ADD_ON}"
+export KOTLIN_HOME=/usr/.asdf/installs/kotlin/${VERSION_KOTLIN}
+eval echo 'export KOTLIN_HOME=/usr/.asdf/installs/kotlin/${VERSION_KOTLIN}' >> ~/.bashrc
+export PATH_ADD_ON=${KOTLIN_HOME}/bin:${PATH_ADD_ON}
 
 # from Node ------------------------------------------------------------------------------
-export PATH_ADD_ON="/usr/local/lib/nodejs/bin":${PATH_ADD_ON}
+export PATH_ADD_ON=/usr/local/lib/nodejs/bin:${PATH_ADD_ON}
 
 # from Oracle Instant Client -------------------------------------------------------------
 export ORACLE_HOME=/usr/lib/oracle/${VERSION_ORACLE_INSTANT_CLIENT_1}/client64
-export LD_LIBRARY_PATH="${ORACLE_HOME}/lib:${LD_LIBRARY_PATH}"
-    PATH_ADD_ON="${ORACLE_HOME}:${PATH_ADD_ON}"
+eval echo 'export ORACLE_HOME=/usr/lib/oracle/${VERSION_ORACLE_INSTANT_CLIENT_1}/client64' >> ~/.bashrc
+export LD_LIBRARY_PATH=${ORACLE_HOME}/lib:${LD_LIBRARY_PATH}
+eval echo 'export LD_LIBRARY_PATH=${ORACLE_HOME}/lib:${LD_LIBRARY_PATH}' >> ~/.bashrc
+export PATH_ADD_ON=${ORACLE_HOME}:${PATH_ADD_ON}
 
 # from Rust ------------------------------------------------------------------------------
-export PATH_ADD_ON="/root/.cargo/bin:${PATH_ADD_ON}"
+export PATH_ADD_ON=/root/.cargo/bin:${PATH_ADD_ON}
 
 echo "--------------------------------------------------------------------------------"
 echo "Step: Setting up the environment: 2. Initializing the interactive shell session"
