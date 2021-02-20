@@ -265,8 +265,8 @@ eval echo 'export PATH=${PATH_ORIG}:${PATH_ADD_ON}' >> ~/.bashrc
 eval echo 'export PATH_ORIG=${PATH_ORIG}' >> ~/.bashrc
 # from asdf -----------------------------------------------------------------------------
 echo '' >> ~/.bashrc
-echo '. ~/.asdf/asdf.sh' >> ~/.bashrc
-echo '. ~/.asdf/completions/asdf.bash' >> ~/.bashrc
+eval echo '. ~/.asdf/asdf.sh' >> ~/.bashrc
+eval echo '. ~/.asdf/completions/asdf.bash' >> ~/.bashrc
 if [ "${HOST_ENVIRONMENT}" = "vm" ]; then
     # from Docker Desktop -------------------------------------------------------------------
     echo '' >> ~/.bashrc
