@@ -39,7 +39,21 @@ echo "Step: Install asdf - part 2"
 echo "--------------------------------------------------------------------------------"
 echo "Current asdf version is: $(asdf --version)"
 echo "================================================================================"
-sudo rm -rf ~/.asdf
+sudo rm -rf ~/.asdf/installs/cmake/*
+sudo rm -rf ~/.asdf/installs/elixir/*
+sudo rm -rf ~/.asdf/installs/erlang/*
+sudo rm -rf ~/.asdf/installs/golang/*
+sudo rm -rf ~/.asdf/installs/gradle/*
+sudo rm -rf ~/.asdf/installs/java/*
+sudo rm -rf ~/.asdf/installs/kotlin/*
+sudo rm -rf ~/.asdf/installs/nodejs/*
+sudo rm -rf ~/.asdf/installs/python/*
+sudo rm -rf ~/.asdf/installs/rebar/*
+sudo rm -rf ~/.asdf/installs/rust/*
+sudo rm -rf ~/.asdf/installs/tmux/*
+sudo rm -rf ~/.asdf/installs/vim/*
+sudo rm -rf ~/.asdf/installs/yarn/*
+
 touch ~/.tool-versions
 # echo "================================================================================"
 # asdf plugin list all
