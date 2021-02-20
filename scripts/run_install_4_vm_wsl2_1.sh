@@ -50,7 +50,7 @@ export VERSION_AUTOCONF=2.71
 export VERSION_AUTOMAKE=1.16.3
 export VERSION_CMAKE=3.19.5
 export VERSION_CURL=7.75.0
-export VERSION_DOCKER_COMPOSE=1.28.2
+export VERSION_DOCKER_COMPOSE=1.28.4
 export VERSION_DOS2UNIX=7.4.2
 export VERSION_ECLIPSE_1=2020-12
 export VERSION_ECLIPSE_2=R
@@ -209,7 +209,7 @@ eval echo 'export LANGUAGE=${LOCALE}' >> ~/.bashrc
 eval echo 'export LC_ALL=${LOCALE}' >> ~/.bashrc
 
 # from asdf ------------------------------------------------------------------------------
-export PATH_ADD_ON=/usr/.asdf/bin:/usr/.asdf/shims:${PATH_ADD_ON}
+export PATH_ADD_ON=~/.asdf/bin:~/.asdf/shims:${PATH_ADD_ON}
 
 # from dos2unix --------------------------------------------------------------------------
 export PATH_ADD_ON=/root/dos2unix/bin:${PATH_ADD_ON}
@@ -218,8 +218,8 @@ export PATH_ADD_ON=/root/dos2unix/bin:${PATH_ADD_ON}
 export PATH_ADD_ON=${HOME_ECLIPSE}/bin:${PATH_ADD_ON}
 
 # from Go --------------------------------------------------------------------------------
-export GOROOT=/usr/.asdf/installs/golang/${VERSION_GO}/go
-eval echo 'export GOROOT=/usr/.asdf/installs/golang/${VERSION_GO}/go' >> ~/.bashrc
+export GOROOT=~/.asdf/installs/golang/${VERSION_GO}/go
+eval echo 'export GOROOT=~/.asdf/installs/golang/${VERSION_GO}/go' >> ~/.bashrc
 export PATH_ADD_ON=${GOROOT}/bin:${PATH_ADD_ON}
 
 # from Gradle ----------------------------------------------------------------------------
@@ -228,13 +228,13 @@ eval echo 'export GRADLE_HOME=/opt/gradle/gradle-${VERSION_GRADLE}'
 export PATH_ADD_ON=${GRADLE_HOME}/bin:${PATH_ADD_ON}
 
 # from Java SE Development Kit ------------------------------------------------------------
-export JAVA_HOME=/usr/.asdf/installs/java/${VERSION_JAVA}
-eval echo 'export JAVA_HOME=/usr/.asdf/installs/java/${VERSION_JAVA}' >> ~/.bashrc
+export JAVA_HOME=~/.asdf/installs/java/${VERSION_JAVA}
+eval echo 'export JAVA_HOME=~/.asdf/installs/java/${VERSION_JAVA}' >> ~/.bashrc
 export PATH_ADD_ON=${JAVA_HOME}/bin:${PATH_ADD_ON}
 
 # from Kotlin ----------------------------------------------------------------------------
-export KOTLIN_HOME=/usr/.asdf/installs/kotlin/${VERSION_KOTLIN}
-eval echo 'export KOTLIN_HOME=/usr/.asdf/installs/kotlin/${VERSION_KOTLIN}' >> ~/.bashrc
+export KOTLIN_HOME=~/.asdf/installs/kotlin/${VERSION_KOTLIN}
+eval echo 'export KOTLIN_HOME=~/.asdf/installs/kotlin/${VERSION_KOTLIN}' >> ~/.bashrc
 export PATH_ADD_ON=${KOTLIN_HOME}/bin:${PATH_ADD_ON}
 
 # from Node ------------------------------------------------------------------------------
@@ -265,8 +265,8 @@ eval echo 'export PATH=${PATH_ORIG}:${PATH_ADD_ON}' >> ~/.bashrc
 eval echo 'export PATH_ORIG=${PATH_ORIG}' >> ~/.bashrc
 # from asdf -----------------------------------------------------------------------------
 echo '' >> ~/.bashrc
-echo '. /usr/.asdf/asdf.sh' >> ~/.bashrc
-echo '. /usr/.asdf/completions/asdf.bash' >> ~/.bashrc
+echo '. ~/.asdf/asdf.sh' >> ~/.bashrc
+echo '. ~/.asdf/completions/asdf.bash' >> ~/.bashrc
 if [ "${HOST_ENVIRONMENT}" = "vm" ]; then
     # from Docker Desktop -------------------------------------------------------------------
     echo '' >> ~/.bashrc
@@ -495,9 +495,9 @@ sudo apt-get install -qy coreutils \
                          libyaml-dev \
                          unixodbc \
                          unzip
-sudo rm -rf /usr/.asdf
-sudo git clone https://github.com/asdf-vm/asdf.git /usr/.asdf
-cd /usr/.asdf
+sudo rm -rf ~/.asdf
+sudo git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+cd ~/.asdf
 sudo git checkout "$(git describe --abbrev=0 --tags)"
 cd ~/
 echo "================================================================================"
