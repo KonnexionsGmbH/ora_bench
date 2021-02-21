@@ -24,6 +24,8 @@ dependencies {
 }
 
 val jar by tasks.getting(Jar::class) {
+    zip64=true
+
     manifest {
         attributes["Main-Class"] = "ch.konnexions.OraBenchKt"
     }

@@ -29,6 +29,7 @@ dependencies {
 jar {
     archivesBaseName = project.name
     duplicatesStrategy = DuplicatesStrategy.INCLUDE // allow duplicates
+    zip64=true
 
     manifest {
         attributes 'Main-Class' : 'ch.konnexions.orabench.OraBench'
