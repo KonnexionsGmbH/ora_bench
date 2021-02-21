@@ -25,10 +25,10 @@ dependencies {
 
 val jar by tasks.getting(Jar::class) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    zip64 true
 
     manifest {
         attributes["Main-Class"] = "ch.konnexions.OraBenchKt"
-        zip64 = true
     }
 
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }) {
