@@ -5,7 +5,7 @@ plugins {
 }
 
 application {
-    mainClassName = "ch.konnexions.OraBenchKt"
+    mainClass.set("ch.konnexions.OraBenchKt")
 }
 
 repositories {
