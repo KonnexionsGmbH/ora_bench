@@ -11,7 +11,6 @@ application {
 
 repositories {
     jcenter()
-    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -28,6 +27,12 @@ dependencies {
 
 shadowJar {
     zip64 true
+}
+
+tasks {
+    named<ShadowJar>("shadowJar") {
+        baseName = "shadow"
+    }
 }
 
 val jar by tasks.getting(Jar::class) {
