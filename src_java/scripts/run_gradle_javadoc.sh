@@ -17,7 +17,7 @@ echo "==========================================================================
 (
     cd src_java || exit
     
-    if ! { gradle javadoc; }; then
+    if ! { gradle javadoc --warning-mode all; }; then
         exit 255
     fi
 

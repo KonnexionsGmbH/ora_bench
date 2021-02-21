@@ -16,19 +16,19 @@ echo ===========================================================================
 
 cd src_java
 
-call gradle init
+call gradle init --warning-mode all
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
-call gradle clean
+call gradle clean --warning-mode all
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
-call gradle copyJarToLib
+call gradle copyJarToLib --warning-mode all
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
@@ -36,7 +36,7 @@ if %ERRORLEVEL% NEQ 0 (
 
 set ORA_BENCH_FILE_CONFIGURATION_NAME_ORIGINAL=%ORA_BENCH_FILE_CONFIGURATION_NAME%
 set ORA_BENCH_FILE_CONFIGURATION_NAME=..\priv\properties\ora_bench.properties
-call gradle test
+call gradle test --warning-mode all
 set ERRORLEVEL_ORIGINAL=%ERRORLEVEL%
 set ORA_BENCH_FILE_CONFIGURATION_NAME=%ORA_BENCH_FILE_CONFIGURATION_NAME_ORIGINAL%
 cd ..

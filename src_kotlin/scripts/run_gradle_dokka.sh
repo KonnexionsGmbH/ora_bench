@@ -17,7 +17,7 @@ echo "==========================================================================
 (
     cd src_kotlin || exit
     
-    if ! { gradle dokkaHtml; }; then
+    if ! { gradle dokkaHtml --warning-mode all; }; then
         exit 255
     fi
 
