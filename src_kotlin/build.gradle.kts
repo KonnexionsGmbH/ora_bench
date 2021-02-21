@@ -1,7 +1,6 @@
 plugins {
     application
     id("org.jetbrains.dokka") version "1.4.0"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
     kotlin("jvm") version "1.4.30"
 }
 
@@ -24,10 +23,9 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.4.30"))
 }
 
-// val jar by tasks.getting(Jar::class) {
-shadowJar {
+val jar by tasks.getting(Jar::class) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    zip64 = true
+//  zip64 = true
 
     manifest {
         attributes["Main-Class"] = "ch.konnexions.OraBenchKt"
