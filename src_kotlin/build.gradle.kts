@@ -24,6 +24,7 @@ dependencies {
 }
 
 val jar by tasks.getting(Jar::class) {
+    duplicatesStrategy=DuplicatesStrategy.INCLUDE
     zip64=true
 
     manifest {
