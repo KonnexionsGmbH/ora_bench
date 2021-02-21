@@ -11,10 +11,12 @@ application {
 
 repositories {
     jcenter()
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
 //  dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.10.2")
+    implementation("com.github.jengelman.gradle.plugins:shadow:6.1.0")
     implementation("com.oracle.database.jdbc:ojdbc11:21.1.0.0")
     implementation("commons-logging:commons-logging:1.2")
     implementation("org.apache.commons:commons-csv:1.8")
