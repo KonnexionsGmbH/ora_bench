@@ -23,12 +23,10 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.4.30"))
 }
 
+// val jar by tasks.getting(Jar::class) {
 shadowJar {
-    zip64 true
-}
-
-val jar by tasks.getting(Jar::class) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    zip64 = true
 
     manifest {
         attributes["Main-Class"] = "ch.konnexions.OraBenchKt"
