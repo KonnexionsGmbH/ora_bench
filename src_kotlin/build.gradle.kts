@@ -1,8 +1,8 @@
 plugins {
     application
-    id("com.github.johnrengelman.shadow")
-    id("org.jetbrains.dokka")
-    kotlin("jvm")
+    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("org.jetbrains.dokka") version "1.4.20"
+    kotlin("jvm") version "1.4.30"
 }
 
 application {
