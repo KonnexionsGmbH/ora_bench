@@ -24,8 +24,9 @@ dependencies {
 }
 
 val jar by tasks.getting(Jar::class) {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     zip64 true
+
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     manifest {
         attributes["Main-Class"] = "ch.konnexions.OraBenchKt"
