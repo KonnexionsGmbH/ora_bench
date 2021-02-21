@@ -20,7 +20,7 @@ dependencies {
     implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.10.2")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.30")
     implementation("org.slf4j:slf4j-log4j12:1.7.30")
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.4.30:pom"))
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.4.30"))
 }
 
 val jar by tasks.getting(Jar::class) {
