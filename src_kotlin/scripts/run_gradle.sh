@@ -17,15 +17,15 @@ echo "==========================================================================
 (
     cd src_kotlin || exit
     
-    if ! { gradle init; }; then
+    if ! { gradle init --warning-mode all; }; then
         exit 255
     fi
 
-    if ! { gradle clean; }; then
+    if ! { gradle clean --warning-mode all; }; then
         exit 255
     fi
     
-    if ! { gradle jar; }; then
+    if ! { gradle jar --warning-mode all; }; then
         exit 255
     fi
     

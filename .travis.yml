@@ -1,17 +1,11 @@
 ---
 dist: focal
 
-sudo: true
-
-language: erlang
-otp_release:
-  - 23.0
-
 env:
   matrix:
     - ORA_BENCH_CHOICE_DB=12 ORA_BENCH_CHOICE_DRIVER=complete
     - ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=complete
-#   - ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=complete
+    #   - ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=complete
 
     - cx_Oracle ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=python
     - GoDROR    ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=go
@@ -21,20 +15,33 @@ env:
     - oranif    ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=elixir
 #   - oranif    ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=erlang
 
+sudo: true
+
+before_script:
+  - echo 'Europe/Zurich' | sudo tee /etc/timezone
+  - sudo dpkg-reconfigure --frontend noninteractive tzdata
+
 script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
   - export VERSION_ELIXIR=1.10.4
-  - export VERSION_GO=1.15.2
-  - export VERSION_GRADLE=6.6.1
+  - export VERSION_ERLANG_SOLUTIONS=2.0
+  - export VERSION_GO=1.15.3
+  - export VERSION_GRADLE=6.7
   - export VERSION_JAVA=15
   - export VERSION_ORACLE_INSTANT_CLIENT_1=19
-  - export VERSION_ORACLE_INSTANT_CLIENT_2=8
+  - export VERSION_ORACLE_INSTANT_CLIENT_2=9
 
   - sudo apt update
   - sudo apt-get install -qy software-properties-common
   - sudo apt-get install -qy lsb-core
   - travis_fold end   "Prepare_installation_process"
+
+  # Erlang -----------------------------------------------------------------------
+  - wget -q https://packages.erlang-solutions.com/erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
+  - sudo dpkg -i erlang-solutions_${VERSION_ERLANG_SOLUTIONS}_all.deb
+  - sudo apt-get update
+  - sudo apt-get install -qy esl-erlang
 
   # Elixir -----------------------------------------------------------------------
   - travis_fold start "Setting_up_Elixir"
@@ -97,8 +104,8 @@ script:
 
   # Oracle Instant Client --------------------------------------------------------
   - travis_fold start "Setting_up_Oracle_Instant_Client"
-  - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}00/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-basic-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
-  - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}00/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-sqlplus-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
+  - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}000/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-basic-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
+  - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}000/oracle-instantclient${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}-sqlplus-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
   - sudo alien -i --scripts *.rpm
   - export ORACLE_HOME=/usr/lib/oracle/${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}/client64
   - export LD_LIBRARY_PATH="$ORACLE_HOME/lib:$LD_LIBRARY_PATH"
@@ -145,7 +152,8 @@ script:
   - sudo chmod +x scripts/*.sh
   - sudo chmod +x */scripts/*.sh
   - python -m pip install -r src_python/requirements.txt
-  - ./scripts/run_properties_variations.sh
+  - ./scripts/run_show_environment.sh
+  - ./scripts/run_collect_and_compile.sh
   - travis_fold end   "Running_ora_bench"
 
 after_success:

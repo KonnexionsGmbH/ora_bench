@@ -14,12 +14,12 @@
 **[2. Framework Tools](#framework_tools)**<br>
 **[3. Coding Pattern](#coding_pattern)**<br>
 **[4. Driver Specific Features](#driver_specifica)**<br>
-**[5. Reporting](#reporting)**<br>
-**[6. Contributing](#contributing)**<br>
+**[5. Execution Variations](#execution)**<br>
+**[6. Reporting](#reporting)**<br>
 
 ----
 
-## <a name="introduction"></a> 1 Introduction
+## <a name="introduction"></a> 1. Introduction
 
 **ora_bench** can be used to determine the performance of different Oracle database drivers under identical conditions.
 The framework parameters for a benchmark run are stored in a central configuration file.
@@ -44,7 +44,7 @@ The following Oracle database versions are provided in a benchmark run via Docke
 
 The results of the benchmark runs are collected in either csv (comma-separated values) or tsv (tab-separated values) files.
 
-## <a name="framework_tools"></a> 2 Framework Tools
+## <a name="framework_tools"></a> 2. Framework Tools
 
 ### 2.1 Benchmark Configuration
 
@@ -167,7 +167,7 @@ The following configuration parameters are taken into account:
 
 The data column in the bulk file is randomly generated with a unique key column (MD5 hash code).
 
-## 3 <a name="coding_pattern"></a> Coding Patterns
+## <a name="coding_pattern"></a> 3. Coding Patterns
 
 ### 3.1 `Benchmark Function` (main function)
 
@@ -319,7 +319,7 @@ The data column in the bulk file is randomly generated with a unique key column 
         ENDIF                    
 ```
 
-## 4 <a name="driver_specifica"></a> Driver Specific Features
+## <a name="driver_specifica"></a> 4. Driver Specific Features
 
 ### 4.1 cx_Oracle and Python
 
@@ -380,14 +380,91 @@ The data column in the bulk file is randomly generated with a unique key column 
     - Erlang version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.erlang`) 
 
-## 5 <a name="reporting"> Reporting
+## <a name="execution"></a> 5. Execution Variations
+
+### 5.1 Ubuntu 20.04 LTS (including VMware)
+
+- **Requirements**:
+  - Ubuntu 20.04 installed directly or via VMware
+  - run `sudo apt update`
+  - run `sudo apt install dos2unix git`
+  - add the following lines to `.bash_profile`:
+
+        if [ -f ~/.bashrc ]; then
+            source ~/.bashrc
+        fi
+
+  - run `export DOCKER_USERNAME=\<user name\>`
+  - run `export DOCKER_PASSWORD=\<password\>`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the ora_bench repository)
+  - run `cd ora_bench`
+  - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
+  - run `./scripts/run_install_4_ubuntu_20.04_vm_wsl2.sh` (setting up the WSL2 environment)
+  - close the Ubuntu shell and reopen it again
+  - run `cd ora_bench`
+- **Execution**: run `./run_bench_all_dbs_props_[std|var].sh`
+
+#### 5.2 Ubuntu 20.04 LTS and [kxn_dev Image](https://hub.docker.com/repository/docker/konnexionsgmbh/kxn_dev)
+
+- **Requirements**:
+  - pull the `kxn_dev` image from DockerHub: `docker pull konnexionsgmbh/kxn_dev:latest`
+  - create an appropriate container: `docker run -it --name kxn_dev -v /var/run/docker.sock:/var/run/docker.sock konnexionsgmbh/kxn_dev:latest bash`
+  - run `export DOCKER_USERNAME=\<user name\>`
+  - run `export DOCKER_PASSWORD=\<password\>`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the ora_bench repository)
+  - run `cd ora_bench`
+  - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
+  - run `gradle copyJarToLib`
+- **Execution**: `./run_ora_bench.sh`
+- **Issues**:
+  - Trino Distributed Query Engine and Microsoft SQL Connector
+
+### 5.3 Ubuntu 20.04 LTS and Windows Subsystem Linux 2
+
+- **Requirements**:
+  - install Ubuntu 20.04 from Microsoft Marketplace
+  - run `sudo apt update`
+  - run `sudo apt install dos2unix`
+  - add the following lines to `.bash_profile`:
+
+        if [ -f ~/.bashrc ]; then
+            source ~/.bashrc
+        fi
+
+  - activate the `WSL INTEGRATION` for Ubuntu 20.04 in Docker
+
+![](.README_images/Docker_Desktop_Settings_1.png)
+
+![](.README_images/Docker_Desktop_Settings_2.png)
+
+- **Requirements (continued)**:
+  - run `export DOCKER_USERNAME=\<user name\>`
+  - run `export DOCKER_PASSWORD=\<password\>`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the ora_bench repository)
+  - run `cd ora_bench`
+  - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
+  - run `./scripts/run_install_4_ubuntu_20.04_vm_wsl2.sh` (setting up the WSL2 environment)
+  - close the Ubuntu shell and reopen it again
+  - run `cd ora_bench`
+  - run `gradle copyJarToLib`
+- **Execution**: run `./run_ora_bench.sh`
+- **Issues**:
+  - Trino Distributed Query Engine and Microsoft SQL Connector
+  - YugabyteDB and Docker image
+
+### 5.4 Windows 10 Pro
+
+- **Requirements**:
+  - run `set DOCKER_USERNAME=\<user name\>`
+  - run `set DOCKER_PASSWORD=\<password\>`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the ora_bench repository)
+  - run `cd ora_bench`
+- **Execution**: run `run_ora_bench.bat`
+- **Issues**:
+  - Trino Distributed Query Engine and Microsoft SQL Connector
+  - YugabyteDB and Docker image
+
+## <a name="reporting"></a> 6. Reporting
 
 [see here](https://konnexionsgmbh.github.io/ora_bench/)
 
-## 6. <a name="contributing"></a> Contributing
-
-1. fork it
-2. create your feature branch (`git checkout -b my-new-feature`)
-3. commit your changes (`git commit -am 'Add some feature'`)
-4. push to the branch (`git push origin my-new-feature`)
-5. create a new pull request

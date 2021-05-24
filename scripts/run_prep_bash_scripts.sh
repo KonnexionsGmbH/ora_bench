@@ -1,36 +1,30 @@
 #!/bin/bash
 
+set -e
+
 # ------------------------------------------------------------------------------
 #
-# run_gradle.bat: clean and assemble the Java part of the project.
+# run_prep_bash_scripts.sh: Configure EOL and execution rights.
 #
 # ------------------------------------------------------------------------------
 
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - Gradle: clean and assemble the Java part of the project."
+echo "ora_bench - Configue EOL and execution rights."
+echo "--------------------------------------------------------------------------------"
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-(
-    cd src_java || exit
-    
-    if ! { gradle init --warning-mode all; }; then
-        exit 255
-    fi
+chmod +x *.sh
+chmod +x */*.sh
+chmod +x */*/*.sh
 
-    if ! { gradle clean --warning-mode all; }; then
-        exit 255
-    fi
-    
-    if ! { gradle copyJarToLib --warning-mode all; }; then
-        exit 255
-    fi
-)
+dos2unix *.sh
+dos2unix */*.sh
+dos2unix */*/*.sh
 
-echo ""
 echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "--------------------------------------------------------------------------------"

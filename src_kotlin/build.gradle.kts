@@ -1,11 +1,11 @@
 plugins {
     application
-    id("org.jetbrains.dokka") version "1.4.0"
-    kotlin("jvm") version "1.4.10"
+    id("org.jetbrains.dokka") version "1.4.20"
+    kotlin("jvm") version "1.4.30"
 }
 
 application {
-    mainClassName = "ch.konnexions.OraBenchKt"
+    mainClass.set("ch.konnexions.OraBenchKt")
 }
 
 repositories {
@@ -13,17 +13,20 @@ repositories {
 }
 
 dependencies {
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.0")
-    implementation("com.oracle.database.jdbc:ojdbc10:19.7.0.0")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.10.2")
+    implementation("com.oracle.database.jdbc:ojdbc11:21.1.0.0")
     implementation("commons-logging:commons-logging:1.2")
     implementation("org.apache.commons:commons-csv:1.8")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.10.2")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.30")
     implementation("org.slf4j:slf4j-log4j12:1.7.30")
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.4.30"))
 }
 
 val jar by tasks.getting(Jar::class) {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    zip64 = true
+
     manifest {
         attributes["Main-Class"] = "ch.konnexions.OraBenchKt"
     }

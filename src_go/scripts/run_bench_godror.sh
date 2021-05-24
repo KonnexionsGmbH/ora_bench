@@ -24,7 +24,7 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
 fi
 
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
-    GOPATH=$(pwd)/src_go
+    GOPATH=${PWD}/src_go
     export GOPATH
 fi
 
