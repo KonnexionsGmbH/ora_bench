@@ -38,9 +38,8 @@ The following Oracle database versions are provided in a benchmark run via Docke
 
 | Shortcut   | Oracle Database Version |
 | :---       | :--- |
-| db_12_2_ee | Oracle Database 12c Release 2 (12.2.0.1.0) - Enterprise Edition - Linux x86-64 |
-| db_18_3_ee | Oracle Database 18c 18.3 - Linux x86-64                                        |
-| db_19_3_ee | Oracle Database 19c 19.3 - Linux x86-64                                        |
+| db_18_4_xe | Oracle Database 18c 18.4 (Express Edition) - Linux x86-64                                        |
+| db_19_3_ee | Oracle Database 19c 19.3                   - Linux x86-64                                        |
 
 The results of the benchmark runs are collected in either csv (comma-separated values) or tsv (tab-separated values) files.
 

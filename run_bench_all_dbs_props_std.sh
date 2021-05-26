@@ -49,8 +49,7 @@ if [ -z "$2" ]; then
     echo "========================================================="
     echo "complete           - All implemented variations"
     echo "---------------------------------------------------------"
-    echo "12                 - Oracle Database 12c Release 2"
-    echo "18                 - Oracle Database 18c"
+    echo "18                 - Oracle Database 18c Express Edition"
     echo "19                 - Oracle Database 19c"
     echo "---------------------------------------------------------"
     read -rp "Enter the desired database version [default: ${ORA_BENCH_CHOICE_DB_DEFAULT}] " ORA_BENCH_CHOICE_DB
@@ -63,18 +62,14 @@ else
     export ORA_BENCH_CHOICE_DB=$2
 fi
 
-export ORA_BENCH_RUN_DB_12_2_EE=false
-export ORA_BENCH_RUN_DB_18_3_EE=false
+export ORA_BENCH_RUN_DB_18_4_XE=false
 export ORA_BENCH_RUN_DB_19_3_EE=false
 
 if [ "${ORA_BENCH_CHOICE_DB}" = "complete" ]; then
-    export ORA_BENCH_RUN_DB_12_2_EE=true
-    export ORA_BENCH_RUN_DB_18_3_EE=true
+    export ORA_BENCH_RUN_DB_18_4_XE=true
     export ORA_BENCH_RUN_DB_19_3_EE=true
-elif [ "${ORA_BENCH_CHOICE_DB}" = "12" ]; then
-    export ORA_BENCH_RUN_DB_12_2_EE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
-    export ORA_BENCH_RUN_DB_18_3_EE=true
+    export ORA_BENCH_RUN_DB_18_4_XE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then
     export ORA_BENCH_RUN_DB_19_3_EE=true
 fi
@@ -114,16 +109,8 @@ fi
 
 export ORA_BENCH_BULKFILE_EXISTING=true
 
- if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
-    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    if ! { /bin/bash scripts/run_properties_standard.sh; }; then
-        exit 255
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
+if [ "$ORA_BENCH_RUN_DB_18_4_XE" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     if ! { /bin/bash scripts/run_properties_standard.sh; }; then
         exit 255
