@@ -8,10 +8,6 @@
 
 set -e
 
-if [ -z "$GOPATH" ]; then
-    GOPATH=$(pwd)/src_go
-fi
-
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -27,7 +23,6 @@ echo "RUN_ODPI_C                        : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR                 : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG                 : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
-echo "GOPATH                            : $GOPATH"
 echo "GOROOT                            : $GOROOT"
 echo "GRADLE_HOME                       : $GRADLE_HOME"
 echo "LD_LIBRARY_PATH                   : $LD_LIBRARY_PATH"

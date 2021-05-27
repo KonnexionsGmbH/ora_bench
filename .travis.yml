@@ -72,9 +72,8 @@ script:
   - wget -q https://dl.google.com/go/go${VERSION_GO}.linux-amd64.tar.gz
   - tar -xf go${VERSION_GO}.linux-amd64.tar.gz
   - sudo mv go /usr/local
-  - export GOPATH=${HOME}/build/KonnexionsGmbH/ora_bench/src_go
   - export GOROOT=/usr/local/go
-  - export PATH=${GOPATH}/bin:${GOROOT}/bin:${PATH}
+  - export PATH=${GOROOT}/bin:${PATH}
   - travis_fold end   "Setting_up_Go"
 
   # Java -------------------------------------------------------------------------

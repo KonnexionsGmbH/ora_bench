@@ -1,15 +1,15 @@
 {
-  application,
-  orabench,
-  [
-    {description, "An escript"},
-    {vsn, "0.1.0"},
-    {registered, []},
-    {applications, [kernel, stdlib, oranif]},
-    {env, []},
-    {modules, []},
-    {maintainers, []},
-    {licenses, ["Konnexions Public License (KX-PL)"]},
-    {links, []}
-  ]
+    application,
+    orabench,
+    [
+        {description, "An escript"},
+        {vsn, "0.1.0"},
+        {registered, []},
+        {applications, [kernel, stdlib, oranif]},
+        {env, []},
+        {modules, []},
+        {maintainers, []},
+        {licenses, ["Konnexions Public License (KX-PL)"]},
+        {links, []}
+    ]
 }.

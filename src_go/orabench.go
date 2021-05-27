@@ -12,6 +12,9 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	godror "github.com/godror/godror"
+	errors "golang.org/x/xerrors"
 )
 
 type bulkPartition struct{ keys, vals []string }
