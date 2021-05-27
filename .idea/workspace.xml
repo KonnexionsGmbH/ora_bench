@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="66285ec5-cf81-4ebf-9870-7f04b68fac11" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/src_python/logging.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src_python/logging.yaml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="CLEAR_OUTPUT_DIRECTORY" value="false" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$/src_kotlin">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$/src_kotlin">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ora_bench" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ora_bench" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ora_bench" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="application" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ora_bench" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ora_bench" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build setup" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ora_bench" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ora_bench" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+                <item name="compileClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ora_bench" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+                <item name="runtimeClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
+    </option>
+  </component>
+  <component name="GOROOT" url="file://C:/Program Files/Go" />
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="wwe_2020_11" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+  </component>
+  <component name="GoDepProject">
+    <integration-enabled>true</integration-enabled>
+  </component>
+  <component name="GoLibraries">
+    <option name="urls">
+      <list>
+        <option value="file://$PROJECT_DIR$/src_go" />
+      </list>
+    </option>
+    <option name="useGoPathFromSystemEnvironment" value="false" />
+  </component>
+  <component name="JupyterTrust" id="0f3f81a0-03c8-4e4f-989b-19be256ac8bc" />
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="0ppl7wtt" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedIndex" value="7" />
+  </component>
+  <component name="ProjectId" id="1bfzLiaY97eKnbCbiPCKcGK1evq" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
+    <property name="Repository.Attach.Annotations" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="add_unversioned_files" value="true" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="LOG&#10;KND&#10;kotlin" />
+    <property name="configurable..is.expanded" value="false" />
+    <property name="configurable.GoLibrariesConfigurable.is.expanded" value="true" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Problems" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.1754902" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Go" />
+    <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/src_elixir" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\SoftDevelopment\Projects\ora_bench\scripts" />
+      <recent name="D:\SoftDevelopment\Projects\ora_bench" />
+      <recent name="D:\SoftDevelopment\Projects\Konnexions\ora_bench\src_kotlin\scripts" />
+      <recent name="D:\SoftDevelopment\Projects\Konnexions\ora_bench\src_java\scripts" />
+      <recent name="D:\SoftDevelopment\Projects\Konnexions\ora_bench" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\SoftDevelopment\Projects\Konnexions\ora_bench\src_kotlin\src\main\kotlin\ch\konnexions" />
+      <recent name="D:\SoftDevelopment\Projects\Konnexions\ora_bench\src_kotlin\src\main\kotlin" />
+      <recent name="D:\SoftDevelopment\Projects\Konnexions\ora_bench\priv\libs" />
+      <recent name="D:\SoftDevelopment\Projects\Konnexions\ora_bench\src_kotlin\src\main\kotlin\ch\konnexions\orabench" />
+      <recent name="D:\SoftDevelopment\Projects\Konnexions\ora_bench\src_java" />
+    </key>
+    <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
+      <recent name="ch.konnexions" />
+      <recent name="" />
+      <recent name="threads" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <working_directory value="$PROJECT_DIR$" />
+      <go_parameters value="-i" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build orabench.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="ora_bench" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/src_go/orabench.go" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <working_directory value="$PROJECT_DIR$" />
+      <go_parameters value="-i" />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="RustProjectSettings">
+    <option name="runRustfmtOnSave" value="true" />
+    <option name="toolchainHomeDirectory" value="$PROJECT_DIR$/../../../../Software/.cargo/bin" />
+    <option name="version" value="2" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="66285ec5-cf81-4ebf-9870-7f04b68fac11" name="Default Changelist" comment="" />
+      <created>1600088019010</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1600088019010</updated>
+      <workItem from="1600088021772" duration="94000" />
+      <workItem from="1600097154753" duration="27000" />
+      <workItem from="1601306558552" duration="460000" />
+      <workItem from="1601307773738" duration="711000" />
+      <workItem from="1601314644481" duration="231000" />
+      <workItem from="1621865447546" duration="678000" />
+      <workItem from="1621923088590" duration="4308000" />
+      <workItem from="1622016553349" duration="6615000" />
+      <workItem from="1622079339270" duration="313000" />
+      <workItem from="1622082245471" duration="49000" />
+      <workItem from="1622110558965" duration="727000" />
+      <workItem from="1622113717664" duration="2414000" />
+    </task>
+    <task id="LOCAL-00001" summary="Execution Documentation.">
+      <created>1621865496480</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1621865496480</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Execution Documentation.">
+      <created>1622016943326</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1622016943326</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Execution Documentation.">
+      <created>1622017320825</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1622017320825</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Execution Documentation.">
+      <created>1622022556384</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1622022556385</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Version 1.0.0">
+      <created>1622082281073</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1622082281073</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Version 1.0.0">
+      <created>1622113665650</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1622113665650</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Version 1.0.0">
+      <created>1622114185074</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1622114185074</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Version 1.0.0&#10;Cleanup golang">
+      <created>1622132886465</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1622132886465</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Version 1.0.0&#10;Cleanup Kotlin">
+      <created>1622132974252</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1622132974252</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.bat" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/src_c/odpi" />
+      <path value="$PROJECT_DIR$/src_elixir/deps/oranif" />
+      <path value="$PROJECT_DIR$/src_elixir/deps/oranif/c_src/odpi" />
+      <path value="$PROJECT_DIR$/src_erlang/_build/default/lib/jamdb_oracle" />
+      <path value="$PROJECT_DIR$/src_erlang/_build/default/lib/oranif" />
+      <path value="$PROJECT_DIR$/src_erlang/_build/default/lib/oranif/c_src/odpi" />
+      <path value="$PROJECT_DIR$/src_go/go/src/github.com/godror/godror" />
+      <path value="$PROJECT_DIR$/src_go/go/src/golang.org/x/xerrors" />
+      <path value="$PROJECT_DIR$/src_go/src/github.com/godror/godror" />
+      <path value="$PROJECT_DIR$/src_go/src/github.com/go-logfmt/logfmt" />
+      <path value="$PROJECT_DIR$/src_go/src/golang.org/x/xerrors" />
+    </ignored-roots>
+    <MESSAGE value="Konnexions Public License (KX-PL)." />
+    <MESSAGE value="Version 1.0.0." />
+    <MESSAGE value="Merge branch 'wwe_logging_java' into master&#10;&#10;# Conflicts:&#10;#&#9;.travis.yml" />
+    <MESSAGE value="Debugging Python." />
+    <MESSAGE value="Exposed &amp; Kotlin." />
+    <MESSAGE value="Documentation &amp; Script Improvements." />
+    <MESSAGE value="Cleanup Gradle." />
+    <MESSAGE value="Kotlin and JDBC." />
+    <MESSAGE value="Go and godror." />
+    <MESSAGE value="Update Travis CI components." />
+    <MESSAGE value="Execution Documentation." />
+    <MESSAGE value="Version 1.0.0" />
+    <MESSAGE value="Version 1.0.0&#10;Cleanup golang" />
+    <MESSAGE value="Version 1.0.0&#10;Cleanup Kotlin" />
+    <option name="LAST_COMMIT_MESSAGE" value="Version 1.0.0&#10;Cleanup Kotlin" />
+    <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+  </component>
+  <component name="com.vaadin.designer2.intellij.settings.SizePresetsSettingsComponent">
+    <option name="sizePresets">
+      <list>
+        <SizePreset>
+          <option name="caption" value="Phone" />
+          <option name="height" value="568" />
+          <option name="width" value="320" />
+        </SizePreset>
+        <SizePreset>
+          <option name="caption" value="Tablet" />
+          <option name="height" value="1024" />
+          <option name="width" value="768" />
+        </SizePreset>
+        <SizePreset>
+          <option name="caption" value="Desktop" />
+          <option name="height" value="900" />
+          <option name="width" value="1440" />
+        </SizePreset>
+      </list>
+    </option>
+  </component>
+</project>
