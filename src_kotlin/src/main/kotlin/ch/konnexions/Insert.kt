@@ -6,15 +6,15 @@ import java.sql.PreparedStatement
 import org.apache.log4j.Logger
 
 class Insert(
-        logger: Logger,
-        isDebug: Boolean,
-        connection: Connection,
-        preparedStatement: PreparedStatement,
-        bulkDataPartition: ArrayList<Array<String>>,
-        benchmarkSize: Int,
-        benchmarkTransactionSize: Int
+    logger: Logger,
+    isDebug: Boolean,
+    connection: Connection,
+    preparedStatement: PreparedStatement,
+    bulkDataPartition: ArrayList<Array<String>>,
+    benchmarkSize: Int,
+    benchmarkTransactionSize: Int
 ) :
-        Runnable {
+    Runnable {
     private val benchmarkSize: Int
     private val benchmarkTransactionSize: Int
     private val bulkDataPartition: ArrayList<Array<String>>
@@ -32,13 +32,13 @@ class Insert(
         }
 
         OraBench.insertHelper(
-                logger,
-                isDebug,
-                connection,
-                preparedStatement,
-                bulkDataPartition,
-                benchmarkSize,
-                benchmarkTransactionSize
+            logger,
+            isDebug,
+            connection,
+            preparedStatement,
+            bulkDataPartition,
+            benchmarkSize,
+            benchmarkTransactionSize
         )
 
         if (isDebug) {
