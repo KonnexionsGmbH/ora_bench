@@ -111,7 +111,7 @@ export ORA_BENCH_BULKFILE_EXISTING=true
 
 if [ "$ORA_BENCH_RUN_DB_18_4_XE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
-    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    export ORA_BENCH_CONNECTION_SERVICE=xe
     if ! { /bin/bash scripts/run_properties_standard.sh; }; then
         exit 255
     fi

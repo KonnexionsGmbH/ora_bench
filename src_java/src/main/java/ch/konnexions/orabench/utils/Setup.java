@@ -110,7 +110,7 @@ public class Setup {
                                                                                         LENGTH_DIGEST);
 
     try {
-      BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(config.getFileBulkName()), false));
+      BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(config.getFileBulkName(), false));
       CSVPrinter     bulkFile       = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.withDelimiter(config.getFileBulkDelimiter().charAt(0)).withHeader(config
           .getFileBulkHeader().split(config.getFileBulkDelimiter())));
 
