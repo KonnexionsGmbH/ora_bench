@@ -105,7 +105,8 @@ public class OraBench {
    * <li>setup_python - creates a configuration parameter file suited for Python
    * </ul>
    * 
-   * @param args finalise / runBenchmark / setup / setup_erlang / setup_python / setup_json
+   * @param args finalise / runBenchmark / setup / setup_erlang / setup_python /
+   *             setup_json
    */
   public static void main(String[] args) {
     if (isDebug) {
@@ -181,7 +182,7 @@ public class OraBench {
    * @param statement         the statement
    * @param bulkDataPartition the bulk data partition
    * @param partitionKey      the partition key
-   * @param config the config
+   * @param config            the config
    */
   public static void selectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey, Config config) {
     if (isDebug) {
