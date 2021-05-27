@@ -74,7 +74,7 @@ public class Database {
       logger.debug("Start");
     }
 
-    final String url = "jdbc:oracle:thin:@//" + connectionHost + ":" + connectionPort + "/" + connectionService;
+    final String url = "jdbc:oracle:thin:@//" + connectionHost + ":" + connectionPort + "/" + connectionService + "?oracle.net.disableOob=true";
 
     if (connection == null) {
       try {

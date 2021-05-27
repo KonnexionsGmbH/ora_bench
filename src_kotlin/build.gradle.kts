@@ -9,7 +9,7 @@ application {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -20,12 +20,12 @@ dependencies {
     implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.32")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.10")
     implementation("org.slf4j:slf4j-log4j12:1.7.30")
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.4.21-js-fixwa"))
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.5.10"))
 }
 
 val jar by tasks.getting(Jar::class) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    zip64 = true
+    isZip64 = true
 
     manifest {
         attributes["Main-Class"] = "ch.konnexions.OraBenchKt"

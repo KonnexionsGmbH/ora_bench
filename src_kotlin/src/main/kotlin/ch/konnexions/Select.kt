@@ -5,8 +5,8 @@ import java.sql.Statement
 import org.apache.log4j.Logger
 
 class Select(
-    logger: Logger,
-    isDebug: Boolean, statement: Statement, bulkDataPartition: ArrayList<Array<String>>, partitionKey: Int, connectionFetchSize: Int, sqlSelect: String
+        logger: Logger,
+        isDebug: Boolean, statement: Statement, bulkDataPartition: ArrayList<Array<String>>, partitionKey: Int, connectionFetchSize: Int, sqlSelect: String
 ) : Runnable {
     private val bulkDataPartition: ArrayList<Array<String>>
     private val connectionFetchSize: Int
@@ -25,13 +25,13 @@ class Select(
         }
 
         OraBench.selectHelper(
-            logger,
-            isDebug,
-            statement,
-            bulkDataPartition,
-            partitionKey,
-            connectionFetchSize,
-            sqlSelect
+                logger,
+                isDebug,
+                statement,
+                bulkDataPartition,
+                partitionKey,
+                connectionFetchSize,
+                sqlSelect
         )
 
         if (isDebug) {
