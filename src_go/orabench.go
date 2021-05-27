@@ -12,9 +12,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	godror "github.com/godror/godror"
-	errors "golang.org/x/xerrors"
 )
 
 type bulkPartition struct{ keys, vals []string }
@@ -117,9 +114,13 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 	db, err := sql.Open("godror", configs["connection.dsn"].(string))
 	if err != nil {
 		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
-		os.Exit(1)
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			log.Fatal(errors.Errorf("%v: %w", "db.Close()", err))
+		}
+	}(db)
 
 	sqlInsert := configs["sql.insert"].(string)
 
@@ -129,7 +130,6 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 			errors.Errorf(
 				"Trial %d, Partition %d, SQL %s -> %w", trial, partition, sqlInsert,
 				err))
-		os.Exit(1)
 	}
 
 	rowCount, err := resultInsert.RowsAffected()
@@ -141,7 +141,6 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 		log.Fatalf(
 			"Trial %d, Partition %d: %d of %d rows inserted by %s",
 			trial, partition, len(rows.keys), rowCount, sqlInsert)
-		os.Exit(1)
 	}
 }
 
@@ -151,9 +150,13 @@ func doSelect(ctx context.Context, configs map[string]interface{}, trial int, pa
 	db, err := sql.Open("godror", configs["connection.dsn"].(string))
 	if err != nil {
 		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
-		os.Exit(1)
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			log.Fatal(errors.Errorf("%v: %w", "db.Close()", err))
+		}
+	}(db)
 
 	selectSQL := configs["sql.select"].(string) + " WHERE partition_key = " +
 		strconv.Itoa(partition)
@@ -163,7 +166,12 @@ func doSelect(ctx context.Context, configs map[string]interface{}, trial int, pa
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			log.Fatal(errors.Errorf("%v: %w", "rows.Close()", err))
+		}
+	}(rows)
 
 	i := 0
 	for rows.Next() {
@@ -173,8 +181,7 @@ func doSelect(ctx context.Context, configs map[string]interface{}, trial int, pa
 	if i != expect {
 		log.Fatalf(
 			"Trial %d, partition %d : failed to get %d rows (got %d)\n",
-			expect, i)
-		os.Exit(1)
+			trial, partition, expect, i)
 	}
 }
 
@@ -187,7 +194,12 @@ func loadBulk(benchmarkNumberPartitions int, fileBulkName string, fileBulkDelimi
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer bulkFile.Close()
+	defer func(bulkFile *os.File) {
+		err := bulkFile.Close()
+		if err != nil {
+			log.Fatal(errors.Errorf("%v: %w", "bulkFile.Close()", err))
+		}
+	}(bulkFile)
 
 	scanner := bufio.NewScanner(bulkFile)
 	for scanner.Scan() {
@@ -217,7 +229,12 @@ func loadConfig(configFile string) map[string]interface{} {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer confFile.Close()
+	defer func(confFile *os.File) {
+		err := confFile.Close()
+		if err != nil {
+			log.Fatal(errors.Errorf("%v: %w", "confFile.Close()", err))
+		}
+	}(confFile)
 
 	scanner := bufio.NewScanner(confFile)
 	for scanner.Scan() {
@@ -252,9 +269,13 @@ func initDb(ctx context.Context, configs map[string]interface{}) {
 		configs["connection.dsn"].(string))
 	if err != nil {
 		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
-		os.Exit(1)
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			log.Fatal(errors.Errorf("%v: %w", "db.Close()", err))
+		}
+	}(db)
 
 	_, err = db.ExecContext(ctx, configs["sql.create"].(string))
 	if err != nil {
@@ -289,7 +310,12 @@ func resultWriter(configs map[string]interface{}, resultChn []result) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer rf.Close()
+	defer func(rf *os.File) {
+		err := rf.Close()
+		if err != nil {
+			log.Fatal(errors.Errorf("%v: %w", "rf.Close()", err))
+		}
+	}(rf)
 
 	resultFile := bufio.NewWriter(rf)
 
