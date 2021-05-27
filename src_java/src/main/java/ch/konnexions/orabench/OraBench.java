@@ -349,7 +349,7 @@ public class OraBench {
   /**
    * Run a benchmark.
    */
-  private final void runBenchmark() {
+  private void runBenchmark() {
     if (isDebug) {
       logger.debug("Start");
     }
@@ -434,6 +434,7 @@ public class OraBench {
       try {
         while (!executorService.awaitTermination(1,
                                                  TimeUnit.SECONDS)) {
+          ;
         }
       } catch (InterruptedException e) {
         e.printStackTrace();
@@ -482,6 +483,7 @@ public class OraBench {
       try {
         while (!executorService.awaitTermination(1,
                                                  TimeUnit.SECONDS)) {
+          ;
         }
       } catch (InterruptedException e) {
         e.printStackTrace();

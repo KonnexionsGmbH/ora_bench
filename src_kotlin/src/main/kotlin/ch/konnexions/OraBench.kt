@@ -36,7 +36,6 @@ import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.CSVRecord
 import org.apache.log4j.Logger
 
-
 class OraBench {
     val logger: Logger = Logger.getLogger(OraBench::class.java)
     val isDebug: Boolean = logger.isDebugEnabled
@@ -112,9 +111,9 @@ class OraBench {
         if (connection == null) {
             try {
                 connection = DriverManager.getConnection(
-                    url,
-                    connectionUser,
-                    connectionPassword
+                        url,
+                        connectionUser,
+                        connectionPassword
                 )
 
                 connection?.let {
@@ -150,11 +149,11 @@ class OraBench {
         }
 
         val connections: ArrayList<Connection> =
-            ArrayList(benchmarkNumberPartitions)
+                ArrayList(benchmarkNumberPartitions)
         val preparedStatements: ArrayList<PreparedStatement> =
-            ArrayList(benchmarkNumberPartitions)
+                ArrayList(benchmarkNumberPartitions)
         val statements: ArrayList<Statement> =
-            ArrayList(benchmarkNumberPartitions)
+                ArrayList(benchmarkNumberPartitions)
 
         for (i in 0 until benchmarkNumberPartitions) {
             try {
@@ -163,15 +162,15 @@ class OraBench {
                 connections.add(connection)
 
                 preparedStatements.add(
-                    connection.prepareStatement(
-                        sqlInsert.replace(
-                            ":key",
-                            "?"
-                        ).replace(
-                            ":data",
-                            "?"
+                        connection.prepareStatement(
+                                sqlInsert.replace(
+                                        ":key",
+                                        "?"
+                                ).replace(
+                                        ":data",
+                                        "?"
+                                )
                         )
-                    )
                 )
 
                 statements.add(connection.createStatement())
@@ -186,31 +185,31 @@ class OraBench {
         }
 
         return ArrayList(
-            listOf<ArrayList<out Any>>(
-                connections,
-                preparedStatements,
-                statements
-            )
+                listOf<ArrayList<out Any>>(
+                        connections,
+                        preparedStatements,
+                        statements
+                )
         )
     }
 
     private fun createMeasuringPoint(
-        trialNo: Int,
-        startDateTime: LocalDateTime,
-        endDateTime: LocalDateTime,
-        duration: Long
+            trialNo: Int,
+            startDateTime: LocalDateTime,
+            endDateTime: LocalDateTime,
+            duration: Long
     ) {
         if (isDebug) {
             logger.debug("Start")
         }
 
         createMeasuringPoint(
-            "trial",
-            trialNo,
-            null,
-            startDateTime,
-            endDateTime,
-            duration
+                "trial",
+                trialNo,
+                null,
+                startDateTime,
+                endDateTime,
+                duration
         )
 
         if (isDebug) {
@@ -224,12 +223,12 @@ class OraBench {
         }
 
         createMeasuringPoint(
-            "benchmark",
-            0,
-            null,
-            lastBenchmark,
-            endDateTime,
-            duration
+                "benchmark",
+                0,
+                null,
+                lastBenchmark,
+                endDateTime,
+                duration
         )
 
         if (isDebug) {
@@ -238,12 +237,12 @@ class OraBench {
     }
 
     private fun createMeasuringPoint(
-        action: String,
-        trialNo: Int,
-        sqlStatement: String?,
-        startDateTime: LocalDateTime,
-        endDateTime: LocalDateTime,
-        duration: Long
+            action: String,
+            trialNo: Int,
+            sqlStatement: String?,
+            startDateTime: LocalDateTime,
+            endDateTime: LocalDateTime,
+            duration: Long
     ) {
         if (isDebug) {
             logger.debug("Start")
@@ -251,29 +250,29 @@ class OraBench {
 
         try {
             resultFile!!.printRecord(
-                benchmarkRelease,
-                benchmarkId,
-                benchmarkComment,
-                benchmarkHostName,
-                benchmarkNumberCores,
-                benchmarkOs,
-                benchmarkUserName,
-                benchmarkDatabase,
-                benchmarkLanguage,
-                benchmarkDriver,
-                trialNo,
-                sqlStatement,
-                benchmarkCoreMultiplier,
-                connectionFetchSize,
-                benchmarkTransactionSize,
-                fileBulkLength,
-                fileBulkSize,
-                benchmarkBatchSize,
-                action,
-                startDateTime.format(formatter),
-                endDateTime.format(formatter),
-                decimalFormat.format((duration / 1000000000.0).roundToLong()),
-                duration.toString()
+                    benchmarkRelease,
+                    benchmarkId,
+                    benchmarkComment,
+                    benchmarkHostName,
+                    benchmarkNumberCores,
+                    benchmarkOs,
+                    benchmarkUserName,
+                    benchmarkDatabase,
+                    benchmarkLanguage,
+                    benchmarkDriver,
+                    trialNo,
+                    sqlStatement,
+                    benchmarkCoreMultiplier,
+                    connectionFetchSize,
+                    benchmarkTransactionSize,
+                    fileBulkLength,
+                    fileBulkSize,
+                    benchmarkBatchSize,
+                    action,
+                    startDateTime.format(formatter),
+                    endDateTime.format(formatter),
+                    decimalFormat.format((duration / 1000000000.0).roundToLong()),
+                    duration.toString()
             )
         } catch (e: IOException) {
             logger.error("file result delimiter=: $fileResultDelimiter")
@@ -300,8 +299,8 @@ class OraBench {
         val duration: Long = System.nanoTime() - lastBenchmarkNano
 
         createMeasuringPoint(
-            endDateTime,
-            duration
+                endDateTime,
+                duration
         )
 
         try {
@@ -334,12 +333,12 @@ class OraBench {
         val duration = System.nanoTime() - lastQueryNano
 
         createMeasuringPoint(
-            "query",
-            trialNo,
-            sqlStatement,
-            lastQuery!!,
-            endDateTime,
-            duration
+                "query",
+                trialNo,
+                sqlStatement,
+                lastQuery!!,
+                endDateTime,
+                duration
         )
 
         if (isDebug) {
@@ -358,10 +357,10 @@ class OraBench {
         }
 
         createMeasuringPoint(
-            trialNo,
-            lastTrial!!,
-            LocalDateTime.now(),
-            System.nanoTime() - lastTrialNano
+                trialNo,
+                lastTrial!!,
+                LocalDateTime.now(),
+                System.nanoTime() - lastTrialNano
         )
 
         if (isDebug) {
@@ -380,7 +379,7 @@ class OraBench {
         }
 
         val bulkDataPartitions: ArrayList<ArrayList<Array<String>>> =
-            ArrayList(benchmarkNumberPartitions)
+                ArrayList(benchmarkNumberPartitions)
         val expectedBulkDataSize: Int = fileBulkSize / benchmarkNumberPartitions
 
         for (i in 0 until benchmarkNumberPartitions) {
@@ -391,20 +390,20 @@ class OraBench {
             val bufferedReader = BufferedReader(FileReader(fileBulkName))
 
             val records: Iterable<CSVRecord> =
-                CSVFormat.EXCEL.withDelimiter(fileBulkDelimiter[0]).withHeader(
-                    *fileBulkHeader.split(fileBulkDelimiter[0].toString()).toTypedArray()
-                ).parse(bufferedReader)
+                    CSVFormat.EXCEL.withDelimiter(fileBulkDelimiter[0]).withHeader(
+                            *fileBulkHeader.split(fileBulkDelimiter[0].toString()).toTypedArray()
+                    ).parse(bufferedReader)
 
             for (record in records) {
                 val keyValue: String = record.get("key")
                 if (keyValue != "key") {
                     val partitionKey: Int =
-                        (keyValue[0].toInt() * 256 + keyValue[1].toInt()) % benchmarkNumberPartitions
+                            (keyValue[0].code * 256 + keyValue[1].code) % benchmarkNumberPartitions
                     bulkDataPartitions[partitionKey].add(
-                        arrayOf(
-                            keyValue,
-                            record.get("data")
-                        )
+                            arrayOf(
+                                    keyValue,
+                                    record.get("data")
+                            )
                     )
                 }
             }
@@ -415,13 +414,13 @@ class OraBench {
 
             for (i in 0 until benchmarkNumberPartitions) {
                 logger.info(
-                    "Partition p" + String.format(
-                        "%05d",
-                        i
-                    ) + " contains " + String.format(
-                        "%9d",
-                        bulkDataPartitions[i].size
-                    ) + " rows"
+                        "Partition p" + String.format(
+                                "%05d",
+                                i
+                        ) + " contains " + String.format(
+                                "%9d",
+                                bulkDataPartitions[i].size
+                        ) + " rows"
                 )
             }
 
@@ -495,22 +494,22 @@ class OraBench {
      * @param bulkDataPartition the bulk data partition
      */
     private fun insert(
-        connection: Connection,
-        preparedStatement: PreparedStatement,
-        bulkDataPartition: ArrayList<Array<String>>
+            connection: Connection,
+            preparedStatement: PreparedStatement,
+            bulkDataPartition: ArrayList<Array<String>>
     ) {
         if (isDebug) {
             logger.debug("Start")
         }
 
         insertHelper(
-            logger,
-            isDebug,
-            connection,
-            preparedStatement,
-            bulkDataPartition,
-            benchmarkBatchSize,
-            benchmarkTransactionSize
+                logger,
+                isDebug,
+                connection,
+                preparedStatement,
+                bulkDataPartition,
+                benchmarkBatchSize,
+                benchmarkTransactionSize
         )
 
         if (isDebug) {
@@ -520,13 +519,13 @@ class OraBench {
 
     companion object {
         fun insertHelper(
-            logger: Logger,
-            isDebug: Boolean,
-            connection: Connection,
-            preparedStatement: PreparedStatement,
-            bulkDataPartition: ArrayList<Array<String>>,
-            benchmarkBatchSize: Int,
-            benchmarkTransactionSize: Int
+                logger: Logger,
+                isDebug: Boolean,
+                connection: Connection,
+                preparedStatement: PreparedStatement,
+                bulkDataPartition: ArrayList<Array<String>>,
+                benchmarkBatchSize: Int,
+                benchmarkTransactionSize: Int
         ) {
             if (isDebug) {
                 logger.debug("Start")
@@ -537,13 +536,13 @@ class OraBench {
             try {
                 for (value in bulkDataPartition) {
                     preparedStatement.setString(
-                        1,
-                        value[0]
+                            1,
+                            value[0]
                     )
 
                     preparedStatement.setString(
-                        2,
-                        value[1]
+                            2,
+                            value[1]
                     )
 
                     count += 1
@@ -580,13 +579,13 @@ class OraBench {
         }
 
         fun selectHelper(
-            logger: Logger,
-            isDebug: Boolean,
-            statement: Statement,
-            bulkDataPartition: ArrayList<Array<String>>,
-            partitionKey: Int,
-            connectionFetchSize: Int,
-            sqlSelect: String
+                logger: Logger,
+                isDebug: Boolean,
+                statement: Statement,
+                bulkDataPartition: ArrayList<Array<String>>,
+                partitionKey: Int,
+                connectionFetchSize: Int,
+                sqlSelect: String
         ) {
             if (isDebug) {
                 logger.debug("Start")
@@ -600,7 +599,7 @@ class OraBench {
                 }
 
                 val resultSet: ResultSet =
-                    statement.executeQuery("$sqlSelect WHERE partition_key = $partitionKey")
+                        statement.executeQuery("$sqlSelect WHERE partition_key = $partitionKey")
 
                 while (resultSet.next()) {
                     count += 1
@@ -673,18 +672,18 @@ class OraBench {
 
         @Suppress("UNCHECKED_CAST")
         val preparedStatements: ArrayList<PreparedStatement> =
-            databaseObjects[1] as ArrayList<PreparedStatement>
+                databaseObjects[1] as ArrayList<PreparedStatement>
 
         @Suppress("UNCHECKED_CAST")
         val statements: ArrayList<Statement> = databaseObjects[2] as ArrayList<Statement>
 
         for (i in 1..benchmarkTrials) {
             runTrial(
-                connections,
-                preparedStatements,
-                statements,
-                i,
-                bulkDataPartitions
+                    connections,
+                    preparedStatements,
+                    statements,
+                    i,
+                    bulkDataPartitions
             )
         }
 
@@ -715,10 +714,10 @@ class OraBench {
      * @param bulkDataPartitions the bulk data partitioned
      */
     private fun runInsert(
-        connections: ArrayList<Connection>,
-        preparedStatements: ArrayList<PreparedStatement>,
-        trialNumber: Int,
-        bulkDataPartitions: ArrayList<ArrayList<Array<String>>>
+            connections: ArrayList<Connection>,
+            preparedStatements: ArrayList<PreparedStatement>,
+            trialNumber: Int,
+            bulkDataPartitions: ArrayList<ArrayList<Array<String>>>
     ) {
         if (isDebug) {
             logger.debug("Start")
@@ -733,22 +732,22 @@ class OraBench {
         for (i in 0 until benchmarkNumberPartitions) {
             if (benchmarkCoreMultiplier == 0) {
                 insert(
-                    connections[i],
-                    preparedStatements[i],
-                    bulkDataPartitions[i]
+                        connections[i],
+                        preparedStatements[i],
+                        bulkDataPartitions[i]
                 )
             } else {
                 executorService?.execute(
-                    Insert(
-                        logger,
-                        isDebug,
-                        connections[i],
-                        preparedStatements[i],
-                        bulkDataPartitions[i],
-                        benchmarkBatchSize,
-                        benchmarkTransactionSize
+                        Insert(
+                                logger,
+                                isDebug,
+                                connections[i],
+                                preparedStatements[i],
+                                bulkDataPartitions[i],
+                                benchmarkBatchSize,
+                                benchmarkTransactionSize
 
-                    )
+                        )
                 )
             }
         }
@@ -756,8 +755,8 @@ class OraBench {
         executorServiceShutdown()
 
         endQuerySQLStatement(
-            trialNumber,
-            sqlInsert
+                trialNumber,
+                sqlInsert
         )
 
         if (isDebug) {
@@ -776,9 +775,9 @@ class OraBench {
             try {
                 @Suppress("ControlFlowWithEmptyBody")
                 while (!executorService!!.awaitTermination(
-                        1,
-                        TimeUnit.SECONDS
-                    )
+                                1,
+                                TimeUnit.SECONDS
+                        )
                 ) {
                 }
             } catch (e: InterruptedException) {
@@ -800,9 +799,9 @@ class OraBench {
      * @param bulkDataPartitions the bulk data partitioned
      */
     private fun runSelect(
-        statements: ArrayList<Statement>,
-        trialNumber: Int,
-        bulkDataPartitions: ArrayList<ArrayList<Array<String>>>
+            statements: ArrayList<Statement>,
+            trialNumber: Int,
+            bulkDataPartitions: ArrayList<ArrayList<Array<String>>>
     ) {
         if (isDebug) {
             logger.debug("Start")
@@ -817,21 +816,21 @@ class OraBench {
         for (i in 0 until benchmarkNumberPartitions) {
             if (benchmarkCoreMultiplier == 0) {
                 select(
-                    statements[i],
-                    bulkDataPartitions[i],
-                    i
+                        statements[i],
+                        bulkDataPartitions[i],
+                        i
                 )
             } else {
                 executorService?.execute(
-                    Select(
-                        logger,
-                        isDebug,
-                        statements[i],
-                        bulkDataPartitions[i],
-                        i,
-                        connectionFetchSize,
-                        sqlSelect
-                    )
+                        Select(
+                                logger,
+                                isDebug,
+                                statements[i],
+                                bulkDataPartitions[i],
+                                i,
+                                connectionFetchSize,
+                                sqlSelect
+                        )
                 )
             }
         }
@@ -839,8 +838,8 @@ class OraBench {
         executorServiceShutdown()
 
         endQuerySQLStatement(
-            trialNumber,
-            sqlSelect
+                trialNumber,
+                sqlSelect
         )
 
         if (isDebug) {
@@ -858,11 +857,11 @@ class OraBench {
      * @param bulkDataPartitions the bulk data partitioned
      */
     private fun runTrial(
-        connections: ArrayList<Connection>,
-        preparedStatements: ArrayList<PreparedStatement>,
-        statements: ArrayList<Statement>,
-        trialNumber: Int,
-        bulkDataPartitions: ArrayList<ArrayList<Array<String>>>
+            connections: ArrayList<Connection>,
+            preparedStatements: ArrayList<PreparedStatement>,
+            statements: ArrayList<Statement>,
+            trialNumber: Int,
+            bulkDataPartitions: ArrayList<ArrayList<Array<String>>>
     ) {
         if (isDebug) {
             logger.debug("Start")
@@ -892,16 +891,16 @@ class OraBench {
         }
 
         runInsert(
-            connections,
-            preparedStatements,
-            trialNumber,
-            bulkDataPartitions
+                connections,
+                preparedStatements,
+                trialNumber,
+                bulkDataPartitions
         )
 
         runSelect(
-            statements,
-            trialNumber,
-            bulkDataPartitions
+                statements,
+                trialNumber,
+                bulkDataPartitions
         )
 
         try {
@@ -935,13 +934,13 @@ class OraBench {
         }
 
         selectHelper(
-            logger,
-            isDebug,
-            statement,
-            bulkDataPartition,
-            partitionKey,
-            connectionFetchSize,
-            sqlSelect
+                logger,
+                isDebug,
+                statement,
+                bulkDataPartition,
+                partitionKey,
+                connectionFetchSize,
+                sqlSelect
         )
 
         if (isDebug) {

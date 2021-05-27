@@ -17,7 +17,6 @@
 package ch.konnexions.orabench.utils;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -142,8 +141,7 @@ public class Setup {
   /**
    * Creates a new result file if none exists yet.
    */
-  @SuppressWarnings("resource")
-  private final void createResultFile() {
+  private void createResultFile() {
     if (isDebug) {
       logger.debug("Start");
     }

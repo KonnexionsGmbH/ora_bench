@@ -148,7 +148,7 @@ public class Config {
   /**
    * Creates the default version of the configuration file.
    */
-  private final void createConfiguration() {
+  private void createConfiguration() {
     if (isDebug) {
       logger.debug("Start");
     }
