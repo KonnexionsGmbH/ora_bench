@@ -5,13 +5,13 @@
       <configuration sdkName="" />
     </facet>
     <facet type="Python" name="Python">
-      <configuration sdkName="" />
+      <configuration sdkName="Python 3.9 (ora_bench)" />
     </facet>
     <facet type="kotlin-language" name="Kotlin">
-      <configuration version="3" platform="JVM 14" allPlatforms="JVM [14]">
+      <configuration version="3" platform="JVM 16" allPlatforms="JVM [16]">
         <compilerSettings />
         <compilerArguments>
-          <option name="jvmTarget" value="14" />
+          <option name="jvmTarget" value="16" />
         </compilerArguments>
       </configuration>
     </facet>
@@ -23,5 +23,9 @@
     </content>
     <orderEntry type="jdk" jdkName="15" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Python 3.9 (ora_bench) interpreter library" level="application" />
+  </component>
+  <component name="PackageRequirementsSettings">
+    <option name="requirementsPath" value="" />
   </component>
 </module>

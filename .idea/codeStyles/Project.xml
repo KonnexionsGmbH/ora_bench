@@ -60,11 +60,6 @@
       <option name="WRAP_LONG_LINES" value="true" />
       <option name="WRAP_ON_TYPING" value="1" />
     </codeStyleSettings>
-    <codeStyleSettings language="go">
-      <indentOptions>
-        <option name="USE_TAB_CHARACTER" value="false" />
-      </indentOptions>
-    </codeStyleSettings>
     <codeStyleSettings language="kotlin">
       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
     </codeStyleSettings>

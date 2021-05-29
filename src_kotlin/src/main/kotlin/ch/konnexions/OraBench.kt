@@ -737,7 +737,7 @@ class OraBench {
                     bulkDataPartitions[i]
                 )
             } else {
-                executorService.execute(
+                executorService?.execute(
                     Insert(
                         logger,
                         isDebug,
@@ -821,7 +821,7 @@ class OraBench {
                     i
                 )
             } else {
-                executorService.execute(
+                executorService?.execute(
                     Select(
                         logger,
                         isDebug,

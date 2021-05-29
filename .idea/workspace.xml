@@ -5,7 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="66285ec5-cf81-4ebf-9870-7f04b68fac11" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src_python/logging.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src_python/logging.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ora_bench.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ora_bench.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/priv/properties/ora_bench.properties" beforeDir="false" afterPath="$PROJECT_DIR$/priv/properties/ora_bench.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src_kotlin/src/main/kotlin/ch/konnexions/OraBench.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src_kotlin/src/main/kotlin/ch/konnexions/OraBench.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src_python/scripts/run_bench_cx_oracle.bat" beforeDir="false" afterPath="$PROJECT_DIR$/src_python/scripts/run_bench_cx_oracle.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src_python/scripts/run_bench_cx_oracle.sh" beforeDir="false" afterPath="$PROJECT_DIR$/src_python/scripts/run_bench_cx_oracle.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,7 +123,7 @@
     <option name="directoryName" value="0ppl7wtt" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedIndex" value="7" />
+    <option name="selectedIndex" value="3" />
   </component>
   <component name="ProjectId" id="1bfzLiaY97eKnbCbiPCKcGK1evq" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -150,11 +156,11 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="project.structure.last.edited" value="Problems" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.1754902" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Go" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" />
     <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/src_elixir" />
   </component>
   <component name="RecentsManager">
@@ -179,13 +185,15 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
       <option name="arquillianRunConfiguration">
         <value>
           <option name="containerStateName" value="" />
         </value>
       </option>
-      <option name="TEST_OBJECT" value="class" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <properties />
+      <listeners />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -240,7 +248,12 @@
       <workItem from="1622079339270" duration="313000" />
       <workItem from="1622082245471" duration="49000" />
       <workItem from="1622110558965" duration="727000" />
-      <workItem from="1622113717664" duration="2414000" />
+      <workItem from="1622113717664" duration="4210000" />
+      <workItem from="1622142672523" duration="683000" />
+      <workItem from="1622182272267" duration="360000" />
+      <workItem from="1622190027639" duration="164000" />
+      <workItem from="1622205144836" duration="1325000" />
+      <workItem from="1622211867807" duration="3578000" />
     </task>
     <task id="LOCAL-00001" summary="Execution Documentation.">
       <created>1621865496480</created>
@@ -305,7 +318,21 @@
       <option name="project" value="LOCAL" />
       <updated>1622132974252</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Version 1.0.0&#10;Cleanup Python">
+      <created>1622133486686</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1622133486686</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Version 1.0.0&#10;Adding IntelliJ IDEA Settings.">
+      <created>1622133658455</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1622133658455</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -344,11 +371,17 @@
     <MESSAGE value="Version 1.0.0" />
     <MESSAGE value="Version 1.0.0&#10;Cleanup golang" />
     <MESSAGE value="Version 1.0.0&#10;Cleanup Kotlin" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version 1.0.0&#10;Cleanup Kotlin" />
+    <MESSAGE value="Version 1.0.0&#10;Cleanup Python" />
+    <MESSAGE value="Version 1.0.0&#10;Adding IntelliJ IDEA Settings." />
+    <option name="LAST_COMMIT_MESSAGE" value="Version 1.0.0&#10;Adding IntelliJ IDEA Settings." />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
   <component name="com.vaadin.designer2.intellij.settings.SizePresetsSettingsComponent">
     <option name="sizePresets">
