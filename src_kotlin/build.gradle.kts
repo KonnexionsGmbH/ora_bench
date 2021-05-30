@@ -1,11 +1,15 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-    application
     id("org.jetbrains.dokka") version "1.4.32"
-    kotlin("jvm") version "1.5.0"
+    kotlin("jvm") version "1.5.10"
+    application
 }
 
+group = "ch.konnexions"
+
 application {
-    mainClass.set("ch.konnexions.OraBenchKt")
+    mainClass.set("OraBenchKt")
 }
 
 repositories {
@@ -15,7 +19,6 @@ repositories {
 dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.32")
     implementation("com.oracle.database.jdbc:ojdbc11:21.1.0.0")
-    implementation("commons-logging:commons-logging:1.2")
     implementation("org.apache.commons:commons-csv:1.8")
     implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.32")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.10")

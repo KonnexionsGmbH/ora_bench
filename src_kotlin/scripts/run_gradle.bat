@@ -34,7 +34,6 @@ if %ERRORLEVEL% NEQ 0 (
     exit %ERRORLEVEL%
 )
 
-if not exist "..\priv\kotlin_jar\NUL" mkdir ..\priv\kotlin_jar
 copy /Y build\libs\ora_bench.jar ..\priv\libs\ora_bench_kotlin.jar
 
 cd ..

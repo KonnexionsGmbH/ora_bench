@@ -29,7 +29,6 @@ echo "==========================================================================
         exit 255
     fi
     
-    mkdir -p ../priv/kotlin_jar
     cp -f build/libs/ora_bench.jar ../priv/libs/ora_bench_kotlin.jar
 )
 

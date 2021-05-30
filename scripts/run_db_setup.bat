@@ -44,6 +44,7 @@ docker ps -a | findstr "ora_bench_db" && docker rm ora_bench_db
 
 echo Docker setup network ...........................................................
 docker network prune --force
+mkdir tmp >nul 2>&1
 docker network ls | findstr "ora_bench_net" > tmp\_ora_bench_net
 set /p _ora_bench_net=<tmp\_ora_bench_net
 if [%_ora_bench_net%] NEQ ["ora_bench_net"] (docker network create ora_bench_net)
