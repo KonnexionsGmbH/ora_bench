@@ -12,6 +12,7 @@
 .git-credentials
 .gitconfig
 .gradle
+.idea
 .mix
 .rebar
 /go.sum
