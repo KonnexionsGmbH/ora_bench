@@ -17,7 +17,6 @@
 package ch.konnexions.orabench.utils;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +27,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class provides setup support for the Oracle JDBC benchmark runs.
@@ -58,7 +58,7 @@ public class Setup {
    */
   private static final int     BULK_SIZE_MIN   = 1;
 
-  private static final Logger  logger          = Logger.getLogger(Setup.class);
+  private static final Logger  logger          = LogManager.getLogger(Setup.class);
 
   private final static boolean isDebug         = logger.isDebugEnabled();
 
@@ -110,7 +110,7 @@ public class Setup {
                                                                                         LENGTH_DIGEST);
 
     try {
-      BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(config.getFileBulkName()), false));
+      BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(config.getFileBulkName(), false));
       CSVPrinter     bulkFile       = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.withDelimiter(config.getFileBulkDelimiter().charAt(0)).withHeader(config
           .getFileBulkHeader().split(config.getFileBulkDelimiter())));
 
@@ -142,8 +142,7 @@ public class Setup {
   /**
    * Creates a new result file if none exists yet.
    */
-  @SuppressWarnings("resource")
-  private final void createResultFile() {
+  private void createResultFile() {
     if (isDebug) {
       logger.debug("Start");
     }

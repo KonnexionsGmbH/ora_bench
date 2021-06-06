@@ -61,11 +61,8 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["python"] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 )
 
-if ["%ORA_BENCH_CHOICE_DB%"] EQU ["12"] (
-    set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
-)
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["18"] (
-    set ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
+    set ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
 )
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["19"] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
@@ -103,8 +100,7 @@ echo RUN_ODPI_C                        : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORANIF_ELIXIR                 : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG                 : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------
-echo RUN_DB_12_2_EE                    : %ORA_BENCH_RUN_DB_12_2_EE%
-echo RUN_DB_18_3_EE                    : %ORA_BENCH_RUN_DB_18_3_EE%
+echo RUN_DB_18_4_XE                    : %ORA_BENCH_RUN_DB_18_4_XE%
 echo RUN_DB_19_3_EE                    : %ORA_BENCH_RUN_DB_19_3_EE%
 echo --------------------------------------------------------------------------------
 echo BENCHMARK_BATCH_SIZE              : %ORA_BENCH_BENCHMARK_BATCH_SIZE%

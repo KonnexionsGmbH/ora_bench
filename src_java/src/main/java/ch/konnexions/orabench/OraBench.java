@@ -20,7 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ch.konnexions.orabench.threads.Insert;
 import ch.konnexions.orabench.threads.Select;
@@ -34,7 +35,7 @@ import ch.konnexions.orabench.utils.Setup;
  */
 public class OraBench {
 
-  private static final Logger  logger  = Logger.getLogger(OraBench.class);
+  private static final Logger  logger  = LogManager.getLogger(OraBench.class);
 
   private final static boolean isDebug = logger.isDebugEnabled();
 
@@ -105,7 +106,8 @@ public class OraBench {
    * <li>setup_python - creates a configuration parameter file suited for Python
    * </ul>
    * 
-   * @param args finalise / runBenchmark / setup / setup_erlang / setup_python / setup_json
+   * @param args finalise / runBenchmark / setup / setup_erlang / setup_python /
+   *             setup_json
    */
   public static void main(String[] args) {
     if (isDebug) {
@@ -181,7 +183,7 @@ public class OraBench {
    * @param statement         the statement
    * @param bulkDataPartition the bulk data partition
    * @param partitionKey      the partition key
-   * @param config the config
+   * @param config            the config
    */
   public static void selectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey, Config config) {
     if (isDebug) {
@@ -348,7 +350,7 @@ public class OraBench {
   /**
    * Run a benchmark.
    */
-  private final void runBenchmark() {
+  private void runBenchmark() {
     if (isDebug) {
       logger.debug("Start");
     }
@@ -433,6 +435,7 @@ public class OraBench {
       try {
         while (!executorService.awaitTermination(1,
                                                  TimeUnit.SECONDS)) {
+          ;
         }
       } catch (InterruptedException e) {
         e.printStackTrace();
@@ -481,6 +484,7 @@ public class OraBench {
       try {
         while (!executorService.awaitTermination(1,
                                                  TimeUnit.SECONDS)) {
+          ;
         }
       } catch (InterruptedException e) {
         e.printStackTrace();

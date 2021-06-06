@@ -1,44 +1,31 @@
-package ch.konnexions/*
+package main.kotlin.ch.konnexions/*
  * 
  */
-
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileReader
-import java.io.FileWriter
-import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.sql.Connection
-import java.sql.DatabaseMetaData
-import java.sql.DriverManager
-import java.sql.PreparedStatement
-import java.sql.ResultSet
-import java.sql.SQLException
-import java.sql.Statement
-import java.text.DecimalFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Properties
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-
-import kotlin.collections.ArrayList
-import kotlin.math.roundToLong
-import kotlin.properties.Delegates
-import kotlin.system.exitProcess
 
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.CSVRecord
-import org.apache.log4j.Logger
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
+import java.io.*
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.sql.*
+import java.text.DecimalFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
+import kotlin.math.roundToLong
+import kotlin.properties.Delegates
+import kotlin.system.exitProcess
 
 class OraBench {
-    val logger: Logger = Logger.getLogger(OraBench::class.java)
+    val logger: Logger = LogManager.getLogger(OraBench::class.java)
     val isDebug: Boolean = logger.isDebugEnabled
 
     private var benchmarkBatchSize by Delegates.notNull<Int>()
@@ -117,7 +104,7 @@ class OraBench {
                     connectionPassword
                 )
 
-                connection?.let {
+                connection.let {
                     val meta: DatabaseMetaData = connection!!.metaData
                     benchmarkDriver = "JDBC (Version " + meta.driverVersion.toString() + ")"
                 }
@@ -399,7 +386,7 @@ class OraBench {
                 val keyValue: String = record.get("key")
                 if (keyValue != "key") {
                     val partitionKey: Int =
-                        (keyValue[0].toInt() * 256 + keyValue[1].toInt()) % benchmarkNumberPartitions
+                        (keyValue[0].code * 256 + keyValue[1].code) % benchmarkNumberPartitions
                     bulkDataPartitions[partitionKey].add(
                         arrayOf(
                             keyValue,
@@ -738,17 +725,14 @@ class OraBench {
                     bulkDataPartitions[i]
                 )
             } else {
-                executorService?.execute(
-                    Insert(
-                        logger,
-                        isDebug,
-                        connections[i],
-                        preparedStatements[i],
-                        bulkDataPartitions[i],
-                        benchmarkBatchSize,
-                        benchmarkTransactionSize
-
-                    )
+                Insert(
+                    logger,
+                    isDebug,
+                    connections[i],
+                    preparedStatements[i],
+                    bulkDataPartitions[i],
+                    benchmarkBatchSize,
+                    benchmarkTransactionSize
                 )
             }
         }

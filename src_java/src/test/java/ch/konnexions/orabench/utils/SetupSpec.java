@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class SetupSpec {
   @Test
   @DisplayName("creation of the bulk file")
-  public void connect() throws Exception {
+  public void connect() {
     Config config       = new Config();
 
     Setup  setup        = new Setup(config);

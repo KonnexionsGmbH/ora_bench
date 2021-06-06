@@ -72,6 +72,10 @@ if [ "$OSTYPE" = "msys" ]; then
         exit 255
   fi      
 else
+  rm -f ~/.sqlnet.ora
+  if [ "$ORA_BENCH_BENCHMARK_DATABASE" = "db_19_3_ee" ]; then
+    echo "DISABLE_OOB=ON" >> ~/.sqlnet.ora
+  fi
   if ! sqlplus sys/$ORA_BENCH_PASSWORD_SYS@//$ORA_BENCH_CONNECTION_HOST:$ORA_BENCH_CONNECTION_PORT/$ORA_BENCH_CONNECTION_SERVICE AS SYSDBA @scripts/run_db_setup.sql; then
         exit 255
   fi      

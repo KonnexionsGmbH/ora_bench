@@ -15,6 +15,7 @@
 .idea
 .mix
 .rebar
+/go.sum
 /priv/Gammadyne/timer.txt
 /src_elixir/deps/
 /src_elixir/mix.lock

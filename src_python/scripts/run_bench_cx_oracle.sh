@@ -55,10 +55,16 @@ if ! java -jar priv/libs/ora_bench_java.jar setup_python; then
 fi
 
 if [ "$OSTYPE" = "msys" ]; then
+    if ! python -m pip install -r src_python/requirements.txt; then
+        exit 255
+    fi
     if ! python src_python/OraBench.py; then
         exit 255
     fi
 else
+    if ! python3 -m pip install -r src_python/requirements.txt; then
+        exit 255
+    fi
     if ! python3 src_python/OraBench.py; then
         exit 255
     fi

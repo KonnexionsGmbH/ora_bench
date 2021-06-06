@@ -39,12 +39,13 @@ echo ===========================================================================
 
 priv\Gammadyne\timer.exe
 echo Docker stop/rm ora_bench_db ....................................................
-docker ps    | grep "ora_bench_db" && docker stop ora_bench_db
-docker ps -a | grep "ora_bench_db" && docker rm ora_bench_db
+docker ps    | findstr "ora_bench_db" && docker stop ora_bench_db
+docker ps -a | findstr "ora_bench_db" && docker rm ora_bench_db
 
 echo Docker setup network ...........................................................
 docker network prune --force
-docker network ls | grep "ora_bench_net" > tmp\_ora_bench_net
+mkdir tmp >nul 2>&1
+docker network ls | findstr "ora_bench_net" > tmp\_ora_bench_net
 set /p _ora_bench_net=<tmp\_ora_bench_net
 if [%_ora_bench_net%] NEQ ["ora_bench_net"] (docker network create ora_bench_net)
 docker network ls

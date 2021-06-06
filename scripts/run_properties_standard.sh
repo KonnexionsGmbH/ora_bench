@@ -47,11 +47,8 @@ elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "python" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 fi
 
-if [ "${ORA_BENCH_CHOICE_DB}" = "12" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
-fi
 if [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
+    export ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
 fi
 if [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
@@ -91,8 +88,7 @@ echo "RUN_ODPI_C                        : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORANIF_ELIXIR                 : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG                 : $ORA_BENCH_RUN_ORANIF_ERLANG"
 echo "--------------------------------------------------------------------------------"
-echo "RUN_DB_12_2_EE                    : $ORA_BENCH_RUN_DB_12_2_EE"
-echo "RUN_DB_18_3_EE                    : $ORA_BENCH_RUN_DB_18_3_EE"
+echo "RUN_DB_18_4_XE                    : $ORA_BENCH_RUN_DB_18_4_XE"
 echo "RUN_DB_19_3_EE                    : $ORA_BENCH_RUN_DB_19_3_EE"
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_BATCH_SIZE              : $ORA_BENCH_BENCHMARK_BATCH_SIZE"

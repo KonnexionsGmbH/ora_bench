@@ -23,10 +23,6 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 )
 
-if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
-    set GOPATH=%cd%\src_go
-)    
-
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
@@ -45,7 +41,6 @@ echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo --------------------------------------------------------------------------------
-echo GOPATH                     : %GOPATH%
 echo GOROOT                     : %GOROOT%
 echo --------------------------------------------------------------------------------
 echo:| TIME

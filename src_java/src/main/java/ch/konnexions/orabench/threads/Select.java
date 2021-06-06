@@ -7,7 +7,8 @@ package ch.konnexions.orabench.threads;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ch.konnexions.orabench.OraBench;
 import ch.konnexions.orabench.utils.Config;
@@ -17,7 +18,7 @@ import ch.konnexions.orabench.utils.Config;
  * The Class Select.
  */
 public class Select implements Runnable {
-  private static final Logger       logger  = Logger.getLogger(Select.class);
+  private static final Logger       logger  = LogManager.getLogger(Select.class);
 
   private final static boolean      isDebug = logger.isDebugEnabled();
 

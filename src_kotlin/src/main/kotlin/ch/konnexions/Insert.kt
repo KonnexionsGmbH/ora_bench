@@ -1,9 +1,8 @@
-package ch.konnexions
+package main.kotlin.ch.konnexions
 
+import org.apache.logging.log4j.Logger
 import java.sql.Connection
 import java.sql.PreparedStatement
-
-import org.apache.log4j.Logger
 
 class Insert(
     logger: Logger,

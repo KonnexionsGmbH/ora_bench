@@ -48,8 +48,7 @@ if ["%2"] EQU [""] (
     echo =========================================================
     echo complete           - All implemented variations
     echo ---------------------------------------------------------
-    echo 12                 - Oracle Database 12c Release 2
-    echo 18                 - Oracle Database 18c 
+    echo 18                 - Oracle Database 18c Express Edition
     echo 19                 - Oracle Database 19c 
     echo ---------------------------------------------------------
     set /P  ORA_BENCH_CHOICE_DB="Enter the desired database version [default: %ORA_BENCH_CHOICE_DB_DEFAULT%] "
@@ -61,22 +60,16 @@ if ["%2"] EQU [""] (
     set ORA_BENCH_CHOICE_DB=%2
 )
 
-set ORA_BENCH_RUN_DB_12_2_EE=false
-set ORA_BENCH_RUN_DB_18_3_EE=false
+set ORA_BENCH_RUN_DB_18_4_XE=false
 set ORA_BENCH_RUN_DB_19_3_EE=false
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["complete"] (
-    set ORA_BENCH_RUN_DB_12_2_EE=true
-    set ORA_BENCH_RUN_DB_18_3_EE=true
+    set ORA_BENCH_RUN_DB_18_4_XE=true
     set ORA_BENCH_RUN_DB_19_3_EE=true
 )
 
-if ["%ORA_BENCH_CHOICE_DB%"] EQU ["12"] (
-    set ORA_BENCH_RUN_DB_12_2_EE=true
-)
-
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["18"] (
-    set ORA_BENCH_RUN_DB_18_3_EE=true
+    set ORA_BENCH_RUN_DB_18_4_XE=true
 )
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["19"] (
@@ -114,19 +107,9 @@ echo.
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
     
-    if ["%ORA_BENCH_RUN_DB_12_2_EE%"] EQU ["true"] (
-        set ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
-        set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-        call scripts\run_properties_variations.bat
-        if %ERRORLEVEL% NEQ 0 (
-            echo Processing of the script was aborted, error code=%ERRORLEVEL%
-            exit %ERRORLEVEL%
-        )
-    )
-    
-    if ["%ORA_BENCH_RUN_DB_18_3_EE%"] EQU ["true"] (
-        set ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
-        set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    if ["%ORA_BENCH_RUN_DB_18_4_XE%"] EQU ["true"] (
+        set ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
+        set ORA_BENCH_CONNECTION_SERVICE=xe
         call scripts\run_properties_variations.bat
         if %ERRORLEVEL% NEQ 0 (
             echo Processing of the script was aborted, error code=%ERRORLEVEL%
