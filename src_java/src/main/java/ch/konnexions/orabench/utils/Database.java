@@ -21,7 +21,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The database support class for the Oracle JDBC benchmark tests. This creates
@@ -30,7 +31,7 @@ import org.apache.log4j.Logger;
  */
 public class Database {
 
-  private static final Logger  logger  = Logger.getLogger(Database.class);
+  private static final Logger  logger  = LogManager.getLogger(Database.class);
   private final static boolean isDebug = logger.isDebugEnabled();
   private final Config         config;
   private Connection           connection;

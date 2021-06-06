@@ -20,7 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ch.konnexions.orabench.threads.Insert;
 import ch.konnexions.orabench.threads.Select;
@@ -34,7 +35,7 @@ import ch.konnexions.orabench.utils.Setup;
  */
 public class OraBench {
 
-  private static final Logger  logger  = Logger.getLogger(OraBench.class);
+  private static final Logger  logger  = LogManager.getLogger(OraBench.class);
 
   private final static boolean isDebug = logger.isDebugEnabled();
 

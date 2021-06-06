@@ -23,7 +23,8 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 /**
@@ -76,7 +77,7 @@ import org.json.simple.JSONObject;
  */
 public class Config {
 
-  private static final Logger                                    logger     = Logger.getLogger(Config.class);
+  private static final Logger                                    logger     = LogManager.getLogger(Config.class);
   private final static boolean                                   isDebug    = logger.isDebugEnabled();
   private int                                                    benchmarkBatchSize;
   private String                                                 benchmarkComment;

@@ -21,7 +21,7 @@
 
 ## <a name="introduction"></a> 1. Introduction
 
-**ora_bench** can be used to determine the performance of different Oracle database drivers under identical conditions.
+**OraBench** can be used to determine the performance of different Oracle database drivers under identical conditions.
 The framework parameters for a benchmark run are stored in a central configuration file.
 
 The currently supported database drivers are:

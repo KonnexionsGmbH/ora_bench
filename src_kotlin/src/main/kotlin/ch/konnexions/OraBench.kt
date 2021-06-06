@@ -1,11 +1,13 @@
-package ch.konnexions/*
+package main.kotlin.ch.konnexions/*
  * 
  */
 
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.CSVRecord
-import org.apache.log4j.Logger
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
+
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -17,12 +19,13 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+
 import kotlin.math.roundToLong
 import kotlin.properties.Delegates
 import kotlin.system.exitProcess
 
 class OraBench {
-    val logger: Logger = Logger.getLogger(OraBench::class.java)
+    val logger: Logger = LogManager.getLogger(OraBench::class.java)
     val isDebug: Boolean = logger.isDebugEnabled
 
     private var benchmarkBatchSize by Delegates.notNull<Int>()

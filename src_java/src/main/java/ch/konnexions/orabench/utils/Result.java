@@ -27,13 +27,14 @@ import java.time.format.DateTimeFormatter;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class is used to record the results of the Oracle JDBC benchmark.
  */
 public class Result {
-  private static final Logger     logger            = Logger.getLogger(Result.class);
+  private static final Logger     logger            = LogManager.getLogger(Result.class);
 
   private final static boolean    isDebug           = logger.isDebugEnabled();
 
