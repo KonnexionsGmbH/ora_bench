@@ -28,10 +28,10 @@ Release Date: dd.mm.yyyy
 
 ### New Features
 
-- Database driver `cx_Oracle` and programming language `Python` 
-- Database driver `godror` and programming language `Go` 
-- Database driver `JDBC` and programming languages `Java` and `Kotlin`
-- Database driver `ODPI-C` and programming language `C`
+- Database driver [`godror`](https://golangrepo.com/repo/godror-godror-go-database-drivers) and programming language `Go`
+- Database driver `Oracle JDBC` and programming languages `Java` and `Kotlin`
+- Database driver `Oracle ODPI-C` and programming language `C`
+- Database driver `Oracle cx_Oracle` and programming language `Python` 
 - Database driver `oranif` and programming languages `Elixir` and `Erlang` 
 
 ### Applied Software
