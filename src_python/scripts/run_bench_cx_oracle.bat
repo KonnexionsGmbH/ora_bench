@@ -2,7 +2,7 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_cx_oracle.bat: Oracle Benchmark based on Python.
+rem run_bench_cx_oracle.bat: Oracle Benchmark based on Python 3.
 rem
 rem ------------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - cx_Oracle and Python.
+echo ora_bench - Oracle benchmark - cx_Oracle and Python 3.
 echo --------------------------------------------------------------------------------
 echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
 echo --------------------------------------------------------------------------------

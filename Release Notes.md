@@ -32,7 +32,7 @@ Release Date: dd.mm.yyyy
 - Database driver [`godror`](https://golangrepo.com/repo/godror-godror-go-database-drivers) and programming language [`Go`](https://golang.org)
 - Database driver [`Oracle JDBC`](https://www.oracle.com/database/technologies/appdev/jdbc.html) and programming languages [`Java`](https://openjdk.java.net) and [`Kotlin`](https://kotlinlang.org)
 - Database driver [`Oracle ODPI-C`](https://oracle.github.io/odpi) and programming language [`C++ (gcc)`](https://gcc.gnu.org)
-- Database driver [`Oracle cx_Oracle`](https://oracle.github.io/python-cx_Oracle) and programming language [`Python`](https://www.python.org ) 
+- Database driver [`Oracle cx_Oracle`](https://oracle.github.io/python-cx_Oracle) and programming language [`Python 3`](https://www.python.org ) 
 - Database driver [`oranif`](https://github.com/KonnexionsGmbH/oranif) and programming languages [`Elixir`](https://elixir-lang.org) and [`Erlang`](https://www.erlang.org) 
 
 ### Applied Software
@@ -50,6 +50,6 @@ Release Date: dd.mm.yyyy
 | Oracle ODPI-C    | Driver   | 4.2.1          |  
 | Oracle cx_Oracle | Driver   | 8.2.1          | 
 | oranif           | Driver   | 0.2.3          |  
-| Python           | Language | 3.10.0b2       | 
+| Python 3         | Language | 3.10.0b2       | 
 
 ----------

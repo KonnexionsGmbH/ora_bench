@@ -176,7 +176,7 @@ public class Config {
   }
 
   /**
-   * Creates the C version of the configuration file.
+   * Creates the C++ (gcc) version of the configuration file.
    */
   public final void createConfigurationFileC() {
     if (isDebug) {
@@ -320,7 +320,7 @@ public class Config {
   }
 
   /**
-   * Creates the Python version of the configuration file.
+   * Creates the Python 3 version of the configuration file.
    */
   public final void createConfigurationFilePython() {
     if (isDebug) {
@@ -545,7 +545,7 @@ public class Config {
   }
 
   /**
-   * @return the name of the configuration file for the C language version. The
+   * @return the name of the configuration file for the C++ (gcc) language version. The
    *         file name may contain the absolute or relative file path.
    */
   public final String getFileConfigurationNameC() {
@@ -569,7 +569,7 @@ public class Config {
   }
 
   /**
-   * @return the name of the configuration file for the Python language version.
+   * @return the name of the configuration file for the Python 3 language version.
    *         The file name may contain the absolute or relative file path.
    */
   public final String getFileConfigurationNamePython() {

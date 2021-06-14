@@ -39,7 +39,7 @@ if NOT ["%ORA_BENCH_BULKFILE_EXISTING%"] == ["true"] (
 )
 
 if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
-    echo Setup C - Start ============================================================
+    echo Setup C++ (gcc) - Start ====================================================
     java -jar priv/libs/ora_bench_java.jar setup_c
     if %ERRORLEVEL% NEQ 0 (
         echo Processing of the script was aborted, error code=%ERRORLEVEL%
@@ -58,7 +58,7 @@ if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
         exit %ERRORLEVEL%
     )
 
-    echo Setup C - End   ============================================================
+    echo Setup C++ (gcc) - End   ====================================================
 )
 
 if ["%ORA_BENCH_RUN_GODROR_GO%"] == ["true"] (

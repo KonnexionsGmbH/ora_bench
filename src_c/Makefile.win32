@@ -36,7 +36,7 @@ $(OBJS) :
 
 odpi:
 !IF !EXISTS($S\odpi)
-    git clone -b v3.2.2 --single-branch $(ODPIREPO) $S\odpi
+    git clone -b v4.2.1 --single-branch $(ODPIREPO) $S\odpi
     @RD /S /Q odpi\.git 2>nul || rem
 !ENDIF
 !IF DEFINED(LINKODPI) && !EXISTS($L)

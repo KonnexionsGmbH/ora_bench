@@ -83,7 +83,7 @@ public class Database {
                                                  connectionUser,
                                                  connectionPassword);
         DatabaseMetaData meta = connection.getMetaData();
-        config.setBenchmarkDriver("JDBC (Version " + meta.getDriverVersion() + ")");
+        config.setBenchmarkDriver("Oracle JDBC (Version " + meta.getDriverVersion() + ")");
       } catch (SQLException ec) {
         logger.error("connection parameter url     =: " + url);
         logger.error("connection parameter username=: " + connectionUser);

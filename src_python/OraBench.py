@@ -15,8 +15,8 @@ from pathlib import Path
 # Definition of the global variables.
 # ------------------------------------------------------------------------------
 
-BENCHMARK_DRIVER = 'cx_Oracle (Version v' + cx_Oracle.version + ')'
-BENCHMARK_LANGUAGE = 'Python ' + sys.version
+BENCHMARK_DRIVER = 'Oracle cx_Oracle (Version v' + cx_Oracle.version + ')'
+BENCHMARK_LANGUAGE = 'Python 3 ' + sys.version
 
 FILE_CONFIGURATION_NAME_PYTHON = 'priv/properties/ora_bench_python.properties'
 

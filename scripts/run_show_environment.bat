@@ -79,7 +79,7 @@ if %ERRORLEVEL% NEQ 0 (
     exit %ERRORLEVEL%
 )
     
-echo =============================================================================== Version Python3:
+echo =============================================================================== Version Python 3:
 python --version
 if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%

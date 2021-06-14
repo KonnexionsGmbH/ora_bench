@@ -1,20 +1,6 @@
 ---
 dist: focal
 
-env:
-  matrix:
-    - ORA_BENCH_CHOICE_DB=12 ORA_BENCH_CHOICE_DRIVER=complete
-    - ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=complete
-    #   - ORA_BENCH_CHOICE_DB=19 ORA_BENCH_CHOICE_DRIVER=complete
-
-    - cx_Oracle ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=python
-    - GoDROR    ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=go
-    - JDBC      ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=java
-    - JDBC      ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=kotlin
-    - ODPI      ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=c
-    - oranif    ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=elixir
-#   - oranif    ORA_BENCH_CHOICE_DB=18 ORA_BENCH_CHOICE_DRIVER=erlang
-
 sudo: true
 
 before_script:
@@ -24,13 +10,13 @@ before_script:
 script:
   # Prepare installation process -------------------------------------------------
   - travis_fold start "Prepare_installation_process"
-  - export VERSION_ELIXIR=1.10.4
+  - export VERSION_ELIXIR=1.12.1
   - export VERSION_ERLANG_SOLUTIONS=2.0
-  - export VERSION_GO=1.15.3
-  - export VERSION_GRADLE=6.7
-  - export VERSION_JAVA=15
-  - export VERSION_ORACLE_INSTANT_CLIENT_1=19
-  - export VERSION_ORACLE_INSTANT_CLIENT_2=9
+  - export VERSION_GO=1.16.5
+  - export VERSION_GRADLE=7.0.2
+  - export VERSION_JAVA=16
+  - export VERSION_ORACLE_INSTANT_CLIENT_1=21
+  - export VERSION_ORACLE_INSTANT_CLIENT_2=1
 
   - sudo apt update
   - sudo apt-get install -qy software-properties-common
@@ -111,15 +97,15 @@ script:
   - export PATH="$ORACLE_HOME::${PATH}"
   - travis_fold end   "Setting_up_Oracle_Instant_Client"
 
-  # Python -----------------------------------------------------------------------
-  - travis_fold start "Setting_up_Python"
+  # Python 3 ---------------------------------------------------------------------
+  - travis_fold start "Setting_up_Python 3"
   - sudo apt-get install -qy python3
   - sudo apt-get install -qy python3-venv
   - sudo rm -rf /usr/bin/python
   - sudo ln -s /usr/bin/python3 /usr/bin/python
   - wget --quiet https://bootstrap.pypa.io/get-pip.py
   - python get-pip.py
-  - travis_fold end   "Setting_up_Python"
+  - travis_fold end   "Setting_up_Python 3"
 
   # rebar3 -----------------------------------------------------------------------
   - travis_fold start "Setting_up_rebar3"
@@ -154,6 +140,3 @@ script:
   - ./scripts/run_show_environment.sh
   - ./scripts/run_collect_and_compile.sh
   - travis_fold end   "Running_ora_bench"
-
-after_success:
-  - ./scripts/run_travis_push_to_github.sh

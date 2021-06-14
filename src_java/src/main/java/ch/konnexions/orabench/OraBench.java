@@ -103,7 +103,7 @@ public class OraBench {
    * <li>setup - creates the bulk file
    * <li>setup_erlang - creates a configuration parameter file suited for Erlang
    * <li>setup_json - creates a JSON configuration parameter file
-   * <li>setup_python - creates a configuration parameter file suited for Python
+   * <li>setup_python - creates a configuration parameter file suited for Python 3
    * </ul>
    * 
    * @param args finalise / runBenchmark / setup / setup_erlang / setup_python /
@@ -159,9 +159,9 @@ public class OraBench {
       config.createConfigurationFileJson();
       logger.info("End   Setup Erlang OraBench Run");
     } else if (args0.equals("setup_python")) {
-      logger.info("Start Setup Python OraBench Run");
+      logger.info("Start Setup Python 3 OraBench Run");
       config.createConfigurationFilePython();
-      logger.info("End   Setup Python OraBench Run");
+      logger.info("End   Setup Python 3 OraBench Run");
     } else if (args0.contentEquals("")) {
       logger.error("Command line argument missing");
     } else {

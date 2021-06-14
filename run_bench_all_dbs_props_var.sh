@@ -29,13 +29,13 @@ if [ -z "$1" ]; then
     echo "========================================================="
     echo "complete           - All implemented variations"
     echo "---------------------------------------------------------"
-    echo "c                  - C and ODPI"
+    echo "c                  - C++ (gcc) and Oracle ODPI-C"
     echo "elixir             - Elixir and oranif"
     echo "erlang             - Erlang and oranif"
-    echo "go                 - Go and GoDROR"
-    echo "java               - Java and JDBC"
-    echo "kotlin             - Kotlin and JDBC"
-    echo "python             - Python and cx_Oracle"
+    echo "go                 - Go and godror"
+    echo "java               - Java and Oracle JDBC"
+    echo "kotlin             - Kotlin and Oracle JDBC"
+    echo "python             - Python 3 and Oracle cx_Oracle"
     echo "---------------------------------------------------------"
     read -rp "Enter the desired programming lanuage (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
     export ORA_BENCH_CHOICE_DRIVER=${ORA_BENCH_CHOICE_DRIVER}

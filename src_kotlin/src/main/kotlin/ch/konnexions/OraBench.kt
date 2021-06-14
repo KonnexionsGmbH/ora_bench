@@ -106,7 +106,7 @@ class OraBench {
 
                 connection.let {
                     val meta: DatabaseMetaData = connection!!.metaData
-                    benchmarkDriver = "JDBC (Version " + meta.driverVersion.toString() + ")"
+                    benchmarkDriver = "Oracle JDBC (Version " + meta.driverVersion.toString() + ")"
                 }
             } catch (ec: SQLException) {
                 logger.error("connection parameter url     =: $url")

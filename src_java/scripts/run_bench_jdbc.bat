@@ -26,7 +26,7 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - JDBC and Java.
+echo ora_bench - Oracle benchmark - Oracle JDBC and Java.
 echo --------------------------------------------------------------------------------
 echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
 echo --------------------------------------------------------------------------------

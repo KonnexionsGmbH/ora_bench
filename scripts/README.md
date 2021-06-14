@@ -20,8 +20,8 @@ The possible exclusion of drivers made before is taken into account.
 
 Depending on the desired drivers, the script collects the libraries necessary for compilation and then compiles the ora_bench software in the appropriate programming languages: 
 
-- C
--- creation of the C specific property file
+- C++ (gcc)
+-- creation of the C++ (gcc) specific property file
 -- cleaning existing binaries
 -- compilation with make  
 - Elixir
@@ -35,8 +35,8 @@ Depending on the desired drivers, the script collects the libraries necessary fo
 -- compilation with `rebar3`
 - Go
 -- providing the [godror](https://github.com/godror/godror) driver
-- Python
--- creation of the Python specific property file
+- Python 3
+-- creation of the Python 3 specific property file
 
 ### 3 `run_create_bulk_file`
 

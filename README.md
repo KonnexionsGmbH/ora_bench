@@ -26,13 +26,13 @@ The framework parameters for a benchmark run are stored in a central configurati
 
 The currently supported database drivers are:
 
-| Driver    | Programming Languages |
-| :---      | :---                  |
-| cx_Oracle | Python                |
-| godror    | Go                    |
-| JDBC      | Java &amp; Kotlin     |
-| ODPI      | C                     |
-| oranif    | Elixir &amp; Erlang   |
+| Driver           | Programming Language(s) |
+| :---             | :---                    |
+| godror           | Go                      |
+| Oracle JDBC      | Java &amp; Kotlin       |
+| Oracle ODPI-C    | C++ (gcc)               |
+| Oracle cx_Oracle | Python 3                |
+| oranif           | Elixir &amp; Erlang     |
 
 The following Oracle database versions are provided in a benchmark run via Docker container:
 
@@ -52,9 +52,9 @@ The default name for the configuration file is `priv/properties/ora_bench.proper
 A detailed description of the configuration options can be found [here](docs/benchmark_configuration_parameter.md).
 For reasons of convenience the following files are generated:
 
-- the configuration file `priv/ora_bench_c.propperties` for C,
+- the configuration file `priv/ora_bench_c.propperties` for C++ (gcc),
 - the configuration file `priv/ora_bench_erlang.properties` with a corresponding map for Erlang, and
-- the configuration file `priv/ora_bench_python.propperties` for Python.
+- the configuration file `priv/ora_bench_python.propperties` for Python 3.
 
 All the file names specified here are also part of the configuration file and can be changed if necessary.
 
@@ -116,7 +116,7 @@ In Travis CI, the following two environment variables are defined per build for 
 
 In each build the following tasks are performed:
 
-1. Installation of Elixir, Erlang, Go, Java, Oracle Instant Client and Python.
+1. Installation of Elixir, Erlang, Go, Java, Oracle Instant Client and Python 3.
 2. Creation of the bulk file with the script `run_create_bulk_file`.
 3. Execution of the `run_properties_variations`sub-script.
 4. Storing the measurement results in the branch `gh-pages`.
@@ -320,19 +320,19 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 ## <a name="driver_specifica"></a> 4. Driver Specific Features
 
-### 4.1 cx_Oracle and Python
+### 4.1 Oracle cx_Oracle and Python 3
 
 - the following data in the configuration parameters is determined at runtime: 
-    - cx_Oracle version (`benchmark.driver`) and
-    - Python version (`benchmark.language`). 
+    - Oracle cx_Oracle version (`benchmark.driver`) and
+    - Python 3 version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.python`) 
-- Python uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
+- Python 3 uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
 - the value fetch size (`connection.fetch.size`) is not used because the operation `SELECT` uses the operation `Cursor.fetchall()`
 
-### 4.2 JDBC and Java
+### 4.2 Oracle JDBC and Java
 
 - the following data in the configuration parameters is determined at runtime: 
-    - JDBC version (`benchmark.driver`),
+    - Oracle JDBC version (`benchmark.driver`),
     - benchmark identifier (`benchmark.id`),
     - host name (`benchmark.host.name`), 
     - number of cores (`benchmark.number.cores`), 
@@ -344,14 +344,14 @@ The data column in the bulk file is randomly generated with a unique key column 
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
-### 4.3 JDBC and Kotlin
+### 4.3 Oracle JDBC and Kotlin
 
 - the following data in the configuration parameters is determined at runtime: 
-    - Kotlin version (`benchmark.driver`),
+    - Oracle JDBC version (`benchmark.driver`),
     - benchmark identifier (`benchmark.id`),
     - host name (`benchmark.host.name`), 
     - number of cores (`benchmark.number.cores`), 
-    - JRE version (`benchmark.language`), 
+    - Kotlin version (`benchmark.language`), 
     - operating system environment (`benchmark.os`), 
     - user name (`benchmark.user.name`) and 
     - SQL create statement (`sql.create`). 
@@ -359,11 +359,11 @@ The data column in the bulk file is randomly generated with a unique key column 
 - Kotlin uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Kotlin uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
-### 4.4 ODPI and C
+### 4.4 Oracle ODPI-C and C++ (gcc)
 
 - the following data in the configuration parameters is determined at runtime: 
-    - ODPI version (`benchmark.driver`) and
-    - C version (`benchmark.language`). 
+    - Oracle ODPI-C version (`benchmark.driver`) and
+    - C++ (gcc) version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.c`) 
 
 ### 4.5 oranif and Elixir
@@ -395,7 +395,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 
   - run `export DOCKER_USERNAME=\<user name\>`
   - run `export DOCKER_PASSWORD=\<password\>`
-  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the ora_bench repository)
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the OraBench repository)
   - run `cd ora_bench`
   - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
   - run `./scripts/run_install_4_ubuntu_20.04_vm_wsl2.sh` (setting up the WSL2 environment)
@@ -410,7 +410,7 @@ The data column in the bulk file is randomly generated with a unique key column 
   - create an appropriate container: `docker run -it --name kxn_dev -v /var/run/docker.sock:/var/run/docker.sock konnexionsgmbh/kxn_dev:latest bash`
   - run `export DOCKER_USERNAME=\<user name\>`
   - run `export DOCKER_PASSWORD=\<password\>`
-  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the ora_bench repository)
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the OraBench repository)
   - run `cd ora_bench`
   - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
   - run `gradle copyJarToLib`
@@ -439,7 +439,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 - **Requirements (continued)**:
   - run `export DOCKER_USERNAME=\<user name\>`
   - run `export DOCKER_PASSWORD=\<password\>`
-  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the ora_bench repository)
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the OraBench repository)
   - run `cd ora_bench`
   - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
   - run `./scripts/run_install_4_ubuntu_20.04_vm_wsl2.sh` (setting up the WSL2 environment)
@@ -456,7 +456,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 - **Requirements**:
   - run `set DOCKER_USERNAME=\<user name\>`
   - run `set DOCKER_PASSWORD=\<password\>`
-  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the ora_bench repository)
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the OraBench repository)
   - run `cd ora_bench`
 - **Execution**: run `run_ora_bench.bat`
 - **Issues**:
