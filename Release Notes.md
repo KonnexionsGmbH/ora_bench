@@ -28,26 +28,27 @@ Release Date: dd.mm.yyyy
 
 ### New Features
 
-- Database driver [`godror`](https://golangrepo.com/repo/godror-godror-go-database-drivers) and programming language `Go`
-- Database driver `Oracle JDBC` and programming languages `Java` and `Kotlin`
-- Database driver `Oracle ODPI-C` and programming language `C`
-- Database driver `Oracle cx_Oracle` and programming language `Python` 
-- Database driver `oranif` and programming languages `Elixir` and `Erlang` 
+- Database driver [`godror`](https://golangrepo.com/repo/godror-godror-go-database-drivers) and programming language [`Go`](https://golang.org)
+- Database driver [`Oracle JDBC`](https://www.oracle.com/database/technologies/appdev/jdbc.html) and programming languages [`Java`](https://openjdk.java.net) and [`Kotlin`](https://kotlinlang.org)
+- Database driver [`Oracle ODPI-C`](https://oracle.github.io/odpi) and programming language [`C++ (gcc)`](https://gcc.gnu.org)
+- Database driver [`Oracle cx_Oracle`](https://oracle.github.io/python-cx_Oracle) and programming language [`Python`](https://www.python.org ) 
+- Database driver [`oranif`](https://github.com/KonnexionsGmbH/oranif) and programming languages [`Elixir`](https://elixir-lang.org) and [`Erlang`](https://www.erlang.org) 
 
 ### Applied Software
 
-| Software         | Type     | Version        | Website |
-| ---              | ---      | ---            | ---     |
-| Elixir           | Language | 1.12.1-otp-24  | https://elixir-lang.org |
-| Erlang           | Language | 24.0.2         | https://www.erlang.org |
-| Go               | Language | 1.16.5         | https://golang.org |
-| godror           | Driver   | v0.9.0         | https://golangrepo.com/repo/godror-godror-go-database-drivers |
-| Java             | Language | openjdk-16.0.1 | https://openjdk.java.net |
-| Kotlin           | Language | 1.5.10         | https://kotlinlang.org |
-| Oracle JDBC      | Driver   | 21.1.0.0       | https://www.oracle.com/database/technologies/appdev/jdbc.html |
-| Oracle ODPI-C    | Driver   | 4.2.1          | https://oracle.github.io/odpi/ |
-| Oracle cx_Oracle | Driver   | 8.2.1          | https://oracle.github.io/python-cx_Oracle/ |
-| oranif           | Driver   | 0.2.3          | https://github.com/KonnexionsGmbH/oranif |
-| Python           | Language | 3.10.0b2       | https://www.python.org |
+| Software         | Type     | Version        | 
+| ---              | ---      | ---            | 
+| C++ (gcc)        | Language | 10.2.0         | 
+| Elixir           | Language | 1.12.1-otp-24  | 
+| Erlang           | Language | 24.0.2         | 
+| Go               | Language | 1.16.5         |  
+| godror           | Driver   | v0.9.0         |  
+| Java             | Language | openjdk-16.0.1 |  
+| Kotlin           | Language | 1.5.10         |  
+| Oracle JDBC      | Driver   | 21.1.0.0       |  
+| Oracle ODPI-C    | Driver   | 4.2.1          |  
+| Oracle cx_Oracle | Driver   | 8.2.1          | 
+| oranif           | Driver   | 0.2.3          |  
+| Python           | Language | 3.10.0b2       | 
 
 ----------
