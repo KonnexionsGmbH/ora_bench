@@ -27,7 +27,7 @@ if ["%1"] EQU [""] (
     echo =========================================================
     echo complete           - All implemented variations
     echo ---------------------------------------------------------
-    echo c                  - C++ (gcc) and Oracle ODPI-C
+    echo c                  - C++ [gcc] and Oracle ODPI-C
     echo elixir             - Elixir and oranif
     echo erlang             - Erlang and oranif
     echo go                 - Go and godror
