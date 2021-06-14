@@ -223,6 +223,10 @@ def get_bulk_data_partitions(logger, config):
 
     bulk_data_partitions = [[] for _ in range(0, config['benchmark.number.partitions'])]
 
+    # ------------------------------------------------------------------------------
+    # Loading the bulk file into memory.
+    # ------------------------------------------------------------------------------
+
     for key_data_tuple in bulk_data:
         key = key_data_tuple[0]
         partition_key = (ord(key[0]) * 256 + ord(key[1])) % config['benchmark.number.partitions']

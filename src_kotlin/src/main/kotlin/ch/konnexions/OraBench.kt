@@ -94,7 +94,7 @@ class OraBench {
             logger.debug("Start")
         }
 
-        val url = "jdbc:oracle:thin:@//$connectionHost:$connectionPort/$connectionService"
+        val url = "jdbc:oracle:thin:@//$connectionHost:$connectionPort/$connectionService?oracle.net.disableOob=true"
 
         if (connection == null) {
             try {
