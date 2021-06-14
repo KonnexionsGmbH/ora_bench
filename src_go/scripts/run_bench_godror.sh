@@ -60,6 +60,18 @@ if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
     exit 255
 fi
 
+if ! go mod tidy; then
+    exit 255
+fi
+
+if ! go get github.com/godror/godror; then
+    exit 255
+fi
+
+if ! go get golang.org/x/xerrors; then
+    exit 255
+fi
+
 if ! go run src_go/orabench.go priv/properties/ora_bench.properties; then
     exit 255
 fi
