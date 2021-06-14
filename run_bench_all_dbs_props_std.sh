@@ -12,6 +12,8 @@ set -e
 export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (locally)'
 
 rm -f ora_bench.log
+rm -f priv/ora_bench_result.csv
+rm -f priv/ora_bench_result.tsv
 
 export ORA_BENCH_CHOICE_DB_DEFAULT=complete
 export ORA_BENCH_CHOICE_DRIVER_DEFAULT=complete

@@ -24,7 +24,8 @@ echo "==========================================================================
     if ! { gradle clean --warning-mode all; }; then
         exit 255
     fi
-    
+
+    kotlin -version
     if ! { gradle jar --warning-mode all; }; then
         exit 255
     fi

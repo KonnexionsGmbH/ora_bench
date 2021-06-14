@@ -12,6 +12,8 @@ setlocal EnableDelayedExpansion
 set ORA_BENCH_BENCHMARK_COMMENT="Standard series (locally)"
 
 if exist ora_bench.log del /f /q ora_bench.log
+if exist priv\ora_bench_result.csv del /f /q priv\ora_bench_result.csv
+if exist priv\ora_bench_result.tsv del /f /q priv\ora_bench_result.tsv
 
 set ORA_BENCH_CHOICE_DB_DEFAULT=complete
 set ORA_BENCH_CHOICE_DRIVER_DEFAULT=complete
