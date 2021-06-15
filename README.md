@@ -11,26 +11,25 @@
 ### Table of Contents
 
 **[1. Introduction](#introduction)**<br>
-**[2. Framework Tools](#framework_tools)**<br>
-**[2.1 Benchmark Configuration](#framework_tools)**<br>
-**[2.2 Installation](#framework_tools)**<br>
-**[2.3 Benchmark Operation](#framework_tools)**<br>
-**[2.4 Benchmark Results](#framework_tools)**<br>
-**[2.5 Bulk File](#framework_tools)**<br>
-**[3. Coding Pattern](#coding_pattern)**<br>
-**[3.1 `Benchmark Function` (main function)](#coding_pattern)**<br>
-**[3.2 `Trial Function`](#coding_pattern)**<br>
-**[3.3 `Insert Control Function`](#coding_pattern)**<br>
-**[3.4 `Insert Function`](#coding_pattern)**<br>
-**[3.5 `Select Control Function`](#coding_pattern)**<br>
-**[3.6 `Select Function`](#coding_pattern)**<br>
-**[4. Driver Specific Features](#driver_specifica)**<br>
-**[4.1 Oracle cx_Oracle and Python](#driver_specifica)**<br>
-**[4.2 Oracle JDBC and Java](#driver_specifica)**<br>
-**[4.3 Oracle JDBC and Kotlin](#driver_specifica)**<br>
-**[4.4 Oracle ODPI-C and C++ (gcc)](#driver_specifica)**<br>
-**[4.5 oranif and Erlang](#driver_specifica)**<br>
-**[5. Reporting](#reporting)**<br>
+**[2. Framework Tools](#2_framework)**<br>
+**[2.1 Benchmark Configuration](#2.1_benchmark)**<br>
+**[2.2 Installation](#2.2_installation)**<br>
+**[2.3 Benchmark Operation](#2.3_benchmark)**<br>
+**[2.4 Benchmark Results](#2.4_benchmark)**<br>
+**[2.5 Bulk File](#2.5_bulk)**<br>
+**[3. Coding Pattern](#3_coding)**<br>
+**[3.1 `Benchmark Function` (main function)](#3.1_benchmark)**<br>
+**[3.2 `Trial Function`](#3.2_trial)**<br>
+**[3.3 `Insert Control Function`](#3.3_insert)**<br>
+**[3.4 `Insert Function`](#3.4_insert)**<br>
+**[3.5 `Select Control Function`](#3.5_select)**<br>
+**[3.6 `Select Function`](#3.6_select)**<br>
+**[4. Driver Specific Features](#4_driver)**<br>
+**[4.1 Oracle cx_Oracle and Python](#4.1_oracle)**<br>
+**[4.2 Oracle JDBC and Java](#4.2_oracle)**<br>
+**[4.3 Oracle JDBC and Kotlin](#4.3_oracle)**<br>
+**[4.4 Oracle ODPI-C and C++ (gcc)](#4.4_oracle)**<br>
+**[4.5 oranif and Erlang](#4.5_oranif)**<br>
 
 ----
 
@@ -60,7 +59,7 @@ The results of the benchmark runs are collected in either csv (comma-separated v
 
 ## <a name="framework_tools"></a> 2. Framework Tools
 
-### 2.1 Benchmark Configuration
+### <a name="2.1_benchmark"></a> 2.1 Benchmark Configuration
 
 The benchmark configuration file controls the execution and output of a benchmark run.
 The default name for the configuration file is `priv/properties/ora_bench.properties`.
@@ -73,7 +72,7 @@ For reasons of convenience the following files are generated:
 
 All the file names specified here are also part of the configuration file and can be changed if necessary.
 
-### 2.2 Installation
+### <a name="2.2_installation"></a> 2.2 Installation
 
 The easiest way is to download a current release of **`OraBench`** from the GitHub repository.
 You can find the necessary link [here](https://github.com/KonnexionsGmbH/ora_bench).
@@ -95,7 +94,7 @@ For changes to the **`DBSeeder`** repository it is best to use an editor (e.g. [
 For using the Docker Image based databases in operational mode, [Docker Desktop](https://www.docker.com/products/docker-desktop) must also be installed.
 For the respective software versions, please consult the document [release notes](Release-Notes.md).
 
-### 2.3 Benchmark Operation
+### <a name="2.3_benchmark"></a> 2.3 Benchmark Operation
 
 #### 2.3.1  `run_bench_all_dbs_props_std`
 
@@ -200,7 +199,7 @@ The run log is stored in the `run_bench_all_dbs_props_var.log` file.
   - Trino Distributed Query Engine and Microsoft SQL Connector
   - YugabyteDB and Docker image
 
-### 2.4 Benchmark Results
+### <a name="2.4_benchmark"></a> 2.4 Benchmark Results
 
 In a file defined by the configuration parameters `file.result.delimiter`, `file.result.header` and `file.result.name`, the results of the benchmark run with the actions `benchmark`, `trial` and `query` are stored.
 In the file directory `priv/statistics` reference statistics files are available per version of **`OraBench`**.
@@ -235,8 +234,8 @@ The different file name patterns result from the following operating system envi
 | end day time      | yyyy-mm-dd hh24:mi:ss.fffffffff | current date and time at the end of the action |
 | duration (sec)    | integer                         | time difference in seconds between start time and end time of the action |
 | duration (ns)     | integer                         | time difference in nanoseconds between start time and end time of the action |
- 
-### 2.5 Bulk File
+
+### <a name="2.5_bulk"></a> 2.5 Bulk File
 
 The bulk file in `csv` or `tsv` format is created in the `run_create_bulk_file` script if it does not already exist. 
 The following configuration parameters are taken into account:
@@ -251,7 +250,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 ## <a name="coding_pattern"></a> 3. Coding Patterns
 
-### 3.1 `Benchmark Function` (main function)
+### <a name="3.1_benchmark"></a> 3.1 `Benchmark Function` (main function)
 
 ```
     run_benchmark()
@@ -277,8 +276,7 @@ The data column in the bulk file is randomly generated with a unique key column 
         WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
 ```
 
-
-### 3.2 `Trial Function`
+### <a name="3.2_trial"></a> 3.2 `Trial Function`
 
 ```
     run_trial(database connections, trial_no, bulk_data_partitions)
@@ -303,7 +301,7 @@ The data column in the bulk file is randomly generated with a unique key column 
         WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
 ```
 
-### 3.3 `Insert Control Function`
+### <a name="3.3_insert"></a> 3.3 `Insert Control Function`
 
 ```
     run_insert(database connections, trial_no, bulk_data_partitions)
@@ -324,7 +322,7 @@ The data column in the bulk file is randomly generated with a unique key column 
         WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 ```
 
-### 3.4 `Insert Function`
+### <a name="3.4_insert"></a> 3.4 `Insert Function`
 
 ```
     insert(database connection, bulk_data_partition)
@@ -357,7 +355,7 @@ The data column in the bulk file is randomly generated with a unique key column 
         commit
 ```
 
-### 3.5 `Select Control Function`
+### <a name="3.5_select"></a> 3.5 `Select Control Function`
 
 ```
     run_select(database connections, trial_no, bulk_data_partitions)
@@ -378,7 +376,7 @@ The data column in the bulk file is randomly generated with a unique key column 
         WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 ```
 
-### 3.6 `Select Function`
+### <a name="3.6_select"></a> 3.6 `Select Function`
 
 ```
     run_select(database connection, bulk_data_partition, partition_no)
@@ -403,32 +401,28 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 ## <a name="driver_specifica"></a> 4. Driver Specific Features
 
-### 4.1 Oracle cx_Oracle and Python 3
+### <a name="4.1_oracle"></a> 4.1 Oracle cx_Oracle and Python 3
 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.python`) 
 - Python 3 uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
 - the value fetch size (`connection.fetch.size`) is not used because the operation `SELECT` uses the operation `Cursor.fetchall()`
 
-### 4.2 Oracle JDBC and Java
+### <a name="4.2_oracle"></a> 4.2 Oracle JDBC and Java
 
 - the Java source code is compiled with the help of Gradle
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
-### 4.3 Oracle JDBC and Kotlin
+### <a name="4.3_oracle"></a> 4.3 Oracle JDBC and Kotlin
 
 - the Kotlin source code is compiled with the help of Gradle
 - Kotlin uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Kotlin uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
-### 4.4 Oracle ODPI-C and C++ (gcc)
+### <a name="4.4_oracle"></a> 4.4 Oracle ODPI-C and C++ (gcc)
 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.c`) 
 
-### 4.5 oranif and Erlang
+### <a name="4.5_oranif"></a> 4.5 oranif and Erlang
 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.erlang`) 
-
-## <a name="reporting"></a> 5. Reporting
-
-[see here](https://konnexionsgmbh.github.io/ora_bench/)
