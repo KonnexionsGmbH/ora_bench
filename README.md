@@ -93,6 +93,10 @@ To download the repository [Git](https://git-scm.com) is needed and for compilat
 - [Python 3](https://www.python.org/downloads/)
 - [rebar3](https://www.rebar3.org/)
 
+Visual Studio 
+https://visualstudio.microsoft.com
+Workloads: Desktop Development with C++
+
 For changes to the **`OraBench`** repository it is best to use an editor (e.g. [Vim](https://www.vim.org)) or a swuitable IDE.
 For using the Docker Image based databases in operational mode, [Docker Desktop](https://www.docker.com/products/docker-desktop) must also be installed.
 For the respective software versions, please consult the document [release notes](Release-Notes.md).

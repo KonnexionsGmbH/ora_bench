@@ -23,6 +23,14 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 )
 
+setlocal
+
+if ["%ORA_BENCH_VCVARSALL_PATH%"] EQU [""] (
+    set ORA_BENCH_VCVARSALL_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\"
+)
+
+call %ORA_BENCH_VCVARSALL_PATH%vcvarsall.bat x64
+
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
@@ -40,6 +48,8 @@ echo BENCHMARK_CORE_MULTIPLIER  : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
 echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo --------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
+echo --------------------------------------------------------------------------------
+echo VCVARSALL_PATH             : %ORA_BENCH_VCVARSALL_PATH%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
@@ -74,6 +84,8 @@ if %ERRORLEVEL% NEQ 0 (
     echo Processing of the script was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
+
+endlocal
 
 echo --------------------------------------------------------------------------------
 echo:| TIME
