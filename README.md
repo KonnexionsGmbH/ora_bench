@@ -90,7 +90,7 @@ To download the repository [Git](https://git-scm.com) is needed and for compilat
 - [Python 3](https://www.python.org/downloads/)
 - [rebar3](https://www.rebar3.org/)
 
-For changes to the **`DBSeeder`** repository it is best to use an editor (e.g. [Vim](https://www.vim.org)) or a swuitable IDE.
+For changes to the **`OraBench`** repository it is best to use an editor (e.g. [Vim](https://www.vim.org)) or a swuitable IDE.
 For using the Docker Image based databases in operational mode, [Docker Desktop](https://www.docker.com/products/docker-desktop) must also be installed.
 For the respective software versions, please consult the document [release notes](Release-Notes.md).
 
@@ -129,7 +129,7 @@ Details on the required software versions can be found in the [release notes](Re
   - Ubuntu 20.04 installed directly or via VMware
   - run `sudo apt update`
   - run `sudo apt install dos2unix git`
-  - run `git clone https://github.com/KonnexionsGmbH/db_seeder` (cloning the **`DBSeeder`** repository)
+  - run `git clone https://github.com/KonnexionsGmbH/db_seeder` (cloning the **`DBOraBenchSeeder`** repository)
   - run `cd db_seeder`
   - run `./scripts/run_install_4_vm_wsl2_1.sh`
   - close the Ubuntu shell and reopen it again
