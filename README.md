@@ -42,10 +42,10 @@ The currently supported database drivers are:
 
 | Driver | Programming Language(s) |
 | :---   | :---                    |
-| [godror](https://golangrepo.com/repo/godror-godror-go-database-drivers) | [Go]((https://golang.org)|
+| [godror](https://golangrepo.com/repo/godror-godror-go-database-drivers) | [Go](https://golang.org)|
 | [Oracle cx_Oracle](https://oracle.github.io/python-cx_Oracle) | [Python 3](https://www.python.org) |
 | [Oracle JDBC](https://www.oracle.com/database/technologies/appdev/jdbc.html) | [Java](https://openjdk.java.net) &amp; [Kotlin](https://kotlinlang.org) |
-| [Oracle ODPI-C](https://oracle.github.io/odpi) | [C++](https://docs.microsoft.com/en-us/cpp/?view=msvc-160) [gcc)]((https://gcc.gnu.org) |
+| [Oracle ODPI-C](https://oracle.github.io/odpi) | [C++](https://docs.microsoft.com/en-us/cpp/?view=msvc-160) ([gcc](https://gcc.gnu.org)) |
 | [oranif](https://github.com/KonnexionsGmbH/oranif) | [Elixir](https://elixir-lang.org) &amp; [Erlang](https://www.erlang.org) |
 
 The following Oracle database versions are provided in a benchmark run via Docker container:
@@ -82,8 +82,8 @@ In addition, tests are always performed in Windows with Ubuntu under the [Window
 
 To download the repository [Git](https://git-scm.com) is needed and for compilation the following software components are needed:
 
-- [Elixir](https://elixir-lang.org/install.html#windows)
 - [Erlang](https://www.erlang.org/downloads/)
+- [Elixir](https://elixir-lang.org/install.html#windows)
 - [Go](https://golang.org/dl/)
 - [Gradle Build Tool](https://gradle.org/releases/)
 - Java, e.g.: the [open-source JDK](https://openjdk.java.net)
