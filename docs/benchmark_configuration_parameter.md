@@ -1,4 +1,4 @@
-# Benchmark Configuration Parameter
+# OraBench - Benchmark Configuration Parameter
 
 The following table contains all possible configuration parameters.
 The `Parameter Name` column contains the parameter name as used in the configuration file.

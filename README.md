@@ -1,4 +1,4 @@
-# ora_bench - Benchmark Framework for Oracle Database Drivers.
+# OraBench - Benchmark Framework for Oracle Database Drivers.
 
 ![Travis (.org)](https://img.shields.io/travis/KonnexionsGmbH/ora_bench.svg?branch=master)
 ![GitHub](https://img.shields.io/github/license/KonnexionsGmbH/ora_bench.svg)
@@ -18,12 +18,12 @@
 **[2.4 Benchmark Results](#2.4_benchmark)**<br>
 **[2.5 Bulk File](#2.5_bulk)**<br>
 **[3. Coding Pattern](#3_coding)**<br>
-**[3.1 `Benchmark Function` (main function)](#3.1_benchmark)**<br>
-**[3.2 `Trial Function`](#3.2_trial)**<br>
-**[3.3 `Insert Control Function`](#3.3_insert)**<br>
-**[3.4 `Insert Function`](#3.4_insert)**<br>
-**[3.5 `Select Control Function`](#3.5_select)**<br>
-**[3.6 `Select Function`](#3.6_select)**<br>
+**[3.1 Benchmark Function` (main function)](#3.1_benchmark)**<br>
+**[3.2 Trial Function](#3.2_trial)**<br>
+**[3.3 Insert Control Function](#3.3_insert)**<br>
+**[3.4 Insert Function](#3.4_insert)**<br>
+**[3.5 Select Control Function](#3.5_select)**<br>
+**[3.6 Select Function](#3.6_select)**<br>
 **[4. Driver Specific Features](#4_driver)**<br>
 **[4.1 Oracle cx_Oracle and Python](#4.1_oracle)**<br>
 **[4.2 Oracle JDBC and Java](#4.2_oracle)**<br>
@@ -40,20 +40,20 @@ The framework parameters for a benchmark run are stored in a central configurati
 
 The currently supported database drivers are:
 
-| Driver           | Programming Language(s) |
-| :---             | :---                    |
-| godror           | Go                      |
-| Oracle cx_Oracle | Python 3                |
-| Oracle JDBC      | Java &amp; Kotlin       |
-| Oracle ODPI-C    | C++ (gcc)               |
-| oranif           | Elixir &amp; Erlang     |
+| Driver | Programming Language(s) |
+| :---   | :---                    |
+| [godror](https://golangrepo.com/repo/godror-godror-go-database-drivers) | [Go]((https://golang.org)|
+| [Oracle cx_Oracle](https://oracle.github.io/python-cx_Oracle) | [Python 3](https://www.python.org) |
+| [Oracle JDBC](https://www.oracle.com/database/technologies/appdev/jdbc.html) | [Java](https://openjdk.java.net) &amp; [Kotlin](https://kotlinlang.org) |
+| [Oracle ODPI-C](https://oracle.github.io/odpi) | [C++](https://docs.microsoft.com/en-us/cpp/?view=msvc-160) [gcc)]((https://gcc.gnu.org) |
+| [oranif](https://github.com/KonnexionsGmbH/oranif) | [Elixir](https://elixir-lang.org) &amp; [Erlang](https://www.erlang.org) |
 
 The following Oracle database versions are provided in a benchmark run via Docker container:
 
 | Shortcut   | Oracle Database Version |
 | :---       | :--- |
-| db_18_4_xe | Oracle Database 18c 18.4 (Express Edition) - Linux x86-64                                        |
-| db_19_3_ee | Oracle Database 19c 19.3                   - Linux x86-64                                        |
+| db_18_4_xe | [Oracle Database 18c 18.4 (Express Edition) - Linux x86-64](https://docs.oracle.com/en/database/oracle/oracle-database/18/) |
+| db_19_3_ee | [Oracle Database 19c 19.3                   - Linux x86-64](https://docs.oracle.com/en/database/oracle/oracle-database/19/index.html) |
 
 The results of the benchmark runs are collected in either csv (comma-separated values) or tsv (tab-separated values) files.
 
