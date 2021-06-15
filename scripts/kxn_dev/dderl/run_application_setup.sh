@@ -21,7 +21,7 @@ echo "==========================================================================
 if [ ! -d "$HOME_DDERL" ]; then
     echo "Create the DDErl repository"
     echo "---------------------------------------------------------"
-    git clone https://walter-weinmann:6f558b7ea4c4f2c0dc981079c2777646ebb4ce12@github.com/KonnexionsGmbH/dderl.git
+    git clone github.com/KonnexionsGmbH/dderl.git
 
     echo "Create the snapshot directory"
     echo "---------------------------------------------------------"
