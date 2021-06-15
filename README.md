@@ -154,6 +154,12 @@ The different file name patterns result from the following operating system envi
 - `...._win10.tsv`: Windows
 - `....._wsl2.tsv`: Ubuntu LTS with Windows Subsystem for Linux on Windows
 
+Excerpts from a sample file can be seen in the following image:
+
+![](.README_images/Statistics_9.9.9_win10.png)
+
+In detail, the following information is available in the result files:
+
 | Column            | Format                          | Content |
 | :---              | :---                            | :--- |
 | release           | alphanumeric                    | config param `benchmark.release` |
