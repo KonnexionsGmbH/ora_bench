@@ -77,6 +77,9 @@ All the file names specified here are also part of the configuration file and ca
 The easiest way is to download a current release of **`OraBench`** from the GitHub repository.
 You can find the necessary link [here](https://github.com/KonnexionsGmbH/ora_bench).
 
+**`OraBench`** is tested under [Ubuntu](https://ubuntu.com) and [Microsoft Windows](https://en.wikipedia.org/wiki/Microsoft_Windows).
+In addition, tests are always performed in Windows with Ubuntu under the [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl).
+
 To download the repository [Git](https://git-scm.com) is needed and for compilation the following software components are needed:
 
 - [Elixir](https://elixir-lang.org/install.html#windows)
@@ -94,6 +97,28 @@ For changes to the **`OraBench`** repository it is best to use an editor (e.g. [
 For using the Docker Image based databases in operational mode, [Docker Desktop](https://www.docker.com/products/docker-desktop) must also be installed.
 For the respective software versions, please consult the document [release notes](Release-Notes.md).
 
+The whole software environment for the operation and further development of OraBench can be created most easily by using a Docker container based on the Konnexions Development Image (version 2.0.4 from [here](https://hub.docker.com/repository/docker/konnexionsgmbh/kxn_dev)).  
+
+Alternatively, in an Ubuntu 20.04 based environment, e.g.: in the Windows Subsystem for Linux or in a virtual machine, the two following scripts can be used to install the necessary software:
+
+- `scripts/kxn_dev/run_install_4-vm_wsl2_1.sh`
+- `scripts/kxn_dev/run_install_4-vm_wsl2_2.sh`
+
+  - run `sudo apt update`
+  - run `sudo apt install git`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the **`OraBench`** repository)
+  - run `cd ora_bench/scripts/kxn_dev`
+  - run `./run_install_4_vm_wsl2_1.sh`
+  - close the Ubuntu shell and reopen it again
+  - run `cd ora_bench/scripts/kxn_dev`
+  - run `./run_install_4_vm_wsl2_2.sh`
+
+If the Windows Subsystem for Linux (WSL) is to be used, then the `WSL INTEGRATION` for Ubuntu must be activated in Docker:
+
+![](.README_images/Docker_Desktop_Settings_1.png)
+
+![](.README_images/Docker_Desktop_Settings_2.png)
+
 ### <a name="2.3_benchmark"></a> 2.3 Benchmark Operation
 
 #### 2.3.1  Script `run_bench_all_dbs_props_std`
@@ -107,42 +132,6 @@ The run log is stored in the `run_bench_all_dbs_props_std.log` file.
 This script executes the `run_properties_variations` script for each of the databases listed in chapter Introduction with variations of properties. 
 At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark. 
 The run log is stored in the `run_bench_all_dbs_props_var.log` file.
-
-##### 2.3.3 Operation Possibilities
-
-**`OraBench`** is tested under [Ubuntu](https://ubuntu.com) and [Microsoft Windows](https://en.wikipedia.org/wiki/Microsoft_Windows).
-In addition, tests are always performed in Windows with Ubuntu under the [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl).
-Besides one of the two operating systems, these are the minimum requirements for running **`OraBench`**:
-
-- [Docker Desktop Community](https://www.docker.com/products/docker-desktop)
-- [Eclipse IDE](https://www.eclipse.org)
-- [Gradle Build Tool](https://gradle.org)
-- [Java Development Kit](https://en.wikipedia.org/wiki/Java_Development_Kit)
-
-Details on the required software versions can be found in the [release notes](Release-Notes.md).
-
-##### 2.3.4 Special Features for the Operation with Ubuntu
-
-- A suitable image is available on Docker Hub for development and operation, see [here](https://hub.docker.com/repository/docker/konnexionsgmbh/kxn_dev).
-
-- In the directory `scripts` are the two scripts `run_install_4_vm_wsl2_1.sh` and `run_install_4_vm_wsl2_1.sh` with which an Ubuntu environment can be prepared for development and operation.
-  - Ubuntu 20.04 installed directly or via VMware
-  - run `sudo apt update`
-  - run `sudo apt install dos2unix git`
-  - run `git clone https://github.com/KonnexionsGmbH/db_seeder` (cloning the **`DBOraBenchSeeder`** repository)
-  - run `cd db_seeder`
-  - run `./scripts/run_install_4_vm_wsl2_1.sh`
-  - close the Ubuntu shell and reopen it again
-  - run `cd db_seeder`
-  - run `./scripts/run_install_4_vm_wsl2_2.sh`
-  - run `gradle copyJarToLib`
-  - run `./run_db_seeder.sh`
-
-- If the Windows Subsystem for Linux (WSL) is to be used, then the `WSL INTEGRATION` for Ubuntu must be activated in Docker
-
-![](.README_images/Docker_Desktop_Settings_1.png)
-
-![](.README_images/Docker_Desktop_Settings_2.png)
 
 ### <a name="2.4_benchmark"></a> 2.4 Benchmark Results
 
