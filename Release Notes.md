@@ -1,4 +1,4 @@
-# Release Notes
+# OraBench - Release Notes
 
 ![Travis (.org)](https://img.shields.io/travis/KonnexionsGmbH/ora_bench.svg?branch=master)
 ![GitHub](https://img.shields.io/github/license/KonnexionsGmbH/ora_bench.svg)
@@ -37,19 +37,19 @@ Release Date: dd.mm.yyyy
 
 ### Applied Software
 
-| Software         | Type     | Version        | 
-| ---              | ---      | ---            | 
-| C++ (gcc)        | Language | 10.2.0         | 
-| Elixir           | Language | 1.12.1-otp-24  | 
-| Erlang           | Language | 24.0.2         | 
-| Go               | Language | 1.16.5         |  
-| godror           | Driver   | v0.9.0         |  
-| Java             | Language | openjdk-16.0.1 |  
-| Kotlin           | Language | 1.5.10         |  
-| Oracle JDBC      | Driver   | 21.1.0.0       |  
-| Oracle ODPI-C    | Driver   | 4.2.1          |  
-| Oracle cx_Oracle | Driver   | 8.2.1          | 
-| oranif           | Driver   | 0.2.3          |  
-| Python 3         | Language | 3.10.0b2       | 
+| Software         | Type     | Version           | 
+| ---              | ---      | ---               | 
+| C++ (gcc)        | Language | 10.2.0            | 
+| Elixir           | Language | 1.12.1-otp-24     | 
+| Erlang           | Language | 24.0.2            | 
+| Go               | Language | 1.16.5            |  
+| godror           | Driver   | v0.9.0            |  
+| Java             | Language | openjdk-16.0.1    |  
+| Kotlin           | Language | 1.5.10 [?1.4.32?] |  
+| Oracle JDBC      | Driver   | 21.1.0.0          |  
+| Oracle ODPI-C    | Driver   | 4.2.1             |  
+| Oracle cx_Oracle | Driver   | 8.2.1             |  
+| oranif           | Driver   | 0.2.3             |  
+| Python 3         | Language | 3.10.0b2          | 
 
 ----------

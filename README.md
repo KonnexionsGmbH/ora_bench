@@ -12,16 +12,31 @@
 
 **[1. Introduction](#introduction)**<br>
 **[2. Framework Tools](#framework_tools)**<br>
+**[2.1 Benchmark Configuration](#framework_tools)**<br>
+**[2.2 Installation](#framework_tools)**<br>
+**[2.3 Benchmark Operation](#framework_tools)**<br>
+**[2.4 Benchmark Results](#framework_tools)**<br>
+**[2.5 Bulk File](#framework_tools)**<br>
 **[3. Coding Pattern](#coding_pattern)**<br>
+**[3.1 `Benchmark Function` (main function)](#coding_pattern)**<br>
+**[3.2 `Trial Function`](#coding_pattern)**<br>
+**[3.3 `Insert Control Function`](#coding_pattern)**<br>
+**[3.4 `Insert Function`](#coding_pattern)**<br>
+**[3.5 `Select Control Function`](#coding_pattern)**<br>
+**[3.6 `Select Function`](#coding_pattern)**<br>
 **[4. Driver Specific Features](#driver_specifica)**<br>
-**[5. Execution Variations](#execution)**<br>
-**[6. Reporting](#reporting)**<br>
+**[4.1 Oracle cx_Oracle and Python](#driver_specifica)**<br>
+**[4.2 Oracle JDBC and Java](#driver_specifica)**<br>
+**[4.3 Oracle JDBC and Kotlin](#driver_specifica)**<br>
+**[4.4 Oracle ODPI-C and C++ (gcc)](#driver_specifica)**<br>
+**[4.5 oranif and Erlang](#driver_specifica)**<br>
+**[5. Reporting](#reporting)**<br>
 
 ----
 
 ## <a name="introduction"></a> 1. Introduction
 
-**OraBench** can be used to determine the performance of different Oracle database drivers under identical conditions.
+**`OraBench`** can be used to determine the performance of different Oracle database drivers under identical conditions.
 The framework parameters for a benchmark run are stored in a central configuration file.
 
 The currently supported database drivers are:
@@ -29,9 +44,9 @@ The currently supported database drivers are:
 | Driver           | Programming Language(s) |
 | :---             | :---                    |
 | godror           | Go                      |
+| Oracle cx_Oracle | Python 3                |
 | Oracle JDBC      | Java &amp; Kotlin       |
 | Oracle ODPI-C    | C++ (gcc)               |
-| Oracle cx_Oracle | Python 3                |
 | oranif           | Elixir &amp; Erlang     |
 
 The following Oracle database versions are provided in a benchmark run via Docker container:
@@ -58,74 +73,142 @@ For reasons of convenience the following files are generated:
 
 All the file names specified here are also part of the configuration file and can be changed if necessary.
 
-### 2.2 Benchmark Execution
+### 2.2 Installation
 
-#### 2.2.1 Locally
+The easiest way is to download a current release of **`OraBench`** from the GitHub repository.
+You can find the necessary link [here](https://github.com/KonnexionsGmbH/ora_bench).
 
-##### 2.2.1.1 System Requirements
+To download the repository [Git](https://git-scm.com) is needed and for compilation the following software components are needed:
 
-##### 2.2.1.1.1 Konnexion's Development Image kxn_dev
+- [Elixir](https://elixir-lang.org/install.html#windows)
+- [Erlang](https://www.erlang.org/downloads/)
+- [Go](https://golang.org/dl/)
+- [Gradle Build Tool](https://gradle.org/releases/)
+- Java, e.g.: the [open-source JDK](https://openjdk.java.net)
+- [Kotlin](https://kotlinlang.org/docs/tutorials/command-line.html)
+- [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm)
+- [Oracle Instant Client](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
+- [Python 3](https://www.python.org/downloads/)
+- [rebar3](https://www.rebar3.org/)
 
-##### 2.2.1.1.2 Windows Platform
+For changes to the **`DBSeeder`** repository it is best to use an editor (e.g. [Vim](https://www.vim.org)) or a swuitable IDE.
+For using the Docker Image based databases in operational mode, [Docker Desktop](https://www.docker.com/products/docker-desktop) must also be installed.
+For the respective software versions, please consult the document [release notes](Release-Notes.md).
 
-- Docker Desktop for Windows from [here](https://www.docker.com/products/docker-desktop)
+### 2.3 Benchmark Operation
 
-- Make for Windows from [here](http://gnuwin32.sourceforge.net/packages/make.htm)
-
-- Oracle Instant Client from [here](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
-
-- Erlang from [here](https://www.erlang.org/downloads/)
-
-- Elixir from [here](https://elixir-lang.org/install.html#windows)
-
-- Go from [here](https://golang.org/dl/)
-
-- Java SE Development Kit, e.g. Version 11 from [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
-
-- Gradle from [here](https://gradle.org/releases/) 
-
-- Kotlin from [here](https://kotlinlang.org/docs/tutorials/command-line.html)
-
-- Python 3 from [here](https://www.python.org/downloads/)
-
-- rebar3 from [here](https://www.rebar3.org/)
-
-##### 2.2.1.2 `run_bench_all_dbs_props_std`
+#### 2.3.1  `run_bench_all_dbs_props_std`
 
 This script executes the `run_properties_standard` script for each of the databases listed in chapter Introduction with standard properties. 
 At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark. 
 The run log is stored in the `run_bench_all_dbs_props_std.log` file.
 
-##### 2.2.1.3 `run_bench_all_dbs_props_var`
+##### 2.3.2 `run_bench_all_dbs_props_var`
 
 This script executes the `run_properties_variations` script for each of the databases listed in chapter Introduction with variations of properties. 
 At the beginning of the script it is possible to exclude individual databases or drivers from the current benchmark. 
 The run log is stored in the `run_bench_all_dbs_props_var.log` file.
 
-##### 2.2.1.4 `run_bench_<driver>_<programming language>`
+### 2.4 Operqational Possibilities
 
-The driver and programming language related scripts, such as `run_bench_jdbc` in the `src_java` directory, 
-first execute the insert statements and then the select statements in each trial with the data from the bulk file.
-The time consumed is captured and recorded in result files.
 
-#### 2.2.2 Travis CI
 
-In Travis CI, the following two environment variables are defined per build for each of the databases listed in chapter [Introduction](#introduction):
 
-- `ORA_BENCH_BENCHMARK_DATABASE`
 
-In each build the following tasks are performed:
 
-1. Installation of Elixir, Erlang, Go, Java, Oracle Instant Client and Python 3.
-2. Creation of the bulk file with the script `run_create_bulk_file`.
-3. Execution of the `run_properties_variations`sub-script.
-4. Storing the measurement results in the branch `gh-pages`.
+## <a name="execution"></a> 6. Operating Instructions
 
-### 2.3 Benchmark Results
+### 5.1 Ubuntu 20.04 LTS (including VMware)
+
+- **Requirements**:
+  - Ubuntu 20.04 installed directly or via VMware
+  - run `sudo apt update`
+  - run `sudo apt install dos2unix git`
+  - add the following lines to `.bash_profile`:
+
+        if [ -f ~/.bashrc ]; then
+            source ~/.bashrc
+        fi
+
+  - run `export DOCKER_USERNAME=\<user name\>`
+  - run `export DOCKER_PASSWORD=\<password\>`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the **`OraBench`** repository)
+  - run `cd ora_bench`
+  - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
+  - run `./scripts/run_install_4_ubuntu_20.04_vm_wsl2.sh` (setting up the WSL2 environment)
+  - close the Ubuntu shell and reopen it again
+  - run `cd ora_bench`
+- **Execution**: run `./run_bench_all_dbs_props_[std|var].sh`
+
+#### 5.2 Ubuntu 20.04 LTS and [kxn_dev Image](https://hub.docker.com/repository/docker/konnexionsgmbh/kxn_dev)
+
+- **Requirements**:
+  - pull the `kxn_dev` image from DockerHub: `docker pull konnexionsgmbh/kxn_dev:latest`
+  - create an appropriate container: `docker run -it --name kxn_dev -v /var/run/docker.sock:/var/run/docker.sock konnexionsgmbh/kxn_dev:latest bash`
+  - run `export DOCKER_USERNAME=\<user name\>`
+  - run `export DOCKER_PASSWORD=\<password\>`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the **`OraBench`** repository)
+  - run `cd ora_bench`
+  - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
+  - run `gradle copyJarToLib`
+- **Execution**: `./run_ora_bench.sh`
+- **Issues**:
+  - Trino Distributed Query Engine and Microsoft SQL Connector
+
+### 5.3 Ubuntu 20.04 LTS and Windows Subsystem Linux 2
+
+- **Requirements**:
+  - install Ubuntu 20.04 from Microsoft Marketplace
+  - run `sudo apt update`
+  - run `sudo apt install dos2unix`
+  - add the following lines to `.bash_profile`:
+
+        if [ -f ~/.bashrc ]; then
+            source ~/.bashrc
+        fi
+
+  - activate the `WSL INTEGRATION` for Ubuntu 20.04 in Docker
+
+![](.README_images/Docker_Desktop_Settings_1.png)
+
+![](.README_images/Docker_Desktop_Settings_2.png)
+
+- **Requirements (continued)**:
+  - run `export DOCKER_USERNAME=\<user name\>`
+  - run `export DOCKER_PASSWORD=\<password\>`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the **`OraBench`** repository)
+  - run `cd ora_bench`
+  - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
+  - run `./scripts/run_install_4_ubuntu_20.04_vm_wsl2.sh` (setting up the WSL2 environment)
+  - close the Ubuntu shell and reopen it again
+  - run `cd ora_bench`
+  - run `gradle copyJarToLib`
+- **Execution**: run `./run_ora_bench.sh`
+- **Issues**:
+  - Trino Distributed Query Engine and Microsoft SQL Connector
+  - YugabyteDB and Docker image
+
+### 5.4 Windows 10 Pro
+
+- **Requirements**:
+  - run `set DOCKER_USERNAME=\<user name\>`
+  - run `set DOCKER_PASSWORD=\<password\>`
+  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the **`OraBench`** repository)
+  - run `cd ora_bench`
+- **Execution**: run `run_ora_bench.bat`
+- **Issues**:
+  - Trino Distributed Query Engine and Microsoft SQL Connector
+  - YugabyteDB and Docker image
+
+### 2.4 Benchmark Results
 
 In a file defined by the configuration parameters `file.result.delimiter`, `file.result.header` and `file.result.name`, the results of the benchmark run with the actions `benchmark`, `trial` and `query` are stored.
-If the result file does not yet exist, a new result file is created. 
-Otherwise, the new current results are appended to existing results. 
+In the file directory `priv/statistics` reference statistics files are available per version of **`OraBench`**.
+The different file name patterns result from the following operating system environments:
+
+- `..._vmware.tsv`: Ubuntu with VMware Workstation Player on Windows
+- `...._win10.tsv`: Windows
+- `....._wsl2.tsv`: Ubuntu LTS with Windows Subsystem for Linux on Windows
 
 | Column            | Format                          | Content |
 | :---              | :---                            | :--- |
@@ -153,7 +236,7 @@ Otherwise, the new current results are appended to existing results.
 | duration (sec)    | integer                         | time difference in seconds between start time and end time of the action |
 | duration (ns)     | integer                         | time difference in nanoseconds between start time and end time of the action |
  
-### 2.4 Bulk File
+### 2.5 Bulk File
 
 The bulk file in `csv` or `tsv` format is created in the `run_create_bulk_file` script if it does not already exist. 
 The following configuration parameters are taken into account:
@@ -322,148 +405,30 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 ### 4.1 Oracle cx_Oracle and Python 3
 
-- the following data in the configuration parameters is determined at runtime: 
-    - Oracle cx_Oracle version (`benchmark.driver`) and
-    - Python 3 version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.python`) 
 - Python 3 uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
 - the value fetch size (`connection.fetch.size`) is not used because the operation `SELECT` uses the operation `Cursor.fetchall()`
 
 ### 4.2 Oracle JDBC and Java
 
-- the following data in the configuration parameters is determined at runtime: 
-    - Oracle JDBC version (`benchmark.driver`),
-    - benchmark identifier (`benchmark.id`),
-    - host name (`benchmark.host.name`), 
-    - number of cores (`benchmark.number.cores`), 
-    - JRE version (`benchmark.language`), 
-    - operating system environment (`benchmark.os`), 
-    - user name (`benchmark.user.name`) and 
-    - SQL create statement (`sql.create`). 
 - the Java source code is compiled with the help of Gradle
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
 ### 4.3 Oracle JDBC and Kotlin
 
-- the following data in the configuration parameters is determined at runtime: 
-    - Oracle JDBC version (`benchmark.driver`),
-    - benchmark identifier (`benchmark.id`),
-    - host name (`benchmark.host.name`), 
-    - number of cores (`benchmark.number.cores`), 
-    - Kotlin version (`benchmark.language`), 
-    - operating system environment (`benchmark.os`), 
-    - user name (`benchmark.user.name`) and 
-    - SQL create statement (`sql.create`). 
 - the Kotlin source code is compiled with the help of Gradle
 - Kotlin uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Kotlin uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
 ### 4.4 Oracle ODPI-C and C++ (gcc)
 
-- the following data in the configuration parameters is determined at runtime: 
-    - Oracle ODPI-C version (`benchmark.driver`) and
-    - C++ (gcc) version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.c`) 
 
-### 4.5 oranif and Elixir
+### 4.5 oranif and Erlang
 
-- the following data in the configuration parameters is determined at runtime: 
-    - oranif version (`benchmark.driver`) and
-    - Elixir version (`benchmark.language`). 
-
-### 4.6 oranif and Erlang
-
-- the following data in the configuration parameters is determined at runtime: 
-    - oranif version (`benchmark.driver`) and
-    - Erlang version (`benchmark.language`). 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.erlang`) 
 
-## <a name="execution"></a> 5. Execution Variations
-
-### 5.1 Ubuntu 20.04 LTS (including VMware)
-
-- **Requirements**:
-  - Ubuntu 20.04 installed directly or via VMware
-  - run `sudo apt update`
-  - run `sudo apt install dos2unix git`
-  - add the following lines to `.bash_profile`:
-
-        if [ -f ~/.bashrc ]; then
-            source ~/.bashrc
-        fi
-
-  - run `export DOCKER_USERNAME=\<user name\>`
-  - run `export DOCKER_PASSWORD=\<password\>`
-  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the OraBench repository)
-  - run `cd ora_bench`
-  - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
-  - run `./scripts/run_install_4_ubuntu_20.04_vm_wsl2.sh` (setting up the WSL2 environment)
-  - close the Ubuntu shell and reopen it again
-  - run `cd ora_bench`
-- **Execution**: run `./run_bench_all_dbs_props_[std|var].sh`
-
-#### 5.2 Ubuntu 20.04 LTS and [kxn_dev Image](https://hub.docker.com/repository/docker/konnexionsgmbh/kxn_dev)
-
-- **Requirements**:
-  - pull the `kxn_dev` image from DockerHub: `docker pull konnexionsgmbh/kxn_dev:latest`
-  - create an appropriate container: `docker run -it --name kxn_dev -v /var/run/docker.sock:/var/run/docker.sock konnexionsgmbh/kxn_dev:latest bash`
-  - run `export DOCKER_USERNAME=\<user name\>`
-  - run `export DOCKER_PASSWORD=\<password\>`
-  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the OraBench repository)
-  - run `cd ora_bench`
-  - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
-  - run `gradle copyJarToLib`
-- **Execution**: `./run_ora_bench.sh`
-- **Issues**:
-  - Trino Distributed Query Engine and Microsoft SQL Connector
-
-### 5.3 Ubuntu 20.04 LTS and Windows Subsystem Linux 2
-
-- **Requirements**:
-  - install Ubuntu 20.04 from Microsoft Marketplace
-  - run `sudo apt update`
-  - run `sudo apt install dos2unix`
-  - add the following lines to `.bash_profile`:
-
-        if [ -f ~/.bashrc ]; then
-            source ~/.bashrc
-        fi
-
-  - activate the `WSL INTEGRATION` for Ubuntu 20.04 in Docker
-
-![](.README_images/Docker_Desktop_Settings_1.png)
-
-![](.README_images/Docker_Desktop_Settings_2.png)
-
-- **Requirements (continued)**:
-  - run `export DOCKER_USERNAME=\<user name\>`
-  - run `export DOCKER_PASSWORD=\<password\>`
-  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the OraBench repository)
-  - run `cd ora_bench`
-  - run `./scripts/run_prep_bash_scripts.sh` (preparing the shell scripts)
-  - run `./scripts/run_install_4_ubuntu_20.04_vm_wsl2.sh` (setting up the WSL2 environment)
-  - close the Ubuntu shell and reopen it again
-  - run `cd ora_bench`
-  - run `gradle copyJarToLib`
-- **Execution**: run `./run_ora_bench.sh`
-- **Issues**:
-  - Trino Distributed Query Engine and Microsoft SQL Connector
-  - YugabyteDB and Docker image
-
-### 5.4 Windows 10 Pro
-
-- **Requirements**:
-  - run `set DOCKER_USERNAME=\<user name\>`
-  - run `set DOCKER_PASSWORD=\<password\>`
-  - run `git clone https://github.com/KonnexionsGmbH/ora_bench` (cloning the OraBench repository)
-  - run `cd ora_bench`
-- **Execution**: run `run_ora_bench.bat`
-- **Issues**:
-  - Trino Distributed Query Engine and Microsoft SQL Connector
-  - YugabyteDB and Docker image
-
-## <a name="reporting"></a> 6. Reporting
+## <a name="reporting"></a> 5. Reporting
 
 [see here](https://konnexionsgmbh.github.io/ora_bench/)
-

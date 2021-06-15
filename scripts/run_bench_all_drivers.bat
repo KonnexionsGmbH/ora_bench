@@ -24,14 +24,6 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
-    call src_python\scripts\run_bench_cx_oracle.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
-    )
-)
-
 if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU ["true"] (
     call src_go\scripts\run_bench_godror.bat
     if %ERRORLEVEL% NEQ 0 (
@@ -40,8 +32,8 @@ if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU ["true"] (
     )
 )
     
-if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] EQU ["true"] (
-    call src_kotlin\scripts\run_bench_jdbc.bat
+if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
+    call src_python\scripts\run_bench_cx_oracle.bat
     if %ERRORLEVEL% NEQ 0 (
         echo Processing of the script was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
@@ -50,6 +42,14 @@ if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] EQU ["true"] (
 
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
     call src_java\scripts\run_bench_jdbc.bat
+    if %ERRORLEVEL% NEQ 0 (
+        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
+    )
+)
+
+if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] EQU ["true"] (
+    call src_kotlin\scripts\run_bench_jdbc.bat
     if %ERRORLEVEL% NEQ 0 (
         echo Processing of the script was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
