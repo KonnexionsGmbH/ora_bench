@@ -11,8 +11,8 @@ echo Start %0
 echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - show environment variables and software versions.
 echo --------------------------------------------------------------------------------
-echo GOROOT                            : %GOROOT%
-echo LD_LIBRARY_PATH                   : %LD_LIBRARY_PATH%
+echo GOROOT                     : %GOROOT%
+echo LD_LIBRARY_PATH            : %LD_LIBRARY_PATH%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================

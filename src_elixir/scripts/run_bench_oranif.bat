@@ -23,6 +23,14 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 )
 
+setlocal
+
+if ["%ORA_BENCH_VCVARSALL_PATH%"] EQU [""] (
+    set ORA_BENCH_VCVARSALL_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\"
+)
+
+call %ORA_BENCH_VCVARSALL_PATH%vcvarsall.bat x64
+
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
@@ -70,6 +78,12 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         exit %ERRORLEVEL%
     )
 
+    call mix local.rebar --force
+    if %ERRORLEVEL% NEQ 0 (
+        echo Processing of the script: %0 - step: 'call mix local.rebar --force' was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
+    )
+
     call mix deps.clean --all
     if %ERRORLEVEL% NEQ 0 (
         echo Processing of the script: %0 - step: 'call mix deps.clean --all' was aborted, error code=%ERRORLEVEL%
@@ -96,6 +110,8 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 cd ..
+
+endlocal
 
 echo --------------------------------------------------------------------------------
 echo:| TIME
