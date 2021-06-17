@@ -57,31 +57,31 @@ echo ===========================================================================
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     nmake -f src_c\Makefile.win32 clean
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'nmake -f src_c\Makefile.win32 clean' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
     nmake -f src_c\Makefile.win32
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'nmake -f src_c\Makefile.win32' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 
     call src_java\scripts\run_gradle
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'call src_java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 
     java -jar priv/libs/ora_bench_java.jar setup_c
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_c' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 )
 
 .\OraBench.exe priv\properties\ora_bench_c.properties
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: '.\OraBench.exe priv\properties\ora_bench_c.properties' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 

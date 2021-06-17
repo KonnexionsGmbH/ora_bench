@@ -49,44 +49,44 @@ echo ===========================================================================
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     go get github.com/godror/godror
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'go get github.com/godror/godror' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 
     call src_java\scripts\run_gradle
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'call src_java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 )
 
 java -jar priv/libs/ora_bench_java.jar setup_default
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_default' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 go mod tidy
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'go mod tidy' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 go get github.com/godror/godror
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'go get github.com/godror/godror' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 go get golang.org/x/xerrors
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'go get golang.org/x/xerrors' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 go run src_go\orabench.go priv\properties\ora_bench.properties
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'go run src_go\orabench.go priv\properties\ora_bench.properties' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 

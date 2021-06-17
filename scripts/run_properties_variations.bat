@@ -116,13 +116,13 @@ echo ===========================================================================
 
 call scripts\run_collect_and_compile.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call scripts\run_collect_and_compile.bat' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 call scripts\run_db_setup.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call scripts\run_db_setup.bat' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -132,7 +132,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DE
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call scripts\run_bench_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -142,7 +142,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call scripts\run_bench_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -152,7 +152,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DE
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call scripts\run_bench_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -162,7 +162,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DE
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call scripts\run_bench_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -172,7 +172,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call scripts\run_bench_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -182,7 +182,7 @@ set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call scripts\run_bench_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 

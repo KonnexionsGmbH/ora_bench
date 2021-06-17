@@ -47,14 +47,14 @@ echo ===========================================================================
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     call src_java\scripts\run_gradle
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'call src_java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 )
 
 java -jar priv/libs/ora_bench_java.jar setup_erlang
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_erlang' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -64,13 +64,13 @@ if EXIST _build\ rd /Q/S _build
 
 call rebar3 steamroll
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call rebar3 steamroll' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 call rebar3 escriptize
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call rebar3 escriptize' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -78,7 +78,7 @@ cd ..
 
 src_erlang\_build\default\bin\orabench priv\properties\ora_bench_erlang.properties
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'src_erlang\_build\default\bin\orabench priv\properties\ora_bench_erlang.properties' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 

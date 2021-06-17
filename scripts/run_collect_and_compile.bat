@@ -33,7 +33,7 @@ echo ===========================================================================
 if NOT ["%ORA_BENCH_BULKFILE_EXISTING%"] == ["true"] (
     call scripts\run_create_bulk_file.bat
     if %ERRORLEVEL% NEQ 0 call script\run_abort
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'call scripts\run_create_bulk_file.bat' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 )
@@ -42,19 +42,19 @@ if ["%ORA_BENCH_RUN_ODPI_C%"] == ["true"] (
     echo Setup C++ [gcc] - Start ====================================================
     java -jar priv/libs/ora_bench_java.jar setup_c
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_c' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 
     nmake -f src_c\Makefile.win32 clean
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'nmake -f src_c\Makefile.win32 clean' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 
     nmake -f src_c\Makefile.win32
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'nmake -f src_c\Makefile.win32' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 
@@ -65,7 +65,7 @@ if ["%ORA_BENCH_RUN_GODROR_GO%"] == ["true"] (
     echo Setup Go - Start ===========================================================
     go get github.com/godror/godror
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'go get github.com/godror/godror' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 
@@ -76,7 +76,7 @@ if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] == ["true"] (
     echo Setup Kotlin - Start =======================================================
     call src_kotlin\scripts\run_gradle.bat
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'call src_kotlin\scripts\run_gradle.bat' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 

@@ -18,19 +18,19 @@ cd src_java
 
 call gradle init --warning-mode all
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call gradle init --warning-mode all' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 call gradle clean --warning-mode all
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call gradle clean --warning-mode all' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 call gradle copyJarToLib --warning-mode all
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call gradle copyJarToLib --warning-mode all' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
@@ -42,7 +42,7 @@ set ORA_BENCH_FILE_CONFIGURATION_NAME=%ORA_BENCH_FILE_CONFIGURATION_NAME_ORIGINA
 cd ..
 set ERRORLEVEL=%ERRORLEVEL_ORIGINAL%
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call gradle test --warning-mode all' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 

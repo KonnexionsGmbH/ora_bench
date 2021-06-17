@@ -28,7 +28,7 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["complete"] (
     set ORA_BENCH_RUN_GODROR_GO=true
     set ORA_BENCH_RUN_JDBC_JAVA=true
     set ORA_BENCH_RUN_JDBC_KOTLIN=true
-    set ORA_BENCH_RUN_ODPI_C=true
+    set ORA_BENCH_RUN_ODPI_C=false
     set ORA_BENCH_RUN_ORANIF_ELIXIR=true
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
@@ -116,19 +116,19 @@ echo ===========================================================================
 
 call scripts\run_collect_and_compile.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call scripts\run_collect_and_compile.bat' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 call scripts\run_db_setup.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call scripts\run_db_setup.bat' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 call scripts\run_bench_all_drivers.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call scripts\run_bench_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 

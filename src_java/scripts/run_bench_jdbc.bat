@@ -47,14 +47,14 @@ echo ===========================================================================
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     call src_java\scripts\run_gradle
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'call src_java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 )    
 
 java -jar priv/libs/ora_bench_java.jar runBenchmark
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar runBenchmark' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
