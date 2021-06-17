@@ -107,7 +107,7 @@ echo.
     
     call scripts\run_create_bulk_file.bat
     if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'call scripts\run_create_bulk_file.bat' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
     
@@ -118,7 +118,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=xe
         call scripts\run_properties_standard.bat
         if %ERRORLEVEL% NEQ 0 (
-            echo Processing of the script was aborted, error code=%ERRORLEVEL%
+            echo Processing of the script: %0 - step: 'call scripts\run_properties_standard.bat' was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
     )
@@ -128,7 +128,7 @@ echo.
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_standard.bat
         if %ERRORLEVEL% NEQ 0 (
-            echo Processing of the script was aborted, error code=%ERRORLEVEL%
+            echo Processing of the script: %0 - step: 'call scripts\run_properties_standard.bat' was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
     )

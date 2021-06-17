@@ -18,19 +18,19 @@ cd src_kotlin
 
 call gradle init --warning-mode all
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call gradle init --warning-mode all' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 call gradle clean --warning-mode all
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call gradle clean --warning-mode all' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 
 call gradle jar --warning-mode all
 if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call gradle jar --warning-mode all' was aborted, error code=%ERRORLEVEL%
     exit %ERRORLEVEL%
 )
 

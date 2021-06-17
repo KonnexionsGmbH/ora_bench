@@ -73,14 +73,6 @@ if ! go version; then
     exit 255
 fi
     
-if ! go env; then
-    echo "===                                                                          ==="
-    echo "=== Go (env) missing                                                         ==="
-    echo "===                                                                          ==="
-    echo "================================================================================"
-    exit 255
-fi
-    
 echo "===============================================================================> Version Gradle:"
 if ! gradle --version; then
     echo "===                                                                          ==="
