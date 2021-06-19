@@ -277,9 +277,10 @@ public class OraBench {
 
     ArrayList<ArrayList<String[]>> bulkDataPartitions   = new ArrayList<>(config.getBenchmarkNumberPartitions());
 
-    int                            expectedBulkDataSize = config.getFileBulkSize() / config.getBenchmarkNumberPartitions();
+    int                            numberPartitions     = config.getBenchmarkNumberPartitions();
+    int                            expectedBulkDataSize = config.getFileBulkSize() / numberPartitions;
 
-    for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
+    for (int i = 0; i < numberPartitions; i++) {
       bulkDataPartitions.add(new ArrayList<>(expectedBulkDataSize));
     }
 
@@ -295,7 +296,7 @@ public class OraBench {
       for (CSVRecord record : records) {
         String keyValue = record.get("key");
         if (!(keyValue.equals("key"))) {
-          partitionKey = (keyValue.charAt(0) * 256 + keyValue.charAt(1)) % config.getBenchmarkNumberPartitions();
+          partitionKey = (keyValue.charAt(0) * 256 + keyValue.charAt(1)) % numberPartitions;
           bulkDataPartitions.get(partitionKey).add(new String[] {
               keyValue,
               record.get("data") });
@@ -306,7 +307,7 @@ public class OraBench {
 
       logger.info("Start Distribution of the data in the partitions");
 
-      for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
+      for (int i = 0; i < numberPartitions; i++) {
         logger.info("Partition p" + String.format("%05d",
                                                   i) + " contains " + String.format("%9d",
                                                                                     bulkDataPartitions.get(i).size()) + " rows");
