@@ -64,8 +64,8 @@ script:
 
   # Java -------------------------------------------------------------------------
   - travis_fold start "Setting_up_Java"
-  - wget -q https://download.java.net/java/GA/jdk${VERSION_JAVA}/779bf45e88a44cbd9ea6621d33e33db1/36/GPL/openjdk-${VERSION_JAVA}_linux-x64_bin.tar.gz
-  - tar -xf openjdk-${VERSION_JAVA}_linux-x64_bin.tar.gz
+  - wget -q https://download.java.net/openjdk/jdk${VERSION_JAVA}/ri/openjdk-${VERSION_JAVA}+36_linux-x64_bin.tar.gz
+  - tar -xf openjdk-${VERSION_JAVA}+36_linux-x64_bin.tar.gz
   - mv jdk-${VERSION_JAVA} /opt/
   - export JAVA_HOME=/opt/jdk-${VERSION_JAVA}
   - export PATH="${JAVA_HOME}/bin:${PATH}"
