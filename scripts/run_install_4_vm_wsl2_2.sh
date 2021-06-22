@@ -209,7 +209,6 @@ echo "==========================================================================
 ls -ll ~/.asdf/installs/golang
 echo "================================================================================"
 echo "Current Go version is: $(go version)"
-echo "Current Go environment is: $(go env)"
 echo "================================================================================"
 
 echo "--------------------------------------------------------------------------------"
@@ -417,7 +416,6 @@ echo "=====================================================================> Ver
 echo "Current version of GNU Make: $(make --version)"
 echo "=====================================================================> Version  Go: "
 echo "Current version of Go: $(go version)"
-echo "Current version of Go environment is: $(go env)"
 echo "=====================================================================> Version  Gradle: "
 echo "Current version of Gradle: $(gradle --version)"
 echo "=====================================================================> Version  htop: "

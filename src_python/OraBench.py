@@ -15,8 +15,8 @@ from pathlib import Path
 # Definition of the global variables.
 # ------------------------------------------------------------------------------
 
-BENCHMARK_DRIVER = 'cx_Oracle (Version v' + cx_Oracle.version + ')'
-BENCHMARK_LANGUAGE = 'Python ' + sys.version
+BENCHMARK_DRIVER = 'Oracle cx_Oracle (Version v' + cx_Oracle.version + ')'
+BENCHMARK_LANGUAGE = 'Python 3 ' + sys.version
 
 FILE_CONFIGURATION_NAME_PYTHON = 'priv/properties/ora_bench_python.properties'
 
@@ -222,6 +222,10 @@ def get_bulk_data_partitions(logger, config):
     del bulk_data[0]
 
     bulk_data_partitions = [[] for _ in range(0, config['benchmark.number.partitions'])]
+
+    # ------------------------------------------------------------------------------
+    # Loading the bulk file into memory.
+    # ------------------------------------------------------------------------------
 
     for key_data_tuple in bulk_data:
         key = key_data_tuple[0]

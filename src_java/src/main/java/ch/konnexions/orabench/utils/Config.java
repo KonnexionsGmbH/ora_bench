@@ -23,7 +23,8 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 /**
@@ -76,7 +77,7 @@ import org.json.simple.JSONObject;
  */
 public class Config {
 
-  private static final Logger                                    logger     = Logger.getLogger(Config.class);
+  private static final Logger                                    logger     = LogManager.getLogger(Config.class);
   private final static boolean                                   isDebug    = logger.isDebugEnabled();
   private int                                                    benchmarkBatchSize;
   private String                                                 benchmarkComment;
@@ -148,7 +149,7 @@ public class Config {
   /**
    * Creates the default version of the configuration file.
    */
-  private final void createConfiguration() {
+  private void createConfiguration() {
     if (isDebug) {
       logger.debug("Start");
     }
@@ -175,7 +176,7 @@ public class Config {
   }
 
   /**
-   * Creates the C version of the configuration file.
+   * Creates the C++ (gcc) version of the configuration file.
    */
   public final void createConfigurationFileC() {
     if (isDebug) {
@@ -319,7 +320,7 @@ public class Config {
   }
 
   /**
-   * Creates the Python version of the configuration file.
+   * Creates the Python 3 version of the configuration file.
    */
   public final void createConfigurationFilePython() {
     if (isDebug) {
@@ -544,7 +545,7 @@ public class Config {
   }
 
   /**
-   * @return the name of the configuration file for the C language version. The
+   * @return the name of the configuration file for the C++ (gcc) language version. The
    *         file name may contain the absolute or relative file path.
    */
   public final String getFileConfigurationNameC() {
@@ -568,7 +569,7 @@ public class Config {
   }
 
   /**
-   * @return the name of the configuration file for the Python language version.
+   * @return the name of the configuration file for the Python 3 language version.
    *         The file name may contain the absolute or relative file path.
    */
   public final String getFileConfigurationNamePython() {

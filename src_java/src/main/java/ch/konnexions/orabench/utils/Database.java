@@ -21,7 +21,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The database support class for the Oracle JDBC benchmark tests. This creates
@@ -30,7 +31,7 @@ import org.apache.log4j.Logger;
  */
 public class Database {
 
-  private static final Logger  logger  = Logger.getLogger(Database.class);
+  private static final Logger  logger  = LogManager.getLogger(Database.class);
   private final static boolean isDebug = logger.isDebugEnabled();
   private final Config         config;
   private Connection           connection;
@@ -74,7 +75,7 @@ public class Database {
       logger.debug("Start");
     }
 
-    final String url = "jdbc:oracle:thin:@//" + connectionHost + ":" + connectionPort + "/" + connectionService;
+    final String url = "jdbc:oracle:thin:@//" + connectionHost + ":" + connectionPort + "/" + connectionService + "?oracle.net.disableOob=true";
 
     if (connection == null) {
       try {
@@ -82,7 +83,7 @@ public class Database {
                                                  connectionUser,
                                                  connectionPassword);
         DatabaseMetaData meta = connection.getMetaData();
-        config.setBenchmarkDriver("JDBC (Version " + meta.getDriverVersion() + ")");
+        config.setBenchmarkDriver("Oracle JDBC (Version " + meta.getDriverVersion() + ")");
       } catch (SQLException ec) {
         logger.error("connection parameter url     =: " + url);
         logger.error("connection parameter username=: " + connectionUser);

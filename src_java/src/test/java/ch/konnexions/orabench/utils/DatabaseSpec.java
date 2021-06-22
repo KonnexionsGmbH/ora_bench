@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class DatabaseSpec {
   @Test
   @DisplayName("always the same database connection")
-  public void connect() throws Exception {
+  public void connect() {
     Config     config       = new Config();
 
     Database   database     = new Database(config);

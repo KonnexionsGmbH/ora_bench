@@ -20,6 +20,6 @@ handlers:
 
 loggers:
   OraBench.py:
-    handlers: [console, file_handler]
+    handlers: [ console, file_handler ]
 root:
-  handlers: [file_handler]
+  handlers: [ file_handler ]

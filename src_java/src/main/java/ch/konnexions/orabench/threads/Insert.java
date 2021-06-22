@@ -8,7 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ch.konnexions.orabench.OraBench;
 import ch.konnexions.orabench.utils.Config;
@@ -18,7 +19,7 @@ import ch.konnexions.orabench.utils.Config;
  * The Class Insert.
  */
 public class Insert implements Runnable {
-  private static final Logger       logger  = Logger.getLogger(Insert.class);
+  private static final Logger       logger  = LogManager.getLogger(Insert.class);
 
   private final static boolean      isDebug = logger.isDebugEnabled();
   private final ArrayList<String[]> bulkDataPartition;

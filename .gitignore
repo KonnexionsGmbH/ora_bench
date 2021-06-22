@@ -15,6 +15,8 @@
 .idea
 .mix
 .rebar
+/go.sum
+/ora_bench.iml
 /priv/Gammadyne/timer.txt
 /src_elixir/deps/
 /src_elixir/mix.lock

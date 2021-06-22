@@ -14,6 +14,8 @@ export ORA_BENCH_MULTIPLE_RUN=true
 export ORA_BENCH_BENCHMARK_COMMENT='Standard series (locally)'
 
 rm -f ora_bench.log
+rm -f priv/ora_bench_result.csv
+rm -f priv/ora_bench_result.tsv
 
 export ORA_BENCH_CHOICE_DB_DEFAULT=complete
 export ORA_BENCH_CHOICE_DRIVER_DEFAULT=complete
@@ -29,13 +31,13 @@ if [ -z "$1" ]; then
     echo "========================================================="
     echo "complete           - All implemented variations"
     echo "---------------------------------------------------------"
-    echo "c                  - C and ODPI"
+    echo "c                  - C++ [gcc] and Oracle ODPI-C"
     echo "elixir             - Elixir and oranif"
     echo "erlang             - Erlang and oranif"
-    echo "go                 - Go and GoDROR"
-    echo "java               - Java and JDBC"
-    echo "kotlin             - Kotlin and JDBC"
-    echo "python             - Python and cx_Oracle"
+    echo "go                 - Go and godror"
+    echo "java               - Java and Oracle JDBC"
+    echo "kotlin             - Kotlin and Oracle JDBC"
+    echo "python             - Python 3 and Oracle cx_Oracle"
     echo "---------------------------------------------------------"
     read -rp "Enter the desired programming lanuage (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
     export ORA_BENCH_CHOICE_DRIVER=${ORA_BENCH_CHOICE_DRIVER}
@@ -51,8 +53,7 @@ if [ -z "$2" ]; then
     echo "========================================================="
     echo "complete           - All implemented variations"
     echo "---------------------------------------------------------"
-    echo "12                 - Oracle Database 12c Release 2"
-    echo "18                 - Oracle Database 18c"
+    echo "18                 - Oracle Database 18c Express Edition"
     echo "19                 - Oracle Database 19c"
     echo "---------------------------------------------------------"
     read -rp "Enter the desired database version [default: ${ORA_BENCH_CHOICE_DB_DEFAULT}] " ORA_BENCH_CHOICE_DB
@@ -65,18 +66,14 @@ else
     export ORA_BENCH_CHOICE_DB=$2
 fi
 
-export ORA_BENCH_RUN_DB_12_2_EE=false
-export ORA_BENCH_RUN_DB_18_3_EE=false
+export ORA_BENCH_RUN_DB_18_4_XE=false
 export ORA_BENCH_RUN_DB_19_3_EE=false
 
 if [ "${ORA_BENCH_CHOICE_DB}" = "complete" ]; then
-    export ORA_BENCH_RUN_DB_12_2_EE=true
-    export ORA_BENCH_RUN_DB_18_3_EE=true
+    export ORA_BENCH_RUN_DB_18_4_XE=true
     export ORA_BENCH_RUN_DB_19_3_EE=true
-elif [ "${ORA_BENCH_CHOICE_DB}" = "12" ]; then
-    export ORA_BENCH_RUN_DB_12_2_EE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
-    export ORA_BENCH_RUN_DB_18_3_EE=true
+    export ORA_BENCH_RUN_DB_18_4_XE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then
     export ORA_BENCH_RUN_DB_19_3_EE=true
 fi
@@ -114,17 +111,9 @@ export ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
 
-if [ "$ORA_BENCH_RUN_DB_12_2_EE" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_12_2_ee
-    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    if ! { /bin/bash scripts/run_properties_variations.sh; }; then
-        exit 255
-    fi
-fi
-
-if [ "$ORA_BENCH_RUN_DB_18_3_EE" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_18_3_ee
-    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+if [ "$ORA_BENCH_RUN_DB_18_4_XE" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
+    export ORA_BENCH_CONNECTION_SERVICE=xe
     if ! { /bin/bash scripts/run_properties_variations.sh; }; then
         exit 255
     fi

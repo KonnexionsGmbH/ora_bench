@@ -24,26 +24,26 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
-if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
-    if ! { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }; then
-        exit 255
-    fi
-fi
-
 if [ "$ORA_BENCH_RUN_GODROR_GO" = "true" ]; then
     if ! { /bin/bash src_go/scripts/run_bench_godror.sh; }; then
         exit 255
     fi
 fi
 
-if [ "$ORA_BENCH_RUN_JDBC_KOTLIN" = "true" ]; then
-    if ! { /bin/bash src_kotlin/scripts/run_bench_jdbc.sh; }; then
+if [ "$ORA_BENCH_RUN_CX_ORACLE_PYTHON" = "true" ]; then
+    if ! { /bin/bash src_python/scripts/run_bench_cx_oracle.sh; }; then
         exit 255
     fi
 fi
 
 if [ "$ORA_BENCH_RUN_JDBC_JAVA" = "true" ]; then
     if ! { /bin/bash src_java/scripts/run_bench_jdbc.sh; }; then
+        exit 255
+    fi
+fi
+
+if [ "$ORA_BENCH_RUN_JDBC_KOTLIN" = "true" ]; then
+    if ! { /bin/bash src_kotlin/scripts/run_bench_jdbc.sh; }; then
         exit 255
     fi
 fi

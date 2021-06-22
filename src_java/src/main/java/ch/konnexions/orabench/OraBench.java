@@ -20,7 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ch.konnexions.orabench.threads.Insert;
 import ch.konnexions.orabench.threads.Select;
@@ -34,7 +35,7 @@ import ch.konnexions.orabench.utils.Setup;
  */
 public class OraBench {
 
-  private static final Logger  logger  = Logger.getLogger(OraBench.class);
+  private static final Logger  logger  = LogManager.getLogger(OraBench.class);
 
   private final static boolean isDebug = logger.isDebugEnabled();
 
@@ -102,10 +103,11 @@ public class OraBench {
    * <li>setup - creates the bulk file
    * <li>setup_erlang - creates a configuration parameter file suited for Erlang
    * <li>setup_json - creates a JSON configuration parameter file
-   * <li>setup_python - creates a configuration parameter file suited for Python
+   * <li>setup_python - creates a configuration parameter file suited for Python 3
    * </ul>
    * 
-   * @param args finalise / runBenchmark / setup / setup_erlang / setup_python / setup_json
+   * @param args finalise / runBenchmark / setup / setup_erlang / setup_python /
+   *             setup_json
    */
   public static void main(String[] args) {
     if (isDebug) {
@@ -157,9 +159,9 @@ public class OraBench {
       config.createConfigurationFileJson();
       logger.info("End   Setup Erlang OraBench Run");
     } else if (args0.equals("setup_python")) {
-      logger.info("Start Setup Python OraBench Run");
+      logger.info("Start Setup Python 3 OraBench Run");
       config.createConfigurationFilePython();
-      logger.info("End   Setup Python OraBench Run");
+      logger.info("End   Setup Python 3 OraBench Run");
     } else if (args0.contentEquals("")) {
       logger.error("Command line argument missing");
     } else {
@@ -181,7 +183,7 @@ public class OraBench {
    * @param statement         the statement
    * @param bulkDataPartition the bulk data partition
    * @param partitionKey      the partition key
-   * @param config the config
+   * @param config            the config
    */
   public static void selectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey, Config config) {
     if (isDebug) {
@@ -275,9 +277,10 @@ public class OraBench {
 
     ArrayList<ArrayList<String[]>> bulkDataPartitions   = new ArrayList<>(config.getBenchmarkNumberPartitions());
 
-    int                            expectedBulkDataSize = config.getFileBulkSize() / config.getBenchmarkNumberPartitions();
+    int                            numberPartitions     = config.getBenchmarkNumberPartitions();
+    int                            expectedBulkDataSize = config.getFileBulkSize() / numberPartitions;
 
-    for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
+    for (int i = 0; i < numberPartitions; i++) {
       bulkDataPartitions.add(new ArrayList<>(expectedBulkDataSize));
     }
 
@@ -293,7 +296,7 @@ public class OraBench {
       for (CSVRecord record : records) {
         String keyValue = record.get("key");
         if (!(keyValue.equals("key"))) {
-          partitionKey = (keyValue.charAt(0) * 256 + keyValue.charAt(1)) % config.getBenchmarkNumberPartitions();
+          partitionKey = (keyValue.charAt(0) * 256 + keyValue.charAt(1)) % numberPartitions;
           bulkDataPartitions.get(partitionKey).add(new String[] {
               keyValue,
               record.get("data") });
@@ -304,7 +307,7 @@ public class OraBench {
 
       logger.info("Start Distribution of the data in the partitions");
 
-      for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
+      for (int i = 0; i < numberPartitions; i++) {
         logger.info("Partition p" + String.format("%05d",
                                                   i) + " contains " + String.format("%9d",
                                                                                     bulkDataPartitions.get(i).size()) + " rows");
@@ -348,7 +351,7 @@ public class OraBench {
   /**
    * Run a benchmark.
    */
-  private final void runBenchmark() {
+  private void runBenchmark() {
     if (isDebug) {
       logger.debug("Start");
     }
@@ -433,6 +436,7 @@ public class OraBench {
       try {
         while (!executorService.awaitTermination(1,
                                                  TimeUnit.SECONDS)) {
+          ;
         }
       } catch (InterruptedException e) {
         e.printStackTrace();
@@ -481,6 +485,7 @@ public class OraBench {
       try {
         while (!executorService.awaitTermination(1,
                                                  TimeUnit.SECONDS)) {
+          ;
         }
       } catch (InterruptedException e) {
         e.printStackTrace();
