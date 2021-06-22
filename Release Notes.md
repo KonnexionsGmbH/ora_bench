@@ -1,7 +1,6 @@
 # OraBench - Release Notes
 
 ![Travis (.org)](https://img.shields.io/travis/KonnexionsGmbH/ora_bench.svg?branch=master)
-![GitHub](https://img.shields.io/github/license/KonnexionsGmbH/ora_bench.svg)
 ![GitHub release](https://img.shields.io/github/release/KonnexionsGmbH/ora_bench.svg)
 ![GitHub Release Date](https://img.shields.io/github/release-date/KonnexionsGmbH/ora_bench.svg)
 ![GitHub commits since latest release](https://img.shields.io/github/commits-since/KonnexionsGmbH/ora_bench/1.0.0.svg)
