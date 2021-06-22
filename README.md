@@ -77,8 +77,7 @@ All the file names specified here are also part of the configuration file and ca
 The easiest way is to download a current release of **`OraBench`** from the GitHub repository.
 You can find the necessary link [here](https://github.com/KonnexionsGmbH/ora_bench).
 
-**`OraBench`** is tested under [Ubuntu](https://ubuntu.com) and [Microsoft Windows](https://en.wikipedia.org/wiki/Microsoft_Windows).
-In addition, tests are always performed in Windows with Ubuntu under the [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl).
+**`OraBench`** is tested under [Ubuntu](https://ubuntu.com).
 
 To download the repository [Git](https://git-scm.com) is needed and for compilation the following software components are needed:
 
@@ -88,14 +87,9 @@ To download the repository [Git](https://git-scm.com) is needed and for compilat
 - [Gradle Build Tool](https://gradle.org/releases/)
 - Java, e.g.: the [open-source JDK](https://openjdk.java.net)
 - [Kotlin](https://kotlinlang.org/docs/tutorials/command-line.html)
-- [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm)
 - [Oracle Instant Client](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
 - [Python 3](https://www.python.org/downloads/)
 - [rebar3](https://www.rebar3.org/)
-
-Visual Studio 
-https://visualstudio.microsoft.com
-Workloads: Desktop Development with C++
 
 For changes to the **`OraBench`** repository it is best to use an editor (e.g. [Vim](https://www.vim.org)) or a swuitable IDE.
 For using the Docker Image based databases in operational mode, [Docker Desktop](https://www.docker.com/products/docker-desktop) must also be installed.
@@ -103,7 +97,7 @@ For the respective software versions, please consult the document [release notes
 
 The whole software environment for the operation and further development of OraBench can be created most easily by using a Docker container based on the Konnexions Development Image (version 2.0.4 from [here](https://hub.docker.com/repository/docker/konnexionsgmbh/kxn_dev)).  
 
-Alternatively, in an Ubuntu 20.04 based environment, e.g.: in the Windows Subsystem for Linux or in a virtual machine, the two following scripts can be used to install the necessary software:
+Alternatively, in an Ubuntu 20.04 based environment, e.g.: in a virtual machine, the two following scripts can be used to install the necessary software:
 
 - `scripts/kxn_dev/run_install_4-vm_wsl2_1.sh`
 - `scripts/kxn_dev/run_install_4-vm_wsl2_2.sh`
@@ -116,12 +110,6 @@ Alternatively, in an Ubuntu 20.04 based environment, e.g.: in the Windows Subsys
   - close the Ubuntu shell and reopen it again
   - run `cd ora_bench/scripts/kxn_dev`
   - run `./run_install_4_vm_wsl2_2.sh`
-
-If the Windows Subsystem for Linux (WSL) is to be used, then the `WSL INTEGRATION` for Ubuntu must be activated in Docker:
-
-![](.README_images/Docker_Desktop_Settings_1.png)
-
-![](.README_images/Docker_Desktop_Settings_2.png)
 
 ### <a name="2.3_benchmark"></a> 2.3 Benchmark Operation
 
@@ -141,11 +129,6 @@ The run log is stored in the `run_bench_all_dbs_props_var.log` file.
 
 In a file defined by the configuration parameters `file.result.delimiter`, `file.result.header` and `file.result.name`, the results of the benchmark run with the actions `benchmark`, `trial` and `query` are stored.
 In the file directory `priv/statistics` reference statistics files are available per version of **`OraBench`**.
-The different file name patterns result from the following operating system environments:
-
-- `..._vmware.tsv`: Ubuntu with VMware Workstation Player on Windows
-- `...._win10.tsv`: Windows
-- `....._wsl2.tsv`: Ubuntu LTS with Windows Subsystem for Linux on Windows
 
 Excerpts from a sample file can be seen in the following image:
 

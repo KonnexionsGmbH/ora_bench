@@ -25,7 +25,7 @@ Currently we are not aware of any issues.
 
 ## Version 1.0.0
 
-Release Date: dd.mm.yyyy
+Release Date: 21.06.2021
 
 ### New Features
 
@@ -50,6 +50,6 @@ Release Date: dd.mm.yyyy
 | Oracle ODPI-C    | Driver   | 4.2.1             |  
 | Oracle cx_Oracle | Driver   | 8.2.1             |  
 | oranif           | Driver   | 0.2.3             |  
-| Python 3         | Language | 3.10.0b2          | 
+| Python 3         | Language | 3.9.5             | 
 
 ----------
