@@ -44,7 +44,7 @@ Release Date: xx.xx.2021
 | Go               | Language | 1.16.5            |  
 | godror           | Driver   | v0.9.0            |  
 | Java             | Language | openjdk-16.0.1    |  
-| Kotlin           | Language | 1.5.10 [?1.4.32?] |  
+| Kotlin           | Language | 1.5.20            |  
 | Oracle JDBC      | Driver   | 21.1.0.0          |  
 | Oracle ODPI-C    | Driver   | 4.2.1             |  
 | Oracle cx_Oracle | Driver   | 8.2.1             |  
