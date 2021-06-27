@@ -45,6 +45,7 @@ The currently supported database drivers are:
 | [Oracle cx_Oracle](https://oracle.github.io/python-cx_Oracle) | [Python 3](https://www.python.org) |
 | [Oracle JDBC](https://www.oracle.com/database/technologies/appdev/jdbc.html) | [Java](https://openjdk.java.net) &amp; [Kotlin](https://kotlinlang.org) |
 | [Oracle ODPI-C](https://oracle.github.io/odpi) | [C++](https://docs.microsoft.com/en-us/cpp/?view=msvc-160) ([gcc](https://gcc.gnu.org)) |
+| [Oracle.jl](https://github.com/felipenoris/Oracle.jl) | [Julia](https://julialang.org) |
 | [oranif](https://github.com/KonnexionsGmbH/oranif) | [Elixir](https://elixir-lang.org) &amp; [Erlang](https://www.erlang.org) |
 
 The following Oracle database versions are provided in a benchmark run via Docker container:
@@ -85,6 +86,7 @@ To download the repository [Git](https://git-scm.com) is needed and for compilat
 - [Go](https://golang.org/dl/)
 - [Gradle Build Tool](https://gradle.org/releases/)
 - Java, e.g.: the [open-source JDK](https://openjdk.java.net)
+- [Julia](https://julialang.org/downloads/)
 - [Kotlin](https://kotlinlang.org/docs/tutorials/command-line.html)
 - [Oracle Instant Client](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
 - [Python 3](https://www.python.org/downloads/)
