@@ -23,6 +23,8 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 )
 
+rem set JULIA_DEBUG=OraBench
+
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
