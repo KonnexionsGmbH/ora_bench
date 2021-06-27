@@ -36,6 +36,7 @@ if [ -z "$1" ]; then
     echo "erlang             - Erlang and oranif"
     echo "go                 - Go and godror"
     echo "java               - Java and Oracle JDBC"
+    echo "julia              - Julia and Oracle.jl"
     echo "kotlin             - Kotlin and Oracle JDBC"
     echo "python             - Python 3 and Oracle cx_Oracle"
     echo "---------------------------------------------------------"

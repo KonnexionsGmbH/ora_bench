@@ -20,6 +20,7 @@ set ORA_BENCH_RUN_GODROR_GO=false
 set ORA_BENCH_RUN_JDBC_JAVA=false
 set ORA_BENCH_RUN_JDBC_KOTLIN=false
 set ORA_BENCH_RUN_ODPI_C=false
+set ORA_BENCH_RUN_ORACLE_JL_JULIA=false
 set ORA_BENCH_RUN_ORANIF_ELIXIR=false
 set ORA_BENCH_RUN_ORANIF_ERLANG=false
 
@@ -29,6 +30,7 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["complete"] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
     set ORA_BENCH_RUN_JDBC_KOTLIN=true
     set ORA_BENCH_RUN_ODPI_C=true
+    set ORA_BENCH_RUN_ORACLE_JL_JULIA=true
     set ORA_BENCH_RUN_ORANIF_ELIXIR=true
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
@@ -51,6 +53,10 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["go"] (
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["java"] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
+)
+
+if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["julia"] (
+    set ORA_BENCH_RUN_ORACLE_JL_JULIA=true
 )
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["kotlin"] (
@@ -97,6 +103,7 @@ echo RUN_GODROR_GO                     : %ORA_BENCH_RUN_GODROR_GO%
 echo RUN_JDBC_JAVA                     : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_JDBC_KOTLIN                   : %ORA_BENCH_RUN_JDBC_KOTLIN%
 echo RUN_ODPI_C                        : %ORA_BENCH_RUN_ODPI_C%
+echo RUN_ORACLE_JL_JULIA               : %ORA_BENCH_RUN_ORACLE_JL_JULIA%
 echo RUN_ORANIF_ELIXIR                 : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG                 : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------

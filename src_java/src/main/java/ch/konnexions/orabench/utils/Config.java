@@ -113,6 +113,7 @@ public class Config {
   private String                                                 fileConfigurationNameErlang;
   private String                                                 fileConfigurationNameJson;
   private String                                                 fileConfigurationNamePython;
+  private String                                                 fileConfigurationNameToml;
   private String                                                 fileResultDelimiter;
   private String                                                 fileResultHeader;
 
@@ -361,6 +362,48 @@ public class Config {
   }
 
   /**
+   * Creates the TOML version of the configuration file.
+   */
+  public final void createConfigurationFileToml() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
+    try {
+
+      BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameToml(), false));
+
+      bufferedWriter.write("[DEFAULT]");
+      bufferedWriter.newLine();
+
+      String value;
+
+      for (final String key : keysSorted) {
+        if ("file.result.header".contentEquals(key)) {
+          value = propertiesConfiguration.getString(key).replace(";",
+                                                                 fileResultDelimiter);
+        } else {
+          value = propertiesConfiguration.getString(key);
+        }
+
+        bufferedWriter.write(key.replace(".",
+                                         "_") + " = \"" + ((value.contentEquals("\t"))
+                                             ? "TAB"
+                                             : value) + "\"");
+        bufferedWriter.newLine();
+      }
+
+      bufferedWriter.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    if (isDebug) {
+      logger.debug("End");
+    }
+  }
+
+  /**
    * @return the batch size of the INSERT operation
    */
   public final int getBenchmarkBatchSize() {
@@ -574,6 +617,14 @@ public class Config {
    */
   public final String getFileConfigurationNamePython() {
     return fileConfigurationNamePython;
+  }
+
+  /**
+   * @return the name of the configuration file for the TOML version.
+   *         The file name may contain the absolute or relative file path.
+   */
+  public final String getFileConfigurationNameToml() {
+    return fileConfigurationNameToml;
   }
 
   /**
@@ -816,6 +867,7 @@ public class Config {
     fileConfigurationNameJson   = propertiesConfiguration.getString("file.configuration.name.json");
 
     fileConfigurationNamePython = propertiesConfiguration.getString("file.configuration.name.python");
+    fileConfigurationNameToml   = propertiesConfiguration.getString("file.configuration.name.toml");
     fileResultDelimiter         = propertiesConfiguration.getString("file.result.delimiter");
     fileResultHeader            = propertiesConfiguration.getString("file.result.header").replace(";",
                                                                                                   fileResultDelimiter);

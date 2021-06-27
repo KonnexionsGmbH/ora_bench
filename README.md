@@ -174,7 +174,7 @@ The following configuration parameters are taken into account:
 
 The data column in the bulk file is randomly generated with a unique key column (MD5 hash code).
 
-## <a name="coding_pattern"></a> 3. Coding Patterns
+## <a name="3_coding"></a> 3. Coding Patterns
 
 ### <a name="3.1_benchmark"></a> 3.1 `Benchmark Function` (main function)
 

@@ -162,6 +162,10 @@ public class OraBench {
       logger.info("Start Setup Python 3 OraBench Run");
       config.createConfigurationFilePython();
       logger.info("End   Setup Python 3 OraBench Run");
+    } else if (args0.equals("setup_toml")) {
+      logger.info("Start Setup TOML OraBench Run");
+      config.createConfigurationFileToml();
+      logger.info("End   Setup TOML OraBench Run");
     } else if (args0.contentEquals("")) {
       logger.error("Command line argument missing");
     } else {

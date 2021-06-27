@@ -18,6 +18,7 @@ echo RUN_JDBC_KOTLIN                   : %ORA_BENCH_RUN_JDBC_KOTLIN%
 echo RUN_GODROR_GO                     : %ORA_BENCH_RUN_GODROR_GO%
 echo RUN_JDBC_JAVA                     : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_ODPI_C                        : %ORA_BENCH_RUN_ODPI_C%
+echo RUN_ORACLE_JL_JULIA               : %ORA_BENCH_RUN_ORACLE_JL_JULIA%
 echo RUN_ORANIF_ELIXIR                 : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG                 : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------
@@ -60,6 +61,14 @@ if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
     call src_c\scripts\run_bench_odpi.bat
     if %ERRORLEVEL% NEQ 0 (
         echo Processing of the script: %0 - step: 'call src_c\scripts\run_bench_odpi.bat' was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
+    )
+)
+    
+if ["%ORA_BENCH_RUN_ORACLE_JL_JULIA%"] EQU ["true"] (
+    call src_julia\scripts\run_bench_oracle_jl.bat
+    if %ERRORLEVEL% NEQ 0 (
+        echo Processing of the script: %0 - step: 'call src_julia\scripts\run_bench_oracle_jl.bat' was aborted, error code=%ERRORLEVEL%
         exit %ERRORLEVEL%
     )
 )

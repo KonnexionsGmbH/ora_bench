@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 #
-# run_bench_godror.sh: Oracle Benchmark based on Go.
+# run_bench_oracle_jl.sh: Oracle Benchmark based on Julia.
 #
 # ------------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ fi
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - godror and GO."
+echo "ora_bench - Oracle benchmark - Oracle.jl and Julia."
 echo "--------------------------------------------------------------------------------"
 echo "MULTIPLE_RUN               : $ORA_BENCH_MULTIPLE_RUN"
 echo "--------------------------------------------------------------------------------"
@@ -41,34 +41,20 @@ echo "BENCHMARK_TRANSACTION_SIZE : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
 echo "--------------------------------------------------------------------------------"
 echo "FILE_CONFIGURATION_NAME    : $ORA_BENCH_FILE_CONFIGURATION_NAME"
 echo "--------------------------------------------------------------------------------"
-echo "GOROOT                     : $GOROOT"
-echo "--------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "================================================================================"
 
 if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
-    if ! go mod tidy; then
-        exit 255
-    fi
-    
-    if ! go get github.com/godror/godror; then
-        exit 255
-    fi
-    
-    if ! go get golang.org/x/xerrors; then
-        exit 255
-    fi
-
     if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
         exit 255
     fi
 fi
 
-if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
+if ! java -jar priv/libs/ora_bench_java.jar setup_toml; then
     exit 255
 fi
 
-if ! go run src_go/orabench.go priv/properties/ora_bench.properties; then
+if ! julia src_julia/OraBench.jl; then
     exit 255
 fi
 

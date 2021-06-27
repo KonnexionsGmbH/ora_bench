@@ -2,14 +2,14 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_bench_all_dbs_props_var.bat: Oracle Benchmark for all database versions
-rem                                  with variations of properties.
+rem run_bench_all_dbs_props_std.bat: Oracle Benchmark for all database versions
+rem                                  with standard properties.
 rem
 rem ------------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
-set ORA_BENCH_BENCHMARK_COMMENT="Standard series (locally)"
+set ORA_BENCH_BENCHMARK_COMMENT="Standard tests (locally)"
 
 if exist ora_bench.log del /f /q ora_bench.log
 if exist priv\ora_bench_result.csv del /f /q priv\ora_bench_result.csv
@@ -34,6 +34,7 @@ if ["%1"] EQU [""] (
     echo erlang             - Erlang and oranif
     echo go                 - Go and godror
     echo java               - Java and Oracle JDBC
+    echo julia              - Julia and Oracle.jl
     echo kotlin             - Kotlin and Oracle JDBC
     echo python             - Python 3 and Oracle cx_Oracle
     echo ---------------------------------------------------------
@@ -87,17 +88,17 @@ if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
 echo.
 echo Script %0 is now running
 echo.
-echo You can find the run log in the file run_bench_all_dbs_props_var.log
+echo You can find the run log in the file run_bench_all_dbs_props_std.log
 echo.
 echo Please wait ...
 echo.
 
-> run_bench_all_dbs_props_var.log 2>&1 (
+> run_bench_all_dbs_props_std.log 2>&1 (
 
     echo ================================================================================
     echo Start %0
     echo --------------------------------------------------------------------------------
-    echo ora_bench - Oracle benchmark - all databases with property variations.
+    echo ora_bench - Oracle benchmark - all databases with standard properties.
     echo --------------------------------------------------------------------------------
     echo CHOICE_DRIVER                 : %ORA_BENCH_CHOICE_DRIVER%
     echo CHOICE_DB                     : %ORA_BENCH_CHOICE_DB%
@@ -105,16 +106,20 @@ echo.
     echo:| TIME
     echo ================================================================================
     
-    set ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
-    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
-    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
+    call scripts\run_create_bulk_file.bat
+    if %ERRORLEVEL% NEQ 0 (
+        echo Processing of the script: %0 - step: 'call scripts\run_create_bulk_file.bat' was aborted, error code=%ERRORLEVEL%
+        exit %ERRORLEVEL%
+    )
     
+    set ORA_BENCH_BULKFILE_EXISTING=true
+
     if ["%ORA_BENCH_RUN_DB_18_4_XE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
         set ORA_BENCH_CONNECTION_SERVICE=xe
-        call scripts\run_properties_variations.bat
+        call scripts\run_properties_standard.bat
         if %ERRORLEVEL% NEQ 0 (
-            echo Processing of the script: %0 - step: 'call scripts\run_properties_variations.bat' was aborted, error code=%ERRORLEVEL%
+            echo Processing of the script: %0 - step: 'call scripts\run_properties_standard.bat' was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
     )
@@ -122,16 +127,12 @@ echo.
     if ["%ORA_BENCH_RUN_DB_19_3_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-        call scripts\run_properties_variations.bat
+        call scripts\run_properties_standard.bat
         if %ERRORLEVEL% NEQ 0 (
-            echo Processing of the script: %0 - step: 'call scripts\run_properties_variations.bat' was aborted, error code=%ERRORLEVEL%
+            echo Processing of the script: %0 - step: 'call scripts\run_properties_standard.bat' was aborted, error code=%ERRORLEVEL%
             exit %ERRORLEVEL%
         )
     )
-    
-    set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
-    set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
-    set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
     
     echo --------------------------------------------------------------------------------
     echo:| TIME
@@ -139,9 +140,4 @@ echo.
     echo End   %0
     echo ================================================================================
     
-    start priv\audio\end_of_series.mp3
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script: %0 - step: 'start priv\audio\end_of_series.mp3' was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
-    )
 )
