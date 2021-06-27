@@ -5,8 +5,8 @@ OraBench:
 - Date: 2021-06-26
 =#
 
-import Pkg;
-Pkg.add("Oracle");
+import Pkg
+Pkg.add("Oracle")
 
 using Dates
 using DelimitedFiles
@@ -65,11 +65,7 @@ function create_result_measuring_point_start_benchmark(config::Dict)
 
     measurement_data::Array = [nothing, nothing, nothing, 0, 0]
 
-    # println("left="*typeof(measurement_data[IX_LAST_BENCHMARK]))
-
-    println("rght="*typeof(now()))
-
-    measurement_data[IX_LAST_BENCHMARK] = now()
+    measurement_data[IX_LAST_BENCHMARK]::DateTime = now()
 
     result_file::File = create_result_file(config)
 
