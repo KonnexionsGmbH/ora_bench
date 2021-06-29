@@ -23,7 +23,7 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 
-export JULIA_DEBUG=OraBench
+# export JULIA_DEBUG=OraBench
 
 echo "================================================================================"
 echo "Start $0"

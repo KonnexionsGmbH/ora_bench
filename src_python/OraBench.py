@@ -198,9 +198,7 @@ def create_result_measuring_point_start_benchmark(logger, config):
 
     measurement_data[IX_LAST_BENCHMARK] = datetime.datetime.now()
 
-    result_file = create_result_file(logger, config)
-
-    measurement_data_result_file = (measurement_data, result_file)
+    measurement_data_result_file = (measurement_data, create_result_file(logger, config))
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug('End')
@@ -216,12 +214,15 @@ def get_bulk_data_partitions(logger, config):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug('Start')
 
+    benchmark_number_partitions = config['benchmark.number.partitions']
+    file_bulk_delimiter = config['file.bulk.delimiter']
+
     with open(os.path.abspath(config['file.bulk.name'])) as csv_file:
-        bulk_data = [tuple(line) for line in csv.reader(csv_file, delimiter=config['file.bulk.delimiter'])]
+        bulk_data = [tuple(line) for line in csv.reader(csv_file, delimiter=file_bulk_delimiter)]
 
     del bulk_data[0]
 
-    bulk_data_partitions = [[] for _ in range(0, config['benchmark.number.partitions'])]
+    bulk_data_partitions = [[] for _ in range(0, benchmark_number_partitions)]
 
     # ------------------------------------------------------------------------------
     # Loading the bulk file into memory.
@@ -229,14 +230,14 @@ def get_bulk_data_partitions(logger, config):
 
     for key_data_tuple in bulk_data:
         key = key_data_tuple[0]
-        partition_key = (ord(key[0]) * 256 + ord(key[1])) % config['benchmark.number.partitions']
+        partition_key = (ord(key[0]) * 256 + ord(key[1])) % benchmark_number_partitions
         bulk_data_partition = bulk_data_partitions[partition_key]
         bulk_data_partition.append([key_data_tuple])
         bulk_data_partitions[partition_key] = bulk_data_partition
 
     logger.info('Start Distribution of the data in the partitions')
 
-    for partition_key in range(0, config['benchmark.number.partitions']):
+    for partition_key in range(0, benchmark_number_partitions):
         logger.info('Partition p' + '{:0>5d}'.format(partition_key) + ' contains ' + '{0:n}'.format(len(bulk_data_partitions[partition_key])) + ' rows')
 
     logger.info('End   Distribution of the data in the partitions')
