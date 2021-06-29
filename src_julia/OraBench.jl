@@ -16,7 +16,6 @@ Pkg.add("TimesDates")
 using CSV
 using DataFrames
 using Dates
-using DelimitedFiles
 using Formatting
 using Oracle
 using TimesDates
@@ -30,6 +29,7 @@ BENCHMARK_DRIVER = ""
 BENCHMARK_LANGUAGE = ""
 
 FILE_CONFIGURATION_NAME_TOML = "priv/properties/ora_bench_toml.properties"
+FILE_RESULT_DELIMITER = ""
 
 IX_DURATION_INSERT_SUM = 4
 IX_DURATION_SELECT_SUM = 5
@@ -69,7 +69,11 @@ function create_connections(config::Dict)
             @info "connection_user    =" * connection_user
             @info "connection_password=" * connection_password
             @info "connection_string  =" * connection_string
-            error("fatal error: program abort =====> database connect error: '" * string(reason) * "' <=====")
+            error(
+                "fatal error: program abort =====> database connect error: '" *
+                string(reason) *
+                "' <=====",
+            )
         end
     end
 
@@ -82,7 +86,16 @@ end
 # Writing the results.
 # ------------------------------------------------------------------------------
 
-function create_result(config, result_file, measurement_data, action, trial_number, sql_statement, start_date_time, sql_operation)
+function create_result(
+    config,
+    result_file,
+    measurement_data,
+    action,
+    trial_number,
+    sql_statement,
+    start_date_time,
+    sql_operation,
+)
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start " * function_name
 
@@ -94,31 +107,58 @@ function create_result(config, result_file, measurement_data, action, trial_numb
         measurement_data[IX_DURATION_INSERT_SUM] += duration_ns
     elseif sql_operation == "select"
         measurement_data[IX_DURATION_SELECT_SUM] += duration_ns
-    end    
+    end
 
-    CSV.write(result_file,config["benchmark.release"] * config["file.result.delimiter"] *
-                      config["benchmark.id"] * config["file.result.delimiter"] *
-                      config["benchmark.comment"] * config["file.result.delimiter"] *
-                      config["benchmark.host.name"] * config["file.result.delimiter"] *
-                      string(config["benchmark.number.cores"]) * config["file.result.delimiter"] *
-                      config["benchmark.os"] * config["file.result.delimiter"] *
-                      config["benchmark.user.name"] * config["file.result.delimiter"] *
-                      config["benchmark.database"] * config["file.result.delimiter"] *
-                      BENCHMARK_LANGUAGE * config["file.result.delimiter"] *
-                      BENCHMARK_DRIVER * config["file.result.delimiter"] *
-                      string(trial_number) * config["file.result.delimiter"] *
-                      sql_statement * config["file.result.delimiter"] *
-                      string(config["benchmark.core.multiplier"]) * config["file.result.delimiter"] *
-                      string(config["connection.fetch.size"]) * config["file.result.delimiter"] *
-                      string(config["benchmark.transaction.size"]) * config["file.result.delimiter"] *
-                      string(config["file.bulk.length"]) * config["file.result.delimiter"] *
-                      string(config["file.bulk.size"]) * config["file.result.delimiter"] *
-                      string(config["benchmark.batch.size"]) * config["file.result.delimiter"] *
-                      action * config["file.result.delimiter"] *
-                      start_date_time.stringftime("%Y-%m-%d %H:%M:%S.%f000") * config["file.result.delimiter"] *
-                      end_date_time.stringftime("%Y-%m-%d %H:%M:%S.%f000") * config["file.result.delimiter"] *
-                      string(round((end_date_time - start_date_time).total_seconds())) * config["file.result.delimiter"] *
-                      string(round(duration_ns)) * "\n")
+    write(
+        result_file,
+        config["benchmark_release"] *
+        FILE_RESULT_DELIMITER *
+        config["benchmark_id"] *
+        FILE_RESULT_DELIMITER *
+        config["benchmark_comment"] *
+        FILE_RESULT_DELIMITER *
+        config["benchmark_host_name"] *
+        FILE_RESULT_DELIMITER *
+        string(config["benchmark_number_cores"]) *
+        FILE_RESULT_DELIMITER *
+        config["benchmark_os"] *
+        FILE_RESULT_DELIMITER *
+        config["benchmark_user_name"] *
+        FILE_RESULT_DELIMITER *
+        config["benchmark_database"] *
+        FILE_RESULT_DELIMITER *
+        BENCHMARK_LANGUAGE *
+        FILE_RESULT_DELIMITER *
+        BENCHMARK_DRIVER *
+        FILE_RESULT_DELIMITER *
+        string(trial_number) *
+        FILE_RESULT_DELIMITER *
+        sql_statement *
+        FILE_RESULT_DELIMITER *
+        string(config["benchmark_core_multiplier"]) *
+        FILE_RESULT_DELIMITER *
+        string(config["connection_fetch_size"]) *
+        FILE_RESULT_DELIMITER *
+        string(config["benchmark_transaction_size"]) *
+        FILE_RESULT_DELIMITER *
+        string(config["file_bulk_length"]) *
+        FILE_RESULT_DELIMITER *
+        string(config["file_bulk_size"]) *
+        FILE_RESULT_DELIMITER *
+        string(config["benchmark_batch_size"]) *
+        FILE_RESULT_DELIMITER *
+        action *
+        FILE_RESULT_DELIMITER *
+        string(start_date_time) *
+        FILE_RESULT_DELIMITER *
+        string(end_date_time) *
+        FILE_RESULT_DELIMITER *
+        string(round((end_date_time - start_date_time).value * 0.001)) *
+        FILE_RESULT_DELIMITER *
+        string(duration_ns) *
+        FILE_RESULT_DELIMITER *
+        "\n",
+    )
 
     @debug "End   " * function_name
 end
@@ -133,13 +173,18 @@ function create_result_file(config)
 
     result_file_name = config["file_result_name"]
 
-    result_file = Path(config["file_result_name"])
+    touch(result_file_name)
 
-    if not result_file.is_file():
-        error("fatal error: program abort =====> result file '" * result_file_name * "' is missing <=====")
+    if not
+        isfile(result_file_name)
+        error(
+            "fatal error: program abort =====> result file '" *
+            result_file_name *
+            "' is missing <=====",
+        )
     end
 
-    result_file = open(os.path.abspath(config["file_result_name"]), "a")
+    result_file = open(result_file_name, "a")
 
     @debug "End   " * function_name
 
@@ -195,9 +240,13 @@ function create_result_measuring_point_end(
             measurement_data[IX_LAST_BENCHMARK],
             sql_operation,
         )
-        CSV.close(result_file)
+        close(result_file)
     else
-        error("fatal error: program abort =====> unknown action='" * action * "' status='end' <=====")
+        error(
+            "fatal error: program abort =====> unknown action='" *
+            action *
+            "' status='end' <=====",
+        )
     end
 
     @debug "End   " * function_name
@@ -236,7 +285,9 @@ function get_bulk_data_partitions(config::Dict)
     file_bulk_size = config["file_bulk_size"]
 
     if file_bulk_size < benchmark_number_partitions
-        error("fatal error: program abort =====> size of the bulk file ($(file_bulk_size)) is smaller than the number of partitions ($(benchmark_number_partitions)) <=====")
+        error(
+            "fatal error: program abort =====> size of the bulk file ($(file_bulk_size)) is smaller than the number of partitions ($(benchmark_number_partitions)) <=====",
+        )
     end
 
     bulk_data = DataFrame(
@@ -323,7 +374,7 @@ function get_config()
     config["file_bulk_size"] = parse(Int64, config_parser["DEFAULT"]["file_bulk_size"])
     config["file_configuration_name_python"] =
         config_parser["DEFAULT"]["file_configuration_name_python"]
-    config["file_result_delimiter"] =
+    FILE_RESULT_DELIMITER =
         replace(config_parser["DEFAULT"]["file_result_delimiter"], "TAB" => "\t")
     config["file_result_name"] = config_parser["DEFAULT"]["file_result_name"]
 
