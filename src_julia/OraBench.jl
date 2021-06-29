@@ -25,8 +25,15 @@ using TOML
 # Definition of the global variables.
 # ------------------------------------------------------------------------------
 
-BENCHMARK_DRIVER = ""
-BENCHMARK_LANGUAGE = ""
+BENCHMARK_DRIVER::String
+BENCHMARK_LANGUAGE::String
+BENCHMARK_NUMBER_PARTITIONS::UInt32
+
+CONNECTION_HOST::String
+CONNECTION_PASSWORD::String
+CONNECTION_PORT::UInt32
+CONNECTION_SERVICE::String
+CONNECTION_USER::String
 
 FILE_CONFIGURATION_NAME_TOML = "priv/properties/ora_bench_toml.properties"
 FILE_RESULT_DELIMITER = ""
@@ -45,25 +52,20 @@ function create_connections(config::Dict)
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start " * function_name
 
-    benchmark_number_partitions = config["benchmark_number_partitions"]
-
-    connection_password = config["connection_password"]
-    connection_user = config["connection_user"]
-
     connections = Dict()
 
     connection_string =
-        config["connection_host"] *
+        CONNECTION_HOST *
         ":" *
-        string(config["connection_port"]) *
+        string(CONNECTION_PORT) *
         "/" *
-        config["connection_service"]
+        CONNECTION_SERVICE
 
-    for partition_key = 1:benchmark_number_partitions
+    for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
         try
             connections[partition_key] =
                 Oracle.Connection(connection_user, connection_password, connection_string)
-            @info "connection " * string(partition_key) * " open"
+            @info "wwe connection " * string(partition_key) * " open"
         catch reason
             @info "partition_key      =" * string(partition_key)
             @info "connection_user    =" * connection_user
@@ -279,14 +281,12 @@ function get_bulk_data_partitions(config::Dict)
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start " * function_name
 
-    benchmark_number_partitions = config["benchmark_number_partitions"]
-
     file_bulk_delimiter = config["file_bulk_delimiter"]
     file_bulk_size = config["file_bulk_size"]
 
-    if file_bulk_size < benchmark_number_partitions
+    if file_bulk_size < BENCHMARK_NUMBER_PARTITIONS
         error(
-            "fatal error: program abort =====> size of the bulk file ($(file_bulk_size)) is smaller than the number of partitions ($(benchmark_number_partitions)) <=====",
+            "fatal error: program abort =====> size of the bulk file ($(file_bulk_size)) is smaller than the number of partitions ($(BENCHMARK_NUMBER_PARTITIONS)) <=====",
         )
     end
 
@@ -294,7 +294,7 @@ function get_bulk_data_partitions(config::Dict)
         CSV.File(config["file_bulk_name"], header = 1, delim = file_bulk_delimiter),
     )
 
-    partition_size = div(file_bulk_size, benchmark_number_partitions)
+    partition_size = div(file_bulk_size, BENCHMARK_NUMBER_PARTITIONS)
 
     # ------------------------------------------------------------------------------
     # Loading the bulk file into memory.
@@ -306,7 +306,7 @@ function get_bulk_data_partitions(config::Dict)
 
     last_partition_upper = 0
 
-    for partition_key = 1:benchmark_number_partitions
+    for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
         current_partition_upper = last_partition_upper + partition_size
         if current_partition_upper > file_bulk_size
             current_partition_upper = file_bulk_size
@@ -350,7 +350,7 @@ function get_config()
     config["benchmark_id"] = config_parser["DEFAULT"]["benchmark_id"]
     config["benchmark_number_cores"] =
         parse(Int64, config_parser["DEFAULT"]["benchmark_number_cores"])
-    config["benchmark_number_partitions"] = 1
+    BENCHMARK_NUMBER_PARTITIONS = 1
     # wwe   parse(Int64, config_parser["DEFAULT"]["benchmark_number_partitions"])
     config["benchmark_os"] = config_parser["DEFAULT"]["benchmark_os"]
     config["benchmark_release"] = config_parser["DEFAULT"]["benchmark_release"]
@@ -446,8 +446,7 @@ function run_benchmark()
 
     connections = create_connections(config)
 
-    for partition_key = 1:config["benchmark_number_partitions"]
-        @info "connection " * string(partition_key) * " start closing"
+    for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
         Oracle.close(connections[partition_key])
         @info "connection " * string(partition_key) * " closed"
     end
