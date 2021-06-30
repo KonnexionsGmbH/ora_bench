@@ -64,6 +64,10 @@ IX_LAST_BENCHMARK = 1
 IX_LAST_QUERY = 3
 IX_LAST_TRIAL = 2
 
+MEASUREMENT_DATA = Array(["", "", "", 0, 0])
+
+RESULT_FILE = nothing
+
 SQL_CREATE = ""
 SQL_DROP = ""
 SQL_INSERT = ""
@@ -93,9 +97,7 @@ function create_connections()
             @info "connection_password=" * CONNECTION_PASSWORD
             @info "connection_string  =" * connection_string
             error(
-                "fatal error: program abort =====> database connect error: '" *
-                string(reason) *
-                "' <=====",
+                "fatal error: program abort =====> database connect error: '$(string(reason))' <=====",
             )
         end
     end
@@ -109,15 +111,7 @@ end
 # Writing the results.
 # ------------------------------------------------------------------------------
 
-function create_result(
-    result_file,
-    measurement_data,
-    action,
-    trial_number,
-    sql_statement,
-    start_date_time,
-    sql_operation,
-)
+function create_result(action, trial_number, sql_statement, start_date_time, sql_operation)
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start " * function_name
 
@@ -126,13 +120,13 @@ function create_result(
     duration_ns = (end_date_time - start_date_time).value
 
     if sql_operation == "insert"
-        measurement_data[IX_DURATION_INSERT_SUM] += duration_ns
+        MEASUREMENT_DATA[IX_DURATION_INSERT_SUM] += duration_ns
     elseif sql_operation == "select"
-        measurement_data[IX_DURATION_SELECT_SUM] += duration_ns
+        MEASUREMENT_DATA[IX_DURATION_SELECT_SUM] += duration_ns
     end
 
     write(
-        result_file,
+        RESULT_FILE,
         BENCHMARK_RELEASE *
         FILE_RESULT_DELIMITER *
         BENCHMARK_ID *
@@ -193,22 +187,15 @@ function create_result_file()
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start " * function_name
 
-    touch(RESULT_FILE_NAME)
-
-    if not
-        isfile(RESULT_FILE_NAME)
+    if !(isfile(FILE_RESULT_NAME))
         error(
-            "fatal error: program abort =====> result file '" *
-            RESULT_FILE_NAME *
-            "' is missing <=====",
+            "fatal error: program abort =====> result file '$(FILE_RESULT_NAME)' is missing <=====",
         )
     end
 
-    result_file = open(RESULT_FILE_NAME, "a")
+    global RESULT_FILE = open(FILE_RESULT_NAME, "a")
 
     @debug "End   " * function_name
-
-    return result_file
 end
 
 # ------------------------------------------------------------------------------
@@ -216,8 +203,6 @@ end
 # ------------------------------------------------------------------------------
 
 function create_result_measuring_point_end(
-    result_file,
-    measurement_data,
     action,
     trial_number = 0,
     sql_statement = "",
@@ -228,40 +213,32 @@ function create_result_measuring_point_end(
 
     if action == "query"
         create_result(
-            result_file,
-            measurement_data,
             action,
             trial_number,
             sql_statement,
-            measurement_data[IX_LAST_QUERY],
+            MEASUREMENT_DATA[IX_LAST_QUERY],
             sql_operation,
         )
     elseif action == "trial"
         create_result(
-            result_file,
-            measurement_data,
             action,
             trial_number,
             sql_statement,
-            measurement_data[IX_LAST_TRIAL],
+            MEASUREMENT_DATA[IX_LAST_TRIAL],
             sql_operation,
         )
     elseif action == "benchmark"
         create_result(
-            result_file,
-            measurement_data,
             action,
             trial_number,
             sql_statement,
-            measurement_data[IX_LAST_BENCHMARK],
+            MEASUREMENT_DATA[IX_LAST_BENCHMARK],
             sql_operation,
         )
-        close(result_file)
+        close(RESULT_FILE)
     else
         error(
-            "fatal error: program abort =====> unknown action='" *
-            action *
-            "' status='end' <=====",
+            "fatal error: program abort =====> unknown action='$(action)' status='end' <=====",
         )
     end
 
@@ -272,19 +249,32 @@ end
 # Recording the results of the benchmark - start processing.
 # ------------------------------------------------------------------------------
 
+function create_result_measuring_point_start(action)
+    function_name = string(StackTraces.stacktrace()[1].func)
+    @debug "Start " * function_name
+
+    if action == "query"
+        MEASUREMENT_DATA[IX_LAST_QUERY] = TimeDate(now())
+    elseif action == "trial"
+        MEASUREMENT_DATA[IX_LAST_TRIAL] = TimeDate(now())
+    else
+        error(
+            "fatal error: program abort =====> unknown action='$(action)' status='start' <=====",
+        )
+    end
+
+    @debug "End   " * function_name
+end
+
 function create_result_measuring_point_start_benchmark()
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start " * function_name
 
-    measurement_data = Array(["", "", "", 0, 0])
+    MEASUREMENT_DATA[IX_LAST_BENCHMARK] = TimeDate(now())
 
-    measurement_data[IX_LAST_BENCHMARK] = TimeDate(now())
-
-    measurement_data_result_file = (measurement_data, open(FILE_RESULT_NAME, "a"))
+    create_result_file()
 
     @debug "End   " * function_name
-
-    return measurement_data_result_file
 end
 
 # ------------------------------------------------------------------------------
@@ -403,9 +393,9 @@ function get_pkg_version(pkg_name::String)
     @debug "Start " * function_name
 
     m = Pkg.Operations.Context().env.manifest
-    print(typeof(m))
+    # wwe print(typeof(m))
     v = m[findfirst(v -> v.name == pkg_name, m)].version
-    print(typeof(v))
+    # wwe print(typeof(v))
 
     @debug "End   " * function_name
 
@@ -421,6 +411,9 @@ function main()
     @debug "Start " * function_name
 
     @info "Start OraBench.jl"
+
+    global BENCHMARK_DRIVER = "Oracle.jl " * get_pkg_version("Oracle")
+    global BENCHMARK_LANGUAGE = "Julia " * string(Base.VERSION)
 
     run_benchmark()
 
@@ -439,33 +432,69 @@ function run_benchmark()
 
     get_config()
 
-    measurement_data_result_file::Tuple = create_result_measuring_point_start_benchmark()
-
-    measurement_data = measurement_data_result_file[1]
-    result_file = measurement_data_result_file[2]
+    create_result_measuring_point_start_benchmark()
 
     bulk_data, bulk_data_partitions = get_bulk_data_partitions()
 
     connections = create_connections()
+
+    for trial_number = 1:BENCHMARK_TRIALS
+        run_trial(connections, bulk_data, bulk_data_partitions, trial_number)
+    end
 
     for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
         Oracle.close(connections[partition_key])
         @info "wwe connection " * string(partition_key) * " closed"
     end
 
-    create_result_measuring_point_end(result_file, measurement_data, "benchmark")
+    create_result_measuring_point_end("benchmark")
 
     @debug "End   " * function_name
 end
+
+# ------------------------------------------------------------------------------
+# Performing one trial.
+# ------------------------------------------------------------------------------
+
+function run_trial(connections, bulk_data, bulk_data_partitions, trial_number)
+    function_name = string(StackTraces.stacktrace()[1].func)
+    @debug "Start " * function_name
+
+    create_result_measuring_point_start("trial")
+
+    @info "Start trial no. $(string(trial_number))"
+
+    #     try
+    #         cursors[0].execute(SQL_CREATE)
+    #         @debug "last DDL statement=$(SQL_CREATE)"
+    #     catch
+    #         cursors[0].execute(SQL_DROP)
+    #         cursors[0].execute(SQL_CREATE)
+    #         @debug "last DDL statement after DROP=$(SQL_CREATE)"
+    #     end
+    #
+    #     run_insert(
+    #         connections,
+    #         bulk_data_partitions,
+    #         trial_number,
+    #     )
+    #
+    #     run_select(cursors, bulk_data_partitions, trial_number)
+    #
+    #     cursors[0].execute(SQL_DROP)
+    #     @debug "last DDL statement=$(SQL_DROP)"
+
+    create_result_measuring_point_end("trial", trial_number)
+
+    @debug "End   " * function_name
+end
+
 
 # ------------------------------------------------------------------------------
 # Entry point.
 # ------------------------------------------------------------------------------
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    BENCHMARK_DRIVER = get_pkg_version("Oracle")
-    BENCHMARK_LANGUAGE = "Julia " * string(Base.VERSION)
-
     main()
 end
 
