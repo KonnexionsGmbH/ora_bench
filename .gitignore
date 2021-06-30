@@ -29,11 +29,14 @@ erl_crash.dump
 erlcinfo
 odpi
 ora_bench_bulk_data.csv
+ora_bench_bulk_data.tsv
 ora_bench_c.properties
 ora_bench_erlang.properties
 ora_bench_java.jar
 ora_bench_kotlin.jar
 ora_bench_python.properties
+ora_bench_result.csv
+ora_bench_result.tsv
 ora_bench_toml.properties
 rebar.lock
 rebar3.crashdump
