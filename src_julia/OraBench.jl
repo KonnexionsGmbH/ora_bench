@@ -82,7 +82,7 @@ SQL_SELECT = ""
 
 function create_connections()
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start " * function_name
+    @debug "Start $(function_name)"
 
     connection_string =
         CONNECTION_HOST * ":" * string(CONNECTION_PORT) * "/" * CONNECTION_SERVICE
@@ -103,7 +103,8 @@ function create_connections()
         end
     end
 
-    @debug "End   " * function_name
+    @debug "End   $(function_name)"
+    nothing
 end
 
 # ------------------------------------------------------------------------------
@@ -112,7 +113,7 @@ end
 
 function create_result(action, trial_number, sql_statement, start_date_time, sql_operation)
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start " * function_name
+    @debug "Start $(function_name)"
 
     end_date_time = TimeDate(now())
 
@@ -175,7 +176,8 @@ function create_result(action, trial_number, sql_statement, start_date_time, sql
         "\n",
     )
 
-    @debug "End   " * function_name
+    @debug "End   $(function_name)"
+    nothing
 end
 
 # ------------------------------------------------------------------------------
@@ -184,7 +186,7 @@ end
 
 function create_result_file()
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start " * function_name
+    @debug "Start $(function_name)"
 
     if !(isfile(FILE_RESULT_NAME))
         error(
@@ -194,7 +196,8 @@ function create_result_file()
 
     global RESULT_FILE = open(FILE_RESULT_NAME, "a")
 
-    @debug "End   " * function_name
+    @debug "End   $(function_name)"
+    nothing
 end
 
 # ------------------------------------------------------------------------------
@@ -208,7 +211,7 @@ function create_result_measuring_point_end(
     sql_operation = "",
 )
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start " * function_name
+    @debug "Start $(function_name)"
 
     if action == "query"
         create_result(
@@ -241,7 +244,8 @@ function create_result_measuring_point_end(
         )
     end
 
-    @debug "End   " * function_name
+    @debug "End   $(function_name)"
+    nothing
 end
 
 # ------------------------------------------------------------------------------
@@ -250,7 +254,7 @@ end
 
 function create_result_measuring_point_start(action)
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start " * function_name
+    @debug "Start $(function_name)"
 
     if action == "query"
         MEASUREMENT_DATA[IX_LAST_QUERY] = TimeDate(now())
@@ -262,18 +266,20 @@ function create_result_measuring_point_start(action)
         )
     end
 
-    @debug "End   " * function_name
+    @debug "End   $(function_name)"
+    nothing
 end
 
 function create_result_measuring_point_start_benchmark()
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start " * function_name
+    @debug "Start $(function_name)"
 
     MEASUREMENT_DATA[IX_LAST_BENCHMARK] = TimeDate(now())
 
     create_result_file()
 
-    @debug "End   " * function_name
+    @debug "End   $(function_name)"
+    nothing
 end
 
 # ------------------------------------------------------------------------------
@@ -282,7 +288,7 @@ end
 
 function get_bulk_data_partitions()
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start " * function_name
+    @debug "Start $(function_name)"
 
     if FILE_BULK_SIZE < BENCHMARK_NUMBER_PARTITIONS
         error(
@@ -320,7 +326,8 @@ function get_bulk_data_partitions()
 
     @info "End   Distribution of the data in the partitions"
 
-    @debug "End   " * function_name
+    @debug "End   $(function_name)"
+    nothing
 end
 
 # ------------------------------------------------------------------------------
@@ -329,7 +336,7 @@ end
 
 function get_config()
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start " * function_name
+    @debug "Start $(function_name)"
 
     config_parser::Dict = TOML.parsefile(FILE_CONFIGURATION_NAME_TOML)
 
@@ -377,7 +384,8 @@ function get_config()
     )
     global SQL_SELECT = config_parser["DEFAULT"]["sql_select"]
 
-    @debug "End   " * function_name
+    @debug "End   $(function_name)"
+    nothing
 end
 
 # ------------------------------------------------------------------------------
@@ -386,16 +394,56 @@ end
 
 function get_pkg_version(pkg_name::String)
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start " * function_name
+    @debug "Start $(function_name)"
 
     m = Pkg.Operations.Context().env.manifest
     # wwe print(typeof(m))
     v = m[findfirst(v -> v.name == pkg_name, m)].version
     # wwe print(typeof(v))
 
-    @debug "End   " * function_name
+    @debug "End   $(function_name)"
 
     return string(v)
+end
+
+# ------------------------------------------------------------------------------
+# Performing the insert operations.
+# ------------------------------------------------------------------------------
+
+function insert(connection, bulk_data_partition)
+    function_name = string(StackTraces.stacktrace()[1].func)
+    @debug "Start $(function_name)"
+
+    count = 0
+    batch_data = list()
+
+    for [key_data_tuple] in bulk_data_partition:
+        count += 1
+
+        if BENCHMARK_BATCH_SIZE == 0:
+            cursor.execute(SQL_SELECT, [key_data_tuple[0], key_data_tuple[1]])
+        else:
+            batch_data.append(key_data_tuple)
+            if count % BENCHMARK_BATCH_SIZE == 0:
+                cursor.executemany(SQL_SELECT, batch_data)
+                batch_data = list()
+            end
+        end
+
+        if BENCHMARK_TRANSACTION_SIZE > 0 and count % BENCHMARK_TRANSACTION_SIZE == 0:
+            connection.commit()
+    end
+
+    if BENCHMARK_BATCH_SIZE > 0 and batch_data.__len__() > 0:
+        cursor.executemany(SQL_SELECT, batch_data)
+    end
+
+    if BENCHMARK_TRANSACTION_SIZE == 0 or count % BENCHMARK_TRANSACTION_SIZE != 0:
+        connection.commit()
+    end
+
+    @debug "End   $(function_name)"
+    nothing
 end
 
 # ------------------------------------------------------------------------------
@@ -404,7 +452,7 @@ end
 
 function main()
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start " * function_name
+    @debug "Start $(function_name)"
 
     @info "Start OraBench.jl"
 
@@ -415,7 +463,8 @@ function main()
 
     @info "End   OraBench.jl"
 
-    @debug "end"
+    @debug "End   $(function_name)"
+    nothing
 end
 
 # ------------------------------------------------------------------------------
@@ -424,7 +473,7 @@ end
 
 function run_benchmark()
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start " * function_name
+    @debug "Start $(function_name)"
 
     get_config()
 
@@ -445,7 +494,42 @@ function run_benchmark()
 
     create_result_measuring_point_end("benchmark")
 
-    @debug "End   " * function_name
+    @debug "End   $(function_name)"
+    nothing
+end
+
+# ------------------------------------------------------------------------------
+# Performing the insert operations.
+# ------------------------------------------------------------------------------
+
+function run_insert(trial_number)
+    function_name = string(StackTraces.stacktrace()[1].func)
+    @debug "Start $(function_name)"
+
+    create_result_measuring_point_start('query')
+
+    threads = list()
+
+    for partition_key in 1: BENCHMARK_NUMBER_PARTITIONS
+        if BENCHMARK_CORE_MULTIPLIER == 0:
+            insert(connections[partition_key], bulk_data_partitions[partition_key])
+        else
+            thread = threading.Thread(target=insert, args=(config, connections[partition_key], cursors[partition_key], bulk_data_partitions[partition_key],))
+            threads.append(thread)
+            thread.start()
+         end
+    end        
+
+    if BENCHMARK_CORE_MULTIPLIER > 0
+        for thread in threads:
+            thread.join()
+        end
+    end        
+
+    create_result_measuring_point_end('query', trial_number, SQL_SELECT, 'insert')
+
+    @debug "End   $(function_name)"
+    nothing
 end
 
 # ------------------------------------------------------------------------------
@@ -454,7 +538,7 @@ end
 
 function run_trial(trial_number)
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start " * function_name
+    @debug "Start $(function_name)"
 
     create_result_measuring_point_start("trial")
 
@@ -469,9 +553,9 @@ function run_trial(trial_number)
         @debug "last DDL statement after DROP=$(SQL_CREATE)"
     end
 
-    #         run_insert(
-    #             trial_number,
-    #         )
+            run_insert(
+                trial_number,
+            )
 
     #     run_select(trial_number)
 
@@ -480,7 +564,8 @@ function run_trial(trial_number)
 
     create_result_measuring_point_end("trial", trial_number)
 
-    @debug "End   " * function_name
+    @debug "End   $(function_name)"
+    nothing
 end
 
 
