@@ -42,6 +42,8 @@ BENCHMARK_RELEASE = ""
 BENCHMARK_TRANSACTION_SIZE = 0
 BENCHMARK_TRIALS = 0
 BENCHMARK_USER_NAME = ""
+BULK_DATA = nothing
+BULK_DATA_PARTITIONS = Dict()
 
 CONNECTION_FETCH_SIZE = 0
 CONNECTION_HOST = ""
@@ -49,6 +51,7 @@ CONNECTION_PASSWORD = ""
 CONNECTION_PORT = 0
 CONNECTION_SERVICE = ""
 CONNECTION_USER = ""
+CONNECTIONS = Dict()
 
 FILE_BULK_DELIMITER = ""
 FILE_BULK_LENGTH = 0
@@ -81,14 +84,12 @@ function create_connections()
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start " * function_name
 
-    connections = Dict()
-
     connection_string =
         CONNECTION_HOST * ":" * string(CONNECTION_PORT) * "/" * CONNECTION_SERVICE
 
     for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
         try
-            connections[partition_key] =
+            CONNECTIONS[partition_key] =
                 Oracle.Connection(CONNECTION_USER, CONNECTION_PASSWORD, connection_string)
             @info "wwe connection " * string(partition_key) * " open"
         catch reason
@@ -103,8 +104,6 @@ function create_connections()
     end
 
     @debug "End   " * function_name
-
-    return connections
 end
 
 # ------------------------------------------------------------------------------
@@ -291,15 +290,14 @@ function get_bulk_data_partitions()
         )
     end
 
-    bulk_data = DataFrame(CSV.File(FILE_BULK_NAME, header = 1, delim = FILE_BULK_DELIMITER))
+    global BULK_DATA =
+        DataFrame(CSV.File(FILE_BULK_NAME, header = 1, delim = FILE_BULK_DELIMITER))
 
     partition_size = div(FILE_BULK_SIZE, BENCHMARK_NUMBER_PARTITIONS)
 
     # ------------------------------------------------------------------------------
     # Loading the bulk file into memory.
     # ------------------------------------------------------------------------------
-
-    bulk_data_partitions = Dict()
 
     @info "Start Distribution of the data in the partitions"
 
@@ -310,7 +308,7 @@ function get_bulk_data_partitions()
         if current_partition_upper > FILE_BULK_SIZE
             current_partition_upper = FILE_BULK_SIZE
         end
-        bulk_data_partitions[partition_key] =
+        BULK_DATA_PARTITIONS[partition_key] =
             last_partition_upper + 1, current_partition_upper
         @info format(
             "Partition p{1:0>5d} contains {2:n} rows",
@@ -323,8 +321,6 @@ function get_bulk_data_partitions()
     @info "End   Distribution of the data in the partitions"
 
     @debug "End   " * function_name
-
-    return bulk_data, bulk_data_partitions
 end
 
 # ------------------------------------------------------------------------------
@@ -434,16 +430,16 @@ function run_benchmark()
 
     create_result_measuring_point_start_benchmark()
 
-    bulk_data, bulk_data_partitions = get_bulk_data_partitions()
+    get_bulk_data_partitions()
 
-    connections = create_connections()
+    create_connections()
 
     for trial_number = 1:BENCHMARK_TRIALS
-        run_trial(connections, bulk_data, bulk_data_partitions, trial_number)
+        run_trial(trial_number)
     end
 
     for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
-        Oracle.close(connections[partition_key])
+        Oracle.close(CONNECTIONS[partition_key])
         @info "wwe connection " * string(partition_key) * " closed"
     end
 
@@ -456,7 +452,7 @@ end
 # Performing one trial.
 # ------------------------------------------------------------------------------
 
-function run_trial(connections, bulk_data, bulk_data_partitions, trial_number)
+function run_trial(trial_number)
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start " * function_name
 
@@ -464,25 +460,23 @@ function run_trial(connections, bulk_data, bulk_data_partitions, trial_number)
 
     @info "Start trial no. $(string(trial_number))"
 
-    #     try
-    #         cursors[0].execute(SQL_CREATE)
-    #         @debug "last DDL statement=$(SQL_CREATE)"
-    #     catch
-    #         cursors[0].execute(SQL_DROP)
-    #         cursors[0].execute(SQL_CREATE)
-    #         @debug "last DDL statement after DROP=$(SQL_CREATE)"
-    #     end
-    #
-    #     run_insert(
-    #         connections,
-    #         bulk_data_partitions,
-    #         trial_number,
-    #     )
-    #
-    #     run_select(cursors, bulk_data_partitions, trial_number)
-    #
-    #     cursors[0].execute(SQL_DROP)
-    #     @debug "last DDL statement=$(SQL_DROP)"
+    try
+        Oracle.execute(CONNECTIONS[1], SQL_CREATE)
+        @debug "last DDL statement=$(SQL_CREATE)"
+    catch
+        Oracle.execute(CONNECTIONS[1], SQL_DROP)
+        Oracle.execute(CONNECTIONS[1], SQL_CREATE)
+        @debug "last DDL statement after DROP=$(SQL_CREATE)"
+    end
+
+    #         run_insert(
+    #             trial_number,
+    #         )
+
+    #     run_select(trial_number)
+
+    Oracle.execute(CONNECTIONS[1], SQL_DROP)
+    @debug "last DDL statement=$(SQL_DROP)"
 
     create_result_measuring_point_end("trial", trial_number)
 
