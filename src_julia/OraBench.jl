@@ -2,7 +2,10 @@
 OraBench:
 - Julia version: 1.6.1
 - Author: Konnexions GmbH
-- Date: 2021-06-26 =#
+- Date: 2021-06-26
+=#
+
+module OraBench
 
 import Pkg
 
@@ -24,36 +27,36 @@ using TOML
 # Definition of the global variables.
 # ------------------------------------------------------------------------------
 
-BENCHMARK_BATCH_SIZE::UInt
-BENCHMARK_COMMENT::String
-BENCHMARK_CORE_MULTIPLIER::UInt
-BENCHMARK_DATABASE::String
-BENCHMARK_DRIVER::String
-BENCHMARK_HOST_NAME::String 
-BENCHMARK_ID::String 
-BENCHMARK_LANGUAGE::String
-BENCHMARK_NUMBER_CORES::UInt
-BENCHMARK_NUMBER_PARTITIONS::Uint 
-BENCHMARK_OS::String 
-BENCHMARK_RELEASE::String
-BENCHMARK_TRANSACTION_SIZE::UInt
-BENCHMARK_TRIALS::UInt 
-BENCHMARK_USER_NAME::String
+BENCHMARK_BATCH_SIZE = 0
+BENCHMARK_COMMENT = ""
+BENCHMARK_CORE_MULTIPLIER = 0
+BENCHMARK_DATABASE = ""
+BENCHMARK_DRIVER = ""
+BENCHMARK_HOST_NAME = ""
+BENCHMARK_ID = ""
+BENCHMARK_LANGUAGE = ""
+BENCHMARK_NUMBER_CORES = 0
+BENCHMARK_NUMBER_PARTITIONS = 0
+BENCHMARK_OS = ""
+BENCHMARK_RELEASE = ""
+BENCHMARK_TRANSACTION_SIZE = 0
+BENCHMARK_TRIALS = 0
+BENCHMARK_USER_NAME = ""
 
-CONNECTION_FETCH_SIZE::UInt
-CONNECTION_HOST::String
-CONNECTION_PASSWORD::String
-CONNECTION_PORT::UInt
-CONNECTION_SERVICE::String
-CONNECTION_USER::String
+CONNECTION_FETCH_SIZE = 0
+CONNECTION_HOST = ""
+CONNECTION_PASSWORD = ""
+CONNECTION_PORT = 0
+CONNECTION_SERVICE = ""
+CONNECTION_USER = ""
 
-FILE_BULK_DELIMITER::String
-FILE_BULK_LENGTH::UInt 
-FILE_BULK_NAME::String
-FILE_BULK_SIZE::UInt 
+FILE_BULK_DELIMITER = ""
+FILE_BULK_LENGTH = 0
+FILE_BULK_NAME = ""
+FILE_BULK_SIZE = 0
 FILE_CONFIGURATION_NAME_TOML = "priv/properties/ora_bench_toml.properties"
-FILE_RESULT_DELIMITER::String
-FILE_RESULT_NAME::String 
+FILE_RESULT_DELIMITER = ""
+FILE_RESULT_NAME = ""
 
 IX_DURATION_INSERT_SUM = 4
 IX_DURATION_SELECT_SUM = 5
@@ -61,10 +64,10 @@ IX_LAST_BENCHMARK = 1
 IX_LAST_QUERY = 3
 IX_LAST_TRIAL = 2
 
-SQL_CREATE::String
-SQL_DROP::String 
-SQL_INSERT::String
-SQL_SELECT::String
+SQL_CREATE = ""
+SQL_DROP = ""
+SQL_INSERT = ""
+SQL_SELECT = ""
 
 # ------------------------------------------------------------------------------
 # Creating the database connections.
@@ -77,16 +80,12 @@ function create_connections()
     connections = Dict()
 
     connection_string =
-        CONNECTION_HOST *
-        ":" *
-        string(CONNECTION_PORT) *
-        "/" *
-        CONNECTION_SERVICE
+        CONNECTION_HOST * ":" * string(CONNECTION_PORT) * "/" * CONNECTION_SERVICE
 
     for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
         try
             connections[partition_key] =
-                Oracle.Connection(connection_user, connection_password, connection_string)
+                Oracle.Connection(CONNECTION_USER, CONNECTION_PASSWORD, connection_string)
             @info "wwe connection " * string(partition_key) * " open"
         catch reason
             @info "partition_key      =" * string(partition_key)
@@ -220,9 +219,9 @@ function create_result_measuring_point_end(
     result_file,
     measurement_data,
     action,
-    trial_number=0,
-    sql_statement="",
-    sql_operation="",
+    trial_number = 0,
+    sql_statement = "",
+    sql_operation = "",
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start " * function_name
@@ -302,9 +301,7 @@ function get_bulk_data_partitions()
         )
     end
 
-    bulk_data = DataFrame(
-        CSV.File(FILE_BULK_NAME, header=1, delim=FILE_BULK_DELIMITER),
-    )
+    bulk_data = DataFrame(CSV.File(FILE_BULK_NAME, header = 1, delim = FILE_BULK_DELIMITER))
 
     partition_size = div(FILE_BULK_SIZE, BENCHMARK_NUMBER_PARTITIONS)
 
@@ -350,49 +347,49 @@ function get_config()
 
     config_parser::Dict = TOML.parsefile(FILE_CONFIGURATION_NAME_TOML)
 
-    BENCHMARK_BATCH_SIZE =
+    global BENCHMARK_BATCH_SIZE =
         parse(Int64, config_parser["DEFAULT"]["benchmark_batch_size"])
-    BENCHMARK_COMMENT = config_parser["DEFAULT"]["benchmark_comment"]
-    BENCHMARK_CORE_MULTIPLIER =
+    global BENCHMARK_COMMENT = config_parser["DEFAULT"]["benchmark_comment"]
+    global BENCHMARK_CORE_MULTIPLIER =
         parse(Int64, config_parser["DEFAULT"]["benchmark_core_multiplier"])
-    BENCHMARK_DATABASE = config_parser["DEFAULT"]["benchmark_database"]
-    BENCHMARK_HOST_NAME = config_parser["DEFAULT"]["benchmark_host_name"]
-    BENCHMARK_ID = config_parser["DEFAULT"]["benchmark_id"]
-    BENCHMARK_NUMBER_CORES =
+    global BENCHMARK_DATABASE = config_parser["DEFAULT"]["benchmark_database"]
+    global BENCHMARK_HOST_NAME = config_parser["DEFAULT"]["benchmark_host_name"]
+    global BENCHMARK_ID = config_parser["DEFAULT"]["benchmark_id"]
+    global BENCHMARK_NUMBER_CORES =
         parse(Int64, config_parser["DEFAULT"]["benchmark_number_cores"])
-    BENCHMARK_NUMBER_PARTITIONS = 1
+    global BENCHMARK_NUMBER_PARTITIONS = 1
     # wwe   parse(Int64, config_parser["DEFAULT"]["benchmark_number_partitions"])
-    BENCHMARK_OS = config_parser["DEFAULT"]["benchmark_os"]
-    BENCHMARK_RELEASE = config_parser["DEFAULT"]["benchmark_release"]
-    BENCHMARK_TRANSACTION_SIZE =
+    global BENCHMARK_OS = config_parser["DEFAULT"]["benchmark_os"]
+    global BENCHMARK_RELEASE = config_parser["DEFAULT"]["benchmark_release"]
+    global BENCHMARK_TRANSACTION_SIZE =
         parse(Int64, config_parser["DEFAULT"]["benchmark_transaction_size"])
-    BENCHMARK_TRIALS = parse(Int64, config_parser["DEFAULT"]["benchmark_trials"])
-    BENCHMARK_USER_NAME = config_parser["DEFAULT"]["benchmark_user_name"]
+    global BENCHMARK_TRIALS = parse(Int64, config_parser["DEFAULT"]["benchmark_trials"])
+    global BENCHMARK_USER_NAME = config_parser["DEFAULT"]["benchmark_user_name"]
 
-    CONNECTION_FETCH_SIZE =
+    global CONNECTION_FETCH_SIZE =
         parse(Int64, config_parser["DEFAULT"]["connection_fetch_size"])
-    CONNECTION_HOST = config_parser["DEFAULT"]["connection_host"]
-    CONNECTION_PASSWORD = config_parser["DEFAULT"]["connection_password"]
-    CONNECTION_PORT = parse(Int64, config_parser["DEFAULT"]["connection_port"])
-    CONNECTION_SERVICE = config_parser["DEFAULT"]["connection_service"]
-    CONNECTION_USER = config_parser["DEFAULT"]["connection_user"]
+    global CONNECTION_HOST = config_parser["DEFAULT"]["connection_host"]
+    global CONNECTION_PASSWORD = config_parser["DEFAULT"]["connection_password"]
+    global CONNECTION_PORT = parse(Int64, config_parser["DEFAULT"]["connection_port"])
+    global CONNECTION_SERVICE = config_parser["DEFAULT"]["connection_service"]
+    global CONNECTION_USER = config_parser["DEFAULT"]["connection_user"]
 
-    FILE_BULK_DELIMITER =
+    global FILE_BULK_DELIMITER =
         replace(config_parser["DEFAULT"]["file_bulk_delimiter"], "TAB" => "\t")
-    FILE_BULK_LENGTH = parse(Int64, config_parser["DEFAULT"]["file_bulk_length"])
-    FILE_BULK_NAME = config_parser["DEFAULT"]["file_bulk_name"]
-    FILE_BULK_SIZE = parse(Int64, config_parser["DEFAULT"]["file_bulk_size"])
-    FILE_RESULT_DELIMITER =
+    global FILE_BULK_LENGTH = parse(Int64, config_parser["DEFAULT"]["file_bulk_length"])
+    global FILE_BULK_NAME = config_parser["DEFAULT"]["file_bulk_name"]
+    global FILE_BULK_SIZE = parse(Int64, config_parser["DEFAULT"]["file_bulk_size"])
+    global FILE_RESULT_DELIMITER =
         replace(config_parser["DEFAULT"]["file_result_delimiter"], "TAB" => "\t")
-    FILE_RESULT_NAME = config_parser["DEFAULT"]["file_result_name"]
+    global FILE_RESULT_NAME = config_parser["DEFAULT"]["file_result_name"]
 
-    SQL_CREATE = config_parser["DEFAULT"]["sql_create"]
-    SQL_DROP = config_parser["DEFAULT"]["sql_drop"]
-    SQL_INSERT = replace(
+    global SQL_CREATE = config_parser["DEFAULT"]["sql_create"]
+    global SQL_DROP = config_parser["DEFAULT"]["sql_drop"]
+    global SQL_INSERT = replace(
         replace(config_parser["DEFAULT"]["sql_insert"], ":key" => ":1"),
         ":data" => ":2",
     )
-    SQL_SELECT = config_parser["DEFAULT"]["sql_select"]
+    global SQL_SELECT = config_parser["DEFAULT"]["sql_select"]
 
     @debug "End   " * function_name
 end
@@ -442,8 +439,7 @@ function run_benchmark()
 
     get_config()
 
-    measurement_data_result_file::Tuple =
-        create_result_measuring_point_start_benchmark()
+    measurement_data_result_file::Tuple = create_result_measuring_point_start_benchmark()
 
     measurement_data = measurement_data_result_file[1]
     result_file = measurement_data_result_file[2]
@@ -454,7 +450,7 @@ function run_benchmark()
 
     for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
         Oracle.close(connections[partition_key])
-        @info "connection " * string(partition_key) * " closed"
+        @info "wwe connection " * string(partition_key) * " closed"
     end
 
     create_result_measuring_point_end(result_file, measurement_data, "benchmark")
@@ -471,4 +467,6 @@ if abspath(PROGRAM_FILE) == @__FILE__
     BENCHMARK_LANGUAGE = "Julia " * string(Base.VERSION)
 
     main()
+end
+
 end
