@@ -53,6 +53,7 @@ if ["%2"] EQU [""] (
     echo ---------------------------------------------------------
     echo 18                 - Oracle Database 18c Express Edition
     echo 19                 - Oracle Database 19c 
+    echo 21                 - Oracle Database 21c
     echo ---------------------------------------------------------
     set /P  ORA_BENCH_CHOICE_DB="Enter the desired database version [default: %ORA_BENCH_CHOICE_DB_DEFAULT%] "
 
@@ -65,10 +66,12 @@ if ["%2"] EQU [""] (
 
 set ORA_BENCH_RUN_DB_18_4_XE=false
 set ORA_BENCH_RUN_DB_19_3_EE=false
+set ORA_BENCH_RUN_DB_20_3_EE=false
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["complete"] (
     set ORA_BENCH_RUN_DB_18_4_XE=true
     set ORA_BENCH_RUN_DB_19_3_EE=true
+    set ORA_BENCH_RUN_DB_20_3_EE=true
 )
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["18"] (
@@ -77,6 +80,10 @@ if ["%ORA_BENCH_CHOICE_DB%"] EQU ["18"] (
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["19"] (
     set ORA_BENCH_RUN_DB_19_3_EE=true
+)
+
+if ["%ORA_BENCH_CHOICE_DB%"] EQU ["21"] (
+    set ORA_BENCH_RUN_DB_21_3_EE=true
 )
 
 set ORA_BENCH_PASSWORD_SYS=oracle
@@ -133,7 +140,17 @@ echo.
             exit %ERRORLEVEL%
         )
     )
-    
+
+    if ["%ORA_BENCH_RUN_DB_21_3_EE%"] EQU ["true"] (
+        set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
+        set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+        call scripts\run_properties_standard.bat
+        if %ERRORLEVEL% NEQ 0 (
+            echo Processing of the script: %0 - step: 'call scripts\run_properties_standard.bat' was aborted, error code=%ERRORLEVEL%
+            exit %ERRORLEVEL%
+        )
+    )
+
     echo --------------------------------------------------------------------------------
     echo:| TIME
     echo --------------------------------------------------------------------------------

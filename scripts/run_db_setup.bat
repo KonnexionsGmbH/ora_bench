@@ -9,7 +9,7 @@ rem ----------------------------------------------------------------------------
 setlocal EnableDelayedExpansion
 
 if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (
-    set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
+    set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
 )
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
     set javaORA_BENCH_CONNECTION_HOST=localhost

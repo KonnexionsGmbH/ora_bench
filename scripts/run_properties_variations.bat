@@ -73,6 +73,9 @@ if ["%ORA_BENCH_CHOICE_DB%"] EQU ["18"] (
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["19"] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 )
+if ["%ORA_BENCH_CHOICE_DB%"] EQU ["21"] (
+    set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
+)
 
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
     set javaORA_BENCH_CONNECTION_HOST=localhost
@@ -109,6 +112,7 @@ echo RUN_ORANIF_ERLANG                 : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------
 echo RUN_DB_18_4_XE                    : %ORA_BENCH_RUN_DB_18_4_XE%
 echo RUN_DB_19_3_EE                    : %ORA_BENCH_RUN_DB_19_3_EE%
+echo RUN_DB_21_3_EE                    : %ORA_BENCH_RUN_DB_21_3_EE%
 echo --------------------------------------------------------------------------------
 echo BENCHMARK_BATCH_SIZE              : %ORA_BENCH_BENCHMARK_BATCH_SIZE%
 echo BENCHMARK_COMMENT                 : %ORA_BENCH_BENCHMARK_COMMENT%
