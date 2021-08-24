@@ -54,6 +54,7 @@ if [ -z "$2" ]; then
     echo "---------------------------------------------------------"
     echo "18                 - Oracle Database 18c Express Edition"
     echo "19                 - Oracle Database 19c"
+    echo "21                 - Oracle Database 21c"
     echo "---------------------------------------------------------"
     read -rp "Enter the desired database version [default: ${ORA_BENCH_CHOICE_DB_DEFAULT}] " ORA_BENCH_CHOICE_DB
     export ORA_BENCH_CHOICE_DB=${ORA_BENCH_CHOICE_DB}
@@ -67,6 +68,7 @@ fi
 
 export ORA_BENCH_RUN_DB_18_4_XE=false
 export ORA_BENCH_RUN_DB_19_3_EE=false
+export ORA_BENCH_RUN_DB_21_3_EE=false
 
 if [ "${ORA_BENCH_CHOICE_DB}" = "complete" ]; then
     export ORA_BENCH_RUN_DB_18_4_XE=true
@@ -74,7 +76,9 @@ if [ "${ORA_BENCH_CHOICE_DB}" = "complete" ]; then
 elif [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
     export ORA_BENCH_RUN_DB_18_4_XE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then
-    export ORA_BENCH_RUN_DB_19_3_EE=true
+    export ORA_BENCH_RUN_DB_19_3_EE=true0
+elif [ "${ORA_BENCH_CHOICE_DB}" = "21" ]; then
+    export ORA_BENCH_RUN_DB_21_3_EE=true
 fi
 
 export ORA_BENCH_PASSWORD_SYS=oracle
@@ -122,6 +126,14 @@ fi
 
 if [ "$ORA_BENCH_RUN_DB_19_3_EE" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
+    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    if ! { /bin/bash scripts/run_properties_standard.sh; }; then
+        exit 255
+    fi
+fi
+
+if [ "$ORA_BENCH_RUN_DB_21_3_EE" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     if ! { /bin/bash scripts/run_properties_standard.sh; }; then
         exit 255
