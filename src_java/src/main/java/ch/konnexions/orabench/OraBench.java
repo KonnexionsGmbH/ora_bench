@@ -164,7 +164,7 @@ public class OraBench {
       logger.info("End   Setup Python 3 OraBench Run");
     } else if (args0.equals("setup_toml")) {
       logger.info("Start Setup TOML OraBench Run");
-      config. createConfigurationFileToml();
+      config.createConfigurationFileToml();
       logger.info("End   Setup TOML OraBench Run");
     } else if (args0.contentEquals("")) {
       logger.error("Command line argument missing");
@@ -290,10 +290,8 @@ public class OraBench {
 
     try {
       BufferedReader      bufferedReader = new BufferedReader(new FileReader(config.getFileBulkName()));
-      Iterable<CSVRecord> records        = CSVFormat.EXCEL.withDelimiter(config.getFileBulkDelimiter().charAt(0)).withHeader(config.getFileBulkHeader().split(
-                                                                                                                                                              config
-                                                                                                                                                                  .getFileBulkDelimiter()))
-          .parse(bufferedReader);
+      Iterable<CSVRecord> records        = CSVFormat.EXCEL.builder().setDelimiter(config.getFileBulkDelimiter().charAt(0)).setHeader(config.getFileBulkHeader()
+          .split(config.getFileBulkDelimiter())).build().parse(bufferedReader);
 
       int                 partitionKey;
 

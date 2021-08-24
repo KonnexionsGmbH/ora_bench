@@ -264,7 +264,7 @@ public class Result {
       }
 
       BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(resultName, true));
-      resultFile = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.withDelimiter(resultDelimiter.charAt(0)));
+      resultFile = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.builder().setDelimiter(resultDelimiter.charAt(0)).build());
     } catch (IOException e) {
       logger.error("file result delimiter=: " + resultDelimiter);
       logger.error("file result header   =: " + config.getFileResultHeader());

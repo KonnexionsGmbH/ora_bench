@@ -111,8 +111,12 @@ public class Setup {
 
     try {
       BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(config.getFileBulkName(), false));
-      CSVPrinter     bulkFile       = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.withDelimiter(config.getFileBulkDelimiter().charAt(0)).withHeader(config
-          .getFileBulkHeader().split(config.getFileBulkDelimiter())));
+      CSVPrinter     bulkFile       = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.builder().setDelimiter(config.getFileBulkDelimiter().charAt(0)).setHeader(
+                                                                                                                                                               config
+                                                                                                                                                                   .getFileBulkHeader()
+                                                                                                                                                                   .split(config
+                                                                                                                                                                       .getFileBulkDelimiter()))
+          .build());
 
       for (int i = 0; i < fileBulkSize; i++) {
         String currDigest = DigestUtils.md5Hex(lastDigest + baseRandomString);
@@ -161,8 +165,9 @@ public class Setup {
 
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(resultName, false));
 
-        new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.withDelimiter(resultDelimiter.charAt(0)).withHeader(config.getFileResultHeader().split(
-                                                                                                                                              resultDelimiter)));
+        new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.builder().setDelimiter(resultDelimiter.charAt(0)).setHeader(config.getFileResultHeader().split(
+                                                                                                                                                      resultDelimiter))
+            .build());
 
         bufferedWriter.close();
 
