@@ -76,7 +76,7 @@ Release Date: 21.06.2021
 | Java                  | Language | openjdk-16.0.1    |  
 | Kotlin                | Language | 1.5.10 [?1.4.32?] |  
 | Oracle cx_Oracle      | Driver   | 8.2.1             |  
-| Oracle Instant Client | Driver   | 19.11.0.0.0       |   |
+| Oracle Instant Client | Driver   | 19.11.0.0.0       |
 | Oracle JDBC           | Driver   | 21.1.0.0          |  
 | Oracle ODPI-C         | Driver   | 4.2.1             |  
 | oranif                | Driver   | 0.2.3             |  

@@ -48,11 +48,10 @@ docker network prune --force
 docker network ls
 
 echo "Docker create ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE) ......................"
-docker create -e         ORACLE_PWD=oracle \
-              --name     ora_bench_db \
-              --network  ora_bench_net \
-              -p         1521:1521/tcp \
-              --shm-size 1G \
+docker create -e        ORACLE_PWD=oracle \
+              --name    ora_bench_db \
+              --network ora_bench_net \
+              -p        1521:1521/tcp \
               konnexionsgmbh/$ORA_BENCH_BENCHMARK_DATABASE
 
 echo "Docker started ora_bench_db($ORA_BENCH_BENCHMARK_DATABASE) ....................."

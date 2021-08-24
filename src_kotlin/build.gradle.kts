@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.dokka") version "1.4.32"
+    id("org.jetbrains.dokka") version "1.5.0"
     kotlin("jvm") version "1.5.20"
     application
 }
@@ -15,15 +15,15 @@ repositories {
 }
 
 dependencies {
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.32")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.5.0")
     implementation("com.oracle.database.jdbc:ojdbc11:21.1.0.0")
     implementation("org.apache.commons:commons-csv:1.8")
-    implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.32")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.20")
+    implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.5.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21")
     implementation("org.apache.logging.log4j:log4j-api:2.14.1")
     implementation("org.apache.logging.log4j:log4j-core:2.14.1")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.5.20"))
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.5.21"))
 }
 
 val jar by tasks.getting(Jar::class) {
