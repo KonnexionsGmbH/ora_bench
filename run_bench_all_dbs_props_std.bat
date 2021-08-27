@@ -66,12 +66,12 @@ if ["%2"] EQU [""] (
 
 set ORA_BENCH_RUN_DB_18_4_XE=false
 set ORA_BENCH_RUN_DB_19_3_EE=false
-set ORA_BENCH_RUN_DB_20_3_EE=false
+set ORA_BENCH_RUN_DB_21_3_EE=false
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["complete"] (
     set ORA_BENCH_RUN_DB_18_4_XE=true
     set ORA_BENCH_RUN_DB_19_3_EE=true
-    set ORA_BENCH_RUN_DB_20_3_EE=true
+    set ORA_BENCH_RUN_DB_21_3_EE=true
 )
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["18"] (
