@@ -15,7 +15,6 @@
 .idea
 .mix
 .rebar
-/go.sum
 /lang/elixir/deps/
 /lang/elixir/mix.lock
 /lang/go/pkg/
