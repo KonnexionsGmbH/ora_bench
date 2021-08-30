@@ -1,5 +1,7 @@
 *.beam
 *.class
+*.crashdump
+*.dump
 *.exe
 *.log
 *.o
@@ -15,16 +17,13 @@
 .idea
 .mix
 .rebar
-/lang/elixir/deps/
+/lang/elixir/deps/*
 /lang/elixir/mix.lock
 /lang/go/pkg/
-/lang/go/src/
 /ora_bench.iml
 /priv/Gammadyne/timer.txt
-OraBench
 _build
 build
-erl_crash.dump
 erlcinfo
 odpi
 ora_bench_bulk_data.csv
@@ -38,7 +37,4 @@ ora_bench_result.csv
 ora_bench_result.tsv
 ora_bench_toml.properties
 rebar.lock
-rebar3.crashdump
 tmp
-/lang/elixir/deps/oranif/.fetch
-/lang/elixir/deps/oranif/
