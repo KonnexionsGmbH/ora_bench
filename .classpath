@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src_java/src/main/java"/>
-	<classpathentry kind="src" path="src_kotlin/src/main/kotlin"/>
-	<classpathentry kind="src" path="src_java/src/test/java"/>
+	<classpathentry kind="src" path="src_java/lang/main/java"/>
+	<classpathentry kind="src" path="src_kotlin/lang/main/kotlin"/>
+	<classpathentry kind="src" path="src_java/lang/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>

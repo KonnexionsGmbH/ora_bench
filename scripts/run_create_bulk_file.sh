@@ -30,7 +30,7 @@ if [ "$ORA_BENCH_CHOICE_DRIVER" = "complete" ]; then
     fi
 fi
 
-if ! { /bin/bash src_java/scripts/run_gradle.sh; }; then
+if ! { /bin/bash lang/java/scripts/run_gradle.sh; }; then
     exit 255
 fi
 

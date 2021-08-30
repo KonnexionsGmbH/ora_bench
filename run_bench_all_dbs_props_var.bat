@@ -121,9 +121,9 @@ echo.
         set ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
         set ORA_BENCH_CONNECTION_SERVICE=xe
         call scripts\run_properties_variations.bat
-        if %ERRORLEVEL% NEQ 0 (
+        if %ERRORLEVEL% neq 0 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_variations.bat' was aborted, error code=%ERRORLEVEL%
-            exit %ERRORLEVEL%
+            exit -1073741510
         )
     )
     
@@ -131,9 +131,9 @@ echo.
         set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_variations.bat
-        if %ERRORLEVEL% NEQ 0 (
+        if %ERRORLEVEL% neq 0 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_variations.bat' was aborted, error code=%ERRORLEVEL%
-            exit %ERRORLEVEL%
+            exit -1073741510
         )
     )
 
@@ -141,9 +141,9 @@ echo.
         set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_variations.bat
-        if %ERRORLEVEL% NEQ 0 (
+        if %ERRORLEVEL% neq 0 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_variations.bat' was aborted, error code=%ERRORLEVEL%
-            exit %ERRORLEVEL%
+            exit -1073741510
         )
     )
 
@@ -158,8 +158,8 @@ echo.
     echo ================================================================================
     
     start priv\audio\end_of_series.mp3
-    if %ERRORLEVEL% NEQ 0 (
+    if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'start priv\audio\end_of_series.mp3' was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
+        exit -1073741510
     )
 )
