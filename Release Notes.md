@@ -9,18 +9,25 @@
 
 ### Table of Contents
 
-**[1. Current Issues](#current_issues)**<br>
-**[2. Version History](#version_history)**<br>
+**[1. Restrictions](#restrictions)**<br>
+**[2. Issues](#issues)**<br>
+**[3. Version History](#version_history)**<br>
 
 ----
 
-## <a name="current_issues"></a> 1. Current Issues
+## <a name="restrictions"></a> 1. Restrictions
+
+- The combination Julia and Oracle.jl requires Linux or macOS: see [here](https://felipenoris.github.io/Oracle.jl/stable/).
+
+----
+
+## <a name="issues"></a> 2. Issues
 
 Currently we are not aware of any issues.
 
 ----
 
-## <a name="version_history"></a> 2. Version History
+## <a name="version_history"></a> 3. Version History
 
 ## Version 1.1.0
 
