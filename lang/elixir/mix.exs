@@ -5,7 +5,7 @@ defmodule OraBench.MixProject do
     [
       app: :ora_bench,
       deps: deps(),
-      elixir: "~> 1.9",
+      elixir: "~> 1.12",
       escript: escript(),
       start_permanent: Mix.env() == :prod,
       version: "0.1.0"
@@ -29,7 +29,7 @@ defmodule OraBench.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:ecto_sql, "~> 3.2.2"},
+      {:ecto_sql, "~> 3.7.0"},
       {:oranif, git: "https://github.com/konnexionsgmbh/oranif"}
     ]
   end

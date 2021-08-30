@@ -386,7 +386,7 @@ class OraBench {
                 val keyValue: String = record.get("key")
                 if (keyValue != "key") {
                     val partitionKey: Int =
-                        (keyValue[0].code * 256 + keyValue[1].code) % benchmarkNumberPartitions
+                        (keyValue[0].code * 251 + keyValue[1].code) % benchmarkNumberPartitions
                     bulkDataPartitions[partitionKey].add(
                         arrayOf(
                             keyValue,

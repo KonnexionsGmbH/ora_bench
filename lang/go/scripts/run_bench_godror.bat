@@ -79,7 +79,6 @@ if %ERRORLEVEL% neq 0 (
 )
 
 go run lang\go\orabench.go priv\properties\ora_bench.properties
-echo wwe ERRORLEVEL=%ERRORLEVEL% 
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'go run lang\go\orabench.go priv\properties\ora_bench.properties' was aborted, error code=%ERRORLEVEL%
     exit -1073741510

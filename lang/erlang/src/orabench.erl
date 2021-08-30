@@ -509,7 +509,7 @@ load_data(Fd, Header, BulkDelimiter, Partitions, Rows, Count) ->
         Line ->
           [<<KeyByte1 : 8, KeyByte2 : 8, _/binary>> = Key, Data] =
             string:split(Line, BulkDelimiter, all),
-          Partition = (KeyByte1 * 256 + KeyByte2) rem Partitions,
+          Partition = (KeyByte1 * 251 + KeyByte2) rem Partitions,
           OldData = maps:get(Partition, Rows, []),
           case (Count + 1) rem 10000 of
             0 ->

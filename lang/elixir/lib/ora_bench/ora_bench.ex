@@ -319,7 +319,7 @@ defmodule OraBench do
                                           partition_key = rem(
                                             (String.at(key, 0)
                                              |> String.to_charlist()
-                                             |> hd) * 256 + (String.at(key, 1)
+                                             |> hd) * 251 + (String.at(key, 1)
                                                              |> String.to_charlist()
                                                              |> hd),
                                             String.to_integer(

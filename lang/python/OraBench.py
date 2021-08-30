@@ -230,7 +230,7 @@ def get_bulk_data_partitions(logger, config):
 
     for key_data_tuple in bulk_data:
         key = key_data_tuple[0]
-        partition_key = (ord(key[0]) * 256 + ord(key[1])) % benchmark_number_partitions
+        partition_key = (ord(key[0]) * 251 + ord(key[1])) % benchmark_number_partitions
         bulk_data_partition = bulk_data_partitions[partition_key]
         bulk_data_partition.append([key_data_tuple])
         bulk_data_partitions[partition_key] = bulk_data_partition

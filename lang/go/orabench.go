@@ -110,8 +110,7 @@ func main() {
     resultWriter(configs, resultSlice)
 
     d := endBenchTs.Sub(startBenchTs)
-    // wwe log.Printf("End   orabench.go (%.0f sec, %d nsec)\n", d.Seconds(), d.Nanoseconds())
-    log.Println("End   orabench.go (%.0f sec, %d nsec)\n", d.Seconds(), d.Nanoseconds())
+    log.Printf("End   orabench.go (%.0f sec, %d nsec)\n", d.Seconds(), d.Nanoseconds())
 
     os.Exit(0)
 }
@@ -230,7 +229,7 @@ func loadBulk(benchmarkNumberPartitions int, fileBulkName string, fileBulkDelimi
     
     for scanner.Scan() {
         parts := strings.Split(scanner.Text(), fileBulkDelimiter)
-        partition := (int(parts[0][0])*256 + int(parts[0][1])) % benchmarkNumberPartitions
+        partition := (int(parts[0][0])*251 + int(parts[0][1])) % benchmarkNumberPartitions
         partitions[partition].keys = append(partitions[partition].keys, parts[0])
         partitions[partition].vals = append(partitions[partition].vals, parts[1])
     }

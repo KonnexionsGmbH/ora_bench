@@ -200,7 +200,7 @@ void load_bulk(const char *file)
   L("Loading(%%).");
   while (fscanf(fp, "%[^;];%[^\r\n]\r\n", row->key, row->data) != EOF)
   {
-    row->partition = (row->key[0] * 256 + row->key[1]) % benchmarkNumberPartitions;
+    row->partition = (row->key[0] * 251 + row->key[1]) % benchmarkNumberPartitions;
     gBulk[row->partition].count++;
     row++;
   }
