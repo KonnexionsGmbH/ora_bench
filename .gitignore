@@ -17,7 +17,7 @@
 .idea
 .mix
 .rebar
-/lang/elixir/deps/*
+/lang/elixir/deps/
 /lang/elixir/mix.lock
 /lang/go/pkg/
 /ora_bench.iml
