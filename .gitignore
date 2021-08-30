@@ -41,3 +41,4 @@ ora_bench_toml.properties
 rebar.lock
 rebar3.crashdump
 tmp
+/lang/elixir/deps/oranif/.fetch
