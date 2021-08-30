@@ -26,73 +26,73 @@ echo:| TIME
 echo ================================================================================
 
 if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU ["true"] (
-    call src_go\scripts\run_bench_godror.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script: %0 - step: 'call src_go\scripts\run_bench_godror.bat' was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
+    call lang\go\scripts\run_bench_godror.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\go\scripts\run_bench_godror.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
     )
 )
     
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
-    call src_python\scripts\run_bench_cx_oracle.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script: %0 - step: 'call src_python\scripts\run_bench_cx_oracle.bat' was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
+    call lang\python\scripts\run_bench_cx_oracle.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\python\scripts\run_bench_cx_oracle.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
     )
 )
 
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
-    call src_java\scripts\run_bench_jdbc.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script: %0 - step: 'call src_java\scripts\run_bench_jdbc.bat' was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
+    call lang\java\scripts\run_bench_jdbc.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\java\scripts\run_bench_jdbc.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
     )
 )
 
 if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] EQU ["true"] (
-    call src_kotlin\scripts\run_bench_jdbc.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script: %0 - step: 'call src_kotlin\scripts\run_bench_jdbc.bat' was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
+    call lang\kotlin\scripts\run_bench_jdbc.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\kotlin\scripts\run_bench_jdbc.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
     )
 )
 
 if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
-    call src_c\scripts\run_bench_odpi.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script: %0 - step: 'call src_c\scripts\run_bench_odpi.bat' was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
+    call lang\c\scripts\run_bench_odpi.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\c\scripts\run_bench_odpi.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
     )
 )
     
 if ["%ORA_BENCH_RUN_ORACLE_JL_JULIA%"] EQU ["true"] (
-    call src_julia\scripts\run_bench_oracle_jl.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script: %0 - step: 'call src_julia\scripts\run_bench_oracle_jl.bat' was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
+    call lang\julia\scripts\run_bench_oracle_jl.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\julia\scripts\run_bench_oracle_jl.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
     )
 )
     
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
-    call src_elixir\scripts\run_bench_oranif.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script: %0 - step: 'call src_elixir\scripts\run_bench_oranif.bat' was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
+    call lang\elixir\scripts\run_bench_oranif.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\elixir\scripts\run_bench_oranif.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
     )
 )
 
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
-    call src_erlang\scripts\run_bench_oranif.bat
-    if %ERRORLEVEL% NEQ 0 (
-        echo Processing of the script: %0 - step: 'call src_erlang\scripts\run_bench_oranif.bat' was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
+    call lang\erlang\scripts\run_bench_oranif.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\erlang\scripts\run_bench_oranif.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
     )
 )
 
 call scripts\run_finalise_benchmark.bat
-if %ERRORLEVEL% NEQ 0 (
+if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'call scripts\run_finalise_benchmark.bat' was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
+    exit -1073741510
 )
 
 echo --------------------------------------------------------------------------------

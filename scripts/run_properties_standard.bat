@@ -126,21 +126,21 @@ echo:| TIME
 echo ================================================================================
 
 call scripts\run_collect_and_compile.bat
-if %ERRORLEVEL% NEQ 0 (
+if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'call scripts\run_collect_and_compile.bat' was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
+    exit -1073741510
 )
 
 call scripts\run_db_setup.bat
-if %ERRORLEVEL% NEQ 0 (
+if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'call scripts\run_db_setup.bat' was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
+    exit -1073741510
 )
 
 call scripts\run_bench_all_drivers.bat
-if %ERRORLEVEL% NEQ 0 (
+if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'call scripts\run_bench_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
+    exit -1073741510
 )
 
 echo --------------------------------------------------------------------------------

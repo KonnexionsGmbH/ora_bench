@@ -136,7 +136,7 @@ script:
   - sudo chmod +x *.sh
   - sudo chmod +x scripts/*.sh
   - sudo chmod +x */scripts/*.sh
-  - python -m pip install -r src_python/requirements.txt
+  - python -m pip install -r lang/python/requirements.txt
   - ./scripts/run_show_environment.sh
   - ./scripts/run_collect_and_compile.sh
   - travis_fold end   "Running_ora_bench"

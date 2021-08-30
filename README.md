@@ -3,7 +3,7 @@
 ![Travis (.org)](https://img.shields.io/travis/KonnexionsGmbH/ora_bench.svg?branch=master)
 ![GitHub release](https://img.shields.io/github/release/KonnexionsGmbH/ora_bench.svg)
 ![GitHub Release Date](https://img.shields.io/github/release-date/KonnexionsGmbH/ora_bench.svg)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/KonnexionsGmbH/ora_bench/1.0.0.svg)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/KonnexionsGmbH/ora_bench/1.1.0.svg)
 
 ----
 
@@ -16,19 +16,12 @@
 **[2.3 Benchmark Operation](#2.3_benchmark)**<br>
 **[2.4 Benchmark Results](#2.4_benchmark)**<br>
 **[2.5 Bulk File](#2.5_bulk)**<br>
-**[3. Coding Pattern](#3_coding)**<br>
-**[3.1 Benchmark Function` (main function)](#3.1_benchmark)**<br>
-**[3.2 Trial Function](#3.2_trial)**<br>
-**[3.3 Insert Control Function](#3.3_insert)**<br>
-**[3.4 Insert Function](#3.4_insert)**<br>
-**[3.5 Select Control Function](#3.5_select)**<br>
-**[3.6 Select Function](#3.6_select)**<br>
-**[4. Driver Specific Features](#4_driver)**<br>
-**[4.1 Oracle cx_Oracle and Python](#4.1_oracle)**<br>
-**[4.2 Oracle JDBC and Java](#4.2_oracle)**<br>
-**[4.3 Oracle JDBC and Kotlin](#4.3_oracle)**<br>
-**[4.4 Oracle ODPI-C and C++ (gcc)](#4.4_oracle)**<br>
-**[4.5 oranif and Erlang](#4.5_oranif)**<br>
+**[3. Driver Specific Features](#4_driver)**<br>
+**[3.1 Oracle cx_Oracle and Python](#4.1_oracle)**<br>
+**[3.2 Oracle JDBC and Java](#4.2_oracle)**<br>
+**[3.3 Oracle JDBC and Kotlin](#4.3_oracle)**<br>
+**[3.4 Oracle ODPI-C and C++ (gcc)](#4.4_oracle)**<br>
+**[3.5 oranif and Erlang](#4.5_oranif)**<br>
 
 ----
 
@@ -56,6 +49,8 @@ The following Oracle database versions are provided in a benchmark run via Docke
 | db_19_3_ee | [Oracle Database 19c 19.3                   - Linux x86-64](https://docs.oracle.com/en/database/oracle/oracle-database/19/index.html) |
 
 The results of the benchmark runs are collected in either csv (comma-separated values) or tsv (tab-separated values) files.
+
+----
 
 ## <a name="framework_tools"></a> 2. Framework Tools
 
@@ -176,181 +171,32 @@ The following configuration parameters are taken into account:
 
 The data column in the bulk file is randomly generated with a unique key column (MD5 hash code).
 
-## <a name="3_coding"></a> 3. Coding Patterns
+----
 
-### <a name="3.1_benchmark"></a> 3.1 `Benchmark Function` (main function)
+## <a name="driver_specifica"></a> 3. Driver Specific Features
 
-```
-    run_benchmark()
-    
-        save the current time as the start of the 'benchmark' action
-    
-        READ the configuration parameters into the memory (config params `file.configuration.name ...`)
-        READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
-            partition key = modulo (ASCII value of 1st byte of key * 256 + ASCII value of 2nd byte of key, 
-                                    number partitions (config param 'benchmark.number.partitions'))
-        Create a separate database connection (without auto commit behaviour) for each partition                            
-        
-        trial_no = 0
-        WHILE trial_no < config_param 'benchmark.trials'
-            DO run_benchmark_trial(database connections, trial_no, bulk_data_partitions)
-        ENDWHILE    
-        
-        partition_no = 0
-        WHILE partition_no < config_param 'benchmark.number.partitions'
-            close the database connection
-        ENDWHILE    
-        
-        WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
-```
-
-### <a name="3.2_trial"></a> 3.2 `Trial Function`
-
-```
-    run_trial(database connections, trial_no, bulk_data_partitions)
-    INPUT: the database connections
-           the current trial number
-           the partitioned bulk data
-    
-        save the current time as the start of the 'trial' action
-    
-        create the database table (config param 'sql.create')
-        
-        IF error
-            drop the database table (config param 'sql.drop')
-            create the database table (config param 'sql.create')
-        ENDIF    
-        
-        DO run_benchmark_insert(database connections, trial_no, bulk_data_partitions)
-        DO run_benchmark_select(database connections, trial_no, bulk_data_partitions)
-        
-        drop the database table (config param 'sql.drop')
-        
-        WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
-```
-
-### <a name="3.3_insert"></a> 3.3 `Insert Control Function`
-
-```
-    run_insert(database connections, trial_no, bulk_data_partitions)
-    INPUT: the database connections
-           the current trial number
-           the partitioned bulk data
-    
-        save the current time as the start of the 'query' action
-     
-        partition_no = 0
-        WHILE partition_no < config_param 'benchmark.number.partitions'
-            IF config_param 'benchmark.core.multiplier' = 0
-                DO Insert(database connections(partition_no), bulk_data_partitions(partition_no)) 
-            ELSE    
-                DO Insert(database connections(partition_no), bulk_data_partitions(partition_no)) as a thread
-        ENDWHILE    
-
-        WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
-```
-
-### <a name="3.4_insert"></a> 3.4 `Insert Function`
-
-```
-    insert(database connection, bulk_data_partition)
-    INPUT: the database connection
-           the bulk data partition
-    
-        count = 0
-        collection batch_collection = empty
-        
-        WHILE iterating through the collection bulk_data_partition
-            count + 1
-            
-            add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection 
-            IF config_param 'benchmark.batch.size' > 0
-                IF count modulo config param 'benchmark.batch.size' = 0 
-                    execute the SQL statements in the collection batch_collection
-                    batch_collection = empty
-                ENDIF                    
-            END IF
-            
-            IF config param 'benchmark.transaction.size' > 0 AND count modulo config param 'benchmark.transaction.size' = 0
-                commit
-            ENDIF    
-        ENDWHILE
-
-        IF collection batch_collection is not empty
-            execute the SQL statements in the collection batch_collection
-        ENDIF
-
-        commit
-```
-
-### <a name="3.5_select"></a> 3.5 `Select Control Function`
-
-```
-    run_select(database connections, trial_no, bulk_data_partitions)
-    INPUT: the database connections
-           the current trial number
-           the partitioned bulk data
-    
-        save the current time as the start of the 'query' action
-     
-        partition_no = 0
-        WHILE partition_no < config_param 'benchmark.number.partitions'
-            IF config_param 'benchmark.core.multiplier' = 0
-                DO Select(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) 
-            ELSE    
-                DO Select(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) as a thread
-        ENDWHILE    
-
-        WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
-```
-
-### <a name="3.6_select"></a> 3.6 `Select Function`
-
-```
-    run_select(database connection, bulk_data_partition, partition_no)
-    INPUT: the database connection
-           the bulk data partition
-           the current partition number
-    
-        save the current time as the start of the 'query' action
-     
-        count = 0
-
-        execute the SQL statement in config param 'sql.select' 
-
-        WHILE iterating through the result set
-            count + 1
-        ENDWHILE
-
-        IF NOT count = size(bulk_data_partition)
-            display an error message            
-        ENDIF                    
-```
-
-## <a name="driver_specifica"></a> 4. Driver Specific Features
-
-### <a name="4.1_oracle"></a> 4.1 Oracle cx_Oracle and Python 3
+### <a name="3.1_oracle"></a> 3.1 Oracle cx_Oracle and Python 3
 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.python`) 
 - Python 3 uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
 - the value fetch size (`connection.fetch.size`) is not used because the operation `SELECT` uses the operation `Cursor.fetchall()`
 
-### <a name="4.2_oracle"></a> 4.2 Oracle JDBC and Java
+### <a name="3.2_oracle"></a> 3.2 Oracle JDBC and Java
 
 - the Java source code is compiled with the help of Gradle
 - Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
-### <a name="4.3_oracle"></a> 4.3 Oracle JDBC and Kotlin
+### <a name="3.3_oracle"></a> 3.3 Oracle JDBC and Kotlin
 
 - the Kotlin source code is compiled with the help of Gradle
 - Kotlin uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
 - Kotlin uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
 
-### <a name="4.4_oracle"></a> 4.4 Oracle ODPI-C and C++ (gcc)
+### <a name="3.4_oracle"></a> 3.4 Oracle ODPI-C and C++ (gcc)
 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.c`) 
 
-### <a name="4.5_oranif"></a> 4.5 oranif and Erlang
+### <a name="3.5_oranif"></a> 3.5 oranif and Erlang
 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.erlang`) 

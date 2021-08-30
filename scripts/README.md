@@ -4,13 +4,13 @@
 
 This script executes the following driver specific sub-scripts:
 
-- `src_c/scripts/run_bench_odpi`
-- `src_elixir/scripts/run_bench_oranif`
-- `src_erlang/scripts/run_bench_oranif`
-- `src_go/scripts/run_bench_godror`
-- `src_java/scripts/run_bench_jdbc`
-- `src_kotlin/scripts/run_bench_jdbc`
-- `src_python/scripts/run_bench_cx_oracle`
+- `lang/c/scripts/run_bench_odpi`
+- `lang/elixir/scripts/run_bench_oranif`
+- `lang/erlang/scripts/run_bench_oranif`
+- `lang/go/scripts/run_bench_godror`
+- `lang/java/scripts/run_bench_jdbc`
+- `lang/kotlin/scripts/run_bench_jdbc`
+- `lang/python/scripts/run_bench_cx_oracle`
 
 - `scripts/run_finalise_benchmark`
 

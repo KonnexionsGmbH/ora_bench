@@ -21,9 +21,9 @@ echo:| TIME
 echo ================================================================================
 
 java -jar priv/libs/ora_bench_java.jar finalise
-if %ERRORLEVEL% NEQ 0 (
+if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar finalise' was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
+    exit -1073741510
 )
 
 echo --------------------------------------------------------------------------------

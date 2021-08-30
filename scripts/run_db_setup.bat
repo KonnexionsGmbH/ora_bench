@@ -59,9 +59,9 @@ docker create -e        ORACLE_PWD=oracle ^
 
 echo Docker started ora_bench_db(%ORA_BENCH_BENCHMARK_DATABASE%) ....................
 docker start ora_bench_db
-if %ERRORLEVEL% NEQ 0 (
+if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'docker start ora_bench_db' was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
+    exit -1073741510
 )
 for /f "delims=" %%A in ('priv\Gammadyne\timer.exe /s') do set "CONSUMED=%%A"
 echo DOCKER ready in %CONSUMED% .....................................................
@@ -75,15 +75,15 @@ if NOT ["%DOCKER_HEALTH_STATUS%"] == ["healthy"] (
     ping -n 60 127.0.0.1 >nul
     goto :check_health_status
 )
-if %ERRORLEVEL% NEQ 0 (
+if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'docker inspect -f {{.State.Health.Status}} ora_bench_db > tmp\docker_health_status.txt' was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
+    exit -1073741510
 )
 
 sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE% AS SYSDBA @scripts/run_db_setup.sql
-if %ERRORLEVEL% NEQ 0 (
+if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'sqlplus.exe sys/%ORA_BENCH_PASSWORD_SYS%@//%ORA_BENCH_CONNECTION_HOST%:%ORA_BENCH_CONNECTION_PORT%/%ORA_BENCH_CONNECTION_SERVICE% AS SYSDBA @scripts/run_db_setup.sql' was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
+    exit -1073741510
 )
 
 echo --------------------------------------------------------------------------------

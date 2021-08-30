@@ -18,10 +18,10 @@
 /go.sum
 /ora_bench.iml
 /priv/Gammadyne/timer.txt
-/src_elixir/deps/
-/src_elixir/mix.lock
-/src_go/pkg/
-/src_go/src/
+/lang/elixir/deps/
+/lang/elixir/mix.lock
+/lang/go/pkg/
+/lang/go/lang/
 OraBench
 _build
 build

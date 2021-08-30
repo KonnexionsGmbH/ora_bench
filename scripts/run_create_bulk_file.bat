@@ -26,22 +26,22 @@ echo ===========================================================================
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["complete"] (
     call scripts\run_show_environment.bat
-    if %ERRORLEVEL% NEQ 0 (
+    if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'call scripts\run_show_environment.bat' was aborted, error code=%ERRORLEVEL%
-        exit %ERRORLEVEL%
+        exit -1073741510
     )
 )
 
-call src_java\scripts\run_gradle
-if %ERRORLEVEL% NEQ 0 (
-    echo Processing of the script: %0 - step: 'call src_java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
+call lang\java\scripts\run_gradle
+if %ERRORLEVEL% neq 0 (
+    echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
+    exit -1073741510
 )
 
 java -jar priv/libs/ora_bench_java.jar setup
-if %ERRORLEVEL% NEQ 0 (
+if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup' was aborted, error code=%ERRORLEVEL%
-    exit %ERRORLEVEL%
+    exit -1073741510
 )
 
 echo --------------------------------------------------------------------------------
