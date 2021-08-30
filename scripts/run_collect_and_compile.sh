@@ -44,10 +44,10 @@ if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
     fi
 
     if [ "$OSTYPE" = "msys" ]; then
-        if ! nmake -f lang\c/Makefile.win32 clean; then
+        if ! nmake -f lang\c\Makefile.win32 clean; then
             exit 255
         fi
-        if ! nmake -f lang\c/Makefile.win32; then
+        if ! nmake -f lang\c\Makefile.win32; then
             exit 255
         fi
     else
