@@ -73,10 +73,11 @@ export ORA_BENCH_RUN_DB_21_3_EE=false
 if [ "${ORA_BENCH_CHOICE_DB}" = "complete" ]; then
     export ORA_BENCH_RUN_DB_18_4_XE=true
     export ORA_BENCH_RUN_DB_19_3_EE=true
+    export ORA_BENCH_RUN_DB_21_3_EE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
     export ORA_BENCH_RUN_DB_18_4_XE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then
-    export ORA_BENCH_RUN_DB_19_3_EE=true0
+    export ORA_BENCH_RUN_DB_19_3_EE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "21" ]; then
     export ORA_BENCH_RUN_DB_21_3_EE=true
 fi
