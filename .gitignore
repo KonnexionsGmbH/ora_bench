@@ -8,7 +8,6 @@
 *.swp
 .concrete/DEV_MODE
 .eunit
-.fetch
 .git-credentials
 .gitconfig
 .gradle
@@ -16,12 +15,11 @@
 .mix
 .rebar
 /go.sum
-/ora_bench.iml
-/priv/Gammadyne/timer.txt
 /lang/elixir/deps/
 /lang/elixir/mix.lock
 /lang/go/pkg/
-/lang/go/lang/
+/ora_bench.iml
+/priv/Gammadyne/timer.txt
 OraBench
 _build
 build
@@ -41,4 +39,3 @@ ora_bench_toml.properties
 rebar.lock
 rebar3.crashdump
 tmp
-/lang/elixir/deps/oranif/.fetch
