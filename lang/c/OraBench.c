@@ -26,11 +26,13 @@ typedef
 
 int main(const int argc, const char *argv[])
 {
+  printf("Start OraBench.c\n");
   if (argc < 2)
   {
     printf("Usage: OraBench.exe config_file\n");
     return -1;
   }
+  printf("argv[1]=%s\n", argv[1]);
   load_config(argv[1]);
 
   L("Start %s\n", __FILE__);
@@ -425,6 +427,8 @@ int main(const int argc, const char *argv[])
   free(ta);
 
   cleanup_db();
+
+  printf("End   OraBench.c\n");
 
   return 0;
 }
