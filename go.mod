@@ -1,4 +1,4 @@
-module src_go
+module lang/go
 
 go 1.17
 

@@ -13,8 +13,9 @@ import (
 	"sync"
 	"time"
 
+	"golang.org/x/xerrors"
+
 	"github.com/godror/godror"
-	errors "golang.org/x/xerrors"
 )
 
 type bulkPartition struct{ keys, vals []string }
@@ -120,7 +121,7 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 
 	db, err := sql.Open("godror", configs["connection.dsn"].(string))
 	if err != nil {
-		log.Print(errors.Errorf("%v: %w", configs["connection.dsn"], err))
+		log.Print(xerrors.Errorf("%v: %w", configs["connection.dsn"], err))
 		os.Exit(1)
 	}
 
@@ -128,7 +129,7 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 		log.Printf("      doInsert() - defer func")
 		err := db.Close()
 		if err != nil {
-			log.Print(errors.Errorf("%v: %w", "db.Close()", err))
+			log.Print(xerrors.Errorf("%v: %w", "db.Close()", err))
 			os.Exit(1)
 		}
 	}(db)
@@ -138,7 +139,7 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 	resultInsert, err := db.ExecContext(ctx, sqlInsert, rows.keys, rows.vals)
 	if err != nil {
 		log.Print(
-			errors.Errorf(
+			xerrors.Errorf(
 				"Trial %d, Partition %d, SQL %s -> %w", trial, partition, sqlInsert,
 				err))
 		os.Exit(1)
@@ -146,7 +147,7 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 
 	rowCount, err := resultInsert.RowsAffected()
 	if err != nil {
-		log.Print(errors.Errorf("%v: %w", "resultInsert.RowsAffected()", err))
+		log.Print(xerrors.Errorf("%v: %w", "resultInsert.RowsAffected()", err))
 		os.Exit(1)
 	}
 
@@ -165,14 +166,14 @@ func doSelect(ctx context.Context, configs map[string]interface{}, trial int, pa
 
 	db, err := sql.Open("godror", configs["connection.dsn"].(string))
 	if err != nil {
-		log.Print(errors.Errorf("%v: %w", configs["connection.dsn"], err))
+		log.Print(xerrors.Errorf("%v: %w", configs["connection.dsn"], err))
 		os.Exit(1)
 	}
 
 	defer func(db *sql.DB) {
 		err := db.Close()
 		if err != nil {
-			log.Print(errors.Errorf("%v: %w", "db.Close()", err))
+			log.Print(xerrors.Errorf("%v: %w", "db.Close()", err))
 			os.Exit(1)
 		}
 	}(db)
@@ -183,14 +184,14 @@ func doSelect(ctx context.Context, configs map[string]interface{}, trial int, pa
 
 	rows, err := db.QueryContext(ctx, selectSQL, opts)
 	if err != nil {
-		log.Print(errors.Errorf("%v: %w", "db.QueryContext()", err))
+		log.Print(xerrors.Errorf("%v: %w", "db.QueryContext()", err))
 		os.Exit(1)
 	}
 
 	defer func(rows *sql.Rows) {
 		err := rows.Close()
 		if err != nil {
-			log.Print(errors.Errorf("%v: %w", "rows.Close()", err))
+			log.Print(xerrors.Errorf("%v: %w", "rows.Close()", err))
 			os.Exit(1)
 		}
 	}(rows)
@@ -216,14 +217,14 @@ func loadBulk(benchmarkNumberPartitions int, fileBulkName string, fileBulkDelimi
 
 	bulkFile, err := os.Open(fileBulkName)
 	if err != nil {
-		log.Print(errors.Errorf("%v: %w", "os.Open()", err))
+		log.Print(xerrors.Errorf("%v: %w", "os.Open()", err))
 		os.Exit(1)
 	}
 
 	defer func(bulkFile *os.File) {
 		err := bulkFile.Close()
 		if err != nil {
-			log.Print(errors.Errorf("%v: %w", "bulkFile.Close()", err))
+			log.Print(xerrors.Errorf("%v: %w", "bulkFile.Close()", err))
 			os.Exit(1)
 		}
 	}(bulkFile)
@@ -238,7 +239,7 @@ func loadBulk(benchmarkNumberPartitions int, fileBulkName string, fileBulkDelimi
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Print(errors.Errorf("%v: %w", "scanner.Err()", err))
+		log.Print(xerrors.Errorf("%v: %w", "scanner.Err()", err))
 		os.Exit(1)
 	}
 
@@ -256,14 +257,14 @@ func loadConfig(configFile string) map[string]interface{} {
 
 	confFile, err := os.Open(configFile)
 	if err != nil {
-		log.Print(errors.Errorf("%v: %w", "os.Open()", err))
+		log.Print(xerrors.Errorf("%v: %w", "os.Open()", err))
 		os.Exit(1)
 	}
 
 	defer func(confFile *os.File) {
 		err := confFile.Close()
 		if err != nil {
-			log.Print(errors.Errorf("%v: %w", "confFile.Close()", err))
+			log.Print(xerrors.Errorf("%v: %w", "confFile.Close()", err))
 			os.Exit(1)
 		}
 	}(confFile)
@@ -284,7 +285,7 @@ func loadConfig(configFile string) map[string]interface{} {
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Print(errors.Errorf("%v: %w", "scanner.Err()", err))
+		log.Print(xerrors.Errorf("%v: %w", "scanner.Err()", err))
 		os.Exit(1)
 	}
 
@@ -302,14 +303,14 @@ func initDb(ctx context.Context, configs map[string]interface{}) {
 	db, err := sql.Open("godror",
 		configs["connection.dsn"].(string))
 	if err != nil {
-		log.Print(errors.Errorf("%v: %w", configs["connection.dsn"], err))
+		log.Print(xerrors.Errorf("%v: %w", configs["connection.dsn"], err))
 		os.Exit(1)
 	}
 
 	defer func(db *sql.DB) {
 		err := db.Close()
 		if err != nil {
-			log.Print(errors.Errorf("%v: %w", "db.Close()", err))
+			log.Print(xerrors.Errorf("%v: %w", "db.Close()", err))
 			os.Exit(1)
 		}
 	}(db)
@@ -318,13 +319,13 @@ func initDb(ctx context.Context, configs map[string]interface{}) {
 	if err != nil {
 		_, err = db.ExecContext(ctx, configs["sql.drop"].(string))
 		if err != nil {
-			log.Println(errors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
+			log.Println(xerrors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
 			os.Exit(1)
 		}
 
 		_, err = db.ExecContext(ctx, configs["sql.create"].(string))
 		if err != nil {
-			log.Println(errors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
+			log.Println(xerrors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
 			os.Exit(1)
 		}
 	}
@@ -339,21 +340,21 @@ func resultWriter(configs map[string]interface{}, resultChn []result) {
 	fileResultDelimiter, err := strconv.Unquote("\"" +
 		configs["file.result.delimiter"].(string) + "\"")
 	if err != nil {
-		log.Print(errors.Errorf("%v: %w", "strconv.Unquote()", err))
+		log.Print(xerrors.Errorf("%v: %w", "strconv.Unquote()", err))
 		os.Exit(1)
 	}
 
 	rf, err := os.OpenFile(configs["file.result.name"].(string),
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Print(errors.Errorf("%v: %w", "os.OpenFile()", err))
+		log.Print(xerrors.Errorf("%v: %w", "os.OpenFile()", err))
 		os.Exit(1)
 	}
 
 	defer func(rf *os.File) {
 		err := rf.Close()
 		if err != nil {
-			log.Print(errors.Errorf("%v: %w", "rf.Close()", err))
+			log.Print(xerrors.Errorf("%v: %w", "rf.Close()", err))
 			os.Exit(1)
 		}
 	}(rf)
@@ -392,14 +393,14 @@ func resultWriter(configs map[string]interface{}, resultChn []result) {
 			result.action, tsStr(result.start), tsStr(result.end), d.Seconds(),
 			d.Nanoseconds())
 		if err != nil {
-			log.Print(errors.Errorf("%v: %w", "fmt.Fprintf()", err))
+			log.Print(xerrors.Errorf("%v: %w", "fmt.Fprintf()", err))
 			os.Exit(1)
 		}
 	}
 
 	err = resultFile.Flush()
 	if err != nil {
-		log.Print(errors.Errorf("%v: %w", "resultFile.Flush()", err))
+		log.Print(xerrors.Errorf("%v: %w", "resultFile.Flush()", err))
 		os.Exit(1)
 	}
 }

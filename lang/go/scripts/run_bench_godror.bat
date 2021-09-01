@@ -47,24 +47,12 @@ echo:| TIME
 echo ================================================================================
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
-    go mod tidy
+    make -C lang\go
     if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'go mod tidy' was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'make' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
-    go get github.com/godror/godror
-    if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'go get github.com/godror/godror' was aborted, error code=%ERRORLEVEL%
-        exit -1073741510
-    )
-
-    go get golang.org/x/xerrors
-    if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'go get golang.org/x/xerrors' was aborted, error code=%ERRORLEVEL%
-        exit -1073741510
-    )
-    
     call lang\java\scripts\run_gradle
     if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
@@ -78,9 +66,9 @@ if %ERRORLEVEL% neq 0 (
     exit -1073741510
 )
 
-go run lang\go\orabench.go priv\properties\ora_bench.properties
+lang\go\orabench.exe priv\properties\ora_bench.properties
 if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'go run lang\go\orabench.go priv\properties\ora_bench.properties' was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'orabench.exe priv\properties\ora_bench.properties' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 

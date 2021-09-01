@@ -1,3 +1,3 @@
 ```sh
-go build
+make -C lang/go
 ```
