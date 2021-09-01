@@ -130,9 +130,9 @@
         partition_no = 0
         WHILE partition_no < config_param 'benchmark.number.partitions'
             IF config_param 'benchmark.core.multiplier' = 0
-                DO Select(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) 
+                DO select(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) 
             ELSE    
-                DO Select(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) as a thread
+                DO select(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) as a thread
             ENDIF
         ENDWHILE    
 
@@ -142,7 +142,7 @@
 ### <a name="6_select"></a> 6 `Select Function`
 
 ```
-    run_select(database connection, bulk_data_partition, partition_no)
+    select(database connection, bulk_data_partition, partition_no)
     INPUT: the database connection
            the bulk data partition
            the current partition number
