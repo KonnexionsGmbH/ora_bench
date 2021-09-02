@@ -75,19 +75,19 @@
         partition_no = 0
         WHILE partition_no < config_param 'benchmark.number.partitions'
             IF config_param 'benchmark.core.multiplier' = 0
-                DO Insert(database connections(partition_no), bulk_data_partitions(partition_no)) 
+                DO insert_helper(database connections(partition_no), bulk_data_partitions(partition_no)) 
             ELSE    
-                DO Insert(database connections(partition_no), bulk_data_partitions(partition_no)) as a thread
+                DO insert_helper(database connections(partition_no), bulk_data_partitions(partition_no)) as a thread
             ENDIF
         ENDWHILE    
 
         WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 ```
 
-### <a name="4_insert"></a> 4 `Insert Function`
+### <a name="4_insert"></a> 4 `Insert helper Function`
 
 ```
-    insert(database connection, bulk_data_partition)
+    insert_helper(database connection, bulk_data_partition)
     INPUT: the database connection
            the bulk data partition
     
@@ -130,19 +130,19 @@
         partition_no = 0
         WHILE partition_no < config_param 'benchmark.number.partitions'
             IF config_param 'benchmark.core.multiplier' = 0
-                DO select(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) 
+                DO select_helper(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) 
             ELSE    
-                DO select(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) as a thread
+                DO select_helper(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) as a thread
             ENDIF
         ENDWHILE    
 
         WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 ```
 
-### <a name="6_select"></a> 6 `Select Function`
+### <a name="6_select"></a> 6 `Select Helper Function`
 
 ```
-    select(database connection, bulk_data_partition, partition_no)
+    select_helper(database connection, bulk_data_partition, partition_no)
     INPUT: the database connection
            the bulk data partition
            the current partition number
