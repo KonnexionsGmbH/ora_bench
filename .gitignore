@@ -19,6 +19,7 @@
 .rebar
 /lang/elixir/deps/
 /lang/elixir/mix.lock
+/lang/go/orabench
 /lang/go/pkg/
 /ora_bench.iml
 /priv/Gammadyne/timer.txt
