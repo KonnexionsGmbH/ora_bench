@@ -2,16 +2,16 @@
 
 ### Table of Contents
 
-**[1 Benchmark Function` (main function)](#1_benchmark)**<br>
-**[2 Trial Function](#2_trial)**<br>
-**[3 Insert Control Function](#3_insert)**<br>
-**[4 Insert Function](#4_insert)**<br>
-**[5 Select Control Function](#5_select)**<br>
-**[6 Select Function](#6_select)**<br>
+**[1 Benchmark Function` (main function)](#run_benchmark)**<br>
+**[2 Trial Function](#run_trial)**<br>
+**[3 Insert Control Function](#run_insert)**<br>
+**[4 Insert Helper Function](#run_insert_helper)**<br>
+**[5 Select Control Function](#run_select)**<br>
+**[6 Select Helper Function](#run_select_helper)**<br>
 
 ----
 
-### <a name="1_benchmark"></a> 1 `Benchmark Function` (main function)
+### <a name="run_benchmark"></a> 1 `Benchmark Function` (main function)
 
 ```
     run_benchmark()
@@ -37,7 +37,7 @@
         WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
 ```
 
-### <a name="2_trial"></a> 2 `Trial Function`
+### <a name="run_trial"></a> 2 `Trial Function`
 
 ```
     run_trial(database connections, trial_no, bulk_data_partitions)
@@ -62,7 +62,7 @@
         WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
 ```
 
-### <a name="3_insert"></a> 3 `Insert Control Function`
+### <a name="run_insert"></a> 3 `Insert Control Function`
 
 ```
     run_insert(database connections, trial_no, bulk_data_partitions)
@@ -75,19 +75,19 @@
         partition_no = 0
         WHILE partition_no < config_param 'benchmark.number.partitions'
             IF config_param 'benchmark.core.multiplier' = 0
-                DO insert_helper(database connections(partition_no), bulk_data_partitions(partition_no)) 
+                DO run_insert_helper(database connections(partition_no), bulk_data_partitions(partition_no)) 
             ELSE    
-                DO insert_helper(database connections(partition_no), bulk_data_partitions(partition_no)) as a thread
+                DO run_insert_helper(database connections(partition_no), bulk_data_partitions(partition_no)) as a thread
             ENDIF
         ENDWHILE    
 
         WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 ```
 
-### <a name="4_insert"></a> 4 `Insert helper Function`
+### <a name="run_insert_helper"></a> 4 `Insert Helper Function`
 
 ```
-    insert_helper(database connection, bulk_data_partition)
+    run_insert_helper(database connection, bulk_data_partition)
     INPUT: the database connection
            the bulk data partition
     
@@ -117,7 +117,7 @@
         commit
 ```
 
-### <a name="5_select"></a> 5 `Select Control Function`
+### <a name="run_select"></a> 5 `Select Control Function`
 
 ```
     run_select(database connections, trial_no, bulk_data_partitions)
@@ -130,19 +130,19 @@
         partition_no = 0
         WHILE partition_no < config_param 'benchmark.number.partitions'
             IF config_param 'benchmark.core.multiplier' = 0
-                DO select_helper(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) 
+                DO run_select_helper(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) 
             ELSE    
-                DO select_helper(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) as a thread
+                DO run_select_helper(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) as a thread
             ENDIF
         ENDWHILE    
 
         WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 ```
 
-### <a name="6_select"></a> 6 `Select Helper Function`
+### <a name="run_select_helper"></a> 6 `Select Helper Function`
 
 ```
-    select_helper(database connection, bulk_data_partition, partition_no)
+    run_select_helper(database connection, bulk_data_partition, partition_no)
     INPUT: the database connection
            the bulk data partition
            the current partition number
