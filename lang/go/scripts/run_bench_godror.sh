@@ -60,7 +60,7 @@ if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
     exit 255
 fi
 
-if ! lang/go/orabench.exe priv/properties/ora_bench.properties; then
+if ! lang/go/orabench priv/properties/ora_bench.properties; then
     exit 255
 fi
 

@@ -19,9 +19,11 @@
         save the current time as the start of the 'benchmark' action
     
         READ the configuration parameters into the memory (config params `file.configuration.name ...`)
+        
         READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
             partition key = modulo (ASCII value of 1st byte of key * 256 + ASCII value of 2nd byte of key, 
                                     number partitions (config param 'benchmark.number.partitions'))
+                                    
         Create a separate database connection (without auto commit behaviour) for each partition                            
         
         trial_no = 0
@@ -55,6 +57,7 @@
         ENDIF    
         
         DO run_benchmark_insert(database connections, trial_no, bulk_data_partitions)
+        
         DO run_benchmark_select(database connections, trial_no, bulk_data_partitions)
         
         drop the database table (config param 'sql.drop')
