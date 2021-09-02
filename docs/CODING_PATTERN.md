@@ -108,7 +108,8 @@
                 ENDIF                    
             ENDIF
             
-            IF config param 'benchmark.transaction.size' > 0 AND count modulo config param 'benchmark.transaction.size' = 0
+            IF config param 'benchmark.transaction.size' > 0 AND 
+               count modulo config param 'benchmark.transaction.size' = 0
                 commit
             ENDIF    
         ENDWHILE
