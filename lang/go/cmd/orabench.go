@@ -127,15 +127,20 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 
 	db, err := sql.Open("godror", configs["connection.dsn"].(string))
 	if err != nil {
-		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
+		log.Fatal(errors.Errorf("      doInsert(%2d) - %v: %w", configs["connection.dsn"], partition, err))
 	}
+
+	log.Debug(fmt.Sprintf("      doInsert(%2d) - db pointer=%p", partition, &db))
 
 	defer func(db *sql.DB) {
 		log.Debug(fmt.Sprintf("Start doInsert(%2d) - defer(db)", partition))
+		log.Debug(fmt.Sprintf("      doInsert(%2d) - defer(db) - db pointer=%p", partition, &db))
 
 		err := db.Close()
 		if err != nil {
-			log.Fatal(errors.Errorf("%v: %w", "db.Close()", err))
+			// wwe
+			//log.Fatal(errors.Errorf("%v: %w", "db.Close()", err))
+			log.Debug(errors.Errorf("      doInsert(%2d) - %v: %w", "db.Close()", partition, err))
 		}
 
 		log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(db)", partition))
@@ -143,22 +148,29 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 
 	sqlInsert := configs["sql.insert"].(string)
 
+	log.Debug(fmt.Sprintf("      doInsert(%2d) - sqlInsert=%v", partition, sqlInsert))
+
 	resultInsert, err := db.ExecContext(ctx, sqlInsert, rows.keys, rows.vals)
 	if err != nil {
 		log.Fatal(
 			errors.Errorf(
-				"Trial %d, Partition %d, SQL %s -> %w", trial, partition, sqlInsert,
+				"      doInsert(%2d) - Trial %d, Partition %d, SQL %s -> %w", partition, trial, partition, sqlInsert,
 				err))
 	}
+
+	log.Debug(fmt.Sprintf("      doInsert(%2d) - resultInsert pointer=%p", partition, &resultInsert))
 
 	rowCount, err := resultInsert.RowsAffected()
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	log.Debug(fmt.Sprintf("      doInsert(%2d) - rowCount      =%d", partition, rowCount))
+	log.Debug(fmt.Sprintf("      doInsert(%2d) - len(rows.keys)=%d", partition, len(rows.keys)))
+
 	if int(rowCount) != len(rows.keys) {
 		log.Fatalf(
-			"Trial %d, Partition %d: %d of %d rows inserted by %s",
+			"      doInsert(%2d) - Trial %d, Partition %d: %d of %d rows inserted by %s", partition,
 			trial, partition, len(rows.keys), rowCount, sqlInsert)
 	}
 
