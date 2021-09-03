@@ -29,7 +29,7 @@ type result struct {
 }
 
 func main() {
-	// log.SetLevel(log.DebugLevel)
+	log.SetLevel(log.DebugLevel)
 
 	log.Println("Start orabench.go")
 	configs := loadConfig(os.Args[1])
@@ -113,21 +113,32 @@ func main() {
 }
 
 func doInsert(ctx context.Context, configs map[string]interface{}, trial int, partition int, rows bulkPartition, wg *sync.WaitGroup) {
-	log.Debug("Start doInsert()")
+	log.Debug(fmt.Sprintf("Start doInsert(%2d)", partition))
 
-	defer wg.Done()
+	defer func() {
+		log.Debug(fmt.Sprintf("Start doInsert(%2d) - defer(wg.done)", partition))
+
+		wg.Done()
+
+		log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(wg.done)", partition))
+	}()
+
+	log.Debug(fmt.Sprintf("      doInsert(%2d) - connection.dsn=%v", partition, configs["connection.dsn"]))
 
 	db, err := sql.Open("godror", configs["connection.dsn"].(string))
 	if err != nil {
 		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
 	}
+
 	defer func(db *sql.DB) {
-		log.Debug("Start doInsert() - defer(db)")
+		log.Debug(fmt.Sprintf("Start doInsert(%2d) - defer(db)", partition))
+
 		err := db.Close()
 		if err != nil {
 			log.Fatal(errors.Errorf("%v: %w", "db.Close()", err))
 		}
-		log.Debug("End   doInsert() - defer(db)")
+
+		log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(db)", partition))
 	}(db)
 
 	sqlInsert := configs["sql.insert"].(string)
@@ -151,24 +162,28 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 			trial, partition, len(rows.keys), rowCount, sqlInsert)
 	}
 
-	log.Debug("End   doInsert()")
+	log.Debug(fmt.Sprintf("End   doInsert(%2d)", partition))
 }
-
 func doSelect(ctx context.Context, configs map[string]interface{}, trial int, partition int, expect int, wg *sync.WaitGroup) {
 	log.Debug("Start doSelect()")
 
 	defer wg.Done()
 
+	log.Debug(fmt.Sprintf("      doSelect() - connection.dsn=%v", configs["connection.dsn"]))
+
 	db, err := sql.Open("godror", configs["connection.dsn"].(string))
 	if err != nil {
 		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
 	}
+
 	defer func(db *sql.DB) {
 		log.Debug("Start doSelect() - defer(db)")
+
 		err := db.Close()
 		if err != nil {
 			log.Fatal(errors.Errorf("%v: %w", "db.Close()", err))
 		}
+
 		log.Debug("End   doSelect() - defer(db)")
 	}(db)
 
@@ -180,12 +195,15 @@ func doSelect(ctx context.Context, configs map[string]interface{}, trial int, pa
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer func(rows *sql.Rows) {
 		log.Debug("Start doSelect() - defer(rows)")
+
 		err := rows.Close()
 		if err != nil {
 			log.Fatal(errors.Errorf("%v: %w", "rows.Close()", err))
 		}
+
 		log.Debug("End   doSelect() - defer(rows)")
 	}(rows)
 
@@ -214,10 +232,12 @@ func initDb(ctx context.Context, configs map[string]interface{}) {
 
 	defer func(db *sql.DB) {
 		log.Debug("Start initDb() - defer(db)")
+
 		err := db.Close()
 		if err != nil {
 			log.Fatal(errors.Errorf("%v: %w", "db.Close()", err))
 		}
+
 		log.Debug("End   initDb() - defer(db)")
 	}(db)
 
@@ -250,19 +270,22 @@ func loadBulk(benchmarkNumberPartitions int, fileBulkName string, fileBulkDelimi
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer func(bulkFile *os.File) {
 		log.Debug("Start loadBulk() - defer(bulkFile)")
+
 		err := bulkFile.Close()
 		if err != nil {
 			log.Fatal(errors.Errorf("%v: %w", "bulkFile.Close()", err))
 		}
+
 		log.Debug("end   loadBulk() - defer(bulkFile)")
 	}(bulkFile)
 
 	scanner := bufio.NewScanner(bulkFile)
 	for scanner.Scan() {
 		parts := strings.Split(scanner.Text(), fileBulkDelimiter)
-		partition := (int(parts[0][0])*256 + int(parts[0][1])) % benchmarkNumberPartitions
+		partition := (int(parts[0][0])*251 + int(parts[0][1])) % benchmarkNumberPartitions
 		partitions[partition].keys = append(partitions[partition].keys, parts[0])
 		partitions[partition].vals = append(partitions[partition].vals, parts[1])
 	}
@@ -291,12 +314,15 @@ func loadConfig(configFile string) map[string]interface{} {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer func(confFile *os.File) {
 		log.Debug("Start loadConfig() - defer(confFile)")
+
 		err := confFile.Close()
 		if err != nil {
 			log.Fatal(errors.Errorf("%v: %w", "confFile.Close()", err))
 		}
+
 		log.Debug("End   loadConfig() - defer(confFile)")
 	}(confFile)
 
@@ -344,12 +370,15 @@ func resultWriter(configs map[string]interface{}, resultChn []result) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer func(rf *os.File) {
 		log.Debug("Start resultWriter() - defer(rf)")
+
 		err := rf.Close()
 		if err != nil {
 			log.Fatal(errors.Errorf("%v: %w", "rf.Close()", err))
 		}
+
 		log.Debug("End   resultWriter() - defer(rf)")
 	}(rf)
 
