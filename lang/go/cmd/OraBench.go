@@ -29,9 +29,9 @@ type result struct {
 }
 
 func main() {
-	log.SetLevel(log.DebugLevel)
+	// log.SetLevel(log.DebugLevel)
 
-	log.Println("Start orabench.go")
+	log.Println("Start OraBench.go")
 	configs := loadConfig(os.Args[1])
 
 	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
@@ -107,7 +107,7 @@ func main() {
 	resultWriter(configs, resultSlice)
 
 	d := endBenchTs.Sub(startBenchTs)
-	log.Printf("End   orabench.go (%.0f sec, %d nsec)\n", d.Seconds(), d.Nanoseconds())
+	log.Printf("End   OraBench.go (%.0f sec, %d nsec)\n", d.Seconds(), d.Nanoseconds())
 
 	os.Exit(0)
 }
@@ -115,13 +115,7 @@ func main() {
 func doInsert(ctx context.Context, configs map[string]interface{}, trial int, partition int, rows bulkPartition, wg *sync.WaitGroup) {
 	log.Debug(fmt.Sprintf("Start doInsert(%2d)", partition))
 
-	defer func() {
-		log.Debug(fmt.Sprintf("Start doInsert(%2d) - defer(wg.done)", partition))
-
-		wg.Done()
-
-		log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(wg.done)", partition))
-	}()
+	defer wg.Done()
 
 	log.Debug(fmt.Sprintf("      doInsert(%2d) - connection.dsn=%v", partition, configs["connection.dsn"]))
 
@@ -132,23 +126,23 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 
 	log.Debug(fmt.Sprintf("      doInsert(%2d) - db pointer=%p", partition, &db))
 
-	defer func(db *sql.DB) {
-		log.Debug(fmt.Sprintf("Start doInsert(%2d) - defer(db)", partition))
-		log.Debug(fmt.Sprintf("      doInsert(%2d) - defer(db) - db pointer=%p", partition, &db))
-
-		err := db.Close()
-		if err != nil {
-			// wwe
-			//log.Fatal(errors.Errorf("%v: %w", "db.Close()", err))
-			log.Debug(errors.Errorf("      doInsert(%2d) - %v: %w", "db.Close()", partition, err))
-		}
-
-		log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(db)", partition))
-	}(db)
+	// wwe
+	//defer func(db *sql.DB) {
+	//	log.Debug(fmt.Sprintf("Start doInsert(%2d) - defer(db)", partition))
+	//	log.Debug(fmt.Sprintf("      doInsert(%2d) - defer(db) - db pointer=%p", partition, &db))
+	//
+	//	deferErr := db.Close()
+	//	if err == nil {
+	//		err = deferErr
+	//	}
+	//	if err != nil {
+	//		log.Fatal(errors.Errorf("      doInsert(%2d) - %v: %w", "db.Close()", partition, err))
+	//	}
+	//
+	//	log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(db)", partition))
+	//}(db)
 
 	sqlInsert := configs["sql.insert"].(string)
-
-	log.Debug(fmt.Sprintf("      doInsert(%2d) - sqlInsert=%v", partition, sqlInsert))
 
 	resultInsert, err := db.ExecContext(ctx, sqlInsert, rows.keys, rows.vals)
 	if err != nil {
@@ -158,15 +152,10 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 				err))
 	}
 
-	log.Debug(fmt.Sprintf("      doInsert(%2d) - resultInsert pointer=%p", partition, &resultInsert))
-
 	rowCount, err := resultInsert.RowsAffected()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	log.Debug(fmt.Sprintf("      doInsert(%2d) - rowCount      =%d", partition, rowCount))
-	log.Debug(fmt.Sprintf("      doInsert(%2d) - len(rows.keys)=%d", partition, len(rows.keys)))
 
 	if int(rowCount) != len(rows.keys) {
 		log.Fatalf(
@@ -176,28 +165,36 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 
 	log.Debug(fmt.Sprintf("End   doInsert(%2d)", partition))
 }
+
 func doSelect(ctx context.Context, configs map[string]interface{}, trial int, partition int, expect int, wg *sync.WaitGroup) {
-	log.Debug("Start doSelect()")
+	log.Debug(fmt.Sprintf("Start doSelect(%2d)", partition))
 
 	defer wg.Done()
 
-	log.Debug(fmt.Sprintf("      doSelect() - connection.dsn=%v", configs["connection.dsn"]))
+	log.Debug(fmt.Sprintf("      doSelect(%2d) - connection.dsn=%v", partition, configs["connection.dsn"]))
 
 	db, err := sql.Open("godror", configs["connection.dsn"].(string))
 	if err != nil {
 		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
 	}
 
-	defer func(db *sql.DB) {
-		log.Debug("Start doSelect() - defer(db)")
+	log.Debug(fmt.Sprintf("      doSelect(%2d) - db pointer=%p", partition, &db))
 
-		err := db.Close()
-		if err != nil {
-			log.Fatal(errors.Errorf("%v: %w", "db.Close()", err))
-		}
-
-		log.Debug("End   doSelect() - defer(db)")
-	}(db)
+	// wwe
+	//defer func(db *sql.DB) {
+	//	log.Debug(fmt.Sprintf("Start doSelect(%2d) - defer(db)", partition))
+	//	log.Debug(fmt.Sprintf("      doSelect(%2d) - defer(db) - db pointer=%p", partition, &db))
+	//
+	//	deferErr := db.Close()
+	//	if err == nil {
+	//		err = deferErr
+	//	}
+	//	if err != nil {
+	//		log.Fatal(errors.Errorf("      doSelect(%2d) - defer(db) - %v: %w", "db.Close()", partition, err))
+	//	}
+	//
+	//	log.Debug(fmt.Sprintf("End   doSelect(%2d) - defer(db)", partition))
+	//}(db)
 
 	selectSQL := configs["sql.select"].(string) + " WHERE partition_key = " +
 		strconv.Itoa(partition)
@@ -205,18 +202,22 @@ func doSelect(ctx context.Context, configs map[string]interface{}, trial int, pa
 
 	rows, err := db.QueryContext(ctx, selectSQL, opts)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(errors.Errorf("      doSelect(%2d) - %v: %w", "db.Close()", partition, err))
 	}
 
 	defer func(rows *sql.Rows) {
-		log.Debug("Start doSelect() - defer(rows)")
+		log.Debug(fmt.Sprintf("Start doSelect(%2d) - defer(rows)", partition))
+		log.Debug(fmt.Sprintf("      doSelect(%2d) - defer(rows) - db pointer=%p", partition, &db))
 
-		err := rows.Close()
+		deferErr := rows.Close()
+		if err == nil {
+			err = deferErr
+		}
 		if err != nil {
-			log.Fatal(errors.Errorf("%v: %w", "rows.Close()", err))
+			log.Fatal(errors.Errorf("      doSelect(%2d) - defer(rows) - %v: %w", "rows.Close()", partition, err))
 		}
 
-		log.Debug("End   doSelect() - defer(rows)")
+		log.Debug(fmt.Sprintf("End   doSelect(%2d) - defer(rows)", partition))
 	}(rows)
 
 	i := 0
@@ -225,12 +226,13 @@ func doSelect(ctx context.Context, configs map[string]interface{}, trial int, pa
 	}
 
 	if i != expect {
-		log.Fatalf(
-			"Trial %d, partition %d : failed to get %d rows (got %d)\n",
-			trial, partition, expect, i)
+		log.Fatal(
+			errors.Errorf(
+				"      doSelect(%2d) - Trial %d, Partition %d : failed to get %d rows (got %d)\n",
+				trial, partition, expect, i))
 	}
 
-	log.Debug("End   doSelect()")
+	log.Debug(fmt.Sprintf("Start doSelect(%2d)", partition))
 }
 
 func initDb(ctx context.Context, configs map[string]interface{}) {

@@ -18,5 +18,5 @@ vet: fmt
 .PHONY:vet
 
 build: vet
-	go build cmd/orabench.go
+	go build cmd/OraBench.go
 .PHONY:build
