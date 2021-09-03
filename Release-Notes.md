@@ -70,7 +70,7 @@ For example, the MonetDB database is faster with inactive constraints by 21.2% c
 
 - Issue: `doInsert()` - `defer func db.close`: **Exception 0xc0000005 0x0**.
 
-    time="2021-09-03T14:43:21+02:00" level=info msg="Start OraBench.go"
+`    time="2021-09-03T14:43:21+02:00" level=info msg="Start OraBench.go"
     time="2021-09-03T14:43:21+02:00" level=info msg="Start Distribution of the data in the partitions"
     time="2021-09-03T14:43:21+02:00" level=info msg="Partition 1 has  3039 rows\n"
     time="2021-09-03T14:43:21+02:00" level=info msg="Partition 2 has  3161 rows\n"
@@ -79,11 +79,11 @@ For example, the MonetDB database is faster with inactive constraints by 21.2% c
     time="2021-09-03T14:43:21+02:00" level=info msg="Partition 32 has  3128 rows\n"
     time="2021-09-03T14:43:21+02:00" level=info msg="End   Distribution of the data in the partitions"
     time="2021-09-03T14:43:21+02:00" level=info msg="Start trial no. 1"
-    Exception 0xc0000005 0x0--------------------------------------------------------------------------------
+    Exception 0xc0000005 0x0--------------------------------------------------------------------------------`
 
-  - Issue: `doSelect()` - `defer func db.close`: **Exception 0xc0000005 0x0 0x38 0x7ffaf9838a54**.
+- Issue: `doSelect()` - `defer func db.close`: **Exception 0xc0000005 0x0 0x38 0x7ffaf9838a54**.
 
-    time="2021-09-03T14:48:27+02:00" level=info msg="Start OraBench.go"
+`    time="2021-09-03T14:48:27+02:00" level=info msg="Start OraBench.go"
     time="2021-09-03T14:48:27+02:00" level=info msg="Start Distribution of the data in the partitions"
     time="2021-09-03T14:48:27+02:00" level=info msg="Partition 1 has  3039 rows\n"
     time="2021-09-03T14:48:27+02:00" level=info msg="Partition 2 has  3161 rows\n"
@@ -94,8 +94,7 @@ For example, the MonetDB database is faster with inactive constraints by 21.2% c
     time="2021-09-03T14:48:27+02:00" level=info msg="Start trial no. 1"
     Exception 0xc0000005 0x0 0x38 0x7ffaf9838a54
     PC=0x7ffaf9838a54
-  
     runtime: unknown pc 0x7ffaf9838a54
     stack: frame={sp:0x9eb99fdea8, fp:0x0} stack=[0x0,0x9eb99ff778)
     0x0000009eb99fdda8:  0x0000000000001fc8  0x0000009eb99fde10
-    ...
+    ...`
