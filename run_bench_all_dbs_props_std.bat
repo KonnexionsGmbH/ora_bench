@@ -9,15 +9,9 @@ rem ----------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" (
-    call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-    if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
-        exit -1073741510
-    )
-)
-
 set ORA_BENCH_BENCHMARK_COMMENT="Standard tests (locally)"
+
+set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
 
 if exist ora_bench.log del /f /q ora_bench.log
 if exist priv\ora_bench_result.csv del /f /q priv\ora_bench_result.csv
@@ -101,7 +95,6 @@ set ORA_BENCH_PASSWORD_SYS=oracle
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 )
-
 echo.
 echo Script %0 is now running
 echo.
@@ -122,7 +115,15 @@ echo.
     echo -------------------------------------------------------------------------------
     echo:| TIME
     echo ===============================================================================
-    
+   
+    if exist "%ORA_BENCH_BENCHMARK_VCVARSALL%" (
+        call "%ORA_BENCH_BENCHMARK_VCVARSALL%" x64
+        if %ERRORLEVEL% neq 0 (
+            echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
+            exit -1073741510
+        )
+    )
+
     call scripts\run_create_bulk_file.bat
     if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'call scripts\run_create_bulk_file.bat' was aborted, error code=%ERRORLEVEL%

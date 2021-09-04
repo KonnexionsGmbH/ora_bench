@@ -9,15 +9,9 @@ rem ----------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" (
-    call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-    if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
-        exit -1073741510
-    )
-)
-
 set ORA_BENCH_BENCHMARK_COMMENT="Standard series (locally)"
+
+set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
 
 if exist ora_bench.log del /f /q ora_bench.log
 if exist priv\ora_bench_result.csv del /f /q priv\ora_bench_result.csv
@@ -123,6 +117,14 @@ echo.
     echo:| TIME
     echo ===============================================================================
     
+    if exist "%ORA_BENCH_BENCHMARK_VCVARSALL%" (
+        call "%ORA_BENCH_BENCHMARK_VCVARSALL%" x64
+        if %ERRORLEVEL% neq 0 (
+            echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
+            exit -1073741510
+        )
+    )
+
     set ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
