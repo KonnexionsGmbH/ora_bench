@@ -23,15 +23,24 @@ if %ERRORLEVEL% neq 0 (
 )
 
 rd /Q /S ..\priv\docs_java
-md ..\priv\docs_java
-xcopy /Q /S build\docs\* ..\priv\docs_java
-
-cd ..\..
-set ERRORLEVEL=%ERRORLEVEL_ORIGINAL%
 if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'set ERRORLEVEL=%ERRORLEVEL_ORIGINAL%' was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'rd /Q /S ..\priv\docs_java' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
+
+md ..\priv\docs_java
+if %ERRORLEVEL% neq 0 (
+    echo Processing of the script: %0 - step: 'md ..\priv\docs_java' was aborted, error code=%ERRORLEVEL%
+    exit -1073741510
+)
+
+xcopy /Q /S build\docs\* ..\priv\docs_java
+if %ERRORLEVEL% neq 0 (
+    echo Processing of the script: %0 - step: 'xcopy /Q /S build\docs\* ..\priv\docs_java' was aborted, error code=%ERRORLEVEL%
+    exit -1073741510
+)
+
+cd ..\..
 
 echo -------------------------------------------------------------------------------
 echo:| TIME
