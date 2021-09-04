@@ -14,9 +14,9 @@ echo ---------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - all drivers.
 echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON              : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
-echo RUN_JDBC_KOTLIN                   : %ORA_BENCH_RUN_JDBC_KOTLIN%
 echo RUN_GODROR_GO                     : %ORA_BENCH_RUN_GODROR_GO%
 echo RUN_JDBC_JAVA                     : %ORA_BENCH_RUN_JDBC_JAVA%
+echo RUN_JDBC_KOTLIN                   : %ORA_BENCH_RUN_JDBC_KOTLIN%
 echo RUN_ODPI_C                        : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORACLE_JL_JULIA               : %ORA_BENCH_RUN_ORACLE_JL_JULIA%
 echo RUN_ORANIF_ELIXIR                 : %ORA_BENCH_RUN_ORANIF_ELIXIR%
@@ -24,6 +24,14 @@ echo RUN_ORANIF_ERLANG                 : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo --------------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
+
+if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
+    call lang\python\scripts\run_bench_cx_oracle.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\python\scripts\run_bench_cx_oracle.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+)
 
 if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU ["true"] (
     call lang\go\scripts\run_bench_godror.bat
@@ -33,14 +41,6 @@ if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU ["true"] (
     )
 )
     
-if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
-    call lang\python\scripts\run_bench_cx_oracle.bat
-    if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'call lang\python\scripts\run_bench_cx_oracle.bat' was aborted, error code=%ERRORLEVEL%
-        exit -1073741510
-    )
-)
-
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
     call lang\java\scripts\run_bench_jdbc.bat
     if %ERRORLEVEL% neq 0 (
@@ -57,6 +57,7 @@ if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] EQU ["true"] (
     )
 )
 
+export ORA_BENCH_RUN_ODPI_C=false
 if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
     call lang\c\scripts\run_bench_odpi.bat
     if %ERRORLEVEL% neq 0 (
@@ -65,6 +66,7 @@ if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
     )
 )
     
+export ORA_BENCH_RUN_ORACLE_JL_JULIA=false
 if ["%ORA_BENCH_RUN_ORACLE_JL_JULIA%"] EQU ["true"] (
     call lang\julia\scripts\run_bench_oracle_jl.bat
     if %ERRORLEVEL% neq 0 (

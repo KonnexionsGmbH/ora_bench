@@ -34,7 +34,7 @@ if [ "${ORA_BENCH_CHOICE_DRIVER}" = "complete" ]; then
     export ORA_BENCH_RUN_ODPI_C=true
     export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
     export ORA_BENCH_RUN_ORANIF_ELIXIR=true
-# wwe   export ORA_BENCH_RUN_ORANIF_ERLANG=true
+    export ORA_BENCH_RUN_ORANIF_ERLANG=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "c" ]; then
     export ORA_BENCH_RUN_ODPI_C=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "elixir" ]; then
@@ -86,8 +86,8 @@ echo "ora_bench - Oracle benchmark - Run with variations of properties."
 echo "--------------------------------------------------------------------------------"
 echo "MULTIPLE_RUN                      : $ORA_BENCH_MULTIPLE_RUN"
 echo "--------------------------------------------------------------------------------"
-echo "CHOICE_DRIVER                     : $ORA_BENCH_CHOICE_DRIVER"
 echo "BENCHMARK_DATABASE                : $ORA_BENCH_BENCHMARK_DATABASE"
+echo "CHOICE_DRIVER                     : $ORA_BENCH_CHOICE_DRIVER"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON              : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_GODROR_GO                     : $ORA_BENCH_RUN_GODROR_GO"
@@ -104,8 +104,8 @@ echo "RUN_DB_21_3_EE                    : $ORA_BENCH_RUN_DB_21_3_EE"
 echo "--------------------------------------------------------------------------------"
 echo "BENCHMARK_BATCH_SIZE              : $ORA_BENCH_BENCHMARK_BATCH_SIZE"
 echo "BENCHMARK_COMMENT                 : $ORA_BENCH_BENCHMARK_COMMENT"
-echo "BULKFILE_EXISTING                 : $ORA_BENCH_BULKFILE_EXISTING"
 echo "BENCHMARK_TRANSACTION_SIZE        : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
+echo "BULKFILE_EXISTING                 : $ORA_BENCH_BULKFILE_EXISTING"
 echo "CONNECTION_HOST                   : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT                   : $ORA_BENCH_CONNECTION_PORT"
 echo "FILE_CONFIGURATION_NAME           : $ORA_BENCH_FILE_CONFIGURATION_NAME"

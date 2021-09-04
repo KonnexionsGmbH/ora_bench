@@ -34,7 +34,7 @@ call %ORA_BENCH_VCVARSALL_PATH%vcvarsall.bat x64
 echo ================================================================================
 echo Start %0
 echo --------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - ODPI-C.
+echo ora_bench - Oracle benchmark - ODPI-C and C.
 echo --------------------------------------------------------------------------------
 echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
 echo --------------------------------------------------------------------------------

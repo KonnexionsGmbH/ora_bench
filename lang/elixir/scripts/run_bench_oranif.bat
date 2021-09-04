@@ -70,7 +70,16 @@ cd lang\elixir
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     if EXIST deps\    rd /Q/S deps 
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'rd /Q/S deps' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+
     if EXIST mix.lock del /s mix.lock 
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'del /s mix.lock' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
 
     call mix local.hex --force
     if %ERRORLEVEL% neq 0 (

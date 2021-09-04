@@ -60,10 +60,14 @@ fi
     if [ "$ORA_BENCH_MULTIPLE_RUN" != "true" ]; then
 
         if [ -f "mix.lock" ]; then
-            rm -f mix.lock
+            if ! rm -f mix.lock; then
+                exit 255
+            fi
         fi
         if [ -f "deps" ]; then
-            rm -rf deps
+            if ! rm -rf deps; then
+                exit 255
+            fi
         fi
 
         if ! mix local.hex --force; then

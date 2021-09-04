@@ -38,6 +38,7 @@ Release Date: xx.xx.2021
 
 ### Open issues
 
+- C & odpi: (see [here](#issues_c_odpi))
 - Go & godror: (see [here](#issues_go_godror))
 
 ----
@@ -65,6 +66,51 @@ For example, the MonetDB database is faster with inactive constraints by 21.2% c
 ----
 
 ## Detailed Open Issues
+
+### <a name="issues_c_odpi"></a> C & ODPI-C
+
+#### Issue: Ubuntu 20.04: compile errors
+
+```
+    rm -rf ./*.obj
+    rm -rf ./OraBench
+    gcc -o OraBench -Ilang/c -I"lang/c/odpi/include" -O2 -ggdb -Wall -fPIC -std=gnu11 -DEMBED lang/c/odpis.c lang/c/config.c lang/c/OraBench.c -lpthread -ldl 
+    In file included from lang/c/odpi/include/../embed/dpi.c:27,
+                     from lang/c/odpis.c:7:
+    lang/c/odpi/include/../embed/../src/dpiError.c: In function ‘dpiError__setFromOS’:
+    lang/c/odpi/include/../embed/../src/dpiError.c:264:13: warning: assignment to ‘char *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+      264 |     message = strerror_r(err, buffer, sizeof(buffer));
+          |             ^
+    In file included from lang/c/odpi/include/../embed/dpi.c:38,
+                     from lang/c/odpis.c:7:
+    lang/c/odpi/include/../embed/../src/dpiOci.c: In function ‘dpiOci__loadLibInModuleDir’:
+    lang/c/odpi/include/../embed/../src/dpiOci.c:1856:5: error: unknown type name ‘Dl_info’
+     1856 |     Dl_info info;
+          |     ^~~~~~~
+    lang/c/odpi/include/../embed/../src/dpiOci.c:1858:9: warning: implicit declaration of function ‘dladdr’ [-Wimplicit-function-declaration]
+     1858 |     if (dladdr(dpiContext_createWithParams, &info) != 0) {
+          |         ^~~~~~
+    lang/c/odpi/include/../embed/../src/dpiOci.c:1860:56: error: request for member ‘dli_fname’ in something not a structure or union
+     1860 |             dpiDebug__print("module name is %s\n", info.dli_fname);
+          |                                                        ^
+    lang/c/odpi/include/../embed/../src/dpiOci.c:1861:31: error: request for member ‘dli_fname’ in something not a structure or union
+     1861 |         dirName = strrchr(info.dli_fname, '/');
+          |                               ^
+    lang/c/odpi/include/../embed/../src/dpiOci.c:1863:59: error: request for member ‘dli_fname’ in something not a structure or union
+     1863 |             return dpiOci__loadLibWithDir(loadParams, info.dli_fname,
+          |                                                           ^
+    lang/c/odpi/include/../embed/../src/dpiOci.c:1864:45: error: request for member ‘dli_fname’ in something not a structure or union
+     1864 |                     (size_t) (dirName - info.dli_fname), 0, error);
+          |                                             ^
+    make: *** [lang/c/Makefile:30: OraBench] Error 1
+```
+
+#### Issue: Windows 10: no reaction
+
+```
+    Start OraBench.c
+    argv[1]=priv\properties\ora_bench_c.properties
+```
 
 ### <a name="issues_go_godror"></a> Go & godror
 
