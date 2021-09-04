@@ -1,11 +1,11 @@
 @echo off
 
-rem ------------------------------------------------------------------------------
+rem --------------------------------------------------------------------------------
 rem
 rem run_bench_all_dbs_props_var.bat: Oracle Benchmark for all database versions
 rem                                  with variations of properties.
 rem
-rem ------------------------------------------------------------------------------
+rem --------------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
@@ -26,9 +26,9 @@ if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
 )
 
 if ["%1"] EQU [""] (
-    echo =========================================================
+    echo ===============================================================================
     echo complete           - All implemented variations
-    echo ---------------------------------------------------------
+    echo -------------------------------------------------------------------------------
     echo c                  - C++ [gcc] and Oracle ODPI-C
     echo elixir             - Elixir and oranif
     echo erlang             - Erlang and oranif
@@ -37,7 +37,7 @@ if ["%1"] EQU [""] (
     echo julia              - Julia and Oracle.jl
     echo kotlin             - Kotlin and Oracle JDBC
     echo python             - Python 3 and Oracle cx_Oracle
-    echo ---------------------------------------------------------
+    echo -------------------------------------------------------------------------------
     set /P ORA_BENCH_CHOICE_DRIVER="Enter the desired programming lanuage (and database driver) [default: %ORA_BENCH_CHOICE_DRIVER_DEFAULT%] "
 
     if ["!ORA_BENCH_CHOICE_DRIVER!"] EQU [""] (
@@ -48,13 +48,13 @@ if ["%1"] EQU [""] (
 )
 
 if ["%2"] EQU [""] (
-    echo =========================================================
+    echo ===============================================================================
     echo complete           - All implemented variations
-    echo ---------------------------------------------------------
+    echo -------------------------------------------------------------------------------
     echo 18                 - Oracle Database 18c Express Edition
     echo 19                 - Oracle Database 19c 
     echo 21                 - Oracle Database 21c
-    echo ---------------------------------------------------------
+    echo -------------------------------------------------------------------------------
     set /P  ORA_BENCH_CHOICE_DB="Enter the desired database version [default: %ORA_BENCH_CHOICE_DB_DEFAULT%] "
 
     if ["!ORA_BENCH_CHOICE_DB!"] EQU [""] (
@@ -102,16 +102,16 @@ echo.
 
 > run_bench_all_dbs_props_var.log 2>&1 (
 
-    echo ================================================================================
+    echo ===============================================================================
     echo Start %0
-    echo --------------------------------------------------------------------------------
+    echo -------------------------------------------------------------------------------
     echo ora_bench - Oracle benchmark - all databases with property variations.
-    echo --------------------------------------------------------------------------------
+    echo -------------------------------------------------------------------------------
     echo CHOICE_DRIVER                 : %ORA_BENCH_CHOICE_DRIVER%
     echo CHOICE_DB                     : %ORA_BENCH_CHOICE_DB%
-    echo --------------------------------------------------------------------------------
+    echo -------------------------------------------------------------------------------
     echo:| TIME
-    echo ================================================================================
+    echo ===============================================================================
     
     set ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
@@ -151,11 +151,11 @@ echo.
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
     
-    echo --------------------------------------------------------------------------------
+    echo -------------------------------------------------------------------------------
     echo:| TIME
-    echo --------------------------------------------------------------------------------
+    echo -------------------------------------------------------------------------------
     echo End   %0
-    echo ================================================================================
+    echo ===============================================================================
     
     start priv\audio\end_of_series.mp3
     if %ERRORLEVEL% neq 0 (

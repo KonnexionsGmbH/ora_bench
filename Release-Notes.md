@@ -126,7 +126,7 @@ For example, the MonetDB database is faster with inactive constraints by 21.2% c
     time="2021-09-03T14:43:21+02:00" level=info msg="Partition 32 has  3128 rows\n"
     time="2021-09-03T14:43:21+02:00" level=info msg="End   Distribution of the data in the partitions"
     time="2021-09-03T14:43:21+02:00" level=info msg="Start trial no. 1"
-    Exception 0xc0000005 0x0--------------------------------------------------------------------------------
+    Exception 0xc0000005 0x0-------------------------------------------------------------------------------
 ```
 
 #### Issue: `doSelect()` - `defer func db.close`: Exception 0xc0000005 0x0 0x38 0x7ffaf9838a54.

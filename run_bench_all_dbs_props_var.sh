@@ -2,12 +2,12 @@
 
 set -e
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 #
 # run_bench_all_dbs_props_var.sh: Oracle Benchmark for all database versions
 #                                 with variations of properties.
 #
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 export ORA_BENCH_MULTIPLE_RUN=true
 
@@ -28,9 +28,9 @@ if [ -z "$ORA_BENCH_CONNECTION_PORT" ]; then
 fi
 
 if [ -z "$1" ]; then
-    echo "========================================================="
+    echo "=============================================================================="
     echo "complete           - All implemented variations"
-    echo "---------------------------------------------------------"
+    echo "-------------------------------------------------------------------------------"
     echo "c                  - C++ [gcc] and Oracle ODPI-C"
     echo "elixir             - Elixir and oranif"
     echo "erlang             - Erlang and oranif"
@@ -39,7 +39,7 @@ if [ -z "$1" ]; then
     echo "julia              - Julia and Oracle.jl"
     echo "kotlin             - Kotlin and Oracle JDBC"
     echo "python             - Python 3 and Oracle cx_Oracle"
-    echo "---------------------------------------------------------"
+    echo "-------------------------------------------------------------------------------"
     read -rp "Enter the desired programming lanuage (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
     export ORA_BENCH_CHOICE_DRIVER=${ORA_BENCH_CHOICE_DRIVER}
 
@@ -51,13 +51,13 @@ else
 fi
 
 if [ -z "$2" ]; then
-    echo "========================================================="
+    echo "=============================================================================="
     echo "complete           - All implemented variations"
-    echo "---------------------------------------------------------"
+    echo "-------------------------------------------------------------------------------"
     echo "18                 - Oracle Database 18c Express Edition"
     echo "19                 - Oracle Database 19c"
     echo "21                 - Oracle Database 21c"
-    echo "---------------------------------------------------------"
+    echo "-------------------------------------------------------------------------------"
     read -rp "Enter the desired database version [default: ${ORA_BENCH_CHOICE_DB_DEFAULT}] " ORA_BENCH_CHOICE_DB
     export ORA_BENCH_CHOICE_DB=${ORA_BENCH_CHOICE_DB}
 
@@ -101,16 +101,16 @@ echo ""
 exec &> >(tee -i $LOG_FILE) 2>&1
 sleep .1
 
-echo "================================================================================"
+echo "=============================================================================="
 echo "Start $0"
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - all databases with property variations."
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 echo "CHOICE_DRIVER                     : $ORA_BENCH_CHOICE_DRIVER"
 echo "CHOICE_DB                         : $ORA_BENCH_CHOICE_DB"
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
-echo "================================================================================"
+echo "=============================================================================="
 
 export ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
@@ -145,11 +145,11 @@ export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=$ORA_BENCH_BENCHMARK_CORE_MUL
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=$ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT
 
 echo ""
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 echo "End   $0"
-echo "================================================================================"
+echo "=============================================================================="
 
 if ! start priv/audio/end_of_series.mp3; then
     exit 255

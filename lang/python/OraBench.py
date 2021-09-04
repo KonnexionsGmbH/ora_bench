@@ -11,9 +11,9 @@ import threading
 import yaml
 from pathlib import Path
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Definition of the global variables.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 BENCHMARK_DRIVER = 'Oracle cx_Oracle (Version v' + cx_Oracle.version + ')'
 BENCHMARK_LANGUAGE = 'Python 3 ' + sys.version
@@ -27,9 +27,9 @@ IX_LAST_QUERY = 2
 IX_LAST_TRIAL = 1
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Creating the database objects connection and cursor.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def create_database_objects(logger, config):
     if logger.isEnabledFor(logging.DEBUG):
@@ -62,9 +62,9 @@ def create_database_objects(logger, config):
     return connections_cursors
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Writing the results.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def create_result(logger, config, result_file, measurement_data, action, trial_number, sql_statement, start_date_time, sql_operation):
     if logger.isEnabledFor(logging.DEBUG):
@@ -110,9 +110,9 @@ def create_result(logger, config, result_file, measurement_data, action, trial_n
         logger.debug('End')
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Creating the result file.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def create_result_file(logger, config):
     if logger.isEnabledFor(logging.DEBUG):
@@ -132,9 +132,9 @@ def create_result_file(logger, config):
     return result_file
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Recording the results of the benchmark - end processing.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def create_result_measuring_point_end(logger, config, result_file, measurement_data, action, trial_number=0, sql_statement='', sql_operation=''):
     if logger.isEnabledFor(logging.DEBUG):
@@ -163,9 +163,9 @@ def create_result_measuring_point_end(logger, config, result_file, measurement_d
         logger.debug('End')
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Recording the results of the benchmark - start processing.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def create_result_measuring_point_start(logger, measurement_data, action):
     if logger.isEnabledFor(logging.DEBUG):
@@ -206,9 +206,9 @@ def create_result_measuring_point_start_benchmark(logger, config):
     return measurement_data_result_file
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Loading the bulk file into memory.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def get_bulk_data_partitions(logger, config):
     if logger.isEnabledFor(logging.DEBUG):
@@ -224,9 +224,9 @@ def get_bulk_data_partitions(logger, config):
 
     bulk_data_partitions = [[] for _ in range(0, benchmark_number_partitions)]
 
-    # ------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------
     # Loading the bulk file into memory.
-    # ------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------
 
     for key_data_tuple in bulk_data:
         key = key_data_tuple[0]
@@ -248,9 +248,9 @@ def get_bulk_data_partitions(logger, config):
     return bulk_data_partitions
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Loading the configuration parameters into memory.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def get_config(logger):
     if logger.isEnabledFor(logging.DEBUG):
@@ -303,9 +303,9 @@ def get_config(logger):
     return config
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Performing the insert operations.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def insert(logger, config, connection, cursor, bulk_data_partition):
     if logger.isEnabledFor(logging.DEBUG):
@@ -338,9 +338,9 @@ def insert(logger, config, connection, cursor, bulk_data_partition):
         logger.debug('End')
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Main routine.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def main():
     with open('lang/python/logging.yaml', 'r') as f:
@@ -366,9 +366,9 @@ def main():
         logger.debug('End')
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Performing the benchmark run.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def run_benchmark(logger):
     if logger.isEnabledFor(logging.DEBUG):
@@ -403,9 +403,9 @@ def run_benchmark(logger):
         logger.debug('End')
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Performing the insert operations.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def run_insert(logger, config, connections, cursors, bulk_data_partitions, result_file, measurement_data, trial_number):
     if logger.isEnabledFor(logging.DEBUG):
@@ -435,9 +435,9 @@ def run_insert(logger, config, connections, cursors, bulk_data_partitions, resul
     return measurement_data
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Performing the select operations.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def run_select(logger, config, cursors, bulk_data_partitions, result_file, measurement_data, trial_number):
     if logger.isEnabledFor(logging.DEBUG):
@@ -467,9 +467,9 @@ def run_select(logger, config, cursors, bulk_data_partitions, result_file, measu
     return measurement_data
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Performing one trial.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def run_trial(logger, config, connections, cursors, bulk_data_partitions, measurement_data, result_file, trial_number):
     if logger.isEnabledFor(logging.DEBUG):
@@ -502,9 +502,9 @@ def run_trial(logger, config, connections, cursors, bulk_data_partitions, measur
     return measurement_data
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Performing the select operations.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 def select(logger, cursor, bulk_size_partition, partition_key, sql_statement):
     if logger.isEnabledFor(logging.DEBUG):
@@ -525,8 +525,8 @@ def select(logger, cursor, bulk_size_partition, partition_key, sql_statement):
         logger.debug('End')
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Program start.
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 main()

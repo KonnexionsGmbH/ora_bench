@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 #
 # run_properties_standard.sh: Run with standard properties.
 #
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 set -e
 
@@ -77,16 +77,16 @@ if [ -z "$ORA_BENCH_PASSWORD_SYS" ]; then
     export ORA_BENCH_PASSWORD_SYS=oracle
 fi
 
-echo "================================================================================"
+echo "=============================================================================="
 echo "Start $0"
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - run with standard properties."
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 echo "MULTIPLE_RUN                      : $ORA_BENCH_MULTIPLE_RUN"
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 echo "BENCHMARK_DATABASE                : $ORA_BENCH_BENCHMARK_DATABASE"
 echo "CHOICE_DRIVER                     : $ORA_BENCH_CHOICE_DRIVER"
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON              : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
 echo "RUN_GODROR_GO                     : $ORA_BENCH_RUN_GODROR_GO"
 echo "RUN_JDBC_JAVA                     : $ORA_BENCH_RUN_JDBC_JAVA"
@@ -95,11 +95,11 @@ echo "RUN_ODPI_C                        : $ORA_BENCH_RUN_ODPI_C"
 echo "RUN_ORACLE_JL_JULIA               : $ORA_BENCH_RUN_ORACLE_JL_JULIA"
 echo "RUN_ORANIF_ELIXIR                 : $ORA_BENCH_RUN_ORANIF_ELIXIR"
 echo "RUN_ORANIF_ERLANG                 : $ORA_BENCH_RUN_ORANIF_ERLANG"
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 echo "RUN_DB_18_4_XE                    : $ORA_BENCH_RUN_DB_18_4_XE"
 echo "RUN_DB_19_3_EE                    : $ORA_BENCH_RUN_DB_19_3_EE"
 echo "RUN_DB_21_3_EE                    : $ORA_BENCH_RUN_DB_21_3_EE"
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 echo "BENCHMARK_BATCH_SIZE              : $ORA_BENCH_BENCHMARK_BATCH_SIZE"
 echo "BENCHMARK_COMMENT                 : $ORA_BENCH_BENCHMARK_COMMENT"
 echo "BENCHMARK_TRANSACTION_SIZE        : $ORA_BENCH_BENCHMARK_TRANSACTION_SIZE"
@@ -107,9 +107,9 @@ echo "BULKFILE_EXISTING                 : $ORA_BENCH_BULKFILE_EXISTING"
 echo "CONNECTION_HOST                   : $ORA_BENCH_CONNECTION_HOST"
 echo "CONNECTION_PORT                   : $ORA_BENCH_CONNECTION_PORT"
 echo "FILE_CONFIGURATION_NAME           : $ORA_BENCH_FILE_CONFIGURATION_NAME"
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
-echo "================================================================================"
+echo "=============================================================================="
 
 if ! { /bin/bash scripts/run_collect_and_compile.sh; }; then
     exit 255
@@ -124,8 +124,8 @@ if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
 fi
 
 echo ""
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 echo "End   $0"
-echo "================================================================================"
+echo "=============================================================================="
