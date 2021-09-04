@@ -34,14 +34,17 @@ if %ERRORLEVEL% neq 0 (
     exit -1073741510
 )
 
+set ORA_BENCH_FILE_CONFIGURATION_NAME_ORIGINAL=%ORA_BENCH_FILE_CONFIGURATION_NAME%
 set ORA_BENCH_FILE_CONFIGURATION_NAME=..\priv\properties\ora_bench.properties
 call gradle test --warning-mode all
+set ERRORLEVEL_ORIGINAL=%ERRORLEVEL%
+set ORA_BENCH_FILE_CONFIGURATION_NAME=%ORA_BENCH_FILE_CONFIGURATION_NAME_ORIGINAL%
+cd ..\..
+set ERRORLEVEL=%ERRORLEVEL_ORIGINAL%
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'call gradle test --warning-mode all' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
-
-cd ..\..
 
 echo -------------------------------------------------------------------------------
 echo:| TIME

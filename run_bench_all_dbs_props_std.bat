@@ -9,6 +9,14 @@ rem ----------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" (
+    call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+)
+
 set ORA_BENCH_BENCHMARK_COMMENT="Standard tests (locally)"
 
 if exist ora_bench.log del /f /q ora_bench.log
@@ -63,6 +71,8 @@ if ["%2"] EQU [""] (
 ) else (
     set ORA_BENCH_CHOICE_DB=%2
 )
+
+set ERRORLEVEL=0
 
 set ORA_BENCH_RUN_DB_18_4_XE=false
 set ORA_BENCH_RUN_DB_19_3_EE=false
