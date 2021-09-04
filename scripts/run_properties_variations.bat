@@ -29,14 +29,15 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["complete"] (
     set ORA_BENCH_RUN_GODROR_GO=true
     set ORA_BENCH_RUN_JDBC_JAVA=true
     set ORA_BENCH_RUN_JDBC_KOTLIN=true
-    set ORA_BENCH_RUN_ODPI_C=true
-    set ORA_BENCH_RUN_ORACLE_JL_JULIA=true
+    set ORA_BENCH_RUN_ODPI_C=false
+    set ORA_BENCH_RUN_ORACLE_JL_JULIA=false
     set ORA_BENCH_RUN_ORANIF_ELIXIR=true
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["c"] (
     set ORA_BENCH_RUN_ODPI_C=true
+    set ORA_BENCH_RUN_ODPI_C=false
 )
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["elixir"] (
@@ -57,6 +58,7 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["java"] (
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["julia"] (
     set ORA_BENCH_RUN_ORACLE_JL_JULIA=true
+    set ORA_BENCH_RUN_ORACLE_JL_JULIA=false
 )
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["kotlin"] (

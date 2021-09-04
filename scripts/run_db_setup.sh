@@ -72,7 +72,7 @@ if [ "$OSTYPE" = "msys" ]; then
     fi
 else
     rm -f ~/.sqlnet.ora
-    if [ "$ORA_BENCH_BENCHMARK_DATABASE" = "db_19_3_ee" ] or
+    if [ "$ORA_BENCH_BENCHMARK_DATABASE" = "db_19_3_ee" ] ||
        [ "$ORA_BENCH_BENCHMARK_DATABASE" = "db_21_3_ee" ]; then
         echo "DISABLE_OOB=ON" >> ~/.sqlnet.ora
     fi

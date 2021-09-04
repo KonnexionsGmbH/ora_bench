@@ -57,7 +57,6 @@ if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] EQU ["true"] (
     )
 )
 
-export ORA_BENCH_RUN_ODPI_C=false
 if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
     call lang\c\scripts\run_bench_odpi.bat
     if %ERRORLEVEL% neq 0 (
@@ -66,7 +65,6 @@ if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
     )
 )
     
-export ORA_BENCH_RUN_ORACLE_JL_JULIA=false
 if ["%ORA_BENCH_RUN_ORACLE_JL_JULIA%"] EQU ["true"] (
     call lang\julia\scripts\run_bench_oracle_jl.bat
     if %ERRORLEVEL% neq 0 (
