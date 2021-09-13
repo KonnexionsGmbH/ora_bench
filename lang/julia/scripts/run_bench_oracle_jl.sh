@@ -23,8 +23,6 @@ if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 
-# export JULIA_DEBUG=OraBench
-
 echo "=============================================================================="
 echo "Start $0"
 echo "------------------------------------------------------------------------------"
@@ -56,7 +54,7 @@ if ! java -jar priv/libs/ora_bench_java.jar setup_toml; then
     exit 255
 fi
 
-if ! julia lang/julia/OraBench.jl; then
+if ! julia lang/julia/OraBench.jl priv/properties/ora_bench_toml.properties; then
     exit 255
 fi
 

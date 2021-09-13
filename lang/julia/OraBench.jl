@@ -18,9 +18,10 @@ using CSV
 using DataFrames
 using Dates
 using Formatting
+using Logging
 using Oracle
-using TimesDates
 using TOML
+using TimesDates
 
 # ----------------------------------------------------------------------------------
 # Definition of the global variables.
@@ -56,7 +57,6 @@ global FILE_BULK_DELIMITER = ""
 global FILE_BULK_LENGTH = 0
 global FILE_BULK_NAME = ""
 global FILE_BULK_SIZE = 0
-global FILE_CONFIGURATION_NAME_TOML = "priv/properties/ora_bench_toml.properties"
 global FILE_RESULT_DELIMITER = ""
 global FILE_RESULT_NAME = ""
 
@@ -85,6 +85,8 @@ function create_connections()
 
     connection_string =
         CONNECTION_HOST * ":" * string(CONNECTION_PORT) * "/" * CONNECTION_SERVICE
+
+    @info "wwe BENCHMARK_NUMBER_PARTITIONS=$(BENCHMARK_NUMBER_PARTITIONS)"
 
     for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
         try
@@ -319,11 +321,11 @@ end
 # Loading the configuration parameters into memory.
 # ----------------------------------------------------------------------------------
 
-function get_config()
+function load_config(configFile)
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
-    config_parser::Dict = TOML.parsefile(FILE_CONFIGURATION_NAME_TOML)
+    config_parser::Dict = TOML.parsefile(configFile)
 
     global BENCHMARK_BATCH_SIZE =
         parse(Int64, config_parser["DEFAULT"]["benchmark_batch_size"])
@@ -335,8 +337,8 @@ function get_config()
     global BENCHMARK_ID = config_parser["DEFAULT"]["benchmark_id"]
     global BENCHMARK_NUMBER_CORES =
         parse(Int64, config_parser["DEFAULT"]["benchmark_number_cores"])
-    global BENCHMARK_NUMBER_PARTITIONS = 1
-    # wwe   parse(Int64, config_parser["DEFAULT"]["benchmark_number_partitions"])
+    global BENCHMARK_NUMBER_PARTITIONS =
+          parse(Int64, config_parser["DEFAULT"]["benchmark_number_partitions"])
     global BENCHMARK_OS = config_parser["DEFAULT"]["benchmark_os"]
     global BENCHMARK_RELEASE = config_parser["DEFAULT"]["benchmark_release"]
     global BENCHMARK_TRANSACTION_SIZE =
@@ -418,6 +420,9 @@ end
 # ----------------------------------------------------------------------------------
 
 function main()
+    logger = SimpleLogger(stdout, Logging.Debug)
+    old_logger = global_logger(logger)
+
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
@@ -426,12 +431,28 @@ function main()
     m = Pkg.Operations.Context().env.manifest
     v = m[findfirst(v -> v.name == "Oracle", m)].version
 
-    global BENCHMARK_DRIVER = "Oracle.jl " * v
-    @info "wwe BENCHMARK_DRIVER=" + BENCHMARK_DRIVER
+    global BENCHMARK_DRIVER = "Oracle.jl " * string(v)
     global BENCHMARK_LANGUAGE = "Julia " * string(Base.VERSION)
-    @info "wwe BENCHMARK_LANGUAGE=" + BENCHMARK_LANGUAGE
 
-    # run_benchmark()
+    numberArgs = size(ARGS,1)
+
+    @info "main() - number arguments=$(numberArgs)"
+
+    if numberArgs == 0
+        @error "main() - no command line argument available"
+        throw(ArgumentError)
+    end
+
+    @info "main() - 1st argument=$(ARGS[1])"
+
+    if numberArgs > 1
+        @error "main() - more than one command line argument available"
+        throw(ArgumentError)
+    end
+
+     load_config(ARGS[1])
+
+    run_benchmark()
 
     @info "End   OraBench.jl"
 
@@ -449,20 +470,18 @@ function run_benchmark()
 
     create_result_measuring_point_start_benchmark()
 
-    get_config()
-
     get_bulk_data_partitions()
 
     create_connections()
 
-    for trial_number = 1:BENCHMARK_TRIALS
-        run_trial(trial_number)
-    end
+#     for trial_number = 1:BENCHMARK_TRIALS
+#         run_trial(trial_number)
+#     end
 
-    for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
-        Oracle.close(CONNECTIONS[partition_key])
-        @info "wwe connection " * string(partition_key) * " closed"
-    end
+     for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
+         Oracle.close(CONNECTIONS[partition_key])
+         @info "wwe connection " * string(partition_key) * " closed"
+     end
 
     create_result_measuring_point_end("benchmark")
 

@@ -23,8 +23,6 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 )
 
-rem set JULIA_DEBUG=OraBench
-
 echo ===============================================================================
 echo Start %0
 echo -------------------------------------------------------------------------------
@@ -60,7 +58,7 @@ if %ERRORLEVEL% neq 0 (
     exit -1073741510
 )
 
-julia lang\julia\OraBench.jl
+julia lang\julia\OraBench.jl priv\properties\ora_bench_toml.properties
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'julia OrtaBench.jl' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
