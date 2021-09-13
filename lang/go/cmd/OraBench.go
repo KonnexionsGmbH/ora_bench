@@ -29,9 +29,31 @@ type result struct {
 }
 
 func main() {
-	// log.SetLevel(log.DebugLevel)
+	//log.SetLevel(log.DebugLevel)
 
 	log.Println("Start OraBench.go")
+
+	numberArgs := len(os.Args)
+
+	log.Info(fmt.Sprintf("main() - number arguments=%2d", numberArgs))
+
+	if numberArgs == 0 {
+		log.Fatal("main() - no command line argument available")
+	}
+
+	log.Info(fmt.Sprintf("main() - 1st argument=%v", os.Args[0]))
+
+	if numberArgs == 1 {
+		log.Fatal("main() - command line argument missing")
+	}
+
+	log.Info(fmt.Sprintf("main() - 2nd argument=%v", os.Args[1]))
+
+	if numberArgs > 2 {
+		log.Info(fmt.Sprintf("main() - 3rd argument=%v", os.Args[2]))
+		log.Fatal("main() - more than one command line argument available")
+	}
+
 	configs := loadConfig(os.Args[1])
 
 	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
@@ -124,23 +146,19 @@ func doInsert(ctx context.Context, configs map[string]interface{}, trial int, pa
 		log.Fatal(errors.Errorf("      doInsert(%2d) - %v: %w", configs["connection.dsn"], partition, err))
 	}
 
-	log.Debug(fmt.Sprintf("      doInsert(%2d) - db pointer=%p", partition, &db))
+	defer func(db *sql.DB) {
+		log.Debug(fmt.Sprintf("Start doInsert(%2d) - defer(db)", partition))
 
-	// wwe
-	//defer func(db *sql.DB) {
-	//	log.Debug(fmt.Sprintf("Start doInsert(%2d) - defer(db)", partition))
-	//	log.Debug(fmt.Sprintf("      doInsert(%2d) - defer(db) - db pointer=%p", partition, &db))
-	//
-	//	deferErr := db.Close()
-	//	if err == nil {
-	//		err = deferErr
-	//	}
-	//	if err != nil {
-	//		log.Fatal(errors.Errorf("      doInsert(%2d) - %v: %w", "db.Close()", partition, err))
-	//	}
-	//
-	//	log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(db)", partition))
-	//}(db)
+		deferErr := db.Close()
+		if err == nil {
+			err = deferErr
+		}
+		if err != nil {
+			log.Fatal(errors.Errorf("      doInsert(%2d) - %v: %w", "db.Close()", partition, err))
+		}
+
+		log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(db)", partition))
+	}(db)
 
 	sqlInsert := configs["sql.insert"].(string)
 
@@ -178,23 +196,19 @@ func doSelect(ctx context.Context, configs map[string]interface{}, trial int, pa
 		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
 	}
 
-	log.Debug(fmt.Sprintf("      doSelect(%2d) - db pointer=%p", partition, &db))
+	defer func(db *sql.DB) {
+		log.Debug(fmt.Sprintf("Start doSelect(%2d) - defer(db)", partition))
 
-	// wwe
-	//defer func(db *sql.DB) {
-	//	log.Debug(fmt.Sprintf("Start doSelect(%2d) - defer(db)", partition))
-	//	log.Debug(fmt.Sprintf("      doSelect(%2d) - defer(db) - db pointer=%p", partition, &db))
-	//
-	//	deferErr := db.Close()
-	//	if err == nil {
-	//		err = deferErr
-	//	}
-	//	if err != nil {
-	//		log.Fatal(errors.Errorf("      doSelect(%2d) - defer(db) - %v: %w", "db.Close()", partition, err))
-	//	}
-	//
-	//	log.Debug(fmt.Sprintf("End   doSelect(%2d) - defer(db)", partition))
-	//}(db)
+		deferErr := db.Close()
+		if err == nil {
+			err = deferErr
+		}
+		if err != nil {
+			log.Fatal(errors.Errorf("      doSelect(%2d) - defer(db) - %v: %w", "db.Close()", partition, err))
+		}
+
+		log.Debug(fmt.Sprintf("End   doSelect(%2d) - defer(db)", partition))
+	}(db)
 
 	selectSQL := configs["sql.select"].(string) + " WHERE partition_key = " +
 		strconv.Itoa(partition)
@@ -207,7 +221,6 @@ func doSelect(ctx context.Context, configs map[string]interface{}, trial int, pa
 
 	defer func(rows *sql.Rows) {
 		log.Debug(fmt.Sprintf("Start doSelect(%2d) - defer(rows)", partition))
-		log.Debug(fmt.Sprintf("      doSelect(%2d) - defer(rows) - db pointer=%p", partition, &db))
 
 		deferErr := rows.Close()
 		if err == nil {
@@ -426,12 +439,18 @@ func resultWriter(configs map[string]interface{}, resultChn []result) {
 			"\n"}, fileResultDelimiter)
 
 		d := result.end.Sub(result.start)
-		fmt.Fprintf(resultFile, resultFormat, result.trial, result.sql,
+		_, err := fmt.Fprintf(resultFile, resultFormat, result.trial, result.sql,
 			result.action, tsStr(result.start), tsStr(result.end), d.Seconds(),
 			d.Nanoseconds())
+		if err != nil {
+			log.Fatal(errors.Errorf("%v: %w", "resultWriter()", err))
+		}
 	}
 
-	resultFile.Flush()
+	err = resultFile.Flush()
+	if err != nil {
+		log.Fatal(errors.Errorf("%v: %w", "resultWriter()", err))
+	}
 
 	log.Debug("End   resultWriter()")
 }
