@@ -495,7 +495,7 @@ end
 
 function run_insert(trial_number)
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
+    @debug "Start $(function_name) - trial_number=$(trial_number)"
 
 #     create_result_measuring_point_start('query')
 # 
@@ -519,7 +519,7 @@ function run_insert(trial_number)
 # 
 #     create_result_measuring_point_end('query', trial_number, SQL_SELECT, 'insert')
 
-    @debug "End   $(function_name)"
+    @debug "End   $(function_name) - trial_number=$(trial_number)"
     nothing
 end
 
@@ -529,7 +529,7 @@ end
 
 function run_trial(trial_number)
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
+    @debug "Start $(function_name) - trial_number=$(trial_number)"
 
     create_result_measuring_point_start("trial")
 
@@ -544,9 +544,7 @@ function run_trial(trial_number)
         @debug "last DDL statement after DROP=$(SQL_CREATE)"
     end
 
-#     run_insert(
-#         trial_number,
-#     )
+     run_insert(         trial_number,     )
 
     #     run_select(trial_number)
 
@@ -555,7 +553,7 @@ function run_trial(trial_number)
 
     create_result_measuring_point_end("trial", trial_number)
 
-    @debug "End   $(function_name)"
+    @debug "End   $(function_name) - trial_number=$(trial_number)"
     nothing
 end
 
