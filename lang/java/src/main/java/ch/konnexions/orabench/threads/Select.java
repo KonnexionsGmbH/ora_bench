@@ -62,7 +62,7 @@ public class Select implements Runnable {
       logger.debug("Start");
     }
 
-    OraBench.selectHelper(statement,
+    OraBench.runSelectHelper(statement,
                           bulkDataPartition,
                           partitionKey,
                           config);

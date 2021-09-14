@@ -200,6 +200,8 @@ class OraBench {
             duration
         )
 
+        logger.info("Duration (ms) trial         : " + duration / 1000000);
+
         if (isDebug) {
             logger.debug("End")
         }
@@ -219,6 +221,8 @@ class OraBench {
             duration
         )
 
+        logger.info("Duration (ms) benchmark run: " + duration / 1000000);
+        
         if (isDebug) {
             logger.debug("End")
         }

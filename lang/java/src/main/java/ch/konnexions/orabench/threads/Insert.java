@@ -62,7 +62,7 @@ public class Insert implements Runnable {
       logger.debug("Start");
     }
 
-    OraBench.insertHelper(connection,
+    OraBench.runInsertHelper(connection,
                           preparedStatement,
                           bulkDataPartition,
                           config);
