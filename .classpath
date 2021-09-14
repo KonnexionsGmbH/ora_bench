@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src_java/lang/main/java"/>
-	<classpathentry kind="src" path="src_kotlin/lang/main/kotlin"/>
-	<classpathentry kind="src" path="src_java/lang/test/java"/>
+	<classpathentry kind="src" path="lang/java/src/main/java"/>
+	<classpathentry kind="src" path="lang/java/src/test/java"/>
+	<classpathentry kind="src" path="lang/kotlin/src/main/kotlin"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -15,6 +15,5 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="priv/libs/ora_bench_java.jar"/>
 	<classpathentry kind="lib" path="priv/libs/ora_bench_kotlin.jar"/>
-	<classpathentry kind="lib" path="priv/libs/ojdbc10.jar"/>
 	<classpathentry kind="output" path="src_java/build/classes/java/main"/>
 </classpath>

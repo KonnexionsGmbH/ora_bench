@@ -170,6 +170,8 @@ public class Result {
       e.printStackTrace();
     }
 
+    logger.info("Duration (ms) benchmark run: " + duration / 1000000);
+
     if (isDebug) {
       logger.debug("End");
     }
@@ -237,10 +239,14 @@ public class Result {
       logger.debug("Start");
     }
 
+    long duration = System.nanoTime() - lastTrialNano;
+
     createMeasuringPoint(trialNo,
                          lastTrial,
                          LocalDateTime.now(),
-                         System.nanoTime() - lastTrialNano);
+                         duration);
+
+    logger.info("Duration (ms) trial         : " + duration / 1000000);
 
     if (isDebug) {
       logger.debug("End");

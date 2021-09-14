@@ -40,3 +40,4 @@ ora_bench_result.tsv
 ora_bench_toml.properties
 rebar.lock
 tmp
+/lang/elixir/deps/oranif/.fetch

@@ -413,7 +413,7 @@ public class Config {
   /**
    * @return the benchmark specific comment
    */
-  public final String getBenchmarkComment() {
+  final String getBenchmarkComment() {
 
     return benchmarkComment;
   }
@@ -428,42 +428,42 @@ public class Config {
   /**
    * @return the database description
    */
-  public final String getBenchmarkDatabase() {
+  final String getBenchmarkDatabase() {
     return benchmarkDatabase;
   }
 
   /**
    * @return the applied driver name and its version
    */
-  public final String getBenchmarkDriver() {
+  final String getBenchmarkDriver() {
     return benchmarkDriver;
   }
 
   /**
    * @return the host name
    */
-  public final String getBenchmarkHostName() {
+  final String getBenchmarkHostName() {
     return benchmarkHostName;
   }
 
   /**
    * @return the benchmark identification
    */
-  public final String getBenchmarkId() {
+  final String getBenchmarkId() {
     return benchmarkId;
   }
 
   /**
    * @return the applied programming language with name and version
    */
-  public final String getBenchmarkLanguage() {
+  final String getBenchmarkLanguage() {
     return benchmarkLanguage;
   }
 
   /**
    * @return the number of cores
    */
-  public final String getBenchmarkNumberCores() {
+  final String getBenchmarkNumberCores() {
     return benchmarkNumberCores;
   }
 
@@ -477,14 +477,14 @@ public class Config {
   /**
    * @return the operating system description
    */
-  public final String getBenchmarkOs() {
+  final String getBenchmarkOs() {
     return benchmarkOs;
   }
 
   /**
    * @return the ora_bench release no.
    */
-  public final String getBenchmarkRelease() {
+  final String getBenchmarkRelease() {
     return benchmarkRelease;
   }
 
@@ -505,7 +505,7 @@ public class Config {
   /**
    * @return the user name
    */
-  public final String getBenchmarkUserName() {
+  final String getBenchmarkUserName() {
     return benchmarkUserName;
   }
 
@@ -519,35 +519,35 @@ public class Config {
   /**
    * @return the host name or the IP address of the database
    */
-  public final String getConnectionHost() {
+  final String getConnectionHost() {
     return connectionHost;
   }
 
   /**
    * @return the password to connect to the database
    */
-  public final String getConnectionPassword() {
+  final String getConnectionPassword() {
     return connectionPassword;
   }
 
   /**
    * @return the port number where the database server is listening for requests
    */
-  public final int getConnectionPort() {
+  final int getConnectionPort() {
     return connectionPort;
   }
 
   /**
    * @return the service name to connect to the database
    */
-  public final String getConnectionService() {
+  final String getConnectionService() {
     return connectionService;
   }
 
   /**
    * @return the user name to connect to the database
    */
-  public final String getConnectionUser() {
+  final String getConnectionUser() {
     return connectionUser;
   }
 
@@ -568,7 +568,7 @@ public class Config {
   /**
    * @return the length of a test column value
    */
-  public final int getFileBulkLength() {
+  final int getFileBulkLength() {
     return fileBulkLength;
   }
 
@@ -591,7 +591,7 @@ public class Config {
    * @return the name of the configuration file for the C++ (gcc) language version. The
    *         file name may contain the absolute or relative file path.
    */
-  public final String getFileConfigurationNameC() {
+  private final String getFileConfigurationNameC() {
     return fileConfigurationNameC;
   }
 
@@ -599,7 +599,7 @@ public class Config {
    * @return the name of the configuration file for the Erlang language version.
    *         The file name may contain the absolute or relative file path.
    */
-  public final String getFileConfigurationNameErlang() {
+  private final String getFileConfigurationNameErlang() {
     return fileConfigurationNameErlang;
   }
 
@@ -607,7 +607,7 @@ public class Config {
    * @return the name of the configuration file in JSON format. The file name may
    *         contain the absolute or relative file path.
    */
-  public final String getFileConfigurationNameJson() {
+  private final String getFileConfigurationNameJson() {
     return fileConfigurationNameJson;
   }
 
@@ -615,7 +615,7 @@ public class Config {
    * @return the name of the configuration file for the Python 3 language version.
    *         The file name may contain the absolute or relative file path.
    */
-  public final String getFileConfigurationNamePython() {
+  private final String getFileConfigurationNamePython() {
     return fileConfigurationNamePython;
   }
 
@@ -623,21 +623,21 @@ public class Config {
    * @return the name of the configuration file for the TOML version.
    *         The file name may contain the absolute or relative file path.
    */
-  public final String getFileConfigurationNameToml() {
+  private final String getFileConfigurationNameToml() {
     return fileConfigurationNameToml;
   }
 
   /**
    * @return the delimiter character of the result file
    */
-  public final String getFileResultDelimiter() {
+  final String getFileResultDelimiter() {
     return fileResultDelimiter;
   }
 
   /**
    * @return the header line of the result file
    */
-  public final String getFileResultHeader() {
+  final String getFileResultHeader() {
     return fileResultHeader;
   }
 
@@ -645,7 +645,7 @@ public class Config {
    * @return the name of the result file containing the benchmark results. The
    *         file name may contain the absolute or relative file path.
    */
-  public final String getFileResultName() {
+  final String getFileResultName() {
     return fileResultName;
   }
 
@@ -823,7 +823,7 @@ public class Config {
   /**
    * @param benchmarkDriver the name of the applied driver to set
    */
-  public final void setBenchmarkDriver(String benchmarkDriver) {
+  final void setBenchmarkDriver(String benchmarkDriver) {
     this.benchmarkDriver = benchmarkDriver;
   }
 

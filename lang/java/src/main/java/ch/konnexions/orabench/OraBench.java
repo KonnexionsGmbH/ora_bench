@@ -114,59 +114,65 @@ public class OraBench {
       logger.debug("Start");
     }
 
-    final Config config = new Config();
-
     logger.info("Start OraBench.java");
 
-    String args0 = null;
-    if (args.length > 0) {
-      args0 = args[0];
+    int numberArgs = args.length;
+
+    logger.info("main() - number arguments=" + numberArgs);
+
+    if (numberArgs == 0) {
+      logger.error("main() - no command line argument available");
     }
 
-    logger.info("args[0]=" + args0);
+    logger.info("main() - 1st argument=" + args[0]);
 
-    if (null == args0) {
-      logger.error("Command line argument missing");
-    } else if (args0.equals("finalise")) {
+    if (numberArgs > 1) {
+      logger.info("main() - 2nd argument=" + args[1]);
+      logger.error("main() - more than one command line argument available");
+    }
+
+    final Config config = new Config();
+
+    if (args[0].equals("finalise")) {
       logger.info("Start Finalise OraBench Run");
       new Config().resetNotAvailables();
       logger.info("End   Finalise OraBench Run");
-    } else if (args0.equals("runBenchmark")) {
+    } else if (args[0].equals("runBenchmark")) {
       logger.info("Start Running OraBench");
       new OraBench().runBenchmark();
       logger.info("End   Running OraBench");
-    } else if (args0.equals("setup")) {
+    } else if (args[0].equals("setup")) {
       logger.info("Start Setup OraBench Run");
       new Setup(config).createBulkFile();
       logger.info("End   Setup OraBench Run");
-    } else if (args0.equals("setup_c")) {
+    } else if (args[0].equals("setup_c")) {
       logger.info("Start Setup ODPI-C OraBench Run");
       config.createConfigurationFileC();
       logger.info("End   Setup ODPI-C OraBench Run");
-    } else if (args0.equals("setup_default")) {
+    } else if (args[0].equals("setup_default")) {
       logger.info("Start Setup Properties OraBench Run");
       logger.info("End   Setup Properties OraBench Run");
-    } else if (args0.equals("setup_elixir")) {
+    } else if (args[0].equals("setup_elixir")) {
       logger.info("Start Setup Elixir OraBench Run");
       new Config();
       logger.info("End   Setup Elixir OraBench Run");
-    } else if (args0.equals("setup_erlang")) {
+    } else if (args[0].equals("setup_erlang")) {
       logger.info("Start Setup Erlang OraBench Run");
       config.createConfigurationFileErlang();
       logger.info("End   Setup Erlang OraBench Run");
-    } else if (args0.equals("setup_json")) {
+    } else if (args[0].equals("setup_json")) {
       logger.info("Start Setup JSON OraBench Run");
       config.createConfigurationFileJson();
       logger.info("End   Setup Erlang OraBench Run");
-    } else if (args0.equals("setup_python")) {
+    } else if (args[0].equals("setup_python")) {
       logger.info("Start Setup Python 3 OraBench Run");
       config.createConfigurationFilePython();
       logger.info("End   Setup Python 3 OraBench Run");
-    } else if (args0.equals("setup_toml")) {
+    } else if (args[0].equals("setup_toml")) {
       logger.info("Start Setup TOML OraBench Run");
       config.createConfigurationFileToml();
       logger.info("End   Setup TOML OraBench Run");
-    } else if (args0.contentEquals("")) {
+    } else if (args[0].contentEquals("")) {
       logger.error("Command line argument missing");
     } else {
       logger.error("Unknown command line argument");
