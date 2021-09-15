@@ -40,7 +40,7 @@ if ["%1"] EQU [""] (
     echo kotlin             - Kotlin and Oracle JDBC
     echo python             - Python 3 and Oracle cx_Oracle
     echo -------------------------------------------------------------------------------
-    set /P ORA_BENCH_CHOICE_DRIVER="Enter the desired programming lanuage (and database driver) [default: %ORA_BENCH_CHOICE_DRIVER_DEFAULT%] "
+    set /P ORA_BENCH_CHOICE_DRIVER="Enter the desired programming language (and database driver) [default: %ORA_BENCH_CHOICE_DRIVER_DEFAULT%] "
 
     if ["!ORA_BENCH_CHOICE_DRIVER!"] EQU [""] (
         set ORA_BENCH_CHOICE_DRIVER=%ORA_BENCH_CHOICE_DRIVER_DEFAULT%

@@ -38,7 +38,7 @@ Release Date: xx.xx.2021
 
 ### Open issues
 
-- C & odpi: (see [here](#issues_c_odpi))
+- C & ODPI-C: (see [here](#issues_c_odpi))
 - Go & godror: (see [here](#issues_go_godror))
 
 ----
@@ -61,7 +61,7 @@ For example, the MonetDB database is faster with inactive constraints by 21.2% c
 - **Type** - client version, embedded version or via trino
 - **ms** - total time of DDL and DML operations in milliseconds
 - **Constraints** - DML operations with active or inactive constraints (foreign, primary and unique key)
-- **Improvment** - improvement of total time if constraints are inactive
+- **Improvement** - improvement of total time if constraints are inactive
 
 ----
 

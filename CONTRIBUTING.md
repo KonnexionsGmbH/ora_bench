@@ -13,7 +13,7 @@ In case of software changes we strongly recommend you to respect the license ter
      - run_bench_all_drivers.[bat|sh]
      - run_collect_and_compile.[bat|sh]
      - run_properties_[standard|variations].[bat|sh]
-   - lang/\<langauge\>
+   - lang/\<language\>
    - README.md
    - Release-Notes.md
    - run_bench_all_dbs_props_[std|var].[bat|sh]

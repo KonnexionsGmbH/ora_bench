@@ -53,9 +53,9 @@ echo "RUN_ORANIF_ELIXIR        : ${ORA_BENCH_RUN_ORANIF_ELIXIR}"
 echo "RUN_ORANIF_ERLANG        : ${ORA_BENCH_RUN_ORANIF_ERLANG}"
 echo "================================================================================"
 
-if [ "${ORA_BENCH_ORACLE_DATABASE_EXISTING}" = "true"
-  || "${ORA_BENCH_ORACLE_DATABASE_18C}" = "true"
-  || "${ORA_BENCH_ORACLE_DATABASE_19C}" = "true" 
+if [ "${ORA_BENCH_ORACLE_DATABASE_EXISTING}" = "true" \
+  || "${ORA_BENCH_ORACLE_DATABASE_18C}" = "true" \
+  || "${ORA_BENCH_ORACLE_DATABASE_19C}" = "true" \
   || "${ORA_BENCH_ORACLE_DATABASE_21C}" = "true" ]; then
     export ORA_BENCH_ORACLE_DATABASE_ANY=true
 fi
@@ -91,21 +91,21 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         fi
     fi
 
-    if [${ORA_BENCH_ORACLE_DATABASE_18C}" = "true" ]; then
+    if [ "${ORA_BENCH_ORACLE_DATABASE_18C}" = "true" ]; then
         echo "--------------------------------------------------------------------------------"
         echo "Oracle Database Express Edition 18c."
         echo "--------------------------------------------------------------------------------"
         export ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
         export ORA_BENCH_CONNECTION_SERVICE=xe
-    )
+    fi
 
-    if [${ORA_BENCH_ORACLE_DATABASE_19C}" = "true" ]; then
+    if [ "${ORA_BENCH_ORACLE_DATABASE_19C}" = "true" ]; then
         echo "--------------------------------------------------------------------------------"
         echo "Oracle Database 19c."
         echo "--------------------------------------------------------------------------------"
         export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
         export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    )
+    fi
 
     if [${ORA_BENCH_ORACLE_DATABASE_21C}" = "true" ]; then
         echo "--------------------------------------------------------------------------------"

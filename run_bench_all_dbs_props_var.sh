@@ -40,7 +40,7 @@ if [ -z "$1" ]; then
     echo "kotlin             - Kotlin and Oracle JDBC"
     echo "python             - Python 3 and Oracle cx_Oracle"
     echo "-------------------------------------------------------------------------------"
-    read -rp "Enter the desired programming lanuage (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
+    read -rp "Enter the desired programming language (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
     export ORA_BENCH_CHOICE_DRIVER=${ORA_BENCH_CHOICE_DRIVER}
 
     if [ -z "${ORA_BENCH_CHOICE_DRIVER}" ]; then
