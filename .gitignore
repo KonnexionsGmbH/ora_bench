@@ -22,6 +22,9 @@
 /lang/go/OraBench
 /lang/go/orabench
 /lang/go/pkg/
+/lang/kotlin/gradle/wrapper/
+/lang/kotlin/gradlew
+/lang/kotlin/gradlew.bat
 /ora_bench.iml
 /priv/Gammadyne/timer.txt
 _build
@@ -40,4 +43,3 @@ ora_bench_result.tsv
 ora_bench_toml.properties
 rebar.lock
 tmp
-/lang/elixir/deps/oranif/.fetch

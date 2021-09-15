@@ -77,6 +77,7 @@ public class OraBench {
       logger.error("main() - more than one command line argument available");
     }
 
+    // READ the configuration parameters into the memory (config params `file.configuration.name ...`)
     final Config config = new Config();
 
     if (args[0].equals("finalise")) {
@@ -573,7 +574,7 @@ public class OraBench {
           count + 1
       ENDWHILE
       */
-      int count = 0;
+      int       count     = 0;
       while (resultSet.next()) {
         count += 1;
       }
