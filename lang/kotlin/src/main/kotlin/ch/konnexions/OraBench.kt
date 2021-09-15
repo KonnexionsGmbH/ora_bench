@@ -429,7 +429,7 @@ class OraBench {
         return bulkDataPartitions
     }
 
-    private fun getConfig() {
+    fun getConfig() {
         if (isDebug) {
             logger.debug("Start")
         }
@@ -651,12 +651,13 @@ class OraBench {
             logger.debug("Start")
         }
 
-        getConfig()
-
+        // save the current time as the start of the 'benchmark' action
         openResultFile()
 
+        // READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
         val bulkDataPartitions: ArrayList<ArrayList<Array<String>>> = getBulkDataPartitions()
 
+        // create a separate database connection (without auto commit behaviour) for each partition
         val databaseObjects: ArrayList<Any> = createDatabaseObjects()
 
         @Suppress("UNCHECKED_CAST")
@@ -669,6 +670,14 @@ class OraBench {
         @Suppress("UNCHECKED_CAST")
         val statements: ArrayList<Statement> = databaseObjects[2] as ArrayList<Statement>
 
+        /*
+        trial_no = 0
+        WHILE trial_no < config_param 'benchmark.trials'
+            DO run_trial(database connections,
+                         trial_no,
+                         bulk_data_partitions)
+        ENDWHILE
+        */
         for (i in 1..benchmarkTrials) {
             runTrial(
                 connections,
@@ -679,6 +688,12 @@ class OraBench {
             )
         }
 
+        /*  
+        partition_no = 0
+        WHILE partition_no < config_param 'benchmark.number.partitions'
+            close the database connection
+        ENDWHILE
+        */
         for (i in 0 until benchmarkNumberPartitions) {
             try {
                 preparedStatements[i].close()
@@ -690,6 +705,7 @@ class OraBench {
             }
         }
 
+        // WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
         endBenchmark()
 
         if (isDebug) {
@@ -985,9 +1001,17 @@ fun main(args: Array<String>) {
 
     oraBench.logger.info("Start OraBench.kt")
 
-    if (args.isNotEmpty()) {
-        oraBench.logger.error("Unknown command line argument(s): " + args.joinToString(" "))
+    val numberArgs: Int = args.size
+
+    oraBench.logger.info("main() - number arguments=$numberArgs")
+
+    if (numberArgs != 0) {
+        oraBench.logger.info("main() - 1st argument=" + args[0]);
+        oraBench.logger.error("main() - Unknown command line argument(s)")
     }
+
+    // READ the configuration parameters into the memory (config params `file.configuration.name ...`)
+    oraBench.getConfig()
 
     oraBench.runBenchmark()
 

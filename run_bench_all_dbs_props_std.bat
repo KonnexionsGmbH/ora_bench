@@ -92,7 +92,7 @@ if ["%ORA_BENCH_CHOICE_DB%"] EQU ["21"] (
 
 set ORA_BENCH_PASSWORD_SYS=oracle
 
-if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
+if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 )
 echo.
@@ -116,14 +116,6 @@ echo.
     echo:| TIME
     echo ===============================================================================
    
-    if exist "%ORA_BENCH_BENCHMARK_VCVARSALL%" (
-        call "%ORA_BENCH_BENCHMARK_VCVARSALL%" x64
-        if %ERRORLEVEL% neq 0 (
-            echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
-            exit -1073741510
-        )
-    )
-
     call scripts\run_create_bulk_file.bat
     if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'call scripts\run_create_bulk_file.bat' was aborted, error code=%ERRORLEVEL%

@@ -14,6 +14,7 @@ echo Start %0
 echo -------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - collect libraries and compile.
 echo -------------------------------------------------------------------------------
+echo BENCHMARK_VCVARSALL        : %ORA_BENCH_BENCHMARK_VCVARSALL%
 echo BULKFILE_EXISTING          : %ORA_BENCH_BULKFILE_EXISTING%
 echo -------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
@@ -31,6 +32,17 @@ echo LD_LIBRARY_PATH            : %LD_LIBRARY_PATH%
 echo -------------------------------------------------------------------------------
 echo:| TIME
 echo ===============================================================================
+
+echo --------------------------------------------------------------------------------
+echo Set environment variables for C / C++ compilation.
+echo --------------------------------------------------------------------------------
+if exist "%ORA_BENCH_BENCHMARK_VCVARSALL%" (
+    call "%ORA_BENCH_BENCHMARK_VCVARSALL%" x64
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+)
 
 if NOT ["%ORA_BENCH_BULKFILE_EXISTING%"] == ["true"] (
     call scripts\run_create_bulk_file.bat
