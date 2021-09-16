@@ -4,7 +4,10 @@ import org.apache.logging.log4j.Logger
 import java.sql.Connection
 import java.sql.PreparedStatement
 
-class Insert(
+/**
+ * Helper class for inserting data into the database.
+ */
+class RunInsertHelper(
     logger: Logger,
     isDebug: Boolean,
     connection: Connection,
@@ -23,29 +26,6 @@ class Insert(
     private val preparedStatement: PreparedStatement
 
     /**
-     * Runs the thread implementer.
-     */
-    override fun run() {
-        if (isDebug) {
-            logger.debug("Start")
-        }
-
-        OraBench.insertHelper(
-            logger,
-            isDebug,
-            connection,
-            preparedStatement,
-            bulkDataPartition,
-            benchmarkSize,
-            benchmarkTransactionSize
-        )
-
-        if (isDebug) {
-            logger.debug("End")
-        }
-    }
-
-    /**
      * Instantiates a new Insert class.
      */
     init {
@@ -60,6 +40,29 @@ class Insert(
         this.isDebug = isDebug
         this.logger = logger
         this.preparedStatement = preparedStatement
+
+        if (isDebug) {
+            logger.debug("End")
+        }
+    }
+
+    /**
+     * Runs the thread implementer.
+     */
+    override fun run() {
+        if (isDebug) {
+            logger.debug("Start")
+        }
+
+        OraBench.runInsertHelper(
+            logger,
+            isDebug,
+            connection,
+            preparedStatement,
+            bulkDataPartition,
+            benchmarkSize,
+            benchmarkTransactionSize
+        )
 
         if (isDebug) {
             logger.debug("End")

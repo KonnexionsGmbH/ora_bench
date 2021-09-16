@@ -84,6 +84,162 @@ class OraBench {
     private lateinit var sqlInsert: String
     private lateinit var sqlSelect: String
 
+    companion object {
+        /**
+         * Helper function for inserting data into the database.
+         *
+         * @param connection        the database connection
+         * @param preparedStatement the prepared statement
+         * @param bulkDataPartition the bulk data partition
+         */
+        fun runInsertHelper(
+            logger: Logger,
+            isDebug: Boolean,
+            connection: Connection,
+            preparedStatement: PreparedStatement,
+            bulkDataPartition: ArrayList<Array<String>>,
+            benchmarkBatchSize: Int,
+            benchmarkTransactionSize: Int
+        ) {
+            if (isDebug) {
+                logger.debug("Start")
+            }
+
+            /*
+             count = 0
+             collection batch_collection = empty
+             WHILE iterating through the collection bulk_data_partition
+               count + 1
+         
+               add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection
+         
+               IF config_param 'benchmark.batch.size' > 0
+                   IF count modulo config param 'benchmark.batch.size' = 0
+                       execute the SQL statements in the collection batch_collection
+                       batch_collection = empty
+                   ENDIF
+               ENDIF
+         
+               IF  config param 'benchmark.transaction.size' > 0
+               AND count modulo config param 'benchmark.transaction.size' = 0
+                   commit
+               ENDIF
+             ENDWHILE
+             */
+            var count = 0
+
+            try {
+                for (value in bulkDataPartition) {
+                    preparedStatement.setString(
+                        1,
+                        value[0]
+                    )
+
+                    preparedStatement.setString(
+                        2,
+                        value[1]
+                    )
+
+                    count += 1
+
+                    if (benchmarkBatchSize == 0) {
+                        preparedStatement.execute()
+                    } else {
+                        preparedStatement.addBatch()
+                        if (count % benchmarkBatchSize == 0) {
+                            preparedStatement.executeBatch()
+                        }
+                    }
+
+                    if (benchmarkTransactionSize > 0 && count % benchmarkTransactionSize == 0) {
+                        connection.commit()
+                    }
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+                exitProcess(1)
+            }
+
+
+            /*      
+            IF collection batch_collection is not empty
+              execute the SQL statements in the collection batch_collection
+            ENDIF
+            */
+            if (benchmarkBatchSize > 0 && count % benchmarkBatchSize != 0) {
+                preparedStatement.executeBatch()
+            }
+
+            // commit
+            if (benchmarkTransactionSize == 0 || count % benchmarkTransactionSize != 0) {
+                connection.commit()
+            }
+
+            if (isDebug) {
+                logger.debug("End")
+            }
+        }
+
+        /**
+         * Helper function for retrieving data from the database.
+         *
+         * @param statement         the statement
+         * @param bulkDataPartition the bulk data partition
+         * @param partitionKey      the partition key
+         */
+        fun runSelectHelper(
+            logger: Logger,
+            isDebug: Boolean,
+            statement: Statement,
+            bulkDataPartition: ArrayList<Array<String>>,
+            partitionKey: Int,
+            connectionFetchSize: Int,
+            sqlSelect: String
+        ) {
+            if (isDebug) {
+                logger.debug("Start")
+            }
+
+            var count = 0
+
+            try {
+                if (connectionFetchSize > 0) {
+                    statement.fetchSize = connectionFetchSize
+                }
+
+                // execute the SQL statement in config param 'sql.select'
+                val resultSet: ResultSet =
+                    statement.executeQuery("$sqlSelect WHERE partition_key = $partitionKey")
+
+                /*
+                int count = 0;
+                WHILE iterating through the result set
+                    count + 1
+                ENDWHILE
+                */
+                while (resultSet.next()) {
+                    count += 1
+                }
+
+                /*
+                IF NOT count = size(bulk_data_partition)
+                    display an error message
+                ENDIF     
+                */
+                if (count != bulkDataPartition.size) {
+                    logger.error("Number rows: expected=" + bulkDataPartition.size + " - found=" + count)
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+                exitProcess(1)
+            }
+
+            if (isDebug) {
+                logger.debug("End")
+            }
+        }
+    }
+
     /**
      * Creates a database connection.
      *
@@ -222,7 +378,7 @@ class OraBench {
         )
 
         logger.info("Duration (ms) benchmark run: " + duration / 1000000);
-        
+
         if (isDebug) {
             logger.debug("End")
         }
@@ -279,81 +435,27 @@ class OraBench {
         }
     }
 
-    /**
-     * End of the whole benchmark run.
-     */
-    private fun endBenchmark() {
+    private fun executorServiceShutdown() {
         if (isDebug) {
             logger.debug("Start")
         }
 
-        val endDateTime: LocalDateTime = LocalDateTime.now()
-        val duration: Long = System.nanoTime() - lastBenchmarkNano
+        if (benchmarkCoreMultiplier != 0) {
+            executorService!!.shutdown()
 
-        createMeasuringPoint(
-            endDateTime,
-            duration
-        )
-
-        try {
-            resultFile!!.close()
-        } catch (e: IOException) {
-            logger.error("file result delimiter=: $fileResultDelimiter")
-            logger.error("file result header   =: $fileResultHeader")
-            logger.error("file result name     =: $fileBulkSize")
-            e.printStackTrace()
-            exitProcess(1)
+            try {
+                @Suppress("ControlFlowWithEmptyBody")
+                while (!executorService!!.awaitTermination(
+                        1,
+                        TimeUnit.SECONDS
+                    )
+                ) {
+                }
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+                exitProcess(1)
+            }
         }
-
-        if (isDebug) {
-            logger.debug("End")
-        }
-    }
-
-    /**
-     * End of the current SQL statement.
-     *
-     * @param trialNo      the current trial number
-     * @param sqlStatement the SQL statement to be applied
-     */
-    private fun endQuerySQLStatement(trialNo: Int, sqlStatement: String?) {
-        if (isDebug) {
-            logger.debug("Start")
-        }
-
-        val endDateTime = LocalDateTime.now()
-        val duration = System.nanoTime() - lastQueryNano
-
-        createMeasuringPoint(
-            "query",
-            trialNo,
-            sqlStatement,
-            lastQuery!!,
-            endDateTime,
-            duration
-        )
-
-        if (isDebug) {
-            logger.debug("End")
-        }
-    }
-
-    /**
-     * End of the current trial.
-     *
-     * @param trialNo the current trial number
-     */
-    private fun endTrial(trialNo: Int) {
-        if (isDebug) {
-            logger.debug("Start")
-        }
-
-        createMeasuringPoint(
-            trialNo,
-            lastTrial!!,
-            LocalDateTime.now(),
-            System.nanoTime() - lastTrialNano
-        )
 
         if (isDebug) {
             logger.debug("End")
@@ -479,139 +581,37 @@ class OraBench {
     }
 
     /**
-     * INSERT: single connection and thread.
-     *
-     * @param connection        the database connection
-     * @param preparedStatement the prepared statement
-     * @param bulkDataPartition the bulk data partition
+     * End of the whole benchmark run.
      */
-    private fun insert(
-        connection: Connection,
-        preparedStatement: PreparedStatement,
-        bulkDataPartition: ArrayList<Array<String>>
-    ) {
+    private fun resultBenchmarkEnd() {
         if (isDebug) {
             logger.debug("Start")
         }
 
-        insertHelper(
-            logger,
-            isDebug,
-            connection,
-            preparedStatement,
-            bulkDataPartition,
-            benchmarkBatchSize,
-            benchmarkTransactionSize
+        val endDateTime: LocalDateTime = LocalDateTime.now()
+        val duration: Long = System.nanoTime() - lastBenchmarkNano
+
+        createMeasuringPoint(
+            endDateTime,
+            duration
         )
+
+        try {
+            resultFile!!.close()
+        } catch (e: IOException) {
+            logger.error("file result delimiter=: $fileResultDelimiter")
+            logger.error("file result header   =: $fileResultHeader")
+            logger.error("file result name     =: $fileBulkSize")
+            e.printStackTrace()
+            exitProcess(1)
+        }
 
         if (isDebug) {
             logger.debug("End")
         }
     }
 
-    companion object {
-        fun insertHelper(
-            logger: Logger,
-            isDebug: Boolean,
-            connection: Connection,
-            preparedStatement: PreparedStatement,
-            bulkDataPartition: ArrayList<Array<String>>,
-            benchmarkBatchSize: Int,
-            benchmarkTransactionSize: Int
-        ) {
-            if (isDebug) {
-                logger.debug("Start")
-            }
-
-            var count = 0
-
-            try {
-                for (value in bulkDataPartition) {
-                    preparedStatement.setString(
-                        1,
-                        value[0]
-                    )
-
-                    preparedStatement.setString(
-                        2,
-                        value[1]
-                    )
-
-                    count += 1
-
-                    if (benchmarkBatchSize == 0) {
-                        preparedStatement.execute()
-                    } else {
-                        preparedStatement.addBatch()
-                        if (count % benchmarkBatchSize == 0) {
-                            preparedStatement.executeBatch()
-                        }
-                    }
-
-                    if (benchmarkTransactionSize > 0 && count % benchmarkTransactionSize == 0) {
-                        connection.commit()
-                    }
-                }
-
-                if (benchmarkBatchSize > 0 && count % benchmarkBatchSize != 0) {
-                    preparedStatement.executeBatch()
-                }
-
-                if (benchmarkTransactionSize == 0 || count % benchmarkTransactionSize != 0) {
-                    connection.commit()
-                }
-            } catch (e: SQLException) {
-                e.printStackTrace()
-                exitProcess(1)
-            }
-
-            if (isDebug) {
-                logger.debug("End")
-            }
-        }
-
-        fun selectHelper(
-            logger: Logger,
-            isDebug: Boolean,
-            statement: Statement,
-            bulkDataPartition: ArrayList<Array<String>>,
-            partitionKey: Int,
-            connectionFetchSize: Int,
-            sqlSelect: String
-        ) {
-            if (isDebug) {
-                logger.debug("Start")
-            }
-
-            var count = 0
-
-            try {
-                if (connectionFetchSize > 0) {
-                    statement.fetchSize = connectionFetchSize
-                }
-
-                val resultSet: ResultSet =
-                    statement.executeQuery("$sqlSelect WHERE partition_key = $partitionKey")
-
-                while (resultSet.next()) {
-                    count += 1
-                }
-
-                if (count != bulkDataPartition.size) {
-                    logger.error("Number rows: expected=" + bulkDataPartition.size + " - found=" + count)
-                }
-            } catch (e: SQLException) {
-                e.printStackTrace()
-                exitProcess(1)
-            }
-
-            if (isDebug) {
-                logger.debug("End")
-            }
-        }
-    }
-
-    private fun openResultFile() {
+    private fun resultBenchmarkStart() {
         if (isDebug) {
             logger.debug("Start")
         }
@@ -644,7 +644,89 @@ class OraBench {
     }
 
     /**
-     * Run a benchmark.
+     * End of the current SQL statement.
+     *
+     * @param trialNo      the current trial number
+     * @param sqlStatement the SQL statement to be applied
+     */
+    private fun resultQueryEnd(trialNo: Int, sqlStatement: String?) {
+        if (isDebug) {
+            logger.debug("Start")
+        }
+
+        val endDateTime = LocalDateTime.now()
+        val duration = System.nanoTime() - lastQueryNano
+
+        createMeasuringPoint(
+            "query",
+            trialNo,
+            sqlStatement,
+            lastQuery!!,
+            endDateTime,
+            duration
+        )
+
+        if (isDebug) {
+            logger.debug("End")
+        }
+    }
+
+    /**
+     * Start a new query.
+     */
+    private fun resultQueryStart() {
+        if (isDebug) {
+            logger.debug("Start")
+        }
+
+        lastQuery = LocalDateTime.now()
+        lastQueryNano = System.nanoTime()
+
+        if (isDebug) {
+            logger.debug("End")
+        }
+    }
+
+    /**
+     * End of the current trial.
+     *
+     * @param trialNo the current trial number
+     */
+    private fun resultTrialEnd(trialNo: Int) {
+        if (isDebug) {
+            logger.debug("Start")
+        }
+
+        createMeasuringPoint(
+            trialNo,
+            lastTrial!!,
+            LocalDateTime.now(),
+            System.nanoTime() - lastTrialNano
+        )
+
+        if (isDebug) {
+            logger.debug("End")
+        }
+    }
+
+    /**
+     * Start a new trial.
+     */
+    private fun resultTrialStart() {
+        if (isDebug) {
+            logger.debug("Start")
+        }
+
+        lastTrial = LocalDateTime.now()
+        lastTrialNano = System.nanoTime()
+
+        if (isDebug) {
+            logger.debug("End")
+        }
+    }
+
+    /**
+     * Performing a complete benchmark run that can consist of several trial runs.
      */
     fun runBenchmark() {
         if (isDebug) {
@@ -652,7 +734,7 @@ class OraBench {
         }
 
         // save the current time as the start of the 'benchmark' action
-        openResultFile()
+        resultBenchmarkStart()
 
         // READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
         val bulkDataPartitions: ArrayList<ArrayList<Array<String>>> = getBulkDataPartitions()
@@ -706,7 +788,7 @@ class OraBench {
         }
 
         // WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
-        endBenchmark()
+        resultBenchmarkEnd()
 
         if (isDebug) {
             logger.debug("End")
@@ -714,7 +796,7 @@ class OraBench {
     }
 
     /**
-     * Run INSERT: multiple connections and eventually multiple threads.
+     * Supervise function for inserting data into the database.
      *
      * @param connections        the database connections
      * @param preparedStatements the prepared statements
@@ -731,21 +813,34 @@ class OraBench {
             logger.debug("Start")
         }
 
-        startQuery()
+        // save the current time as the start of the 'query' action
+        resultQueryStart()
 
+        /*
+        partition_no = 0
+        WHILE partition_no < config_param 'benchmark.number.partitions'
+            IF config_param 'benchmark.core.multiplier' = 0
+                DO run_insert_helper(database connections(partition_no),
+                        bulk_data_partitions(partition_no))
+            ELSE
+                DO run_insert_helper (database connections(partition_no),
+                        bulk_data_partitions(partition_no)) as a thread
+            ENDIF
+        ENDWHILE
+        */
         if (benchmarkCoreMultiplier != 0) {
             executorService = Executors.newFixedThreadPool(benchmarkNumberPartitions)
         }
 
         for (i in 0 until benchmarkNumberPartitions) {
             if (benchmarkCoreMultiplier == 0) {
-                insert(
+                runInsertHelper(
                     connections[i],
                     preparedStatements[i],
                     bulkDataPartitions[i]
                 )
             } else {
-                Insert(
+                RunInsertHelper(
                     logger,
                     isDebug,
                     connections[i],
@@ -759,7 +854,8 @@ class OraBench {
 
         executorServiceShutdown()
 
-        endQuerySQLStatement(
+        // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')        
+        resultQueryEnd(
             trialNumber,
             sqlInsert
         )
@@ -769,27 +865,31 @@ class OraBench {
         }
     }
 
-    private fun executorServiceShutdown() {
+    /**
+     * Helper function for inserting data into the database.
+     *
+     * @param connection        the database connection
+     * @param preparedStatement the prepared statement
+     * @param bulkDataPartition the bulk data partition
+     */
+    private fun runInsertHelper(
+        connection: Connection,
+        preparedStatement: PreparedStatement,
+        bulkDataPartition: ArrayList<Array<String>>
+    ) {
         if (isDebug) {
             logger.debug("Start")
         }
 
-        if (benchmarkCoreMultiplier != 0) {
-            executorService!!.shutdown()
-
-            try {
-                @Suppress("ControlFlowWithEmptyBody")
-                while (!executorService!!.awaitTermination(
-                        1,
-                        TimeUnit.SECONDS
-                    )
-                ) {
-                }
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-                exitProcess(1)
-            }
-        }
+        runInsertHelper(
+            logger,
+            isDebug,
+            connection,
+            preparedStatement,
+            bulkDataPartition,
+            benchmarkBatchSize,
+            benchmarkTransactionSize
+        )
 
         if (isDebug) {
             logger.debug("End")
@@ -797,7 +897,7 @@ class OraBench {
     }
 
     /**
-     * Run SELECT: multiple connections and eventually multiple threads.
+     * Supervise function for retrieving of the database data.
      *
      * @param statements         the statements
      * @param trialNumber        the trial number
@@ -812,22 +912,33 @@ class OraBench {
             logger.debug("Start")
         }
 
-        startQuery()
+        // save the current time as the start of the 'query' action
+        resultQueryStart()
 
+        /*
+        partition_no = 0
+        WHILE partition_no < config_param 'benchmark.number.partitions'
+            IF config_param 'benchmark.core.multiplier' = 0
+                DO run_select_helper(database connections(partition_no), bulk_data_partitions(partition_no, partition_no)
+            ELSE
+                DO run_select_helper(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) as a thread
+            ENDIF
+        ENDWHILE
+        */
         if (benchmarkCoreMultiplier != 0) {
             executorService = Executors.newFixedThreadPool(benchmarkNumberPartitions)
         }
 
         for (i in 0 until benchmarkNumberPartitions) {
             if (benchmarkCoreMultiplier == 0) {
-                select(
+                runSelectHelper(
                     statements[i],
                     bulkDataPartitions[i],
                     i
                 )
             } else {
                 executorService?.execute(
-                    Select(
+                    RunSelectHelper(
                         logger,
                         isDebug,
                         statements[i],
@@ -842,7 +953,8 @@ class OraBench {
 
         executorServiceShutdown()
 
-        endQuerySQLStatement(
+        // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
+        resultQueryEnd(
             trialNumber,
             sqlSelect
         )
@@ -853,7 +965,34 @@ class OraBench {
     }
 
     /**
-     * Run a trial.
+     * Helper function for retrieving data from the database.
+     *
+     * @param statement         the statement
+     * @param bulkDataPartition the bulk data partition
+     * @param partitionKey      the partition key
+     */
+    private fun runSelectHelper(statement: Statement, bulkDataPartition: ArrayList<Array<String>>, partitionKey: Int) {
+        if (isDebug) {
+            logger.debug("Start")
+        }
+
+        runSelectHelper(
+            logger,
+            isDebug,
+            statement,
+            bulkDataPartition,
+            partitionKey,
+            connectionFetchSize,
+            sqlSelect
+        )
+
+        if (isDebug) {
+            logger.debug("End")
+        }
+    }
+
+    /**
+     * Performing a single trial run.
      *
      * @param connections        the database connections
      * @param statements         the statements
@@ -872,10 +1011,18 @@ class OraBench {
             logger.debug("Start")
         }
 
-        startTrial()
+        // save the current time as the start of the 'trial' action
+        resultTrialStart()
 
         logger.info("Start trial no. $trialNumber")
 
+        /*  
+        create the database table (config param 'sql.create')
+        IF error
+            drop the database table (config param 'sql.drop')
+            create the database table (config param 'sql.create')
+        ENDIF
+        */
         try {
             statements[0].executeUpdate(sqlCreate)
 
@@ -895,6 +1042,11 @@ class OraBench {
             }
         }
 
+        /*    
+        DO run_insert(database connections,
+                      trial_no,
+                      bulk_data_partitions)
+        */
         runInsert(
             connections,
             preparedStatements,
@@ -902,12 +1054,18 @@ class OraBench {
             bulkDataPartitions
         )
 
+        /*
+        DO run_select(database connections,
+                      trial_no,
+                      bulk_data_partitions)
+        */
         runSelect(
             statements,
             trialNumber,
             bulkDataPartitions
         )
 
+        // drop the database table (config param 'sql.drop')
         try {
             statements[0].executeUpdate(sqlDrop)
 
@@ -919,66 +1077,8 @@ class OraBench {
             exitProcess(1)
         }
 
-        endTrial(trialNumber)
-
-        if (isDebug) {
-            logger.debug("End")
-        }
-    }
-
-    /**
-     * SELECT: single connection and thread.
-     *
-     * @param statement         the statement
-     * @param bulkDataPartition the bulk data partition
-     * @param partitionKey      the partition key
-     */
-    private fun select(statement: Statement, bulkDataPartition: ArrayList<Array<String>>, partitionKey: Int) {
-        if (isDebug) {
-            logger.debug("Start")
-        }
-
-        selectHelper(
-            logger,
-            isDebug,
-            statement,
-            bulkDataPartition,
-            partitionKey,
-            connectionFetchSize,
-            sqlSelect
-        )
-
-        if (isDebug) {
-            logger.debug("End")
-        }
-    }
-
-    /**
-     * Start a new query.
-     */
-    private fun startQuery() {
-        if (isDebug) {
-            logger.debug("Start")
-        }
-
-        lastQuery = LocalDateTime.now()
-        lastQueryNano = System.nanoTime()
-
-        if (isDebug) {
-            logger.debug("End")
-        }
-    }
-
-    /**
-     * Start a new trial.
-     */
-    private fun startTrial() {
-        if (isDebug) {
-            logger.debug("Start")
-        }
-
-        lastTrial = LocalDateTime.now()
-        lastTrialNano = System.nanoTime()
+        // WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
+        resultTrialEnd(trialNumber)
 
         if (isDebug) {
             logger.debug("End")

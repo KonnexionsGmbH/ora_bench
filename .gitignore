@@ -1,5 +1,9 @@
 *.log
+/.classpath
 /.idea/
+/.project
+/.settings/
+/bin/
 /lang/elixir/_build/dev/lib/
 /lang/elixir/deps/
 /lang/elixir/mix.lock
@@ -16,6 +20,16 @@
 /lang/kotlin/gradle/wrapper/
 /lang/kotlin/gradlew
 /lang/kotlin/gradlew.bat
+/lib/kotlin-reflect-sources.jar
+/lib/kotlin-reflect.jar
+/lib/kotlin-stdlib-jdk7-sources.jar
+/lib/kotlin-stdlib-jdk7.jar
+/lib/kotlin-stdlib-jdk8-sources.jar
+/lib/kotlin-stdlib-jdk8.jar
+/lib/kotlin-stdlib-sources.jar
+/lib/kotlin-stdlib.jar
+/lib/kotlin-test-sources.jar
+/lib/kotlin-test.jar
 /priv/libs/ora_bench_java.jar
 /priv/libs/ora_bench_kotlin.jar
 /priv/ora_bench_bulk_data.csv
