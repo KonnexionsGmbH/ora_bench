@@ -271,7 +271,7 @@ public class OraBench {
   }
 
   /**
-   * Run a benchmark.
+   * Performing a complete benchmark run that can consist of several trial runs.
    */
   private void runBenchmark() {
     if (isDebug) {
@@ -338,7 +338,7 @@ public class OraBench {
   }
 
   /**
-   * Run INSERT: multiple connections and eventually multiple threads.
+   * Supervise function for inserting data into the database.
    *
    * @param connections        the database connections
    * @param preparedStatements the prepared statements
@@ -406,7 +406,7 @@ public class OraBench {
   }
 
   /**
-   * Run INSERT_HELPER.
+   * Helper function for inserting data into the database.
    *
    * @param connection        the database connection
    * @param preparedStatement the prepared statement
@@ -487,7 +487,7 @@ public class OraBench {
   }
 
   /**
-   * Run SELECT: multiple connections and eventually multiple threads.
+   * Supervise function for retrieving of the database data.
    *
    * @param statements         the statements
    * @param trialNumber        the trial number
@@ -506,9 +506,13 @@ public class OraBench {
     partition_no = 0
     WHILE partition_no < config_param 'benchmark.number.partitions'
         IF config_param 'benchmark.core.multiplier' = 0
-            DO run_select_helper(database connections(partition_no), bulk_data_partitions(partition_no, partition_no)
+            DO run_select_helper(database connections(partition_no), 
+                                 bulk_data_partitions(partition_no, 
+                                 partition_no)
         ELSE
-            DO run_select_helper(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) as a thread
+            DO run_select_helper(database connections(partition_no), 
+                                 bulk_data_partitions(partition_no, 
+                                 partition_no) as a thread
         ENDIF
     ENDWHILE
     */
@@ -548,7 +552,7 @@ public class OraBench {
   }
 
   /**
-   * Run SELECT_HELPER.
+   * Helper function for retrieving data from the database.
    *
    * @param statement         the statement
    * @param bulkDataPartition the bulk data partition
@@ -598,7 +602,7 @@ public class OraBench {
   }
 
   /**
-   * Run a trial.
+   * Performing a single trial run.
    *
    * @param connections        the database connections
    * @param statements         the statements
