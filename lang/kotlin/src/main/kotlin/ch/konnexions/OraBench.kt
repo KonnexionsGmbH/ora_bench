@@ -919,9 +919,13 @@ class OraBench {
         partition_no = 0
         WHILE partition_no < config_param 'benchmark.number.partitions'
             IF config_param 'benchmark.core.multiplier' = 0
-                DO run_select_helper(database connections(partition_no), bulk_data_partitions(partition_no, partition_no)
+                DO run_select_helper(database connections(partition_no), 
+                                     bulk_data_partitions(partition_no, 
+                                     partition_no)
             ELSE
-                DO run_select_helper(database connections(partition_no), bulk_data_partitions(partition_no, partition_no) as a thread
+                DO run_select_helper(database connections(partition_no), 
+                                     bulk_data_partitions(partition_no, 
+                                     partition_no) as a thread
             ENDIF
         ENDWHILE
         */
