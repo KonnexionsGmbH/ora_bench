@@ -450,6 +450,7 @@ function main()
         throw(ArgumentError)
     end
 
+    # READ the configuration parameters into the memory (config params `file.configuration.name ...`)
     load_config(ARGS[1])
 
     run_benchmark()
@@ -461,28 +462,46 @@ function main()
 end
 
 # ----------------------------------------------------------------------------------
-# Performing the benchmark run.
+# Performing a complete benchmark run that can consist of several trial runs.
 # ----------------------------------------------------------------------------------
 
 function run_benchmark()
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
+    # save the current time as the start of the 'benchmark' action
     create_result_measuring_point_start_benchmark()
 
+    # READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
     get_bulk_data_partitions()
 
+    # create a separate database connection (without auto commit behaviour) for each partition
     create_connections()
 
-     for trial_number = 1:BENCHMARK_TRIALS
-         run_trial(trial_number)
-     end
+    #=
+    trial_no = 0
+    WHILE trial_no < config_param 'benchmark.trials'
+        DO run_trial(database connections,
+                     trial_no,
+                     bulk_data_partitions)
+    ENDWHILE
+    =#
+    for trial_number = 1:BENCHMARK_TRIALS
+     run_trial(trial_number)
+    end
 
-     for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
-         Oracle.close(CONNECTIONS[partition_key])
-         @info "wwe connection " * string(partition_key) * " closed"
-     end
+    #=
+    partition_no = 0
+    WHILE partition_no < config_param 'benchmark.number.partitions'
+        close the database connection
+    ENDWHILE
+    =#
+    for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
+     Oracle.close(CONNECTIONS[partition_key])
+     @info "wwe connection " * string(partition_key) * " closed"
+    end
 
+    # WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
     create_result_measuring_point_end("benchmark")
 
     @debug "End   $(function_name)"

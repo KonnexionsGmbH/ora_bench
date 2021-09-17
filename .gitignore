@@ -36,4 +36,5 @@
 /priv/ora_bench_result.tsv
 /priv/properties/ora_bench_erlang.properties
 /priv/properties/ora_bench_python.properties
+/priv/properties/ora_bench_toml.properties
 /tmp/
