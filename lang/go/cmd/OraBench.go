@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"math"
 	"os"
 	"runtime"
 	"strconv"
@@ -31,7 +32,7 @@ type result struct {
 func main() {
 	//log.SetLevel(log.DebugLevel)
 
-	log.Println("Start OraBench.go")
+	log.Info("Start OraBench.go")
 
 	numberArgs := len(os.Args)
 
@@ -54,199 +55,202 @@ func main() {
 		log.Fatal("main() - more than one command line argument available")
 	}
 
-	configs := loadConfig(os.Args[1])
+	runBenchmark()
 
-	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
-	partitions := loadBulk(
-		benchmarkNumberPartitions,
-		configs["file.bulk.name"].(string),
-		configs["file.bulk.delimiter"].(string))
+	//configs := loadConfig(os.Args[1])
+	//
+	//benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
+	//partitions := loadBulk(
+	//	benchmarkNumberPartitions,
+	//	configs["file.bulk.name"].(string),
+	//	configs["file.bulk.delimiter"].(string))
+	//
+	//ctx, cancel := context.WithCancel(context.Background())
+	//defer cancel()
+	//
+	//trials := configs["benchmark.trials"].(int)
+	//resultPos := 0
+	//
+	//resultSlice := make([]result, trials*3+1)
+	//var wg sync.WaitGroup
+	//
+	//startBenchTs := time.Now()
+	//
+	//for t := 1; t <= trials; t++ {
+	//	log.Info("Start trial no.", t)
+	//	initDb(ctx, configs)
+	//
+	//	startTrialTs := time.Now()
+	//
+	//	start := time.Now()
+	//	wg.Add(benchmarkNumberPartitions)
+	//	for p := 0; p < benchmarkNumberPartitions; p++ {
+	//		go doInsert(ctx, configs, t, p, partitions[p], &wg)
+	//	}
+	//	wg.Wait()
+	//
+	//	end := time.Now()
+	//	resultSlice[resultPos] = result{trial: t,
+	//		sql:    configs["sql.insert"].(string),
+	//		action: "query",
+	//		start:  start,
+	//		end:    end}
+	//	resultPos++
+	//
+	//	start = time.Now()
+	//	wg.Add(benchmarkNumberPartitions)
+	//	for p := 0; p < benchmarkNumberPartitions; p++ {
+	//		go doSelect(ctx, configs, t, p, len(partitions[p].keys), &wg)
+	//	}
+	//	wg.Wait()
+	//
+	//	end = time.Now()
+	//	resultSlice[resultPos] = result{trial: t,
+	//		sql:    configs["sql.select"].(string),
+	//		action: "query",
+	//		start:  start,
+	//		end:    end}
+	//	resultPos++
+	//
+	//	endTrialTs := time.Now()
+	//	resultSlice[resultPos] = result{trial: t,
+	//		sql:    "",
+	//		action: "trial",
+	//		start:  startTrialTs,
+	//		end:    endTrialTs}
+	//	resultPos++
+	//}
+	//
+	//endBenchTs := time.Now()
+	//resultSlice[resultPos] = result{trial: 0,
+	//	sql:    "",
+	//	action: "benchmark",
+	//	start:  startBenchTs,
+	//	end:    endBenchTs}
+	//resultPos++
+	//
+	//resultWriter(configs, resultSlice)
+	//
+	//d := endBenchTs.Sub(startBenchTs)
+	//log.Printf("End   OraBench.go (%.0f sec, %d nsec)", d.Seconds(), d.Nanoseconds())
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	trials := configs["benchmark.trials"].(int)
-	resultPos := 0
-
-	resultSlice := make([]result, trials*3+1)
-	var wg sync.WaitGroup
-
-	startBenchTs := time.Now()
-
-	for t := 1; t <= trials; t++ {
-		log.Println("Start trial no.", t)
-		initDb(ctx, configs)
-
-		startTrialTs := time.Now()
-
-		start := time.Now()
-		wg.Add(benchmarkNumberPartitions)
-		for p := 0; p < benchmarkNumberPartitions; p++ {
-			go doInsert(ctx, configs, t, p, partitions[p], &wg)
-		}
-		wg.Wait()
-
-		end := time.Now()
-		resultSlice[resultPos] = result{trial: t,
-			sql:    configs["sql.insert"].(string),
-			action: "query",
-			start:  start,
-			end:    end}
-		resultPos++
-
-		start = time.Now()
-		wg.Add(benchmarkNumberPartitions)
-		for p := 0; p < benchmarkNumberPartitions; p++ {
-			go doSelect(ctx, configs, t, p, len(partitions[p].keys), &wg)
-		}
-		wg.Wait()
-
-		end = time.Now()
-		resultSlice[resultPos] = result{trial: t,
-			sql:    configs["sql.select"].(string),
-			action: "query",
-			start:  start,
-			end:    end}
-		resultPos++
-
-		endTrialTs := time.Now()
-		resultSlice[resultPos] = result{trial: t,
-			sql:    "",
-			action: "trial",
-			start:  startTrialTs,
-			end:    endTrialTs}
-		resultPos++
-	}
-
-	endBenchTs := time.Now()
-	resultSlice[resultPos] = result{trial: 0,
-		sql:    "",
-		action: "benchmark",
-		start:  startBenchTs,
-		end:    endBenchTs}
-	resultPos++
-
-	resultWriter(configs, resultSlice)
-
-	d := endBenchTs.Sub(startBenchTs)
-	log.Printf("End   OraBench.go (%.0f sec, %d nsec)\n", d.Seconds(), d.Nanoseconds())
-
+	log.Info("End   OraBench.go")
 	os.Exit(0)
 }
 
-func doInsert(ctx context.Context, configs map[string]interface{}, trial int, partition int, rows bulkPartition, wg *sync.WaitGroup) {
-	log.Debug(fmt.Sprintf("Start doInsert(%2d)", partition))
+//func doInsert(ctx context.Context, configs map[string]interface{}, trial int, partition int, rows bulkPartition, wg *sync.WaitGroup) {
+//	log.Debug(fmt.Sprintf("Start doInsert(%2d)", partition))
+//
+//	defer wg.Done()
+//
+//	log.Debug(fmt.Sprintf("      doInsert(%2d) - connection.dsn=%v", partition, configs["connection.dsn"]))
+//
+//	db, err := sql.Open("godror", configs["connection.dsn"].(string))
+//	if err != nil {
+//		log.Fatal(errors.Errorf("      doInsert(%2d) - %v: %w", configs["connection.dsn"], partition, err))
+//	}
+//
+//	defer func(db *sql.DB) {
+//		log.Debug(fmt.Sprintf("Start doInsert(%2d) - defer(db)", partition))
+//
+//		deferErr := db.Close()
+//		if err == nil {
+//			err = deferErr
+//		}
+//		if err != nil {
+//			log.Fatal(errors.Errorf("      doInsert(%2d) - %v: %w", "db.Close()", partition, err))
+//		}
+//
+//		log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(db)", partition))
+//	}(db)
+//
+//	sqlInsert := configs["sql.insert"].(string)
+//
+//	resultInsert, err := db.ExecContext(ctx, sqlInsert, rows.keys, rows.vals)
+//	if err != nil {
+//		log.Fatal(
+//			errors.Errorf(
+//				"      doInsert(%2d) - Trial %d, Partition %d, SQL %s -> %w", partition, trial, partition, sqlInsert,
+//				err))
+//	}
+//
+//	rowCount, err := resultInsert.RowsAffected()
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//
+//	if int(rowCount) != len(rows.keys) {
+//		log.Fatalf(
+//			"      doInsert(%2d) - Trial %d, Partition %d: %d of %d rows inserted by %s", partition,
+//			trial, partition, len(rows.keys), rowCount, sqlInsert)
+//	}
+//
+//	log.Debug(fmt.Sprintf("End   doInsert(%2d)", partition))
+//}
 
-	defer wg.Done()
-
-	log.Debug(fmt.Sprintf("      doInsert(%2d) - connection.dsn=%v", partition, configs["connection.dsn"]))
-
-	db, err := sql.Open("godror", configs["connection.dsn"].(string))
-	if err != nil {
-		log.Fatal(errors.Errorf("      doInsert(%2d) - %v: %w", configs["connection.dsn"], partition, err))
-	}
-
-	defer func(db *sql.DB) {
-		log.Debug(fmt.Sprintf("Start doInsert(%2d) - defer(db)", partition))
-
-		deferErr := db.Close()
-		if err == nil {
-			err = deferErr
-		}
-		if err != nil {
-			log.Fatal(errors.Errorf("      doInsert(%2d) - %v: %w", "db.Close()", partition, err))
-		}
-
-		log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(db)", partition))
-	}(db)
-
-	sqlInsert := configs["sql.insert"].(string)
-
-	resultInsert, err := db.ExecContext(ctx, sqlInsert, rows.keys, rows.vals)
-	if err != nil {
-		log.Fatal(
-			errors.Errorf(
-				"      doInsert(%2d) - Trial %d, Partition %d, SQL %s -> %w", partition, trial, partition, sqlInsert,
-				err))
-	}
-
-	rowCount, err := resultInsert.RowsAffected()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if int(rowCount) != len(rows.keys) {
-		log.Fatalf(
-			"      doInsert(%2d) - Trial %d, Partition %d: %d of %d rows inserted by %s", partition,
-			trial, partition, len(rows.keys), rowCount, sqlInsert)
-	}
-
-	log.Debug(fmt.Sprintf("End   doInsert(%2d)", partition))
-}
-
-func doSelect(ctx context.Context, configs map[string]interface{}, trial int, partition int, expect int, wg *sync.WaitGroup) {
-	log.Debug(fmt.Sprintf("Start doSelect(%2d)", partition))
-
-	defer wg.Done()
-
-	log.Debug(fmt.Sprintf("      doSelect(%2d) - connection.dsn=%v", partition, configs["connection.dsn"]))
-
-	db, err := sql.Open("godror", configs["connection.dsn"].(string))
-	if err != nil {
-		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
-	}
-
-	defer func(db *sql.DB) {
-		log.Debug(fmt.Sprintf("Start doSelect(%2d) - defer(db)", partition))
-
-		deferErr := db.Close()
-		if err == nil {
-			err = deferErr
-		}
-		if err != nil {
-			log.Fatal(errors.Errorf("      doSelect(%2d) - defer(db) - %v: %w", "db.Close()", partition, err))
-		}
-
-		log.Debug(fmt.Sprintf("End   doSelect(%2d) - defer(db)", partition))
-	}(db)
-
-	selectSQL := configs["sql.select"].(string) + " WHERE partition_key = " +
-		strconv.Itoa(partition)
-	opts := godror.FetchRowCount(configs["connection.fetch.size"].(int))
-
-	rows, err := db.QueryContext(ctx, selectSQL, opts)
-	if err != nil {
-		log.Fatal(errors.Errorf("      doSelect(%2d) - %v: %w", "db.Close()", partition, err))
-	}
-
-	defer func(rows *sql.Rows) {
-		log.Debug(fmt.Sprintf("Start doSelect(%2d) - defer(rows)", partition))
-
-		deferErr := rows.Close()
-		if err == nil {
-			err = deferErr
-		}
-		if err != nil {
-			log.Fatal(errors.Errorf("      doSelect(%2d) - defer(rows) - %v: %w", "rows.Close()", partition, err))
-		}
-
-		log.Debug(fmt.Sprintf("End   doSelect(%2d) - defer(rows)", partition))
-	}(rows)
-
-	i := 0
-	for rows.Next() {
-		i++
-	}
-
-	if i != expect {
-		log.Fatal(
-			errors.Errorf(
-				"      doSelect(%2d) - Trial %d, Partition %d : failed to get %d rows (got %d)\n",
-				trial, partition, expect, i))
-	}
-
-	log.Debug(fmt.Sprintf("Start doSelect(%2d)", partition))
-}
+//func doSelect(ctx context.Context, configs map[string]interface{}, trial int, partition int, expect int, wg *sync.WaitGroup) {
+//	log.Debug(fmt.Sprintf("Start doSelect(%2d)", partition))
+//
+//	defer wg.Done()
+//
+//	log.Debug(fmt.Sprintf("      doSelect(%2d) - connection.dsn=%v", partition, configs["connection.dsn"]))
+//
+//	db, err := sql.Open("godror", configs["connection.dsn"].(string))
+//	if err != nil {
+//		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
+//	}
+//
+//	defer func(db *sql.DB) {
+//		log.Debug(fmt.Sprintf("Start doSelect(%2d) - defer(db)", partition))
+//
+//		deferErr := db.Close()
+//		if err == nil {
+//			err = deferErr
+//		}
+//		if err != nil {
+//			log.Fatal(errors.Errorf("      doSelect(%2d) - defer(db) - %v: %w", "db.Close()", partition, err))
+//		}
+//
+//		log.Debug(fmt.Sprintf("End   doSelect(%2d) - defer(db)", partition))
+//	}(db)
+//
+//	selectSQL := configs["sql.select"].(string) + " WHERE partition_key = " +
+//		strconv.Itoa(partition)
+//	opts := godror.FetchRowCount(configs["connection.fetch.size"].(int))
+//
+//	rows, err := db.QueryContext(ctx, selectSQL, opts)
+//	if err != nil {
+//		log.Fatal(errors.Errorf("      doSelect(%2d) - %v: %w", "db.Close()", partition, err))
+//	}
+//
+//	defer func(rows *sql.Rows) {
+//		log.Debug(fmt.Sprintf("Start doSelect(%2d) - defer(rows)", partition))
+//
+//		deferErr := rows.Close()
+//		if err == nil {
+//			err = deferErr
+//		}
+//		if err != nil {
+//			log.Fatal(errors.Errorf("      doSelect(%2d) - defer(rows) - %v: %w", "rows.Close()", partition, err))
+//		}
+//
+//		log.Debug(fmt.Sprintf("End   doSelect(%2d) - defer(rows)", partition))
+//	}(rows)
+//
+//	i := 0
+//	for rows.Next() {
+//		i++
+//	}
+//
+//	if i != expect {
+//		log.Fatal(
+//			errors.Errorf(
+//				"      doSelect(%2d) - Trial %d, Partition %d : failed to get %d rows (got %d)",
+//				trial, partition, expect, i))
+//	}
+//
+//	log.Debug(fmt.Sprintf("Start doSelect(%2d)", partition))
+//}
 
 func initDb(ctx context.Context, configs map[string]interface{}) {
 	log.Debug("Start initDb()")
@@ -272,13 +276,13 @@ func initDb(ctx context.Context, configs map[string]interface{}) {
 	if err != nil {
 		_, err = db.ExecContext(ctx, configs["sql.drop"].(string))
 		if err != nil {
-			log.Println(errors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
+			log.Info(errors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
 			os.Exit(1)
 		}
 
 		_, err = db.ExecContext(ctx, configs["sql.create"].(string))
 		if err != nil {
-			log.Println(errors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
+			log.Info(errors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
 			os.Exit(1)
 		}
 	}
@@ -289,7 +293,7 @@ func initDb(ctx context.Context, configs map[string]interface{}) {
 func loadBulk(benchmarkNumberPartitions int, fileBulkName string, fileBulkDelimiter string) []bulkPartition {
 	log.Debug("Start loadBulk()")
 
-	log.Println("Start Distribution of the data in the partitions")
+	log.Info("Start Distribution of the data in the partitions")
 
 	partitions := make([]bulkPartition, benchmarkNumberPartitions)
 
@@ -322,10 +326,10 @@ func loadBulk(benchmarkNumberPartitions int, fileBulkName string, fileBulkDelimi
 	}
 
 	for i, p := range partitions {
-		log.Printf("Partition %d has %5d rows\n", i+1, len(p.keys))
+		log.Printf("Partition %d has %5d rows", i+1, len(p.keys))
 	}
 
-	log.Println("End   Distribution of the data in the partitions")
+	log.Info("End   Distribution of the data in the partitions")
 
 	log.Debug("End   loadBulk()")
 
@@ -343,14 +347,14 @@ func loadConfig(configFile string) map[string]interface{} {
 	}
 
 	defer func(confFile *os.File) {
-		log.Debug("Start loadConfig() - defer(confFile)")
+		log.Debug("Start loadConfig() - defer()")
 
 		err := confFile.Close()
 		if err != nil {
 			log.Fatal(errors.Errorf("%v: %w", "confFile.Close()", err))
 		}
 
-		log.Debug("End   loadConfig() - defer(confFile)")
+		log.Debug("End   loadConfig() - defer()")
 	}(confFile)
 
 	scanner := bufio.NewScanner(confFile)
@@ -435,8 +439,7 @@ func resultWriter(configs map[string]interface{}, resultChn []result) {
 			"%s",   // start day time
 			"%s",   // end day time
 			"%.0f", // duration (sec)
-			"%d",   // duration (ns)
-			"\n"}, fileResultDelimiter)
+			"%d"}, fileResultDelimiter)
 
 		d := result.end.Sub(result.start)
 		_, err := fmt.Fprintf(resultFile, resultFormat, result.trial, result.sql,
@@ -453,6 +456,344 @@ func resultWriter(configs map[string]interface{}, resultChn []result) {
 	}
 
 	log.Debug("End   resultWriter()")
+}
+
+/*
+Performing a complete benchmark run that can consist of several trial runs.
+*/
+func runBenchmark() {
+	log.Debug("Start runBenchmark()")
+
+	// READ the configuration parameters into the memory (config params `file.configuration.name ...`)
+	configs := loadConfig(os.Args[1])
+
+	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
+	trials := configs["benchmark.trials"].(int)
+
+	// save the current time as the start of the 'benchmark' action
+	startBenchTs := time.Now()
+
+	resultSlice := make([]result, trials*3+1)
+	resultPos := 0
+
+	// READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
+	partitions := loadBulk(
+		benchmarkNumberPartitions,
+		configs["file.bulk.name"].(string),
+		configs["file.bulk.delimiter"].(string))
+
+	// create a separate database connection (without auto commit behaviour) for each partition
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	/*
+	   trial_no = 0
+	   WHILE trial_no < config_param 'benchmark.trials'
+	       DO run_trial(database connections,
+	                    trial_no,
+	                    bulk_data_partitions)
+	   ENDWHILE
+	*/
+	for t := 1; t <= trials; t++ {
+		runTrial(ctx, configs, t, partitions, resultSlice, resultPos)
+	}
+
+	/*
+	   partition_no = 0
+	   WHILE partition_no < config_param 'benchmark.number.partitions'
+	       close the database connection
+	   ENDWHILE
+	*/
+	// n/a
+
+	// WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
+	endBenchTs := time.Now()
+	resultSlice[resultPos] = result{trial: 0,
+		sql:    "",
+		action: "benchmark",
+		start:  startBenchTs,
+		end:    endBenchTs}
+	resultPos++
+
+	resultWriter(configs, resultSlice)
+
+	log.Info("Duration (ms) trial average : ", math.Round(float64(endBenchTs.Sub(startBenchTs).Nanoseconds()/1000000/int64(trials))))
+	log.Info("Duration (ms) benchmark run : ", math.Round(float64(endBenchTs.Sub(startBenchTs).Nanoseconds()/1000000)))
+
+	log.Debug("End   runBenchmark()")
+}
+
+/*
+Supervise function for inserting data into the database.
+*/
+func runInsert(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result, resultPos int) {
+	log.Debug("Start runInsert()")
+
+	// save the current time as the start of the 'query' action
+	start := time.Now()
+
+	/*
+	   partition_no = 0
+	   WHILE partition_no < config_param 'benchmark.number.partitions'
+	       IF config_param 'benchmark.core.multiplier' = 0
+	           DO run_insert_helper(database connections(partition_no),
+	                   bulk_data_partitions(partition_no))
+	       ELSE
+	           DO run_insert_helper (database connections(partition_no),
+	                   bulk_data_partitions(partition_no)) as a thread
+	       ENDIF
+	   ENDWHILE
+	*/
+	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
+	var wg sync.WaitGroup
+	wg.Add(benchmarkNumberPartitions)
+	for p := 0; p < benchmarkNumberPartitions; p++ {
+		if configs["benchmark.core.multiplier"].(int) == 0 {
+			runInsertHelper(ctx, configs, trialNo, p, partitions[p], &wg)
+		} else {
+			go runInsertHelper(ctx, configs, trialNo, p, partitions[p], &wg)
+		}
+	}
+
+	// WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
+	end := time.Now()
+	resultSlice[resultPos] = result{trial: trialNo,
+		sql:    configs["sql.insert"].(string),
+		action: "query",
+		start:  start,
+		end:    end}
+	resultPos++
+
+	log.Debug("End   runInsert()")
+}
+
+/*
+Helper function for inserting data into the database.
+*/
+func runInsertHelper(ctx context.Context, configs map[string]interface{}, trial int, partition int, rows bulkPartition, wg *sync.WaitGroup) {
+	log.Debug("Start runInsertHelper()")
+
+	defer wg.Done()
+
+	/*
+	   count = 0
+	   collection batch_collection = empty
+	   WHILE iterating through the collection bulk_data_partition
+	     count + 1
+
+	     add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection
+
+	     IF config_param 'benchmark.batch.size' > 0
+	         IF count modulo config param 'benchmark.batch.size' = 0
+	             execute the SQL statements in the collection batch_collection
+	             batch_collection = empty
+	         ENDIF
+	     ENDIF
+
+	     IF  config param 'benchmark.transaction.size' > 0
+	     AND count modulo config param 'benchmark.transaction.size' = 0
+	         commit
+	     ENDIF
+	   ENDWHILE
+	*/
+	log.Debug(fmt.Sprintf("      doInsert(%2d) - connection.dsn=%v", partition, configs["connection.dsn"]))
+
+	db, err := sql.Open("godror", configs["connection.dsn"].(string))
+	if err != nil {
+		log.Fatal(errors.Errorf("      doInsert(%2d) - %v: %w", configs["connection.dsn"], partition, err))
+	}
+
+	sqlInsert := configs["sql.insert"].(string)
+
+	resultInsert, err := db.ExecContext(ctx, sqlInsert, rows.keys, rows.vals)
+	if err != nil {
+		log.Fatal(
+			errors.Errorf(
+				"      doInsert(%2d) - Trial %d, Partition %d, SQL %s -> %w", partition, trial, partition, sqlInsert,
+				err))
+	}
+
+	rowCount, err := resultInsert.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if int(rowCount) != len(rows.keys) {
+		log.Fatalf(
+			"      doInsert(%2d) - Trial %d, Partition %d: %d of %d rows inserted by %s", partition,
+			trial, partition, len(rows.keys), rowCount, sqlInsert)
+	}
+
+	/*
+	   IF collection batch_collection is not empty
+	     execute the SQL statements in the collection batch_collection
+	   ENDIF
+	*/
+
+	// commit
+	defer func(db *sql.DB) {
+		log.Debug(fmt.Sprintf("Start doInsert(%2d) - defer(db)", partition))
+
+		deferErr := db.Close()
+		if err == nil {
+			err = deferErr
+		}
+		if err != nil {
+			log.Fatal(errors.Errorf("      doInsert(%2d) - %v: %w", "db.Close()", partition, err))
+		}
+
+		log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(db)", partition))
+	}(db)
+
+	log.Debug("End   runInsertHelper()")
+}
+
+/*
+Supervise function for retrieving of the database data.
+*/
+func runSelect(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result, resultPos int) {
+	log.Debug("Start runSelect()")
+
+	// save the current time as the start of the 'query' action
+	start := time.Now()
+
+	/*
+	   partition_no = 0
+	   WHILE partition_no < config_param 'benchmark.number.partitions'
+	       IF config_param 'benchmark.core.multiplier' = 0
+	           DO run_select_helper(database connections(partition_no),
+	                                bulk_data_partitions(partition_no,
+	                                partition_no)
+	       ELSE
+	           DO run_select_helper(database connections(partition_no),
+	                                bulk_data_partitions(partition_no,
+	                                partition_no) as a thread
+	       ENDIF
+	   ENDWHILE
+	*/
+	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
+	var wg sync.WaitGroup
+	wg.Add(benchmarkNumberPartitions)
+	for p := 0; p < benchmarkNumberPartitions; p++ {
+		if configs["benchmark.core.multiplier"].(int) == 0 {
+			runSelectHelper(ctx, configs, trialNo, p, len(partitions[p].keys), &wg)
+		} else {
+			go runSelectHelper(ctx, configs, trialNo, p, len(partitions[p].keys), &wg)
+		}
+	}
+
+	// WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
+	end := time.Now()
+	resultSlice[resultPos] = result{trial: trialNo,
+		sql:    configs["sql.insert"].(string),
+		action: "query",
+		start:  start,
+		end:    end}
+	resultPos++
+
+	log.Debug("End   runSelect()")
+}
+
+/*
+Helper function for retrieving data from the database.
+*/
+func runSelectHelper(ctx context.Context, configs map[string]interface{}, trial int, partition int, expect int, wg *sync.WaitGroup) {
+	log.Debug("Start runSelectHelper()")
+
+	defer wg.Done()
+
+	// execute the SQL statement in config param 'sql.select'
+	log.Debug(fmt.Sprintf("      doSelect(%2d) - connection.dsn=%v", partition, configs["connection.dsn"]))
+
+	db, err := sql.Open("godror", configs["connection.dsn"].(string))
+	if err != nil {
+		log.Fatal(errors.Errorf("%v: %w", configs["connection.dsn"], err))
+	}
+
+	selectSQL := configs["sql.select"].(string) + " WHERE partition_key = " +
+		strconv.Itoa(partition)
+	opts := godror.FetchRowCount(configs["connection.fetch.size"].(int))
+
+	rows, err := db.QueryContext(ctx, selectSQL, opts)
+	if err != nil {
+		log.Fatal(errors.Errorf("      doSelect(%2d) - %v: %w", "db.Close()", partition, err))
+	}
+
+	/*
+	   int count = 0;
+	   WHILE iterating through the result set
+	       count + 1
+	   ENDWHILE
+	*/
+	i := 0
+	for rows.Next() {
+		i++
+	}
+
+	/*
+	   IF NOT count = size(bulk_data_partition)
+	       display an error message
+	   ENDIF
+	*/
+	if i != expect {
+		log.Fatal(
+			errors.Errorf(
+				"      doSelect(%2d) - Trial %d, Partition %d : failed to get %d rows (got %d)",
+				trial, partition, expect, i))
+	}
+
+	log.Debug("End   runSelectHelper()")
+}
+
+/*
+Performing a single trial run.
+*/
+func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result, resultPos int) {
+	log.Debug("Start runTrial()")
+
+	// save the current time as the start of the 'trial' action
+	startTrialTs := time.Now()
+
+	log.Info("Start trial no.", trialNo)
+
+	/*
+	   create the database table (config param 'sql.create')
+	   IF error
+	       drop the database table (config param 'sql.drop')
+	       create the database table (config param 'sql.create')
+	   ENDIF
+	*/
+	initDb(ctx, configs)
+
+	/*
+	   DO run_insert(database connections,
+	                 trial_no,
+	                 bulk_data_partitions)
+	*/
+	runInsert(ctx, configs, trialNo, partitions, resultSlice, resultPos)
+
+	/*
+	   DO run_select(database connections,
+	                 trial_no,
+	                 bulk_data_partitions)
+	*/
+	runSelect(ctx, configs, trialNo, partitions, resultSlice, resultPos)
+
+	// drop the database table (config param 'sql.drop')
+	// n/a
+
+	// WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
+	endTrialTs := time.Now()
+	resultSlice[resultPos] = result{trial: trialNo,
+		sql:    "",
+		action: "trial",
+		start:  startTrialTs,
+		end:    endTrialTs}
+	resultPos++
+
+	log.Info("Duration (ms) trial         : ", math.Round(float64(endTrialTs.Sub(startTrialTs).Nanoseconds()/1000000)))
+
+	log.Debug("End   runTrial()")
 }
 
 func tsStr(t time.Time) string {
