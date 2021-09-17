@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 
 package ch.konnexions.orabench.threads;
@@ -14,6 +14,7 @@ import ch.konnexions.orabench.OraBench;
 import ch.konnexions.orabench.utils.Config;
 
 // TODO: Auto-generated Javadoc
+
 /**
  * The Class Select.
  */

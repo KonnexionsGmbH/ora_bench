@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 
 package ch.konnexions.orabench.threads;
@@ -15,6 +15,7 @@ import ch.konnexions.orabench.OraBench;
 import ch.konnexions.orabench.utils.Config;
 
 // TODO: Auto-generated Javadoc
+
 /**
  * The Class Insert.
  */
@@ -39,7 +40,7 @@ public class Insert implements Runnable {
      * @param bulkDataPartition the bulk data partition
      */
     public Insert(Config config, Connection connection, PreparedStatement preparedStatement,
-            ArrayList<String[]> bulkDataPartition) {
+                  ArrayList<String[]> bulkDataPartition) {
         if (isDebug) {
             logger.debug("Start");
         }

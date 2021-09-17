@@ -1,8 +1,8 @@
 /*
- * Licensed to the Konnexions GmbH under one or more contributor license 
- * agreements.  The Konnexions GmbH licenses this file to You under the 
- * Apache License, Version 2.0 (the "License"); you may not use this file 
- * except in compliance with the License.  You may obtain a copy of the 
+ * Licensed to the Konnexions GmbH under one or more contributor license
+ * agreements.  The Konnexions GmbH licenses this file to You under the
+ * Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a copy of the
  * License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -34,14 +34,12 @@ public class Database {
     private static final Logger logger = LogManager.getLogger(Database.class);
     private final static boolean isDebug = logger.isDebugEnabled();
     private final Config config;
-    private Connection connection;
     private final String connectionHost;
     private final String connectionPassword;
     private final int connectionPort;
-
     private final String connectionService;
-
     private final String connectionUser;
+    private Connection connection;
 
     /**
      * Constructs a Database object using the given {@link Config} object.

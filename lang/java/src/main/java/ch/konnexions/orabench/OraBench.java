@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 
 package ch.konnexions.orabench;
@@ -38,6 +38,8 @@ public class OraBench {
     private static final Logger logger = LogManager.getLogger(OraBench.class);
 
     private final static boolean isDebug = logger.isDebugEnabled();
+    private final Config config = new Config();
+    private ExecutorService executorService = null;
 
     /**
      * This is the main method for the Oracle benchmark run. The operations to be
@@ -51,7 +53,7 @@ public class OraBench {
      * <li>setup_json - creates a JSON configuration parameter file
      * <li>setup_python - creates a configuration parameter file suited for Python 3
      * </ul>
-     * 
+     *
      * @param args finalise / runBenchmark / setup / setup_erlang / setup_python /
      *             setup_json
      */
@@ -135,16 +137,132 @@ public class OraBench {
         System.exit(0);
     }
 
-    private final Config config = new Config();
+    /**
+     * Helper function for inserting data into the database.
+     *
+     * @param connection        the database connection
+     * @param preparedStatement the prepared statement
+     * @param bulkDataPartition the bulk data partition
+     * @param config            the configuration parameters
+     */
+    public static void runInsertHelper(Connection connection, PreparedStatement preparedStatement,
+                                       ArrayList<String[]> bulkDataPartition, Config config) {
+        if (isDebug) {
+            logger.debug("Start");
+        }
 
-    private ExecutorService executorService = null;
+        // count = 0
+        // collection batch_collection = empty
+        int count = 0;
+
+        try {
+            /*
+             * WHILE iterating through the collection bulk_data_partition count + 1
+             *
+             * add the SQL statement in config param 'sql.insert' with the current bulk_data
+             * entry to the collection batch_collection
+             *
+             * IF config_param 'benchmark.batch.size' > 0 IF count modulo config param
+             * 'benchmark.batch.size' = 0 execute the SQL statements in the collection
+             * batch_collection batch_collection = empty ENDIF ENDIF
+             *
+             * IF config param 'benchmark.transaction.size' > 0 AND count modulo config
+             * param 'benchmark.transaction.size' = 0 commit ENDIF ENDWHILE
+             */
+            for (String[] value : bulkDataPartition) {
+                preparedStatement.setString(1, value[0]);
+                preparedStatement.setString(2, value[1]);
+
+                count += 1;
+
+                if (config.getBenchmarkBatchSize() == 0) {
+                    preparedStatement.execute();
+                } else {
+                    preparedStatement.addBatch();
+                    if (count % config.getBenchmarkBatchSize() == 0) {
+                        preparedStatement.executeBatch();
+                    }
+                }
+
+                if ((config.getBenchmarkTransactionSize() > 0) && (count % config.getBenchmarkTransactionSize() == 0)) {
+                    connection.commit();
+                }
+            }
+
+            /*
+             * IF collection batch_collection is not empty execute the SQL statements in the
+             * collection batch_collection ENDIF
+             */
+            if ((config.getBenchmarkBatchSize() > 0) && (count % config.getBenchmarkBatchSize() != 0)) {
+                preparedStatement.executeBatch();
+            }
+
+            // commit
+            if ((config.getBenchmarkTransactionSize() == 0) || (count % config.getBenchmarkTransactionSize() != 0)) {
+                connection.commit();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if (isDebug) {
+            logger.debug("End");
+        }
+    }
+
+    /**
+     * Helper function for retrieving data from the database.
+     *
+     * @param statement         the statement
+     * @param bulkDataPartition the bulk data partition
+     * @param partitionKey      the partition key
+     * @param config            the config
+     */
+    public static void runSelectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey,
+                                       Config config) {
+        if (isDebug) {
+            logger.debug("Start");
+        }
+
+        try {
+            if (config.getConnectionFetchSize() > 0) {
+                statement.setFetchSize(config.getConnectionFetchSize());
+            }
+
+            // execute the SQL statement in config param 'sql.select'
+            ResultSet resultSet = statement
+                    .executeQuery(config.getSqlSelect() + " WHERE partition_key = " + partitionKey);
+
+            /*
+             * count = 0; WHILE iterating through the result set count + 1 ENDWHILE
+             */
+            int count = 0;
+            while (resultSet.next()) {
+                count += 1;
+            }
+
+            /*
+             * IF NOT count = size(bulk_data_partition) display an error message ENDIF
+             */
+            if (count != bulkDataPartition.size()) {
+                logger.error("Number rows: expected=" + bulkDataPartition.size() + " - found=" + count);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if (isDebug) {
+            logger.debug("End");
+        }
+    }
 
     /**
      * Creates the database objects of type Connection, PreparedStatement, ResultSet
      * and Statement.
      *
      * @return the array list containing the database objects of the classes
-     *         Connection, PreparedStatement and Statement
+     * Connection, PreparedStatement and Statement
      */
     private ArrayList<Object> createDatabaseObjects() {
         if (isDebug) {
@@ -218,7 +336,7 @@ public class OraBench {
                      * 'benchmark.number.partitions')
                      */
                     partitionKey = (keyValue.charAt(0) * 251 + keyValue.charAt(1)) % numberPartitions;
-                    bulkDataPartitions.get(partitionKey).add(new String[] { keyValue, record.get("data") });
+                    bulkDataPartitions.get(partitionKey).add(new String[]{keyValue, record.get("data")});
                 }
             }
 
@@ -313,7 +431,7 @@ public class OraBench {
      * @param result             the result
      */
     private void runInsert(ArrayList<Connection> connections, ArrayList<PreparedStatement> preparedStatements,
-            int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
+                           int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -363,79 +481,6 @@ public class OraBench {
     }
 
     /**
-     * Helper function for inserting data into the database.
-     *
-     * @param connection        the database connection
-     * @param preparedStatement the prepared statement
-     * @param bulkDataPartition the bulk data partition
-     * @param config            the configuration parameters
-     */
-    public static void runInsertHelper(Connection connection, PreparedStatement preparedStatement,
-            ArrayList<String[]> bulkDataPartition, Config config) {
-        if (isDebug) {
-            logger.debug("Start");
-        }
-
-        // count = 0
-        // collection batch_collection = empty
-        int count = 0;
-
-        try {
-            /*
-             * WHILE iterating through the collection bulk_data_partition count + 1
-             * 
-             * add the SQL statement in config param 'sql.insert' with the current bulk_data
-             * entry to the collection batch_collection
-             * 
-             * IF config_param 'benchmark.batch.size' > 0 IF count modulo config param
-             * 'benchmark.batch.size' = 0 execute the SQL statements in the collection
-             * batch_collection batch_collection = empty ENDIF ENDIF
-             * 
-             * IF config param 'benchmark.transaction.size' > 0 AND count modulo config
-             * param 'benchmark.transaction.size' = 0 commit ENDIF ENDWHILE
-             */
-            for (String[] value : bulkDataPartition) {
-                preparedStatement.setString(1, value[0]);
-                preparedStatement.setString(2, value[1]);
-
-                count += 1;
-
-                if (config.getBenchmarkBatchSize() == 0) {
-                    preparedStatement.execute();
-                } else {
-                    preparedStatement.addBatch();
-                    if (count % config.getBenchmarkBatchSize() == 0) {
-                        preparedStatement.executeBatch();
-                    }
-                }
-
-                if ((config.getBenchmarkTransactionSize() > 0) && (count % config.getBenchmarkTransactionSize() == 0)) {
-                    connection.commit();
-                }
-            }
-
-            /*
-             * IF collection batch_collection is not empty execute the SQL statements in the
-             * collection batch_collection ENDIF
-             */
-            if ((config.getBenchmarkBatchSize() > 0) && (count % config.getBenchmarkBatchSize() != 0)) {
-                preparedStatement.executeBatch();
-            }
-
-            // commit
-            if ((config.getBenchmarkTransactionSize() == 0) || (count % config.getBenchmarkTransactionSize() != 0)) {
-                connection.commit();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        if (isDebug) {
-            logger.debug("End");
-        }
-    }
-
-    /**
      * Supervise function for retrieving of the database data.
      *
      * @param statements         the statements
@@ -444,7 +489,7 @@ public class OraBench {
      * @param result             the result
      */
     private void runSelect(ArrayList<Statement> statements, int trialNumber,
-            ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
+                           ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -493,53 +538,6 @@ public class OraBench {
     }
 
     /**
-     * Helper function for retrieving data from the database.
-     *
-     * @param statement         the statement
-     * @param bulkDataPartition the bulk data partition
-     * @param partitionKey      the partition key
-     * @param config            the config
-     */
-    public static void runSelectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey,
-            Config config) {
-        if (isDebug) {
-            logger.debug("Start");
-        }
-
-        try {
-            if (config.getConnectionFetchSize() > 0) {
-                statement.setFetchSize(config.getConnectionFetchSize());
-            }
-
-            // execute the SQL statement in config param 'sql.select'
-            ResultSet resultSet = statement
-                    .executeQuery(config.getSqlSelect() + " WHERE partition_key = " + partitionKey);
-
-            /*
-             * count = 0; WHILE iterating through the result set count + 1 ENDWHILE
-             */
-            int count = 0;
-            while (resultSet.next()) {
-                count += 1;
-            }
-
-            /*
-             * IF NOT count = size(bulk_data_partition) display an error message ENDIF
-             */
-            if (count != bulkDataPartition.size()) {
-                logger.error("Number rows: expected=" + bulkDataPartition.size() + " - found=" + count);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        if (isDebug) {
-            logger.debug("End");
-        }
-    }
-
-    /**
      * Performing a single trial run.
      *
      * @param connections        the database connections
@@ -550,8 +548,8 @@ public class OraBench {
      * @param result             the result
      */
     private void runTrial(ArrayList<Connection> connections, ArrayList<PreparedStatement> preparedStatements,
-            ArrayList<Statement> statements, int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions,
-            Result result) {
+                          ArrayList<Statement> statements, int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions,
+                          Result result) {
         if (isDebug) {
             logger.debug("Start");
         }

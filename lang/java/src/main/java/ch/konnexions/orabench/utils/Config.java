@@ -79,6 +79,7 @@ public class Config {
 
     private static final Logger logger = LogManager.getLogger(Config.class);
     private final static boolean isDebug = logger.isDebugEnabled();
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
     private int benchmarkBatchSize;
     private String benchmarkComment;
     private int benchmarkCoreMultiplier;
@@ -92,14 +93,12 @@ public class Config {
     private String benchmarkOs;
     private String benchmarkRelease;
     private int benchmarkTransactionSize;
-
     private int benchmarkTrials;
     private String benchmarkUserName;
     private int connectionFetchSize;
     private String connectionHost;
     private String connectionPassword;
     private int connectionPort;
-
     private String connectionService;
     private String connectionUser;
     private FileBasedConfigurationBuilder<PropertiesConfiguration> fileBasedConfigurationBuilder;
@@ -116,11 +115,7 @@ public class Config {
     private String fileConfigurationNameToml;
     private String fileResultDelimiter;
     private String fileResultHeader;
-
     private String fileResultName;
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
-
     private ArrayList<String> keysSorted = new ArrayList<>();
 
     private PropertiesConfiguration propertiesConfiguration;
@@ -239,7 +234,7 @@ public class Config {
 
             String value;
 
-            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
+            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext(); ) {
                 final String key = iterator.next();
 
                 if ("file.result.header".contentEquals(key)) {
@@ -426,6 +421,13 @@ public class Config {
     }
 
     /**
+     * @param benchmarkDriver the name of the applied driver to set
+     */
+    final void setBenchmarkDriver(String benchmarkDriver) {
+        this.benchmarkDriver = benchmarkDriver;
+    }
+
+    /**
      * @return the host name
      */
     final String getBenchmarkHostName() {
@@ -560,7 +562,7 @@ public class Config {
 
     /**
      * @return the file name of the text file with the example data (bulk data
-     *         file). The file name may contain the absolute or relative file path.
+     * file). The file name may contain the absolute or relative file path.
      */
     public final String getFileBulkName() {
         return fileBulkName;
@@ -575,8 +577,8 @@ public class Config {
 
     /**
      * @return the name of the configuration file for the C++ (gcc) language
-     *         version. The file name may contain the absolute or relative file
-     *         path.
+     * version. The file name may contain the absolute or relative file
+     * path.
      */
     private final String getFileConfigurationNameC() {
         return fileConfigurationNameC;
@@ -584,7 +586,7 @@ public class Config {
 
     /**
      * @return the name of the configuration file for the Erlang language version.
-     *         The file name may contain the absolute or relative file path.
+     * The file name may contain the absolute or relative file path.
      */
     private final String getFileConfigurationNameErlang() {
         return fileConfigurationNameErlang;
@@ -592,7 +594,7 @@ public class Config {
 
     /**
      * @return the name of the configuration file in JSON format. The file name may
-     *         contain the absolute or relative file path.
+     * contain the absolute or relative file path.
      */
     private final String getFileConfigurationNameJson() {
         return fileConfigurationNameJson;
@@ -600,7 +602,7 @@ public class Config {
 
     /**
      * @return the name of the configuration file for the Python 3 language version.
-     *         The file name may contain the absolute or relative file path.
+     * The file name may contain the absolute or relative file path.
      */
     private final String getFileConfigurationNamePython() {
         return fileConfigurationNamePython;
@@ -608,7 +610,7 @@ public class Config {
 
     /**
      * @return the name of the configuration file for the TOML version. The file
-     *         name may contain the absolute or relative file path.
+     * name may contain the absolute or relative file path.
      */
     private final String getFileConfigurationNameToml() {
         return fileConfigurationNameToml;
@@ -630,7 +632,7 @@ public class Config {
 
     /**
      * @return the name of the result file containing the benchmark results. The
-     *         file name may contain the absolute or relative file path.
+     * file name may contain the absolute or relative file path.
      */
     final String getFileResultName() {
         return fileResultName;
@@ -641,7 +643,7 @@ public class Config {
             logger.debug("Start");
         }
 
-        for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
+        for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext(); ) {
             keysSorted.add(iterator.next());
         }
 
@@ -801,13 +803,6 @@ public class Config {
         if (isDebug) {
             logger.debug("End");
         }
-    }
-
-    /**
-     * @param benchmarkDriver the name of the applied driver to set
-     */
-    final void setBenchmarkDriver(String benchmarkDriver) {
-        this.benchmarkDriver = benchmarkDriver;
     }
 
     private void storeConfiguration() {

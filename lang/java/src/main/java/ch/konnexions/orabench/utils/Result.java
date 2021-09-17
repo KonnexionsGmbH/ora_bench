@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 import org.apache.commons.math3.util.Precision;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -73,7 +74,7 @@ public class Result {
     }
 
     private void createMeasuringPoint(int trialNo, LocalDateTime startDateTime, LocalDateTime endDateTime,
-            long duration) {
+                                      long duration) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -98,7 +99,7 @@ public class Result {
     }
 
     private void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime,
-            LocalDateTime endDateTime, long duration) {
+                                      LocalDateTime endDateTime, long duration) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -126,7 +127,7 @@ public class Result {
 
     /**
      * End of the whole benchmark run.
-     * 
+     *
      * @param benchmarkTrials
      */
     public final void endBenchmark(int benchmarkTrials) {
