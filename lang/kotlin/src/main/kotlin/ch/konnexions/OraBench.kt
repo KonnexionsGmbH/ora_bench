@@ -5,6 +5,7 @@ package main.kotlin.ch.konnexions/*
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.CSVRecord
+import org.apache.commons.math3.util.Precision
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -356,14 +357,14 @@ class OraBench {
             duration
         )
 
-        logger.info("Duration (ms) trial         : " + duration / 1000000);
+        logger.info("Duration (ms) trial         : " +  Precision.round(duration / 1000000.0,0).toLong());
 
         if (isDebug) {
             logger.debug("End")
         }
     }
 
-    private fun createMeasuringPoint(endDateTime: LocalDateTime, duration: Long) {
+    private fun createMeasuringPoint(endDateTime: LocalDateTime, duration: Long, trials: Int) {
         if (isDebug) {
             logger.debug("Start")
         }
@@ -377,7 +378,8 @@ class OraBench {
             duration
         )
 
-        logger.info("Duration (ms) benchmark run: " + duration / 1000000);
+        logger.info("Duration (ms) trial average : " +  Precision.round(duration / 1000000.0 / trials,0).toLong());
+        logger.info("Duration (ms) benchmark run : " +  Precision.round(duration / 1000000.0,0).toLong());
 
         if (isDebug) {
             logger.debug("End")
@@ -583,7 +585,7 @@ class OraBench {
     /**
      * End of the whole benchmark run.
      */
-    private fun resultBenchmarkEnd() {
+    private fun resultBenchmarkEnd(benchmarkTrials: Int) {
         if (isDebug) {
             logger.debug("Start")
         }
@@ -593,7 +595,8 @@ class OraBench {
 
         createMeasuringPoint(
             endDateTime,
-            duration
+            duration,
+            benchmarkTrials
         )
 
         try {
@@ -788,7 +791,7 @@ class OraBench {
         }
 
         // WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
-        resultBenchmarkEnd()
+        resultBenchmarkEnd(benchmarkTrials)
 
         if (isDebug) {
             logger.debug("End")
