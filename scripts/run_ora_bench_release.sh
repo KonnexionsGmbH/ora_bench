@@ -23,7 +23,7 @@ export ORA_BENCH_CONNECTION_PORT=1521
 export ORA_BENCH_ORACLE_DATABASE_ANY=false
 export ORA_BENCH_ORACLE_DATABASE_18C=false
 export ORA_BENCH_ORACLE_DATABASE_19C=false
-export ORA_BENCH_ORACLE_DATABASE_21C=false
+export ORA_BENCH_ORACLE_DATABASE_21C=true
 export ORA_BENCH_ORACLE_DATABASE_EXISTING=false
 
 export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
@@ -53,10 +53,10 @@ echo "RUN_ORANIF_ELIXIR        : ${ORA_BENCH_RUN_ORANIF_ELIXIR}"
 echo "RUN_ORANIF_ERLANG        : ${ORA_BENCH_RUN_ORANIF_ERLANG}"
 echo "================================================================================"
 
-if [ "${ORA_BENCH_ORACLE_DATABASE_EXISTING}" = "true" \
-  || "${ORA_BENCH_ORACLE_DATABASE_18C}" = "true" \
-  || "${ORA_BENCH_ORACLE_DATABASE_19C}" = "true" \
-  || "${ORA_BENCH_ORACLE_DATABASE_21C}" = "true" ]; then
+if [ "${ORA_BENCH_ORACLE_DATABASE_EXISTING}" = "true" ] \
+|| [ "${ORA_BENCH_ORACLE_DATABASE_18C}" = "true" ] \
+|| [ "${ORA_BENCH_ORACLE_DATABASE_19C}" = "true" ] \
+|| [ "${ORA_BENCH_ORACLE_DATABASE_21C}" = "true" ]; then
     export ORA_BENCH_ORACLE_DATABASE_ANY=true
 fi
 
@@ -107,7 +107,7 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     fi
 
-    if [${ORA_BENCH_ORACLE_DATABASE_21C}" = "true" ]; then
+    if [ "${ORA_BENCH_ORACLE_DATABASE_21C}" = "true" ]; then
         echo "--------------------------------------------------------------------------------"
         echo "Oracle Database 21c."
         echo "--------------------------------------------------------------------------------"
@@ -121,7 +121,7 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
             exit 255
         fi
-    )
+    fi
 fi
 
 echo "--------------------------------------------------------------------------------"
