@@ -58,7 +58,7 @@ if %ERRORLEVEL% neq 0 (
     exit -1073741510
 )
 
-julia lang\julia\OraBench.jl priv\properties\ora_bench_toml.properties
+julia lang\julia\OraBenchOracle.jl priv\properties\ora_bench_toml.properties
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'julia OrtaBench.jl' was aborted, error code=%ERRORLEVEL%
     exit -1073741510

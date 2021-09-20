@@ -83,16 +83,13 @@ function create_connections()
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
-    connection_string = 
+    connection_string =
         CONNECTION_HOST * ":" * string(CONNECTION_PORT) * "/" * CONNECTION_SERVICE
-
-    @info "wwe BENCHMARK_NUMBER_PARTITIONS=$(BENCHMARK_NUMBER_PARTITIONS)"
 
     for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
         try
-            CONNECTIONS[partition_key] = 
+            CONNECTIONS[partition_key] =
                 Oracle.Connection(CONNECTION_USER, CONNECTION_PASSWORD, connection_string)
-            @info "wwe connection " * string(partition_key) * " open"
         catch reason
             @info "partition_key      =" * string(partition_key)
             @info "connection_user    =" * CONNECTION_USER
@@ -136,7 +133,7 @@ function create_result(action, trial_number, sql_statement, start_date_time, sql
         FILE_RESULT_DELIMITER *
         BENCHMARK_HOST_NAME *
         FILE_RESULT_DELIMITER *
-        string(BENCHMARK_NUMBER_CORES) * 
+        string(BENCHMARK_NUMBER_CORES) *
         FILE_RESULT_DELIMITER *
         BENCHMARK_OS *
         FILE_RESULT_DELIMITER *
@@ -148,31 +145,31 @@ function create_result(action, trial_number, sql_statement, start_date_time, sql
         FILE_RESULT_DELIMITER *
         BENCHMARK_DRIVER *
         FILE_RESULT_DELIMITER *
-        string(trial_number) * 
+        string(trial_number) *
         FILE_RESULT_DELIMITER *
         sql_statement *
         FILE_RESULT_DELIMITER *
-        string(BENCHMARK_CORE_MULTIPLIER) * 
+        string(BENCHMARK_CORE_MULTIPLIER) *
         FILE_RESULT_DELIMITER *
-        string(CONNECTION_FETCH_SIZE) * 
+        string(CONNECTION_FETCH_SIZE) *
         FILE_RESULT_DELIMITER *
-        string(BENCHMARK_TRANSACTION_SIZE) * 
+        string(BENCHMARK_TRANSACTION_SIZE) *
         FILE_RESULT_DELIMITER *
-        string(FILE_BULK_LENGTH) * 
+        string(FILE_BULK_LENGTH) *
         FILE_RESULT_DELIMITER *
-        string(FILE_BULK_SIZE) * 
+        string(FILE_BULK_SIZE) *
         FILE_RESULT_DELIMITER *
-        string(BENCHMARK_BATCH_SIZE) * 
+        string(BENCHMARK_BATCH_SIZE) *
         FILE_RESULT_DELIMITER *
         action *
         FILE_RESULT_DELIMITER *
-        string(start_date_time) * 
+        string(start_date_time) *
         FILE_RESULT_DELIMITER *
-        string(end_date_time) * 
+        string(end_date_time) *
         FILE_RESULT_DELIMITER *
-        string(round((end_date_time - start_date_time).value * 0.001)) * 
+        string(round((end_date_time - start_date_time).value * 0.001)) *
         FILE_RESULT_DELIMITER *
-        string(duration_ns) * 
+        string(duration_ns) *
         FILE_RESULT_DELIMITER *
         "\n",
     )
@@ -186,10 +183,10 @@ end
 # ----------------------------------------------------------------------------------
 
 function create_result_measuring_point_end(
-    action, 
-    trial_number = 0, 
-    sql_statement = "", 
-    sql_operation = "", 
+    action,
+    trial_number = 0,
+    sql_statement = "",
+    sql_operation = "",
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
@@ -283,7 +280,7 @@ function get_bulk_data_partitions()
         )
     end
 
-    global BULK_DATA = 
+    global BULK_DATA =
         DataFrame(CSV.File(FILE_BULK_NAME, header = 1, delim = FILE_BULK_DELIMITER))
 
     partition_size = div(FILE_BULK_SIZE, BENCHMARK_NUMBER_PARTITIONS)
@@ -301,7 +298,7 @@ function get_bulk_data_partitions()
         if current_partition_upper > FILE_BULK_SIZE
             current_partition_upper = FILE_BULK_SIZE
         end
-        BULK_DATA_PARTITIONS[partition_key] = 
+        BULK_DATA_PARTITIONS[partition_key] =
             last_partition_upper + 1, current_partition_upper
         @info format(
             "Partition p{1:0>5d} contains {2:n} rows",
@@ -327,26 +324,26 @@ function load_config(configFile)
 
     config_parser::Dict = TOML.parsefile(configFile)
 
-    global BENCHMARK_BATCH_SIZE = 
+    global BENCHMARK_BATCH_SIZE =
         parse(Int64, config_parser["DEFAULT"]["benchmark_batch_size"])
     global BENCHMARK_COMMENT = config_parser["DEFAULT"]["benchmark_comment"]
-    global BENCHMARK_CORE_MULTIPLIER = 
+    global BENCHMARK_CORE_MULTIPLIER =
         parse(Int64, config_parser["DEFAULT"]["benchmark_core_multiplier"])
     global BENCHMARK_DATABASE = config_parser["DEFAULT"]["benchmark_database"]
     global BENCHMARK_HOST_NAME = config_parser["DEFAULT"]["benchmark_host_name"]
     global BENCHMARK_ID = config_parser["DEFAULT"]["benchmark_id"]
-    global BENCHMARK_NUMBER_CORES = 
+    global BENCHMARK_NUMBER_CORES =
         parse(Int64, config_parser["DEFAULT"]["benchmark_number_cores"])
-    global BENCHMARK_NUMBER_PARTITIONS = 
-          parse(Int64, config_parser["DEFAULT"]["benchmark_number_partitions"])
+    global BENCHMARK_NUMBER_PARTITIONS =
+        parse(Int64, config_parser["DEFAULT"]["benchmark_number_partitions"])
     global BENCHMARK_OS = config_parser["DEFAULT"]["benchmark_os"]
     global BENCHMARK_RELEASE = config_parser["DEFAULT"]["benchmark_release"]
-    global BENCHMARK_TRANSACTION_SIZE = 
+    global BENCHMARK_TRANSACTION_SIZE =
         parse(Int64, config_parser["DEFAULT"]["benchmark_transaction_size"])
     global BENCHMARK_TRIALS = parse(Int64, config_parser["DEFAULT"]["benchmark_trials"])
     global BENCHMARK_USER_NAME = config_parser["DEFAULT"]["benchmark_user_name"]
 
-    global CONNECTION_FETCH_SIZE = 
+    global CONNECTION_FETCH_SIZE =
         parse(Int64, config_parser["DEFAULT"]["connection_fetch_size"])
     global CONNECTION_HOST = config_parser["DEFAULT"]["connection_host"]
     global CONNECTION_PASSWORD = config_parser["DEFAULT"]["connection_password"]
@@ -354,12 +351,12 @@ function load_config(configFile)
     global CONNECTION_SERVICE = config_parser["DEFAULT"]["connection_service"]
     global CONNECTION_USER = config_parser["DEFAULT"]["connection_user"]
 
-    global FILE_BULK_DELIMITER = 
+    global FILE_BULK_DELIMITER =
         replace(config_parser["DEFAULT"]["file_bulk_delimiter"], "TAB" => "\t")
     global FILE_BULK_LENGTH = parse(Int64, config_parser["DEFAULT"]["file_bulk_length"])
     global FILE_BULK_NAME = config_parser["DEFAULT"]["file_bulk_name"]
     global FILE_BULK_SIZE = parse(Int64, config_parser["DEFAULT"]["file_bulk_size"])
-    global FILE_RESULT_DELIMITER = 
+    global FILE_RESULT_DELIMITER =
         replace(config_parser["DEFAULT"]["file_result_delimiter"], "TAB" => "\t")
     global FILE_RESULT_NAME = config_parser["DEFAULT"]["file_result_name"]
 
@@ -386,30 +383,30 @@ function insert(connection, bulk_data_partition)
     count = 0
     batch_data = list()
 
-#     for key_data_tuple in bulk_data_partition
-#         count += 1
-# 
-#         if BENCHMARK_BATCH_SIZE == 0:
-#             cursor.execute(SQL_SELECT, [key_data_tuple[0], key_data_tuple[1]])
-#         else:
-#             batch_data.append(key_data_tuple)
-#             if count % BENCHMARK_BATCH_SIZE == 0:
-#                 cursor.executemany(SQL_SELECT, batch_data)
-#                 batch_data = list()
-#             end
-#         end
-# 
-#         if BENCHMARK_TRANSACTION_SIZE > 0 and count % BENCHMARK_TRANSACTION_SIZE == 0:
-#             connection.commit()
-#     end
-# 
-#     if BENCHMARK_BATCH_SIZE > 0 and batch_data.__len__() > 0:
-#         cursor.executemany(SQL_SELECT, batch_data)
-#     end
-# 
-#     if BENCHMARK_TRANSACTION_SIZE == 0 or count % BENCHMARK_TRANSACTION_SIZE != 0:
-#         connection.commit()
-#     end
+    #     for key_data_tuple in bulk_data_partition
+    #         count += 1
+    # 
+    #         if BENCHMARK_BATCH_SIZE == 0:
+    #             cursor.execute(SQL_SELECT, [key_data_tuple[0], key_data_tuple[1]])
+    #         else:
+    #             batch_data.append(key_data_tuple)
+    #             if count % BENCHMARK_BATCH_SIZE == 0:
+    #                 cursor.executemany(SQL_SELECT, batch_data)
+    #                 batch_data = list()
+    #             end
+    #         end
+    # 
+    #         if BENCHMARK_TRANSACTION_SIZE > 0 and count % BENCHMARK_TRANSACTION_SIZE == 0:
+    #             connection.commit()
+    #     end
+    # 
+    #     if BENCHMARK_BATCH_SIZE > 0 and batch_data.__len__() > 0:
+    #         cursor.executemany(SQL_SELECT, batch_data)
+    #     end
+    # 
+    #     if BENCHMARK_TRANSACTION_SIZE == 0 or count % BENCHMARK_TRANSACTION_SIZE != 0:
+    #         connection.commit()
+    #     end
 
     @debug "End   $(function_name)"
     nothing
@@ -421,6 +418,7 @@ end
 
 function main()
     logger = SimpleLogger(stdout, Logging.Debug)
+#     logger = SimpleLogger(stdout, Logging.Info)
     old_logger = global_logger(logger)
 
     function_name = string(StackTraces.stacktrace()[1].func)
@@ -434,7 +432,7 @@ function main()
     global BENCHMARK_DRIVER = "Oracle.jl " * string(v)
     global BENCHMARK_LANGUAGE = "Julia " * string(Base.VERSION)
 
-    numberArgs = size(ARGS,1)
+    numberArgs = size(ARGS, 1)
 
     @info "main() - number arguments=$(numberArgs)"
 
@@ -487,7 +485,7 @@ function run_benchmark()
     ENDWHILE
     =#
     for trial_number = 1:BENCHMARK_TRIALS
-     run_trial(trial_number)
+        run_trial(trial_number)
     end
 
     #=
@@ -497,8 +495,9 @@ function run_benchmark()
     ENDWHILE
     =#
     for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
-     Oracle.close(CONNECTIONS[partition_key])
-     @info "wwe connection " * string(partition_key) * " closed"
+        @debug "www partition_key=$(partition_key) - to be closed"
+        Oracle.close(CONNECTIONS[partition_key])
+        @debug "www partition_key=$(partition_key) - closed"
     end
 
     # WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
@@ -516,27 +515,27 @@ function run_insert(trial_number)
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name) - trial_number=$(trial_number)"
 
-#     create_result_measuring_point_start('query')
-# 
-#     threads = list()
-# 
-#     for partition_key in 1: BENCHMARK_NUMBER_PARTITIONS
-#         if BENCHMARK_CORE_MULTIPLIER == 0:
-#             insert(connections[partition_key], bulk_data_partitions[partition_key])
-#         else
-#             thread = threading.Thread(target=insert, args=(config, connections[partition_key], cursors[partition_key], bulk_data_partitions[partition_key],))
-#             threads.append(thread)
-#             thread.start()
-#          end
-#     end        
-# 
-#     if BENCHMARK_CORE_MULTIPLIER > 0
-#         for thread in threads:
-#             thread.join()
-#         end
-#     end        
-# 
-#     create_result_measuring_point_end('query', trial_number, SQL_SELECT, 'insert')
+    #     create_result_measuring_point_start('query')
+    # 
+    #     threads = list()
+    # 
+    #     for partition_key in 1: BENCHMARK_NUMBER_PARTITIONS
+    #         if BENCHMARK_CORE_MULTIPLIER == 0:
+    #             insert(connections[partition_key], bulk_data_partitions[partition_key])
+    #         else
+    #             thread = threading.Thread(target=insert, args=(config, connections[partition_key], cursors[partition_key], bulk_data_partitions[partition_key],))
+    #             threads.append(thread)
+    #             thread.start()
+    #          end
+    #     end        
+    # 
+    #     if BENCHMARK_CORE_MULTIPLIER > 0
+    #         for thread in threads:
+    #             thread.join()
+    #         end
+    #     end        
+    # 
+    #     create_result_measuring_point_end('query', trial_number, SQL_SELECT, 'insert')
 
     @debug "End   $(function_name) - trial_number=$(trial_number)"
     nothing
@@ -550,26 +549,46 @@ function run_trial(trial_number)
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name) - trial_number=$(trial_number)"
 
+    # save the current time as the start of the 'trial' action
     create_result_measuring_point_start("trial")
 
     @info "Start trial no. $(string(trial_number))"
 
+    #=
+    create the database table (config param 'sql.create')
+    IF error
+        drop the database table (config param 'sql.drop')
+        create the database table (config param 'sql.create')
+    ENDIF
+    =#
     try
-        Oracle.execute(CONNECTIONS[trial_number], SQL_CREATE)
+        Oracle.execute(CONNECTIONS[1], SQL_CREATE)
         @debug "last DDL statement=$(SQL_CREATE)"
     catch
-        Oracle.execute(CONNECTIONS[trial_number], SQL_DROP)
-        Oracle.execute(CONNECTIONS[trial_number], SQL_CREATE)
+        Oracle.execute(CONNECTIONS[1], SQL_DROP)
+        Oracle.execute(CONNECTIONS[1], SQL_CREATE)
         @debug "last DDL statement after DROP=$(SQL_CREATE)"
     end
 
-     run_insert(         trial_number,     )
+    #=
+    DO run_insert(database connections,
+                  trial_no,
+                  bulk_data_partitions)
+    =#
+    #   run_insert(         trial_number,     )
 
-    #     run_select(trial_number)
+    #=
+    DO run_select(database connections,
+                  trial_no,
+                  bulk_data_partitions)
+    =#
+    #   run_select(trial_number)
 
-    Oracle.execute(CONNECTIONS[trial_number], SQL_DROP)
+    # drop the database table (config param 'sql.drop')
+    Oracle.execute(CONNECTIONS[1], SQL_DROP)
     @debug "last DDL statement=$(SQL_DROP)"
 
+    # WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
     create_result_measuring_point_end("trial", trial_number)
 
     @debug "End   $(function_name) - trial_number=$(trial_number)"

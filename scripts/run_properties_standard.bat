@@ -55,7 +55,7 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["java"] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
 )
 
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["julia"] (
+if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["julia_oracle"] (
     set ORA_BENCH_RUN_ORACLE_JL_JULIA=false
 )
 

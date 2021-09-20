@@ -54,7 +54,7 @@ if ! java -jar priv/libs/ora_bench_java.jar setup_toml; then
     exit 255
 fi
 
-if ! julia lang/julia/OraBench.jl priv/properties/ora_bench_toml.properties; then
+if ! julia lang/julia/OraBenchOracle.jl priv/properties/ora_bench_toml.properties; then
     exit 255
 fi
 
