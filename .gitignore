@@ -9,7 +9,11 @@
 /lang/elixir/mix.lock
 /lang/erlang/_build/default/
 /lang/erlang/rebar.lock
+/lang/go/OraBench
 /lang/go/OraBench.exe
+/lang/go/orabench
+/lang/go/pkg/mod/
+/lang/go/pkg/sumdb/sum.golang.org/
 /lang/java/.gradle/
 /lang/java/build/
 /lang/java/gradle/wrapper/
@@ -30,10 +34,12 @@
 /lib/kotlin-stdlib.jar
 /lib/kotlin-test-sources.jar
 /lib/kotlin-test.jar
+/ora_bench.iml
 /priv/libs/ora_bench_java.jar
 /priv/libs/ora_bench_kotlin.jar
 /priv/ora_bench_bulk_data.csv
 /priv/ora_bench_result.tsv
+/priv/properties/ora_bench_c.properties
 /priv/properties/ora_bench_erlang.properties
 /priv/properties/ora_bench_python.properties
 /priv/properties/ora_bench_toml.properties
