@@ -73,8 +73,10 @@ if [ "$ORA_BENCH_RUN_ORANIF_ERLANG" = "true" ]; then
     fi
 fi
 
-if ! { /bin/bash scripts/run_finalise_benchmark.sh; }; then
-    exit 255
+if ! [ "${ORA_BENCH_CHOICE_DRIVER}" = "none" ]; then
+    if ! { /bin/bash scripts/run_finalise_benchmark.sh; }; then
+        exit 255
+    fi
 fi
 
 echo ""

@@ -89,11 +89,13 @@ if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
     )
 )
 
-call scripts\run_finalise_benchmark.bat
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'call scripts\run_finalise_benchmark.bat' was aborted, error code=%ERRORLEVEL%
-    exit -1073741510
-)
+if ["%ORA_BENCH_CHOICE_DRIVER%"] NEQ ["none"] (
+    call scripts\run_finalise_benchmark.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call scripts\run_finalise_benchmark.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+)    
 
 echo -------------------------------------------------------------------------------
 echo:| TIME
