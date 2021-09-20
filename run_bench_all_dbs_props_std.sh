@@ -16,7 +16,7 @@ rm -f priv/ora_bench_result.csv
 rm -f priv/ora_bench_result.tsv
 
 export ORA_BENCH_CHOICE_DB_DEFAULT=complete
-export ORA_BENCH_CHOICE_DRIVER_DEFAULT=complete
+export ORA_BENCH_CHOICE_DRIVER_DEFAULT=none
 
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
     export ORA_BENCH_CONNECTION_HOST=localhost
@@ -28,6 +28,7 @@ fi
 if [ -z "$1" ]; then
     echo "=============================================================================="
     echo "complete           - All implemented variations"
+    echo "none               - Without specific driver run"
     echo "------------------------------------------------------------------------------"
     echo "c                  - C++ [gcc] and Oracle ODPI-C"
     echo "elixir             - Elixir and oranif"

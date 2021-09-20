@@ -18,7 +18,7 @@ rm -f priv/ora_bench_result.csv
 rm -f priv/ora_bench_result.tsv
 
 export ORA_BENCH_CHOICE_DB_DEFAULT=complete
-export ORA_BENCH_CHOICE_DRIVER_DEFAULT=complete
+export ORA_BENCH_CHOICE_DRIVER_DEFAULT=none
 
 if [ -z "$ORA_BENCH_CONNECTION_HOST" ]; then
     export ORA_BENCH_CONNECTION_HOST=localhost
@@ -30,7 +30,8 @@ fi
 if [ -z "$1" ]; then
     echo "=============================================================================="
     echo "complete           - All implemented variations"
-    echo "-------------------------------------------------------------------------------"
+    echo "none               - Without specific driver run"
+    echo "------------------------------------------------------------------------------"
     echo "c                  - C++ [gcc] and Oracle ODPI-C"
     echo "elixir             - Elixir and oranif"
     echo "erlang             - Erlang and oranif"
@@ -39,7 +40,7 @@ if [ -z "$1" ]; then
     echo "julia              - Julia and Oracle.jl"
     echo "kotlin             - Kotlin and Oracle JDBC"
     echo "python             - Python 3 and Oracle cx_Oracle"
-    echo "-------------------------------------------------------------------------------"
+    echo "------------------------------------------------------------------------------"
     read -rp "Enter the desired programming language (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
     export ORA_BENCH_CHOICE_DRIVER=${ORA_BENCH_CHOICE_DRIVER}
 
@@ -53,11 +54,11 @@ fi
 if [ -z "$2" ]; then
     echo "=============================================================================="
     echo "complete           - All implemented variations"
-    echo "-------------------------------------------------------------------------------"
+    echo "------------------------------------------------------------------------------"
     echo "18                 - Oracle Database 18c Express Edition"
     echo "19                 - Oracle Database 19c"
     echo "21                 - Oracle Database 21c"
-    echo "-------------------------------------------------------------------------------"
+    echo "------------------------------------------------------------------------------"
     read -rp "Enter the desired database version [default: ${ORA_BENCH_CHOICE_DB_DEFAULT}] " ORA_BENCH_CHOICE_DB
     export ORA_BENCH_CHOICE_DB=${ORA_BENCH_CHOICE_DB}
 
@@ -75,6 +76,7 @@ export ORA_BENCH_RUN_DB_21_3_EE=false
 if [ "${ORA_BENCH_CHOICE_DB}" = "complete" ]; then
     export ORA_BENCH_RUN_DB_18_4_XE=true
     export ORA_BENCH_RUN_DB_19_3_EE=true
+    export ORA_BENCH_RUN_DB_21_3_EE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
     export ORA_BENCH_RUN_DB_18_4_XE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then

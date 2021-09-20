@@ -18,7 +18,7 @@ if exist priv\ora_bench_result.csv del /f /q priv\ora_bench_result.csv
 if exist priv\ora_bench_result.tsv del /f /q priv\ora_bench_result.tsv
 
 set ORA_BENCH_CHOICE_DB_DEFAULT=complete
-set ORA_BENCH_CHOICE_DRIVER_DEFAULT=complete
+set ORA_BENCH_CHOICE_DRIVER_DEFAULT=none
 
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
     set ORA_BENCH_CONNECTION_HOST=localhost
@@ -30,6 +30,7 @@ if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
 if ["%1"] EQU [""] (
     echo ===============================================================================
     echo complete           - All implemented variations
+    echo none               - Without specific driver run
     echo -------------------------------------------------------------------------------
     echo c                  - C++ [gcc] and Oracle ODPI-C
     echo elixir             - Elixir and oranif
