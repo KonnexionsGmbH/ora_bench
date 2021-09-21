@@ -8,7 +8,7 @@
 
 set -e
 
-if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
+if [ -z "${ORA_BENCH_FILE_CONFIGURATION_NAME}" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 

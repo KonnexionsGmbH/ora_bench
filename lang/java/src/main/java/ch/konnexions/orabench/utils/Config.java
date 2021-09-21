@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.System;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
@@ -821,6 +822,7 @@ public class Config {
         benchmarkId = propertiesConfiguration.getString("benchmark.id");
         benchmarkNumberCores = propertiesConfiguration.getString("benchmark.number.cores");
         benchmarkNumberPartitions = propertiesConfiguration.getInt("benchmark.number.partitions");
+        System.setProperty("ORA_BENCH_BENCHMARK_NUMBER_PARTITIONS", benchmarkNumberPartitions);
         benchmarkOs = propertiesConfiguration.getString("benchmark.os");
         benchmarkRelease = propertiesConfiguration.getString("benchmark.release");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");

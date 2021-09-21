@@ -8,7 +8,7 @@
 
 set -e
 
-if [ -z "$ORA_BENCH_FILE_CONFIGURATION_NAME" ]; then
+if [ -z "${ORA_BENCH_FILE_CONFIGURATION_NAME}" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 fi
 
@@ -17,14 +17,14 @@ echo "Start $0"
 echo "------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - setup benchmark run."
 echo "------------------------------------------------------------------------------"
-echo "CHOICE_DRIVER                     : $ORA_BENCH_CHOICE_DRIVER"
+echo "CHOICE_DRIVER                     : ${ORA_BENCH_CHOICE_DRIVER}"
 echo "------------------------------------------------------------------------------"
-echo "FILE_CONFIGURATION_NAME           : $ORA_BENCH_FILE_CONFIGURATION_NAME"
+echo "FILE_CONFIGURATION_NAME           : ${ORA_BENCH_FILE_CONFIGURATION_NAME}"
 echo "------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "=============================================================================="
 
-if [ "$ORA_BENCH_CHOICE_DRIVER" = "complete" ]; then
+if [ "${ORA_BENCH_CHOICE_DRIVER}" = "complete" ]; then
     if ! { /bin/bash scripts/run_show_environment.sh; }; then
         exit 255
     fi

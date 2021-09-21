@@ -93,8 +93,8 @@ script:
   - wget -q https://download.oracle.com/otn_software/linux/instantclient/${VERSION_ORACLE_INSTANT_CLIENT_1}${VERSION_ORACLE_INSTANT_CLIENT_2}000/oracle-instantclient-sqlplus-${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}.0.0.0-1.x86_64.rpm
   - sudo alien -i --scripts *.rpm
   - export ORACLE_HOME=/usr/lib/oracle/${VERSION_ORACLE_INSTANT_CLIENT_1}.${VERSION_ORACLE_INSTANT_CLIENT_2}/client64
-  - export LD_LIBRARY_PATH="$ORACLE_HOME/lib:$LD_LIBRARY_PATH"
-  - export PATH="$ORACLE_HOME::${PATH}"
+  - export LD_LIBRARY_PATH="${ORACLE_HOME}/lib:$LD_LIBRARY_PATH"
+  - export PATH="${ORACLE_HOME}::${PATH}"
   - travis_fold end   "Setting_up_Oracle_Instant_Client"
 
   # Python 3 ---------------------------------------------------------------------

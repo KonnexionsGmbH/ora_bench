@@ -15,14 +15,14 @@ echo "ora_bench - Oracle benchmark - collect libraries and compile."
 echo "------------------------------------------------------------------------------"
 echo "BULKFILE_EXISTING                 : $BULKFILE_EXISTING"
 echo "------------------------------------------------------------------------------"
-echo "RUN_CX_ORACLE_PYTHON              : $ORA_BENCH_RUN_CX_ORACLE_PYTHON"
-echo "RUN_GODROR_GO                     : $ORA_BENCH_RUN_GODROR_GO"
-echo "RUN_JDBC_JAVA                     : $ORA_BENCH_RUN_JDBC_JAVA"
-echo "RUN_JDBC_KOTLIN                   : $ORA_BENCH_RUN_JDBC_KOTLIN"
-echo "RUN_ODPI_C                        : $ORA_BENCH_RUN_ODPI_C"
-echo "RUN_ORACLE_JL_JULIA               : $ORA_BENCH_RUN_ORACLE_JL_JULIA"
-echo "RUN_ORANIF_ELIXIR                 : $ORA_BENCH_RUN_ORANIF_ELIXIR"
-echo "RUN_ORANIF_ERLANG                 : $ORA_BENCH_RUN_ORANIF_ERLANG"
+echo "RUN_CX_ORACLE_PYTHON              : ${ORA_BENCH_RUN_CX_ORACLE_PYTHON}"
+echo "RUN_GODROR_GO                     : ${ORA_BENCH_RUN_GODROR_GO}"
+echo "RUN_JDBC_JAVA                     : ${ORA_BENCH_RUN_JDBC_JAVA}"
+echo "RUN_JDBC_KOTLIN                   : ${ORA_BENCH_RUN_JDBC_KOTLIN}"
+echo "RUN_ODPI_C                        : ${ORA_BENCH_RUN_ODPI_C}"
+echo "RUN_ORACLE_JL_JULIA               : ${ORA_BENCH_RUN_ORACLE_JL_JULIA}"
+echo "RUN_ORANIF_ELIXIR                 : ${ORA_BENCH_RUN_ORANIF_ELIXIR}"
+echo "RUN_ORANIF_ERLANG                 : ${ORA_BENCH_RUN_ORANIF_ERLANG}"
 echo "------------------------------------------------------------------------------"
 echo "GOROOT                            : $GOROOT"
 echo "GRADLE_HOME                       : $GRADLE_HOME"
@@ -37,7 +37,7 @@ if [ "$BULKFILE_EXISTING" != "true" ]; then
     fi
 fi
 
-if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
+if [ "${ORA_BENCH_RUN_ODPI_C}" == "true" ]; then
     echo "Setup C++ [gcc] - Start ========================================================"
     if ! java -jar priv/libs/ora_bench_java.jar setup_c; then
         exit 255
@@ -61,7 +61,7 @@ if [ "$ORA_BENCH_RUN_ODPI_C" == "true" ]; then
     echo "Setup C++ [gcc] - End   ========================================================"
 fi
 
-if [ "$ORA_BENCH_RUN_GODROR_GO" == "true" ]; then
+if [ "${ORA_BENCH_RUN_GODROR_GO}" == "true" ]; then
     echo "Setup Go - Start ==============================================================="
     if ! go get github.com/godror/godror; then
         exit 255
@@ -69,7 +69,7 @@ if [ "$ORA_BENCH_RUN_GODROR_GO" == "true" ]; then
     echo "Setup Go - End   ==============================================================="
 fi
 
-if [ "$ORA_BENCH_RUN_JDBC_KOTLIN" == "true" ]; then
+if [ "${ORA_BENCH_RUN_JDBC_KOTLIN}" == "true" ]; then
     echo "Setup Kotlin - Start ==========================================================="
     if ! ./lang/kotlin/scripts/run_gradle.sh; then
         exit 255

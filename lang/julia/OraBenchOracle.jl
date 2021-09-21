@@ -88,8 +88,12 @@ function create_connections()
 
     for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
         try
+            @debug "      $(function_name) Connection #$(partition_key) - to be openend"
+            @info "wwe   $(function_name) Connection #$(partition_key) - to be openend"
             CONNECTIONS[partition_key] =
                 Oracle.Connection(CONNECTION_USER, CONNECTION_PASSWORD, connection_string)
+            @info "wwe   $(function_name) Connection #$(partition_key) - is now open"
+            @debug "      $(function_name) Connection #$(partition_key) - is now open"
         catch reason
             @info "partition_key      =" * string(partition_key)
             @info "connection_user    =" * CONNECTION_USER
@@ -418,7 +422,7 @@ end
 
 function main()
     logger = SimpleLogger(stdout, Logging.Debug)
-#     logger = SimpleLogger(stdout, Logging.Info)
+    logger = SimpleLogger(stdout, Logging.Info)
     old_logger = global_logger(logger)
 
     function_name = string(StackTraces.stacktrace()[1].func)
@@ -495,9 +499,11 @@ function run_benchmark()
     ENDWHILE
     =#
     for partition_key = 1:BENCHMARK_NUMBER_PARTITIONS
-        @debug "www partition_key=$(partition_key) - to be closed"
+        @debug "      $(function_name) Connection #$(partition_key) - to be closed"
+        @info "wwe   $(function_name) Connection #$(partition_key) - to be closed"
         Oracle.close(CONNECTIONS[partition_key])
-        @debug "www partition_key=$(partition_key) - closed"
+        @info "wwe   $(function_name) Connection #$(partition_key) - is now closed"
+        @debug "      $(function_name) Connection #$(partition_key) - is now closed"
     end
 
     # WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
@@ -515,27 +521,41 @@ function run_insert(trial_number)
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name) - trial_number=$(trial_number)"
 
-    #     create_result_measuring_point_start('query')
-    # 
-    #     threads = list()
-    # 
-    #     for partition_key in 1: BENCHMARK_NUMBER_PARTITIONS
-    #         if BENCHMARK_CORE_MULTIPLIER == 0:
-    #             insert(connections[partition_key], bulk_data_partitions[partition_key])
-    #         else
-    #             thread = threading.Thread(target=insert, args=(config, connections[partition_key], cursors[partition_key], bulk_data_partitions[partition_key],))
-    #             threads.append(thread)
-    #             thread.start()
-    #          end
-    #     end        
-    # 
-    #     if BENCHMARK_CORE_MULTIPLIER > 0
-    #         for thread in threads:
-    #             thread.join()
-    #         end
-    #     end        
-    # 
-    #     create_result_measuring_point_end('query', trial_number, SQL_SELECT, 'insert')
+    # save the current time as the start of the 'query' action
+    create_result_measuring_point_start("query")
+
+    #=
+    partition_no = 0
+    WHILE partition_no < config_param 'benchmark.number.partitions'
+        IF config_param 'benchmark.core.multiplier' = 0
+            DO run_insert_helper(database connections(partition_no),
+                    bulk_data_partitions(partition_no))
+        ELSE
+            DO run_insert_helper (database connections(partition_no),
+                    bulk_data_partitions(partition_no)) as a thread
+        ENDIF
+    ENDWHILE
+    =#
+#         threads = list()
+#
+#         for partition_key in 1: BENCHMARK_NUMBER_PARTITIONS
+#             if BENCHMARK_CORE_MULTIPLIER == 0:
+#                 insert(connections[partition_key], bulk_data_partitions[partition_key])
+#             else
+#                 thread = threading.Thread(target = insert, args = (config, connections[partition_key], cursors[partition_key], bulk_data_partitions[partition_key],))
+#                 threads.append(thread)
+#                 thread.start()
+#              end
+#         end
+#
+#         if BENCHMARK_CORE_MULTIPLIER > 0
+#             for thread in threads:
+#                 thread.join()
+#             end
+#         end
+
+    # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
+    create_result_measuring_point_end("query", trial_number, SQL_SELECT, "insert")
 
     @debug "End   $(function_name) - trial_number=$(trial_number)"
     nothing
