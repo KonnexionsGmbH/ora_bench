@@ -376,6 +376,13 @@ public class Config {
             }
 
             bufferedWriter.close();
+            if (benchmarkCoreMultiplier == 0) {
+                System.setProperty("JULIA_NUM_THREADS", "1");
+            } else {
+                System.setProperty("JULIA_NUM_THREADS", Integer.toString(benchmarkNumberPartitions));
+            }
+
+            logger.info("JULIA_NUM_THREADS=" + System.getProperty("JULIA_NUM_THREADS"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -822,7 +829,6 @@ public class Config {
         benchmarkId = propertiesConfiguration.getString("benchmark.id");
         benchmarkNumberCores = propertiesConfiguration.getString("benchmark.number.cores");
         benchmarkNumberPartitions = propertiesConfiguration.getInt("benchmark.number.partitions");
-        System.setProperty("ORA_BENCH_BENCHMARK_NUMBER_PARTITIONS", Integer.toString(benchmarkNumberPartitions));
         benchmarkOs = propertiesConfiguration.getString("benchmark.os");
         benchmarkRelease = propertiesConfiguration.getString("benchmark.release");
         benchmarkTransactionSize = propertiesConfiguration.getInt("benchmark.transaction.size");
