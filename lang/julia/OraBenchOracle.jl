@@ -210,7 +210,6 @@ function create_result_measuring_point_end(
             "fatal error: program abort =====> unknown action='$(action)' status='end' <=====",
         )
     end
-    @info "typeof MEASUREMENT_DATA=$(typeof(MEASUREMENT_DATA))"
 
     @debug "End   $(function_name)"
     nothing
@@ -246,13 +245,13 @@ function create_result_measuring_point_start_benchmark(config::Dict{String,Any})
 
     file_result_name = config["DEFAULT"]["file_result_name"]
 
+    result_file = open(file_result_name, "a")
+
     if !(isfile(file_result_name))
         error(
             "fatal error: program abort =====> result file '$(file_result_name)' is missing <=====",
         )
     end
-
-    result_file = open(file_result_name, "a")
 
     @debug "End   $(function_name)"
     return result_file
@@ -271,8 +270,14 @@ function get_bulk_data_partitions(
     benchmark_number_partitions =
         parse(Int64, config["DEFAULT"]["benchmark_number_partitions"])
     file_bulk_name = config["DEFAULT"]["file_bulk_name"]
-    file_bulk_size = parse(Int64, config["DEFAULT"]["file_bulk_size"])
 
+    if !(isfile(file_bulk_name))
+        error(
+            "fatal error: program abort =====> bulk file '$(file_bulk_name)' is missing <=====",
+        )
+    end
+
+    file_bulk_size = parse(Int64, config["DEFAULT"]["file_bulk_size"])
 
     if file_bulk_size < benchmark_number_partitions
         error(
@@ -307,7 +312,7 @@ function get_bulk_data_partitions(
             current_partition_upper = file_bulk_size
         end
         bulk_data_partitions[partition_key] =
-            bulk_data[last_partition_upper:current_partition_upper, :]
+            bulk_data[last_partition_upper:current_partition_upper, :]::DataFrames.DataFrame
         @info format(
             "Partition p{1:0>5d} contains {2:n} rows",
             partition_key,
@@ -332,11 +337,6 @@ function load_config(configFile::String)::Dict{String,Any}
 
     config = TOML.parsefile(configFile)::Dict{String,Any}
 
-    #     global BENCHMARK_TRANSACTION_SIZE =
-    #         parse(Int64, config["DEFAULT"]["benchmark_transaction_size"])
-    #
-    #     global SQL_INSERT =
-    #         replace(replace(config["DEFAULT"]["sql_insert"], ":key" => ":1"), ":data" => ":2")
     #     global SQL_SELECT = config["DEFAULT"]["sql_select"]
 
     @debug "End   $(function_name)"
@@ -476,13 +476,16 @@ function run_insert(
     ENDWHILE
     =#
     for partition_key = 1:parse(Int64, config["DEFAULT"]["benchmark_number_partitions"])
+        @info "Start partition_key no. $(partition_key) - size $(size(bulk_data_partitions[partition_key], 1))"
         if parse(Int64, config["DEFAULT"]["benchmark_core_multiplier"]) == 0
             run_insert_helper(
+                config,
                 connections[partition_key],
                 bulk_data_partitions[partition_key],
             )
         else
             Threads.@spawn run_insert_helper(
+                config,
                 connections[partition_key],
                 bulk_data_partitions[partition_key],
             )
@@ -508,6 +511,7 @@ end
 # ----------------------------------------------------------------------------------
 
 function run_insert_helper(
+    config::Dict{String,Any},
     connection::Oracle.Connection,
     bulk_data_partition::DataFrames.DataFrame,
 )
@@ -515,36 +519,69 @@ function run_insert_helper(
     @debug "Start $(function_name)"
 
     #=
-     count = 0
-     collection batch_collection = empty
-     WHILE iterating through the collection bulk_data_partition
-       count + 1
+    count = 0
+    collection batch_collection = empty
+    WHILE iterating through the collection bulk_data_partition
+        count + 1
 
-       add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection
+        add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection
 
-       IF config_param 'benchmark.batch.size' > 0
-           IF count modulo config param 'benchmark.batch.size' = 0
-               execute the SQL statements in the collection batch_collection
-               batch_collection = empty
-           ENDIF
-       ENDIF
+        IF config_param 'benchmark.batch.size' > 0
+            IF count modulo config param 'benchmark.batch.size' = 0
+                execute the SQL statements in the collection batch_collection
+                batch_collection = empty
+            ENDIF
+        ENDIF
 
-       IF  config param 'benchmark.transaction.size' > 0
-       AND count modulo config param 'benchmark.transaction.size' = 0
-           commit
-       ENDIF
-     ENDWHILE
-     =#
+        IF  config param 'benchmark.transaction.size' > 0
+        AND count modulo config param 'benchmark.transaction.size' = 0
+            commit
+        ENDIF
+    ENDWHILE
+    =#
+    benchmark_batch_size = parse(Int64, config["DEFAULT"]["benchmark_batch_size"])
+    benchmark_transaction_size =
+        parse(Int64, config["DEFAULT"]["benchmark_transaction_size"])
+    sql_insert = replace(replace(config["DEFAULT"]["sql_insert"], ":key" => ":1"), ":data" => ":2")::String
 
+    stmt = Oracle.Stmt(connection, sql_insert)::Oracle.Stmt{Oracle.ORA_STMT_TYPE_INSERT}
+
+    count = 0
+    batch_collection = Oracle.Stmt{Oracle.ORA_STMT_TYPE_INSERT}[]
+
+    for bulk_data_row in eachrow(bulk_data_partition)
+        count += 1
+
+        if benchmark_batch_size == 0
+            stmt[:1] = bulk_data_row.key
+            stmt[:2] = bulk_data_row.data
+            Oracle.execute(stmt)
+        else
+            append(batch_collection, stmt)
+            if mod(count, benchmark_batch_size) == 0
+                Oracle.execute(stmt)
+                batch_collection = Oracle.Stmt{Oracle.ORA_STMT_TYPE_INSERT}[]
+            end
+        end
+
+        if benchmark_transaction_size > 0
+            if mod(count, benchmark_transaction_size) == 0
+                Oracle.execute(connection, "commit")
+            end
+        end
+    end
 
     #=
     IF collection batch_collection is not empty
-      execute the SQL statements in the collection batch_collection
+        execute the SQL statements in the collection batch_collection
     ENDIF
     =#
 
 
     # commit
+    Oracle.execute(connection, "commit")
+
+    Oracle.close(stmt)
 
     @debug "End   $(function_name)"
     nothing
