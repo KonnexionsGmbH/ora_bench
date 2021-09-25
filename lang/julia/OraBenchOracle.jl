@@ -31,7 +31,6 @@ using TimesDates
 global BENCHMARK_DRIVER = ""::String
 global BENCHMARK_LANGUAGE = ""::String
 global BENCHMARK_TRANSACTION_SIZE = 0::Int64
-global BULK_DATA_PARTITIONS = Dict{Int64,Tuple{Int64,Int64}}()
 
 global IX_DURATION_INSERT_SUM = 4::Int64
 global IX_DURATION_SELECT_SUM = 5::Int64
@@ -60,10 +59,8 @@ function create_connections(
     for partition_key = 1:benchmark_number_partitions
         try
             @debug "      $(function_name) Connection #$(partition_key) - to be openend"
-            @info "wwe   $(function_name) Connection #$(partition_key) - to be openend"
             connections[partition_key] =
                 Oracle.Connection(connection_user, connection_password, connection_string)
-            @info "wwe   $(function_name) Connection #$(partition_key) - is now open"
             @debug "      $(function_name) Connection #$(partition_key) - is now open"
         catch reason
             @info "partition_key      =" * string(partition_key)
@@ -265,7 +262,9 @@ end
 # Loading the bulk file into memory.
 # ----------------------------------------------------------------------------------
 
-function get_bulk_data_partitions(config::Dict{String,Any})
+function get_bulk_data_partitions(
+    config::Dict{String,Any},
+)::Dict{Int64,DataFrames.DataFrame}
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
@@ -288,7 +287,6 @@ function get_bulk_data_partitions(config::Dict{String,Any})
             delim = replace(config["DEFAULT"]["file_bulk_delimiter"], "TAB" => "\t"),
         ),
     )::DataFrames.DataFrame
-    @info "typeof bulk_data=$(typeof(bulk_data))"
 
     partition_size = div(file_bulk_size, benchmark_number_partitions)
 
@@ -298,19 +296,22 @@ function get_bulk_data_partitions(config::Dict{String,Any})
 
     @info "Start Distribution of the data in the partitions"
 
+    bulk_data_partitions = Dict{Int64,DataFrames.DataFrame}()
+
     last_partition_upper = 0
 
     for partition_key = 1:benchmark_number_partitions
         current_partition_upper = last_partition_upper + partition_size
+        last_partition_upper = last_partition_upper + 1
         if current_partition_upper > file_bulk_size
             current_partition_upper = file_bulk_size
         end
-        BULK_DATA_PARTITIONS[partition_key] =
-            last_partition_upper + 1, current_partition_upper
+        bulk_data_partitions[partition_key] =
+            bulk_data[last_partition_upper:current_partition_upper, :]
         @info format(
             "Partition p{1:0>5d} contains {2:n} rows",
             partition_key,
-            current_partition_upper - last_partition_upper,
+            size(bulk_data_partitions[partition_key], 1),
         )
         last_partition_upper = current_partition_upper
     end
@@ -318,7 +319,7 @@ function get_bulk_data_partitions(config::Dict{String,Any})
     @info "End   Distribution of the data in the partitions"
 
     @debug "End   $(function_name)"
-    nothing
+    return bulk_data_partitions
 end
 
 # ----------------------------------------------------------------------------------
@@ -401,7 +402,7 @@ function run_benchmark(config::Dict{String,Any})
     result_file = create_result_measuring_point_start_benchmark(config)
 
     # READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
-    get_bulk_data_partitions(config)
+    bulk_data_partitions = get_bulk_data_partitions(config)
 
     # create a separate database connection (without auto commit behaviour) for each partition
     benchmark_number_partitions =
@@ -412,6 +413,7 @@ function run_benchmark(config::Dict{String,Any})
         config["DEFAULT"]["connection_password"]::String,
         "$(config["DEFAULT"]["connection_host"]::String):$(config["DEFAULT"]["connection_port"]::String)/$(config["DEFAULT"]["connection_service"]::String)",
     )
+    @debug "Number of database connections $(length(connections))"
 
     #=
     trial_no = 0
@@ -422,7 +424,7 @@ function run_benchmark(config::Dict{String,Any})
     ENDWHILE
     =#
     for trial_number = 1:parse(Int64, config["DEFAULT"]["benchmark_trials"])
-        run_trial(config, result_file, connections, trial_number)
+        run_trial(config, result_file, connections, bulk_data_partitions, trial_number)
     end
 
     #=
@@ -433,9 +435,7 @@ function run_benchmark(config::Dict{String,Any})
     =#
     for partition_key = 1:benchmark_number_partitions
         @debug "      $(function_name) Connection #$(partition_key) - to be closed"
-        @info "wwe   $(function_name) Connection #$(partition_key) - to be closed"
         Oracle.close(connections[partition_key])
-        @info "wwe   $(function_name) Connection #$(partition_key) - is now closed"
         @debug "      $(function_name) Connection #$(partition_key) - is now closed"
     end
 
@@ -450,7 +450,13 @@ end
 # Supervise function for inserting data into the database.
 # ----------------------------------------------------------------------------------
 
-function run_insert(result_file::IOStream, trial_number::Int64)
+function run_insert(
+    config::Dict{String,Any},
+    result_file::IOStream,
+    connections::Dict{Int64,Oracle.Connection},
+    bulk_data_partitions::Dict{Int64,DataFrames.DataFrame},
+    trial_number::Int64,
+)
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name) - trial_number=$(trial_number)"
 
@@ -473,12 +479,12 @@ function run_insert(result_file::IOStream, trial_number::Int64)
         if parse(Int64, config["DEFAULT"]["benchmark_core_multiplier"]) == 0
             run_insert_helper(
                 connections[partition_key],
-                BULK_DATA_PARTITIONS[partition_key],
+                bulk_data_partitions[partition_key],
             )
         else
             Threads.@spawn run_insert_helper(
                 connections[partition_key],
-                BULK_DATA_PARTITIONS[partition_key],
+                bulk_data_partitions[partition_key],
             )
         end
     end
@@ -489,7 +495,7 @@ function run_insert(result_file::IOStream, trial_number::Int64)
         result_file,
         "query",
         trial_number,
-        SQL_SELECT,
+        config["DEFAULT"]["sql_insert"],
         "insert",
     )
 
@@ -503,7 +509,7 @@ end
 
 function run_insert_helper(
     connection::Oracle.Connection,
-    bulk_data_partition::Tuple{Int64,Int64},
+    bulk_data_partition::DataFrames.DataFrame,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
@@ -545,6 +551,82 @@ function run_insert_helper(
 end
 
 # ----------------------------------------------------------------------------------
+# Supervise function for retrieving of the database data.
+# ----------------------------------------------------------------------------------
+
+function run_select(
+    config::Dict{String,Any},
+    result_file::IOStream,
+    connections::Dict{Int64,Oracle.Connection},
+    bulk_data_partitions::Dict{Int64,DataFrames.DataFrame},
+    trial_number::Int64,
+)
+    function_name = string(StackTraces.stacktrace()[1].func)
+    @debug "Start $(function_name) - trial_number=$(trial_number)"
+
+    # save the current time as the start of the 'query' action
+    create_result_measuring_point_start("query")
+
+    #=
+    partition_no = 0
+    WHILE partition_no < config_param 'benchmark.number.partitions'
+        IF config_param 'benchmark.core.multiplier' = 0
+            DO run_select_helper(database connections(partition_no),
+                                 bulk_data_partitions(partition_no,
+                                 partition_no)
+        ELSE
+            DO run_select_helper(database connections(partition_no),
+                                 bulk_data_partitions(partition_no,
+                                 partition_no) as a thread
+        ENDIF
+    ENDWHILE
+    =#
+
+    # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
+    create_result_measuring_point_end(
+        config,
+        result_file,
+        "query",
+        trial_number,
+        config["DEFAULT"]["sql_select"],
+        "select",
+    )
+
+    @debug "End   $(function_name) - trial_number=$(trial_number)"
+    nothing
+end
+
+# ----------------------------------------------------------------------------------
+# Helper function for retrieving data from the database.
+# ----------------------------------------------------------------------------------
+
+function run_select_helper(
+    connection::Oracle.Connection,
+    bulk_data_partition::DataFrames.DataFrame,
+)
+    function_name = string(StackTraces.stacktrace()[1].func)
+    @debug "Start $(function_name)"
+
+    # execute the SQL statement in config param 'sql.select'
+
+    #=
+    int count = 0;
+    WHILE iterating through the result set
+        count + 1
+    ENDWHILE
+    =#
+
+    #=
+    IF NOT count = size(bulk_data_partition)
+        display an error message
+    ENDIF
+    =#
+
+    @debug "End   $(function_name)"
+    nothing
+end
+
+# ----------------------------------------------------------------------------------
 # Performing a single trial run.
 # ----------------------------------------------------------------------------------
 
@@ -552,6 +634,7 @@ function run_trial(
     config::Dict{String,Any},
     result_file::IOStream,
     connections::Dict{Int64,Oracle.Connection},
+    bulk_data_partitions::Dict{Int64,DataFrames.DataFrame},
     trial_number::Int64,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
@@ -585,14 +668,14 @@ function run_trial(
                   trial_no,
                   bulk_data_partitions)
     =#
-    #   run_insert(         trial_number,     )
+    run_insert(config, result_file, connections, bulk_data_partitions, trial_number)
 
     #=
     DO run_select(database connections,
                   trial_no,
                   bulk_data_partitions)
     =#
-    #   run_select(trial_number)
+    run_select(config, result_file, connections, bulk_data_partitions, trial_number)
 
     # drop the database table (config param 'sql.drop')
     Oracle.execute(connections[1], sql_drop)
