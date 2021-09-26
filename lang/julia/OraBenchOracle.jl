@@ -30,7 +30,6 @@ using TimesDates
 
 global BENCHMARK_DRIVER = ""::String
 global BENCHMARK_LANGUAGE = ""::String
-global BENCHMARK_TRANSACTION_SIZE = 0::Int64
 
 global IX_DURATION_INSERT_SUM = 4::Int64
 global IX_DURATION_SELECT_SUM = 5::Int64
@@ -38,43 +37,46 @@ global IX_LAST_BENCHMARK = 1::Int64
 global IX_LAST_QUERY = 3::Int64
 global IX_LAST_TRIAL = 2::Int64
 
-global MEASUREMENT_DATA =
-    Array([""::String, ""::String, ""::String, 0::Int64, 0::Int64])::Vector{Any}
-
 # ----------------------------------------------------------------------------------
 # Creating the database connections.
 # ----------------------------------------------------------------------------------
 
 function create_connections(
+    config::Dict{String,Any},
     benchmark_number_partitions::Int64,
-    connection_user::String,
-    connection_password::String,
-    connection_string::String,
-)::Dict{Int64,Oracle.Connection}
+)::Tuple{Oracle.Pool,Dict{Int64,Oracle.Connection}}
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
+
+    connection_user = config["DEFAULT"]["connection_user"]::String
+    connection_password = config["DEFAULT"]["connection_password"]::String
+    connection_string = "$(config["DEFAULT"]["connection_host"]::String):$(config["DEFAULT"]["connection_port"]::String)/$(config["DEFAULT"]["connection_service"]::String)"
+
+    pool = Oracle.Pool(
+        connection_user,
+        connection_password,
+        connection_string,
+        max_sessions = benchmark_number_partitions,
+        session_increment = 1,
+    )
 
     connections = Dict{Int64,Oracle.Connection}()
 
     for partition_key = 1:benchmark_number_partitions
         try
             @debug "      $(function_name) Connection #$(partition_key) - to be openend"
-            connections[partition_key] =
-                Oracle.Connection(connection_user, connection_password, connection_string)
+            connections[partition_key] = Oracle.Connection(pool)
             @debug "      $(function_name) Connection #$(partition_key) - is now open"
         catch reason
             @info "partition_key      =" * string(partition_key)
-            @info "connection_user    =" * connection_user
-            @info "connection_password=" * connection_password
-            @info "connection_string  =" * connection_string
             error(
-                "fatal error: program abort =====> database connect error: '$(string(reason))' <=====",
+                "fatal error: program abort =====> Oracle.Connection(pool) error: '$(string(reason))' <=====",
             )
         end
     end
 
     @debug "End   $(function_name)"
-    return connections
+    return (pool, connections)
 end
 
 # ----------------------------------------------------------------------------------
@@ -82,13 +84,14 @@ end
 # ----------------------------------------------------------------------------------
 
 function create_result(
-    config::Dict{String,Any},
-    result_file::IOStream,
     action::String,
-    trial_number::Int64,
+    config::Dict{String,Any},
+    measurement_data::Vector{Any},
+    result_file::IOStream,
+    sql_operation::String,
     sql_statement::String,
     start_date_time::TimesDates.TimeDate,
-    sql_operation::String,
+    trial_number::Int64,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
@@ -99,9 +102,9 @@ function create_result(
         replace(config["DEFAULT"]["file_result_delimiter"], "TAB" => "\t")
 
     if sql_operation == "insert"
-        MEASUREMENT_DATA[IX_DURATION_INSERT_SUM] += duration_ns
+        measurement_data[IX_DURATION_INSERT_SUM] += duration_ns
     elseif sql_operation == "select"
-        MEASUREMENT_DATA[IX_DURATION_SELECT_SUM] += duration_ns
+        measurement_data[IX_DURATION_SELECT_SUM] += duration_ns
     end
 
     write(
@@ -155,6 +158,13 @@ function create_result(
         "\n",
     )
 
+    if action == "trial"
+        @info "Duration (ms) trial         : $(round(duration_ns / 1000000))"
+    elseif action == "benchmark"
+        @info "Duration (ms) trial average : $(round(duration_ns / 1000000 / parse(Int64, config["DEFAULT"]["benchmark_trials"])))"
+        @info "Duration (ms) benchmark run : $(round(duration_ns / 1000000))"
+    end
+
     @debug "End   $(function_name)"
     nothing
 end
@@ -164,45 +174,49 @@ end
 # ----------------------------------------------------------------------------------
 
 function create_result_measuring_point_end(
-    config::Dict{String,Any},
-    result_file::IOStream,
     action::String,
+    config::Dict{String,Any},
+    measurement_data::Vector{Any},
+    result_file::IOStream,
     trial_number::Int64 = 0,
-    sql_statement::String = "",
     sql_operation::String = "",
+    sql_statement::String = "",
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
     if action == "query"
         create_result(
-            config,
-            result_file,
             action,
-            trial_number,
-            sql_statement,
-            MEASUREMENT_DATA[IX_LAST_QUERY],
+            config,
+            measurement_data,
+            result_file,
             sql_operation,
+            sql_statement,
+            measurement_data[IX_LAST_QUERY],
+            trial_number,
         )
     elseif action == "trial"
         create_result(
-            config,
-            result_file,
             action,
-            trial_number,
-            sql_statement,
-            MEASUREMENT_DATA[IX_LAST_TRIAL],
+            config,
+            measurement_data,
+            result_file,
             sql_operation,
+            sql_statement,
+            measurement_data[IX_LAST_TRIAL],
+            trial_number,
         )
     elseif action == "benchmark"
         create_result(
-            config,
-            result_file,
             action,
-            trial_number,
-            sql_statement,
-            MEASUREMENT_DATA[IX_LAST_BENCHMARK],
+            config,
+            measurement_data,
+            result_file,
             sql_operation,
+            sql_statement,
+            measurement_data[IX_LAST_BENCHMARK],
+            trial_number,
         )
         close(result_file)
     else
@@ -219,14 +233,14 @@ end
 # Recording the results of the benchmark - start processing.
 # ----------------------------------------------------------------------------------
 
-function create_result_measuring_point_start(action::String)
+function create_result_measuring_point_start(action::String, measurement_data::Vector{Any})
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
     if action == "query"
-        MEASUREMENT_DATA[IX_LAST_QUERY] = TimeDate(now())
+        measurement_data[IX_LAST_QUERY] = TimeDate(now())
     elseif action == "trial"
-        MEASUREMENT_DATA[IX_LAST_TRIAL] = TimeDate(now())
+        measurement_data[IX_LAST_TRIAL] = TimeDate(now())
     else
         error(
             "fatal error: program abort =====> unknown action='$(action)' status='start' <=====",
@@ -235,26 +249,6 @@ function create_result_measuring_point_start(action::String)
 
     @debug "End   $(function_name)"
     nothing
-end
-
-function create_result_measuring_point_start_benchmark(config::Dict{String,Any})::IOStream
-    function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
-
-    MEASUREMENT_DATA[IX_LAST_BENCHMARK] = TimeDate(now())
-
-    file_result_name = config["DEFAULT"]["file_result_name"]
-
-    result_file = open(file_result_name, "a")
-
-    if !(isfile(file_result_name))
-        error(
-            "fatal error: program abort =====> result file '$(file_result_name)' is missing <=====",
-        )
-    end
-
-    @debug "End   $(function_name)"
-    return result_file
 end
 
 # ----------------------------------------------------------------------------------
@@ -269,8 +263,8 @@ function get_bulk_data_partitions(
 
     benchmark_number_partitions =
         parse(Int64, config["DEFAULT"]["benchmark_number_partitions"])
-    file_bulk_name = config["DEFAULT"]["file_bulk_name"]
 
+    file_bulk_name = config["DEFAULT"]["file_bulk_name"]
     if !(isfile(file_bulk_name))
         error(
             "fatal error: program abort =====> bulk file '$(file_bulk_name)' is missing <=====",
@@ -278,7 +272,6 @@ function get_bulk_data_partitions(
     end
 
     file_bulk_size = parse(Int64, config["DEFAULT"]["file_bulk_size"])
-
     if file_bulk_size < benchmark_number_partitions
         error(
             "fatal error: program abort =====> size of the bulk file ($(file_bulk_size)) is smaller than the number of partitions ($(benchmark_number_partitions)) <=====",
@@ -299,6 +292,13 @@ function get_bulk_data_partitions(
     # Loading the bulk file into memory.
     # ----------------------------------------------------------------------------------
 
+#     for key_data_tuple in bulk_data:
+#         key = key_data_tuple[0]
+#         partition_key = (ord(key[0]) * 251 + ord(key[1])) % benchmark_number_partitions
+#         bulk_data_partition = bulk_data_partitions[partition_key]
+#         bulk_data_partition.append([key_data_tuple])
+#         bulk_data_partitions[partition_key] = bulk_data_partition
+
     @info "Start Distribution of the data in the partitions"
 
     bulk_data_partitions = Dict{Int64,DataFrames.DataFrame}()
@@ -308,9 +308,11 @@ function get_bulk_data_partitions(
     for partition_key = 1:benchmark_number_partitions
         current_partition_upper = last_partition_upper + partition_size
         last_partition_upper = last_partition_upper + 1
+
         if current_partition_upper > file_bulk_size
             current_partition_upper = file_bulk_size
         end
+
         bulk_data_partitions[partition_key] =
             bulk_data[last_partition_upper:current_partition_upper, :]::DataFrames.DataFrame
         @info format(
@@ -325,22 +327,6 @@ function get_bulk_data_partitions(
 
     @debug "End   $(function_name)"
     return bulk_data_partitions
-end
-
-# ----------------------------------------------------------------------------------
-# Loading the configuration parameters into memory.
-# ----------------------------------------------------------------------------------
-
-function load_config(configFile::String)::Dict{String,Any}
-    function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
-
-    config = TOML.parsefile(configFile)::Dict{String,Any}
-
-    #     global SQL_SELECT = config["DEFAULT"]["sql_select"]
-
-    @debug "End   $(function_name)"
-    return config
 end
 
 # ----------------------------------------------------------------------------------
@@ -380,7 +366,7 @@ function main()
     end
 
     # READ the configuration parameters into the memory (config params `file.configuration.name ...`)
-    config = load_config(ARGS[1])
+    config = TOML.parsefile(ARGS[1])::Dict{String,Any}
 
     run_benchmark(config)
 
@@ -399,7 +385,19 @@ function run_benchmark(config::Dict{String,Any})
     @debug "Start $(function_name)"
 
     # save the current time as the start of the 'benchmark' action
-    result_file = create_result_measuring_point_start_benchmark(config)
+    file_result_name = config["DEFAULT"]["file_result_name"]
+
+    measurement_data =
+        Array([""::String, ""::String, ""::String, 0::Int64, 0::Int64])::Vector{Any}
+    measurement_data[IX_LAST_BENCHMARK] = TimeDate(now())
+
+    result_file = open(file_result_name, "a")
+
+    if !(isfile(file_result_name))
+        error(
+            "fatal error: program abort =====> result file '$(file_result_name)' is missing <=====",
+        )
+    end
 
     # READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
     bulk_data_partitions = get_bulk_data_partitions(config)
@@ -407,13 +405,8 @@ function run_benchmark(config::Dict{String,Any})
     # create a separate database connection (without auto commit behaviour) for each partition
     benchmark_number_partitions =
         parse(Int64, config["DEFAULT"]["benchmark_number_partitions"])::Int64
-    connections = create_connections(
-        benchmark_number_partitions,
-        config["DEFAULT"]["connection_user"]::String,
-        config["DEFAULT"]["connection_password"]::String,
-        "$(config["DEFAULT"]["connection_host"]::String):$(config["DEFAULT"]["connection_port"]::String)/$(config["DEFAULT"]["connection_service"]::String)",
-    )
-    @debug "Number of database connections $(length(connections))"
+
+    (pool, connections) = create_connections(config, benchmark_number_partitions)
 
     #=
     trial_no = 0
@@ -424,7 +417,14 @@ function run_benchmark(config::Dict{String,Any})
     ENDWHILE
     =#
     for trial_number = 1:parse(Int64, config["DEFAULT"]["benchmark_trials"])
-        run_trial(config, result_file, connections, bulk_data_partitions, trial_number)
+        run_trial(
+            config,
+            result_file,
+            measurement_data,
+            connections,
+            bulk_data_partitions,
+            trial_number,
+        )
     end
 
     #=
@@ -439,8 +439,10 @@ function run_benchmark(config::Dict{String,Any})
         @debug "      $(function_name) Connection #$(partition_key) - is now closed"
     end
 
+    Oracle.close(pool)
+
     # WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
-    create_result_measuring_point_end(config, result_file, "benchmark")
+    create_result_measuring_point_end("benchmark", config, measurement_data, result_file)
 
     @debug "End   $(function_name)"
     nothing
@@ -451,17 +453,23 @@ end
 # ----------------------------------------------------------------------------------
 
 function run_insert(
-    config::Dict{String,Any},
-    result_file::IOStream,
-    connections::Dict{Int64,Oracle.Connection},
+    benchmark_batch_size::Int64,
+    benchmark_core_multiplier::Int64,
+    benchmark_number_partitions::Int64,
+    benchmark_transaction_size::Int64,
     bulk_data_partitions::Dict{Int64,DataFrames.DataFrame},
+    config::Dict{String,Any},
+    connections::Dict{Int64,Oracle.Connection},
+    measurement_data::Vector{Any},
+    result_file::IOStream,
+    sql_insert::String,
     trial_number::Int64,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name) - trial_number=$(trial_number)"
 
     # save the current time as the start of the 'query' action
-    create_result_measuring_point_start("query")
+    create_result_measuring_point_start("query", measurement_data)
 
     #=
     partition_no = 0
@@ -475,31 +483,36 @@ function run_insert(
         ENDIF
     ENDWHILE
     =#
-    for partition_key = 1:parse(Int64, config["DEFAULT"]["benchmark_number_partitions"])
-        @info "Start partition_key no. $(partition_key) - size $(size(bulk_data_partitions[partition_key], 1))"
-        if parse(Int64, config["DEFAULT"]["benchmark_core_multiplier"]) == 0
+    for partition_key = 1:benchmark_number_partitions
+        @debug "      $(function_name) - partition_key no. $(partition_key) - size $(size(bulk_data_partitions[partition_key], 1))"
+        if benchmark_core_multiplier == 0
             run_insert_helper(
-                config,
-                connections[partition_key],
+                benchmark_batch_size,
+                benchmark_transaction_size,
                 bulk_data_partitions[partition_key],
+                connections[partition_key],
+                sql_insert,
             )
         else
             Threads.@spawn run_insert_helper(
-                config,
-                connections[partition_key],
+                benchmark_batch_size,
+                benchmark_transaction_size,
                 bulk_data_partitions[partition_key],
+                connections[partition_key],
+                sql_insert,
             )
         end
     end
 
     # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
     create_result_measuring_point_end(
-        config,
-        result_file,
         "query",
+        config,
+        measurement_data,
+        result_file,
         trial_number,
-        config["DEFAULT"]["sql_insert"],
         "insert",
+        sql_insert,
     )
 
     @debug "End   $(function_name) - trial_number=$(trial_number)"
@@ -511,9 +524,11 @@ end
 # ----------------------------------------------------------------------------------
 
 function run_insert_helper(
-    config::Dict{String,Any},
-    connection::Oracle.Connection,
+    benchmark_batch_size::Int64,
+    benchmark_transaction_size::Int64,
     bulk_data_partition::DataFrames.DataFrame,
+    connection::Oracle.Connection,
+    sql_insert::String,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
@@ -539,11 +554,6 @@ function run_insert_helper(
         ENDIF
     ENDWHILE
     =#
-    benchmark_batch_size = parse(Int64, config["DEFAULT"]["benchmark_batch_size"])
-    benchmark_transaction_size =
-        parse(Int64, config["DEFAULT"]["benchmark_transaction_size"])
-    sql_insert = replace(replace(config["DEFAULT"]["sql_insert"], ":key" => ":1"), ":data" => ":2")::String
-
     stmt = Oracle.Stmt(connection, sql_insert)::Oracle.Stmt{Oracle.ORA_STMT_TYPE_INSERT}
 
     count = 0
@@ -552,13 +562,13 @@ function run_insert_helper(
     for bulk_data_row in eachrow(bulk_data_partition)
         count += 1
 
-        if benchmark_batch_size == 0
+        if benchmark_batch_size == 1
             stmt[:1] = bulk_data_row.key
             stmt[:2] = bulk_data_row.data
             Oracle.execute(stmt)
         else
             append(batch_collection, stmt)
-            if mod(count, benchmark_batch_size) == 0
+            if benchmark_batch_size == 0 || mod(count, benchmark_batch_size) == 0
                 Oracle.execute(stmt)
                 batch_collection = Oracle.Stmt{Oracle.ORA_STMT_TYPE_INSERT}[]
             end
@@ -592,17 +602,21 @@ end
 # ----------------------------------------------------------------------------------
 
 function run_select(
-    config::Dict{String,Any},
-    result_file::IOStream,
-    connections::Dict{Int64,Oracle.Connection},
+    benchmark_core_multiplier::Int64,
+    benchmark_number_partitions::Int64,
     bulk_data_partitions::Dict{Int64,DataFrames.DataFrame},
+    config::Dict{String,Any},
+    connections::Dict{Int64,Oracle.Connection},
+    measurement_data::Vector{Any},
+    result_file::IOStream,
+    sql_select::String,
     trial_number::Int64,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name) - trial_number=$(trial_number)"
 
     # save the current time as the start of the 'query' action
-    create_result_measuring_point_start("query")
+    create_result_measuring_point_start("query", measurement_data)
 
     #=
     partition_no = 0
@@ -619,14 +633,33 @@ function run_select(
     ENDWHILE
     =#
 
+    for partition_key = 0:benchmark_number_partitions - 1
+        if benchmark_core_multiplier == 0
+            run_select_helper(
+                connections[partition_key],
+                size(bulk_data_partitions[partition_key], 1),
+                partition_key,
+                sql_select,
+            )
+        else
+            Threads.@spawn run_select_helper(
+                connections[partition_key],
+                size(bulk_data_partitions[partition_key], 1),
+                partition_key,
+                sql_select,
+            )
+        end
+    end
+
     # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
     create_result_measuring_point_end(
-        config,
-        result_file,
         "query",
+        config,
+        measurement_data,
+        result_file,
         trial_number,
-        config["DEFAULT"]["sql_select"],
         "select",
+        sql_select,
     )
 
     @debug "End   $(function_name) - trial_number=$(trial_number)"
@@ -639,12 +672,18 @@ end
 
 function run_select_helper(
     connection::Oracle.Connection,
-    bulk_data_partition::DataFrames.DataFrame,
+    count_expected::Int64,
+    partition_key::Int64,
+    sql_select::String,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
     # execute the SQL statement in config param 'sql.select'
+    stmt = Oracle.Stmt(
+        connection,
+        sql_select * " where partition_key = $(partition_key)",
+    )::Oracle.Stmt{Oracle.ORA_STMT_TYPE_SELECT}
 
     #=
     int count = 0;
@@ -652,12 +691,23 @@ function run_select_helper(
         count + 1
     ENDWHILE
     =#
+    count = 0
+
+    Oracle.query(stmt) do cursor
+        for row in cursor
+            count += 1
+        end
+    end
 
     #=
     IF NOT count = size(bulk_data_partition)
         display an error message
     ENDIF
     =#
+    if count != count_expected
+        @error "Partition $(partition_key) number rows: expected=$(count_expected) - found=$(count)"
+        throw(ErrorException)
+    end
 
     @debug "End   $(function_name)"
     nothing
@@ -670,6 +720,7 @@ end
 function run_trial(
     config::Dict{String,Any},
     result_file::IOStream,
+    measurement_data::Vector{Any},
     connections::Dict{Int64,Oracle.Connection},
     bulk_data_partitions::Dict{Int64,DataFrames.DataFrame},
     trial_number::Int64,
@@ -678,7 +729,7 @@ function run_trial(
     @debug "Start $(function_name) - trial_number=$(trial_number)"
 
     # save the current time as the start of the 'trial' action
-    create_result_measuring_point_start("trial")
+    create_result_measuring_point_start("trial", measurement_data)
 
     @info "Start trial no. $(string(trial_number))"
 
@@ -691,6 +742,7 @@ function run_trial(
     =#
     sql_create = config["DEFAULT"]["sql_create"]
     sql_drop = config["DEFAULT"]["sql_drop"]
+
     try
         Oracle.execute(connections[1], sql_create)
         @debug "last DDL statement=$(sql_create)"
@@ -705,21 +757,63 @@ function run_trial(
                   trial_no,
                   bulk_data_partitions)
     =#
-    run_insert(config, result_file, connections, bulk_data_partitions, trial_number)
+    benchmark_batch_size = parse(Int64, config["DEFAULT"]["benchmark_batch_size"])
+    benchmark_core_multiplier = parse(Int64, config["DEFAULT"]["benchmark_core_multiplier"])
+    benchmark_number_partitions =
+        parse(Int64, config["DEFAULT"]["benchmark_number_partitions"])
+    benchmark_transaction_size =
+        parse(Int64, config["DEFAULT"]["benchmark_transaction_size"])
+
+    sql_insert = replace(
+        replace(config["DEFAULT"]["sql_insert"], ":key" => ":1"),
+        ":data" => ":2",
+    )::String
+
+    run_insert(
+        benchmark_batch_size,
+        benchmark_core_multiplier,
+        benchmark_number_partitions,
+        benchmark_transaction_size,
+        bulk_data_partitions,
+        config,
+        connections,
+        measurement_data,
+        result_file,
+        sql_insert,
+        trial_number,
+    )
 
     #=
     DO run_select(database connections,
                   trial_no,
                   bulk_data_partitions)
     =#
-    run_select(config, result_file, connections, bulk_data_partitions, trial_number)
+    sql_select = config["DEFAULT"]["sql_select"]::String
+
+    run_select(
+        benchmark_core_multiplier,
+        benchmark_number_partitions,
+        bulk_data_partitions,
+        config,
+        connections,
+        measurement_data,
+        result_file,
+        sql_select,
+        trial_number,
+    )
 
     # drop the database table (config param 'sql.drop')
     Oracle.execute(connections[1], sql_drop)
     @debug "last DDL statement=$(sql_drop)"
 
     # WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
-    create_result_measuring_point_end(config, result_file, "trial", trial_number)
+    create_result_measuring_point_end(
+        "trial",
+        config,
+        measurement_data,
+        result_file,
+        trial_number,
+    )
 
     @debug "End   $(function_name) - trial_number=$(trial_number)"
     nothing
