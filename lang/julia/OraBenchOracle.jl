@@ -423,7 +423,7 @@ function run_benchmark(config::Dict{String,Any})
     benchmark_number_partitions =
         parse(Int64, config["DEFAULT"]["benchmark_number_partitions"])::Int64
 
-    (pool, connections) = create_connections(benchmark_number_partitions, config )
+    (pool, connections) = create_connections(benchmark_number_partitions, config)
 
     #=
     trial_no = 0
