@@ -78,12 +78,16 @@ class OraBench {
     private var lastTrial: LocalDateTime? = null
     private var lastTrialNano: Long = 0
 
+    private var maxTrialDurationNano: Long = 0
+    private var minTrialDurationNano: Long = 0
+
     private var resultFile: CSVPrinter? = null
 
     private lateinit var sqlCreate: String
     private lateinit var sqlDrop: String
     private lateinit var sqlInsert: String
     private lateinit var sqlSelect: String
+    private var sumTrialDurationNano: Long = 0
 
     companion object {
         /**
@@ -357,8 +361,6 @@ class OraBench {
             duration
         )
 
-        logger.info("Duration (ms) trial         : " +  Precision.round(duration / 1000000.0,0).toLong());
-
         if (isDebug) {
             logger.debug("End")
         }
@@ -377,9 +379,6 @@ class OraBench {
             endDateTime,
             duration
         )
-
-        logger.info("Duration (ms) trial average : " +  Precision.round(duration / 1000000.0 / trials,0).toLong());
-        logger.info("Duration (ms) benchmark run : " +  Precision.round(duration / 1000000.0,0).toLong());
 
         if (isDebug) {
             logger.debug("End")
@@ -430,6 +429,29 @@ class OraBench {
             logger.error("file result name     =: $fileBulkSize")
             e.printStackTrace()
             exitProcess(1)
+        }
+
+        if (action == "trial") {
+            logger.info("Duration (ms) trial         : " + Precision.round(duration / 1000000.0, 0).toLong());
+
+            if (maxTrialDurationNano == 0L) {
+                maxTrialDurationNano = duration;
+            } else if (maxTrialDurationNano < duration) {
+                maxTrialDurationNano = duration;
+            }
+
+            if (minTrialDurationNano == 0L) {
+                minTrialDurationNano = duration;
+            } else if (minTrialDurationNano > duration) {
+                minTrialDurationNano = duration;
+            }
+
+            sumTrialDurationNano += duration;
+        } else if (action == "benchmark") {
+            logger.info("Duration (ms) trial min.    : " + Precision.round(minTrialDurationNano / 1000000.0, 0).toLong());
+            logger.info("Duration (ms) trial max.    : " + Precision.round(maxTrialDurationNano / 1000000.0, 0).toLong());
+            logger.info("Duration (ms) trial average : " + Precision.round(sumTrialDurationNano / 1000000.0 / benchmarkTrials, 0).toLong());
+            logger.info("Duration (ms) benchmark run : " + Precision.round(duration / 1000000.0, 0).toLong());
         }
 
         if (isDebug) {
