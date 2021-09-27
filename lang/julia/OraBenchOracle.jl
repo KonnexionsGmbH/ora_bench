@@ -377,16 +377,26 @@ function run_benchmark(config::Dict{String,Any})
     file_result_name = config["DEFAULT"]["file_result_name"]
 
     benchmark_globals = Array([
-        ""::String, # LAST_BENCHMARK
-        ""::String, # LAST_TRIAL
-        ""::String, # LAST_QUERY
-        0::Int64, # DURATION_INSERT_SUM
-        0::Int64, # DURATION_SELECT_SUM
-        0::Int64, # DURATION_TRIAL_MAX
-        0::Int64, # DURATION_TRIAL_MIN
-        0::Int64, # DURATION_TRIAL_TOTAL
-        ""::String, # BENCHMARK_DRIVER
-        ""::String, # BENCHMARK_LANGUAGE
+        # LAST_BENCHMARK
+        ""::String,
+        # LAST_TRIAL
+        ""::String,
+        # LAST_QUERY
+        ""::String,
+        # DURATION_INSERT_SUM
+        0::Int64,
+        # DURATION_SELECT_SUM
+        0::Int64,
+        # DURATION_TRIAL_MAX
+        0::Int64,
+        # DURATION_TRIAL_MIN
+        0::Int64,
+        # DURATION_TRIAL_TOTAL
+        0::Int64,
+        # BENCHMARK_DRIVER
+        ""::String,
+        # BENCHMARK_LANGUAGE
+        ""::String,
     ])::Vector{Any}
 
     global IX_BENCHMARK_DRIVER = 9::Int64
