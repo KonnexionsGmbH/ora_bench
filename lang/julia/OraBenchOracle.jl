@@ -549,7 +549,8 @@ function run_insert_helper(
     stmt = Oracle.Stmt(connection, sql_insert)::Oracle.Stmt{Oracle.ORA_STMT_TYPE_INSERT}
 
     count = 0
-    batch_collection = DataFrames.DataFrame
+    batch_collection_keys = Vector{String}()
+    batch_collection_data = Vector{String}()
 
     for bulk_data_row in eachrow(bulk_data_partition)
         count += 1
@@ -559,10 +560,12 @@ function run_insert_helper(
             stmt[:2] = bulk_data_row.data
             Oracle.execute(stmt)
         else
-            append!(batch_collection, [bulk_data_row.key, bulk_data_row.data])
+            push!(batch_collection_keys, bulk_data_row.key)
+            push!(batch_collection_data, bulk_data_row.data)
             if benchmark_batch_size > 0 && mod(count, benchmark_batch_size) == 0
-                Oracle.execute_many(connection, sql_insert,batch_collection )
-                batch_collection = DataFrames.DataFrame
+                Oracle.execute_many(connection, sql_insert,[batch_collection_keys, batch_collection_data])
+                batch_collection_keys = Vector{String}()
+                batch_collection_data = Vector{String}()
             end
         end
 
@@ -578,8 +581,8 @@ function run_insert_helper(
         execute the SQL statements in the collection batch_collection
     ENDIF
     =#
-    if size(batch_collection,1) != 0
-        Oracle.execute_many(connection, sql_insert,batch_collection )
+    if size(batch_collection_keys,1) != 0
+        Oracle.execute_many(connection, sql_insert,[batch_collection_keys, batch_collection_data])
     end
 
     # commit
