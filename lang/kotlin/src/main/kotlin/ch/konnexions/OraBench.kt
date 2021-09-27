@@ -147,7 +147,7 @@ class OraBench {
 
                     count += 1
 
-                    if (benchmarkBatchSize == 0) {
+                    if (benchmarkBatchSize == 1) {
                         preparedStatement.execute()
                     } else {
                         preparedStatement.addBatch()
@@ -171,7 +171,7 @@ class OraBench {
               execute the SQL statements in the collection batch_collection
             ENDIF
             */
-            if (benchmarkBatchSize > 0 && count % benchmarkBatchSize != 0) {
+            if (benchmarkBatchSize == 0 || count % benchmarkBatchSize != 0) {
                 preparedStatement.executeBatch()
             }
 
