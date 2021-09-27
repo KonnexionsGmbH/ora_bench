@@ -51,6 +51,9 @@ public class Result {
     private LocalDateTime lastTrial;
 
     private long lastTrialNano;
+    private long maxTrialNano = 0L;
+    private long minTrialNano = 0L;
+    private long sumTrialNano = 0L;
 
     private CSVPrinter resultFile;
 
@@ -149,8 +152,9 @@ public class Result {
             e.printStackTrace();
         }
 
-        logger.info(
-                "Duration (ms) trial average : " + (long) Precision.round(duration / 1000000.0 / benchmarkTrials, 0));
+        logger.info("Duration (ms) trial min.    : " + (long) Precision.round(minTrialNano / 1000000.0, 0));
+        logger.info("Duration (ms) trial max.    : " + (long) Precision.round(maxTrialNano / 1000000.0, 0));
+        logger.info("Duration (ms) trial average : " + (long) Precision.round(sumTrialNano / 1000000.0 / benchmarkTrials, 0));
         logger.info("Duration (ms) benchmark run : " + (long) Precision.round(duration / 1000000.0, 0));
 
         if (isDebug) {
@@ -211,6 +215,20 @@ public class Result {
         }
 
         long duration = System.nanoTime() - lastTrialNano;
+
+        if (maxTrialNano == 0) {
+            maxTrialNano = duration;
+        } else if (maxTrialNano < duration) {
+            maxTrialNano = duration;
+        }
+
+        if (minTrialNano == 0) {
+            minTrialNano = duration;
+        } else if (minTrialNano > duration) {
+            minTrialNano = duration;
+        }
+
+        sumTrialNano += duration;
 
         createMeasuringPoint(trialNo, lastTrial, LocalDateTime.now(), duration);
 

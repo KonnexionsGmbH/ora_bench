@@ -398,11 +398,11 @@ public class OraBench {
 
                 count += 1;
 
-                if (config.getBenchmarkBatchSize() == 0) {
+                if (config.getBenchmarkBatchSize() == 1) {
                     preparedStatement.execute();
                 } else {
                     preparedStatement.addBatch();
-                    if (count % config.getBenchmarkBatchSize() == 0) {
+                    if (config.getBenchmarkBatchSize() != 0 && count % config.getBenchmarkBatchSize() == 0) {
                         preparedStatement.executeBatch();
                     }
                 }
@@ -416,7 +416,7 @@ public class OraBench {
              * IF collection batch_collection is not empty execute the SQL statements in the
              * collection batch_collection ENDIF
              */
-            if ((config.getBenchmarkBatchSize() > 0) && (count % config.getBenchmarkBatchSize() != 0)) {
+            if ((config.getBenchmarkBatchSize() == 0) || (count % config.getBenchmarkBatchSize() != 0)) {
                 preparedStatement.executeBatch();
             }
 
