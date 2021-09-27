@@ -16,13 +16,15 @@ import yaml
 # Definition of the global variables.
 # ----------------------------------------------------------------------------------
 
-BENCHMARK_DRIVER = "Oracle cx_Oracle (Version v" + cx_Oracle.version + ")"
-BENCHMARK_LANGUAGE = "Python 3 " + sys.version
-
 FILE_CONFIGURATION_NAME_PYTHON = "priv/properties/ora_bench_python.properties"
 
+IX_BENCHMARK_DRIVER = 8
+IX_BENCHMARK_LANGUAGE = 9
 IX_DURATION_INSERT_SUM = 3
 IX_DURATION_SELECT_SUM = 4
+IX_DURATION_TRIAL_MAX = 5
+IX_DURATION_TRIAL_MIN = 6
+IX_DURATION_TRIAL_TOTAL = 7
 IX_LAST_BENCHMARK = 0
 IX_LAST_QUERY = 2
 IX_LAST_TRIAL = 1
@@ -71,8 +73,13 @@ def create_result(logger, config, result_file, measurement_data, action, trial_n
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
+    global IX_BENCHMARK_DRIVER
+    global IX_BENCHMARK_LANGUAGE
     global IX_DURATION_INSERT_SUM
     global IX_DURATION_SELECT_SUM
+    global IX_DURATION_TRIAL_MAX
+    global IX_DURATION_TRIAL_MIN
+    global IX_DURATION_TRIAL_TOTAL
 
     end_date_time = datetime.datetime.now()
 
@@ -91,8 +98,8 @@ def create_result(logger, config, result_file, measurement_data, action, trial_n
                       config["benchmark.os"] + config["file.result.delimiter"] +
                       config["benchmark.user.name"] + config["file.result.delimiter"] +
                       config["benchmark.database"] + config["file.result.delimiter"] +
-                      BENCHMARK_LANGUAGE + config["file.result.delimiter"] +
-                      BENCHMARK_DRIVER + config["file.result.delimiter"] +
+                      measurement_data[IX_BENCHMARK_LANGUAGE] + config["file.result.delimiter"] +
+                      measurement_data[IX_BENCHMARK_DRIVER] + config["file.result.delimiter"] +
                       str(trial_number) + config["file.result.delimiter"] +
                       sql_statement + config["file.result.delimiter"] +
                       str(config["benchmark.core.multiplier"]) + config["file.result.delimiter"] +
@@ -107,11 +114,25 @@ def create_result(logger, config, result_file, measurement_data, action, trial_n
                       str(round((end_date_time - start_date_time).total_seconds())) + config["file.result.delimiter"] +
                       str(round(duration_ns)) + "\n")
 
-    if action == "benchmark":
-        logger.info("Duration (ms) trial average : " + str(round(duration_ns / 1000000 / config["benchmark.trials"])))
-        logger.info("Duration (ms) benchmark run : " + str(round(duration_ns / 1000000)))
-    elif action == "trial":
+    if action == "trial":
         logger.info("Duration (ms) trial         : " + str(round(duration_ns / 1000000)))
+
+        if measurement_data[IX_DURATION_TRIAL_MAX] == 0:
+            measurement_data[IX_DURATION_TRIAL_MAX] = duration_ns
+        elif measurement_data[IX_DURATION_TRIAL_MAX] < duration_ns:
+            measurement_data[IX_DURATION_TRIAL_MAX] = duration_ns
+
+        if measurement_data[IX_DURATION_TRIAL_MIN] == 0:
+            measurement_data[IX_DURATION_TRIAL_MIN] = duration_ns
+        elif measurement_data[IX_DURATION_TRIAL_MIN] > duration_ns:
+            measurement_data[IX_DURATION_TRIAL_MIN] = duration_ns
+
+        measurement_data[IX_DURATION_TRIAL_TOTAL] += duration_ns
+    elif action == "benchmark":
+        logger.info("Duration (ms) trial min.    : " + str(round(measurement_data[IX_DURATION_TRIAL_MIN] / 1000000)))
+        logger.info("Duration (ms) trial max.    : " + str(round(measurement_data[IX_DURATION_TRIAL_MAX] / 1000000)))
+        logger.info("Duration (ms) trial average : " + str(round(measurement_data[IX_DURATION_TRIAL_TOTAL] / 1000000 / config["benchmark.trials"])))
+        logger.info("Duration (ms) benchmark run : " + str(round(duration_ns / 1000000)))
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("End")
@@ -201,9 +222,12 @@ def create_result_measuring_point_start_benchmark(logger, config):
 
     global IX_LAST_BENCHMARK
 
-    measurement_data = [None, None, None, 0, 0]
+    measurement_data = [None, None, None, 0, 0, 0, 0, 0, None, None]
 
     measurement_data[IX_LAST_BENCHMARK] = datetime.datetime.now()
+
+    measurement_data[IX_BENCHMARK_DRIVER] = "Oracle cx_Oracle (Version v" + cx_Oracle.version + ")"
+    measurement_data[IX_BENCHMARK_LANGUAGE] = "Python 3 " + sys.version
 
     measurement_data_result_file = (measurement_data, create_result_file(logger, config))
 
@@ -467,7 +491,7 @@ def run_insert_helper(logger, config, connection, cursor, bulk_data_partition):
     for [key_data_tuple] in bulk_data_partition:
         count += 1
 
-        if config["benchmark.batch.size"] == 0:
+        if config["benchmark.batch.size"] == 1:
             cursor.execute(config["sql.insert"], [key_data_tuple[0], key_data_tuple[1]])
         else:
             batch_data.append(key_data_tuple)
