@@ -18,6 +18,7 @@ if ["%ORA_BENCH_CHOICE_DB%"] EQU [""] (
 set ORA_BENCH_RUN_CX_ORACLE_PYTHON=false
 set ORA_BENCH_RUN_GODROR_GO=false
 set ORA_BENCH_RUN_JDBC_JAVA=false
+set ORA_BENCH_RUN_JDBC_JL_JULIA=false
 set ORA_BENCH_RUN_JDBC_KOTLIN=false
 set ORA_BENCH_RUN_ODPI_C=false
 set ORA_BENCH_RUN_ORACLE_JL_JULIA=false
@@ -28,6 +29,7 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["complete"] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
     set ORA_BENCH_RUN_GODROR_GO=true
     set ORA_BENCH_RUN_JDBC_JAVA=true
+    set ORA_BENCH_RUN_JDBC_JL_JULIA=true
     set ORA_BENCH_RUN_JDBC_KOTLIN=true
     set ORA_BENCH_RUN_ODPI_C=false
     set ORA_BENCH_RUN_ORACLE_JL_JULIA=false
@@ -55,7 +57,12 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["java"] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
 )
 
+if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["julia_jdbc"] (
+    set ORA_BENCH_RUN_JDBC_JL_JULIA=true
+)
+
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["julia_oracle"] (
+    set ORA_BENCH_RUN_ORACLE_JL_JULIA=true
     set ORA_BENCH_RUN_ORACLE_JL_JULIA=false
 )
 
@@ -104,6 +111,7 @@ echo ---------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON              : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_GODROR_GO                     : %ORA_BENCH_RUN_GODROR_GO%
 echo RUN_JDBC_JAVA                     : %ORA_BENCH_RUN_JDBC_JAVA%
+echo RUN_JDBC_JL_JULIA                 : %ORA_BENCH_RUN_JDBC_JL_JULIA%
 echo RUN_JDBC_KOTLIN                   : %ORA_BENCH_RUN_JDBC_KOTLIN%
 echo RUN_ODPI_C                        : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORACLE_JL_JULIA               : %ORA_BENCH_RUN_ORACLE_JL_JULIA%
