@@ -505,7 +505,7 @@ def run_insert_helper(logger, config, connection, cursor, bulk_data_partition):
     # IF collection batch_collection is not empty
     #     execute the SQL statements in the collection batch_collection
     # ENDIF
-    if config["benchmark.batch.size"] > 0 and batch_data.__len__() > 0:
+    if config["benchmark.batch.size"] == 0 or batch_data.__len__() > 0:
         cursor.executemany(config["sql.insert"], batch_data)
 
     if config["benchmark.transaction.size"] == 0 or count % config["benchmark.transaction.size"] != 0:
