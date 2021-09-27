@@ -25,19 +25,6 @@ using TOML
 using TimesDates
 
 # ----------------------------------------------------------------------------------
-# Definition of the global variables.
-# ----------------------------------------------------------------------------------
-
-global BENCHMARK_DRIVER = ""::String
-global BENCHMARK_LANGUAGE = ""::String
-
-global IX_DURATION_INSERT_SUM = 4::Int64
-global IX_DURATION_SELECT_SUM = 5::Int64
-global IX_LAST_BENCHMARK = 1::Int64
-global IX_LAST_QUERY = 3::Int64
-global IX_LAST_TRIAL = 2::Int64
-
-# ----------------------------------------------------------------------------------
 # Creating the database connections.
 # ----------------------------------------------------------------------------------
 
@@ -125,9 +112,9 @@ function create_result(
         file_result_delimiter *
         config["DEFAULT"]["benchmark_database"] *
         file_result_delimiter *
-        BENCHMARK_LANGUAGE *
+        measurement_data[IX_BENCHMARK_LANGUAGE] *
         file_result_delimiter *
-        BENCHMARK_DRIVER *
+        measurement_data[IX_BENCHMARK_DRIVER] *
         file_result_delimiter *
         string(trial_number) *
         file_result_delimiter *
@@ -160,8 +147,24 @@ function create_result(
 
     if action == "trial"
         @info "Duration (ms) trial         : $(round(duration_ns / 1000000))"
+
+        if measurement_data[IX_DURATION_TRIAL_MAX] == 0
+            measurement_data[IX_DURATION_TRIAL_MAX] = duration_ns
+        elseif duration_ns > measurement_data[IX_DURATION_TRIAL_MAX]
+            measurement_data[IX_DURATION_TRIAL_MAX] = duration_ns
+        end
+
+        if measurement_data[IX_DURATION_TRIAL_MIN] == 0
+            measurement_data[IX_DURATION_TRIAL_MIN] = duration_ns
+        elseif duration_ns < measurement_data[IX_DURATION_TRIAL_MIN]
+            measurement_data[IX_DURATION_TRIAL_MIN] = duration_ns
+        end
+
+        measurement_data[IX_DURATION_TRIAL_TOTAL] += duration_ns
     elseif action == "benchmark"
-        @info "Duration (ms) trial average : $(round(duration_ns / 1000000 / parse(Int64, config["DEFAULT"]["benchmark_trials"])))"
+        @info "Duration (ms) trial min.    : $(round(measurement_data[IX_DURATION_TRIAL_MIN] / 1000000))"
+        @info "Duration (ms) trial max.    : $(round(measurement_data[IX_DURATION_TRIAL_MAX] / 1000000))"
+        @info "Duration (ms) trial average : $(round(measurement_data[IX_DURATION_TRIAL_TOTAL] / 1000000 / parse(Int64, config["DEFAULT"]["benchmark_trials"])))"
         @info "Duration (ms) benchmark run : $(round(duration_ns / 1000000))"
     end
 
@@ -335,12 +338,6 @@ function main()
 
     @info "Start OraBench.jl - Number Threads: $(Threads.nthreads())"
 
-    m = Pkg.Operations.Context().env.manifest
-    v = m[findfirst(v -> v.name == "Oracle", m)].version
-
-    global BENCHMARK_DRIVER = "Oracle.jl $(string(v))"
-    global BENCHMARK_LANGUAGE = "Julia $(string(Base.VERSION))"
-
     numberArgs = size(ARGS, 1)
 
     @info "main() - number arguments=$(numberArgs)"
@@ -379,9 +376,37 @@ function run_benchmark(config::Dict{String,Any})
     # save the current time as the start of the 'benchmark' action
     file_result_name = config["DEFAULT"]["file_result_name"]
 
-    measurement_data =
-        Array([""::String, ""::String, ""::String, 0::Int64, 0::Int64])::Vector{Any}
+    measurement_data = Array([
+        ""::String,
+        ""::String,
+        ""::String,
+        0::Int64,
+        0::Int64,
+        0::Int64,
+        0::Int64,
+        0::Int64,
+        ""::String,
+        ""::String,
+    ])::Vector{Any}
+
+    global IX_BENCHMARK_DRIVER = 9::Int64
+    global IX_BENCHMARK_LANGUAGE = 10::Int64
+    global IX_DURATION_INSERT_SUM = 4::Int64
+    global IX_DURATION_SELECT_SUM = 5::Int64
+    global IX_DURATION_TRIAL_MAX = 6::Int64
+    global IX_DURATION_TRIAL_MIN = 7::Int64
+    global IX_DURATION_TRIAL_TOTAL = 8::Int64
+    global IX_LAST_BENCHMARK = 1::Int64
+    global IX_LAST_QUERY = 3::Int64
+    global IX_LAST_TRIAL = 2::Int64
+
     measurement_data[IX_LAST_BENCHMARK] = TimeDate(now())
+
+    m = Pkg.Operations.Context().env.manifest
+    v = m[findfirst(v -> v.name == "Oracle", m)].version
+
+    measurement_data[IX_BENCHMARK_DRIVER] = "Oracle.jl $(string(v))"
+    measurement_data[IX_BENCHMARK_LANGUAGE] = "Julia $(string(Base.VERSION))"
 
     result_file = open(file_result_name, "a")
 
@@ -563,7 +588,11 @@ function run_insert_helper(
             push!(batch_collection_keys, bulk_data_row.key)
             push!(batch_collection_data, bulk_data_row.data)
             if benchmark_batch_size > 0 && mod(count, benchmark_batch_size) == 0
-                Oracle.execute_many(connection, sql_insert,[batch_collection_keys, batch_collection_data])
+                Oracle.execute_many(
+                    connection,
+                    sql_insert,
+                    [batch_collection_keys, batch_collection_data],
+                )
                 batch_collection_keys = Vector{String}()
                 batch_collection_data = Vector{String}()
             end
@@ -581,8 +610,12 @@ function run_insert_helper(
         execute the SQL statements in the collection batch_collection
     ENDIF
     =#
-    if size(batch_collection_keys,1) != 0
-        Oracle.execute_many(connection, sql_insert,[batch_collection_keys, batch_collection_data])
+    if size(batch_collection_keys, 1) != 0
+        Oracle.execute_many(
+            connection,
+            sql_insert,
+            [batch_collection_keys, batch_collection_data],
+        )
     end
 
     # commit
