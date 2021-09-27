@@ -1,10 +1,10 @@
 #= 
-OraBench:
+OraBenchOracle:
 - Author: Konnexions GmbH
 - Date: 2021-06-26
 =#
 
-module OraBench
+module OraBenchOracle
 
 using Pkg
 
@@ -55,7 +55,7 @@ function create_connections(
             connections[partition_key] = Oracle.Connection(pool)
             @debug "      $(function_name) Connection #$(partition_key) - is now open"
         catch reason
-            @info "partition_key      =" * string(partition_key)
+            @info "partition_key=$(partition_key)"
             error(
                 "fatal error: program abort =====> Oracle.Connection(pool) error: '$(string(reason))' <=====",
             )
@@ -336,7 +336,7 @@ function main()
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
-    @info "Start OraBench.jl - Number Threads: $(Threads.nthreads())"
+    @info "Start OraBenchOracle.jl - Number Threads: $(Threads.nthreads())"
 
     numberArgs = size(ARGS, 1)
 
@@ -359,7 +359,7 @@ function main()
 
     run_benchmark(config)
 
-    @info "End   OraBench.jl"
+    @info "End   OraBenchOracle.jl"
 
     @debug "End   $(function_name)"
     nothing
@@ -377,16 +377,16 @@ function run_benchmark(config::Dict{String,Any})
     file_result_name = config["DEFAULT"]["file_result_name"]
 
     benchmark_globals = Array([
-        ""::String,
-        ""::String,
-        ""::String,
-        0::Int64,
-        0::Int64,
-        0::Int64,
-        0::Int64,
-        0::Int64,
-        ""::String,
-        ""::String,
+        ""::String,    # LAST_BENCHMARK
+        ""::String,    # LAST_TRIAL
+        ""::String,    # LAST_QUERY
+        0::Int64,      # DURATION_INSERT_SUM
+        0::Int64,      # DURATION_SELECT_SUM
+        0::Int64,      # DURATION_TRIAL_MAX
+        0::Int64,      # DURATION_TRIAL_MIN
+        0::Int64,      # DURATION_TRIAL_TOTAL
+        ""::String,    # BENCHMARK_DRIVER
+        ""::String,    # BENCHMARK_LANGUAGE
     ])::Vector{Any}
 
     global IX_BENCHMARK_DRIVER = 9::Int64
