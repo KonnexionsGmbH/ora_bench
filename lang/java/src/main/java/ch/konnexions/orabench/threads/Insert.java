@@ -40,7 +40,7 @@ public class Insert implements Runnable {
      * @param bulkDataPartition the bulk data partition
      */
     public Insert(Config config, Connection connection, PreparedStatement preparedStatement,
-                  ArrayList<String[]> bulkDataPartition) {
+            ArrayList<String[]> bulkDataPartition) {
         if (isDebug) {
             logger.debug("Start");
         }

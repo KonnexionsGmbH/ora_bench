@@ -235,7 +235,7 @@ public class Config {
 
             String value;
 
-            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext(); ) {
+            for (final Iterator<String> iterator = keysSorted.iterator(); iterator.hasNext();) {
                 final String key = iterator.next();
 
                 if ("file.result.header".contentEquals(key)) {
@@ -563,7 +563,7 @@ public class Config {
 
     /**
      * @return the file name of the text file with the example data (bulk data
-     * file). The file name may contain the absolute or relative file path.
+     *         file). The file name may contain the absolute or relative file path.
      */
     public final String getFileBulkName() {
         return fileBulkName;
@@ -578,8 +578,8 @@ public class Config {
 
     /**
      * @return the name of the configuration file for the C++ (gcc) language
-     * version. The file name may contain the absolute or relative file
-     * path.
+     *         version. The file name may contain the absolute or relative file
+     *         path.
      */
     private final String getFileConfigurationNameC() {
         return fileConfigurationNameC;
@@ -587,7 +587,7 @@ public class Config {
 
     /**
      * @return the name of the configuration file for the Erlang language version.
-     * The file name may contain the absolute or relative file path.
+     *         The file name may contain the absolute or relative file path.
      */
     private final String getFileConfigurationNameErlang() {
         return fileConfigurationNameErlang;
@@ -595,7 +595,7 @@ public class Config {
 
     /**
      * @return the name of the configuration file in JSON format. The file name may
-     * contain the absolute or relative file path.
+     *         contain the absolute or relative file path.
      */
     private final String getFileConfigurationNameJson() {
         return fileConfigurationNameJson;
@@ -603,7 +603,7 @@ public class Config {
 
     /**
      * @return the name of the configuration file for the Python 3 language version.
-     * The file name may contain the absolute or relative file path.
+     *         The file name may contain the absolute or relative file path.
      */
     private final String getFileConfigurationNamePython() {
         return fileConfigurationNamePython;
@@ -611,7 +611,7 @@ public class Config {
 
     /**
      * @return the name of the configuration file for the TOML version. The file
-     * name may contain the absolute or relative file path.
+     *         name may contain the absolute or relative file path.
      */
     private final String getFileConfigurationNameToml() {
         return fileConfigurationNameToml;
@@ -633,7 +633,7 @@ public class Config {
 
     /**
      * @return the name of the result file containing the benchmark results. The
-     * file name may contain the absolute or relative file path.
+     *         file name may contain the absolute or relative file path.
      */
     final String getFileResultName() {
         return fileResultName;
@@ -644,7 +644,7 @@ public class Config {
             logger.debug("Start");
         }
 
-        for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext(); ) {
+        for (final Iterator<String> iterator = propertiesConfiguration.getKeys(); iterator.hasNext();) {
             keysSorted.add(iterator.next());
         }
 

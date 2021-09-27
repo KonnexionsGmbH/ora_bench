@@ -142,7 +142,7 @@ public class OraBench {
      * and Statement.
      *
      * @return the array list containing the database objects of the classes
-     * Connection, PreparedStatement and Statement
+     *         Connection, PreparedStatement and Statement
      */
     private ArrayList<Object> createDatabaseObjects() {
         if (isDebug) {
@@ -216,7 +216,7 @@ public class OraBench {
                      * 'benchmark.number.partitions')
                      */
                     partitionKey = (keyValue.charAt(0) * 251 + keyValue.charAt(1)) % numberPartitions;
-                    bulkDataPartitions.get(partitionKey).add(new String[]{keyValue, record.get("data")});
+                    bulkDataPartitions.get(partitionKey).add(new String[] { keyValue, record.get("data") });
                 }
             }
 
@@ -311,7 +311,7 @@ public class OraBench {
      * @param result             the result
      */
     private void runInsert(ArrayList<Connection> connections, ArrayList<PreparedStatement> preparedStatements,
-                           int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
+            int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -369,7 +369,7 @@ public class OraBench {
      * @param config            the configuration parameters
      */
     public static void runInsertHelper(Connection connection, PreparedStatement preparedStatement,
-                                       ArrayList<String[]> bulkDataPartition, Config config) {
+            ArrayList<String[]> bulkDataPartition, Config config) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -442,7 +442,7 @@ public class OraBench {
      * @param result             the result
      */
     private void runSelect(ArrayList<Statement> statements, int trialNumber,
-                           ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
+            ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -499,7 +499,7 @@ public class OraBench {
      * @param config            the config
      */
     public static void runSelectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey,
-                                       Config config) {
+            Config config) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -548,8 +548,8 @@ public class OraBench {
      * @param result             the result
      */
     private void runTrial(ArrayList<Connection> connections, ArrayList<PreparedStatement> preparedStatements,
-                          ArrayList<Statement> statements, int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions,
-                          Result result) {
+            ArrayList<Statement> statements, int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions,
+            Result result) {
         if (isDebug) {
             logger.debug("Start");
         }

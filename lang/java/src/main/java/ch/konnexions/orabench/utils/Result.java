@@ -77,7 +77,7 @@ public class Result {
     }
 
     private void createMeasuringPoint(int trialNo, LocalDateTime startDateTime, LocalDateTime endDateTime,
-                                      long duration) {
+            long duration) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -102,7 +102,7 @@ public class Result {
     }
 
     private void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime,
-                                      LocalDateTime endDateTime, long duration) {
+            LocalDateTime endDateTime, long duration) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -154,7 +154,8 @@ public class Result {
 
         logger.info("Duration (ms) trial min.    : " + (long) Precision.round(minTrialNano / 1000000.0, 0));
         logger.info("Duration (ms) trial max.    : " + (long) Precision.round(maxTrialNano / 1000000.0, 0));
-        logger.info("Duration (ms) trial average : " + (long) Precision.round(sumTrialNano / 1000000.0 / benchmarkTrials, 0));
+        logger.info("Duration (ms) trial average : "
+                + (long) Precision.round(sumTrialNano / 1000000.0 / benchmarkTrials, 0));
         logger.info("Duration (ms) benchmark run : " + (long) Precision.round(duration / 1000000.0, 0));
 
         if (isDebug) {
