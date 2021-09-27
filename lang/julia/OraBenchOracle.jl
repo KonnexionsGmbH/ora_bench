@@ -29,8 +29,8 @@ using TimesDates
 # ----------------------------------------------------------------------------------
 
 function create_connections(
-    config::Dict{String,Any},
     benchmark_number_partitions::Int64,
+    config::Dict{String,Any},
 )::Tuple{Oracle.Pool,Dict{Int64,Oracle.Connection}}
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
@@ -72,8 +72,8 @@ end
 
 function create_result(
     action::String,
+    benchmark_globals::Vector{Any},
     config::Dict{String,Any},
-    measurement_data::Vector{Any},
     result_file::IOStream,
     sql_operation::String,
     sql_statement::String,
@@ -89,9 +89,9 @@ function create_result(
         replace(config["DEFAULT"]["file_result_delimiter"], "TAB" => "\t")
 
     if sql_operation == "insert"
-        measurement_data[IX_DURATION_INSERT_SUM] += duration_ns
+        benchmark_globals[IX_DURATION_INSERT_SUM] += duration_ns
     elseif sql_operation == "select"
-        measurement_data[IX_DURATION_SELECT_SUM] += duration_ns
+        benchmark_globals[IX_DURATION_SELECT_SUM] += duration_ns
     end
 
     write(
@@ -112,9 +112,9 @@ function create_result(
         file_result_delimiter *
         config["DEFAULT"]["benchmark_database"] *
         file_result_delimiter *
-        measurement_data[IX_BENCHMARK_LANGUAGE] *
+        benchmark_globals[IX_BENCHMARK_LANGUAGE] *
         file_result_delimiter *
-        measurement_data[IX_BENCHMARK_DRIVER] *
+        benchmark_globals[IX_BENCHMARK_DRIVER] *
         file_result_delimiter *
         string(trial_number) *
         file_result_delimiter *
@@ -148,23 +148,23 @@ function create_result(
     if action == "trial"
         @info "Duration (ms) trial         : $(round(duration_ns / 1000000))"
 
-        if measurement_data[IX_DURATION_TRIAL_MAX] == 0
-            measurement_data[IX_DURATION_TRIAL_MAX] = duration_ns
-        elseif duration_ns > measurement_data[IX_DURATION_TRIAL_MAX]
-            measurement_data[IX_DURATION_TRIAL_MAX] = duration_ns
+        if benchmark_globals[IX_DURATION_TRIAL_MAX] == 0
+            benchmark_globals[IX_DURATION_TRIAL_MAX] = duration_ns
+        elseif duration_ns > benchmark_globals[IX_DURATION_TRIAL_MAX]
+            benchmark_globals[IX_DURATION_TRIAL_MAX] = duration_ns
         end
 
-        if measurement_data[IX_DURATION_TRIAL_MIN] == 0
-            measurement_data[IX_DURATION_TRIAL_MIN] = duration_ns
-        elseif duration_ns < measurement_data[IX_DURATION_TRIAL_MIN]
-            measurement_data[IX_DURATION_TRIAL_MIN] = duration_ns
+        if benchmark_globals[IX_DURATION_TRIAL_MIN] == 0
+            benchmark_globals[IX_DURATION_TRIAL_MIN] = duration_ns
+        elseif duration_ns < benchmark_globals[IX_DURATION_TRIAL_MIN]
+            benchmark_globals[IX_DURATION_TRIAL_MIN] = duration_ns
         end
 
-        measurement_data[IX_DURATION_TRIAL_TOTAL] += duration_ns
+        benchmark_globals[IX_DURATION_TRIAL_TOTAL] += duration_ns
     elseif action == "benchmark"
-        @info "Duration (ms) trial min.    : $(round(measurement_data[IX_DURATION_TRIAL_MIN] / 1000000))"
-        @info "Duration (ms) trial max.    : $(round(measurement_data[IX_DURATION_TRIAL_MAX] / 1000000))"
-        @info "Duration (ms) trial average : $(round(measurement_data[IX_DURATION_TRIAL_TOTAL] / 1000000 / parse(Int64, config["DEFAULT"]["benchmark_trials"])))"
+        @info "Duration (ms) trial min.    : $(round(benchmark_globals[IX_DURATION_TRIAL_MIN] / 1000000))"
+        @info "Duration (ms) trial max.    : $(round(benchmark_globals[IX_DURATION_TRIAL_MAX] / 1000000))"
+        @info "Duration (ms) trial average : $(round(benchmark_globals[IX_DURATION_TRIAL_TOTAL] / 1000000 / parse(Int64, config["DEFAULT"]["benchmark_trials"])))"
         @info "Duration (ms) benchmark run : $(round(duration_ns / 1000000))"
     end
 
@@ -178,8 +178,8 @@ end
 
 function create_result_measuring_point_end(
     action::String,
+    benchmark_globals::Vector{Any},
     config::Dict{String,Any},
-    measurement_data::Vector{Any},
     result_file::IOStream,
     trial_number::Int64 = 0,
     sql_operation::String = "",
@@ -191,34 +191,34 @@ function create_result_measuring_point_end(
     if action == "query"
         create_result(
             action,
+            benchmark_globals,
             config,
-            measurement_data,
             result_file,
             sql_operation,
             sql_statement,
-            measurement_data[IX_LAST_QUERY],
+            benchmark_globals[IX_LAST_QUERY],
             trial_number,
         )
     elseif action == "trial"
         create_result(
             action,
+            benchmark_globals,
             config,
-            measurement_data,
             result_file,
             sql_operation,
             sql_statement,
-            measurement_data[IX_LAST_TRIAL],
+            benchmark_globals[IX_LAST_TRIAL],
             trial_number,
         )
     elseif action == "benchmark"
         create_result(
             action,
+            benchmark_globals,
             config,
-            measurement_data,
             result_file,
             sql_operation,
             sql_statement,
-            measurement_data[IX_LAST_BENCHMARK],
+            benchmark_globals[IX_LAST_BENCHMARK],
             trial_number,
         )
         close(result_file)
@@ -236,14 +236,14 @@ end
 # Recording the results of the benchmark - start processing.
 # ----------------------------------------------------------------------------------
 
-function create_result_measuring_point_start(action::String, measurement_data::Vector{Any})
+function create_result_measuring_point_start(action::String, benchmark_globals::Vector{Any})
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
     if action == "query"
-        measurement_data[IX_LAST_QUERY] = TimeDate(now())
+        benchmark_globals[IX_LAST_QUERY] = TimeDate(now())
     elseif action == "trial"
-        measurement_data[IX_LAST_TRIAL] = TimeDate(now())
+        benchmark_globals[IX_LAST_TRIAL] = TimeDate(now())
     else
         error(
             "fatal error: program abort =====> unknown action='$(action)' status='start' <=====",
@@ -376,7 +376,7 @@ function run_benchmark(config::Dict{String,Any})
     # save the current time as the start of the 'benchmark' action
     file_result_name = config["DEFAULT"]["file_result_name"]
 
-    measurement_data = Array([
+    benchmark_globals = Array([
         ""::String,
         ""::String,
         ""::String,
@@ -400,13 +400,13 @@ function run_benchmark(config::Dict{String,Any})
     global IX_LAST_QUERY = 3::Int64
     global IX_LAST_TRIAL = 2::Int64
 
-    measurement_data[IX_LAST_BENCHMARK] = TimeDate(now())
+    benchmark_globals[IX_LAST_BENCHMARK] = TimeDate(now())
 
     m = Pkg.Operations.Context().env.manifest
     v = m[findfirst(v -> v.name == "Oracle", m)].version
 
-    measurement_data[IX_BENCHMARK_DRIVER] = "Oracle.jl $(string(v))"
-    measurement_data[IX_BENCHMARK_LANGUAGE] = "Julia $(string(Base.VERSION))"
+    benchmark_globals[IX_BENCHMARK_DRIVER] = "Oracle.jl $(string(v))"
+    benchmark_globals[IX_BENCHMARK_LANGUAGE] = "Julia $(string(Base.VERSION))"
 
     result_file = open(file_result_name, "a")
 
@@ -423,7 +423,7 @@ function run_benchmark(config::Dict{String,Any})
     benchmark_number_partitions =
         parse(Int64, config["DEFAULT"]["benchmark_number_partitions"])::Int64
 
-    (pool, connections) = create_connections(config, benchmark_number_partitions)
+    (pool, connections) = create_connections(benchmark_number_partitions, config )
 
     #=
     trial_no = 0
@@ -435,11 +435,11 @@ function run_benchmark(config::Dict{String,Any})
     =#
     for trial_number = 1:parse(Int64, config["DEFAULT"]["benchmark_trials"])
         run_trial(
-            config,
-            result_file,
-            measurement_data,
-            connections,
+            benchmark_globals,
             bulk_data_partitions,
+            config,
+            connections,
+            result_file,
             trial_number,
         )
     end
@@ -459,7 +459,7 @@ function run_benchmark(config::Dict{String,Any})
     Oracle.close(pool)
 
     # WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
-    create_result_measuring_point_end("benchmark", config, measurement_data, result_file)
+    create_result_measuring_point_end("benchmark", benchmark_globals, config, result_file)
 
     @debug "End   $(function_name)"
     nothing
@@ -472,12 +472,12 @@ end
 function run_insert(
     benchmark_batch_size::Int64,
     benchmark_core_multiplier::Int64,
+    benchmark_globals::Vector{Any},
     benchmark_number_partitions::Int64,
     benchmark_transaction_size::Int64,
     bulk_data_partitions::Dict{Int64,DataFrames.DataFrame},
     config::Dict{String,Any},
     connections::Dict{Int64,Oracle.Connection},
-    measurement_data::Vector{Any},
     result_file::IOStream,
     sql_insert::String,
     trial_number::Int64,
@@ -486,7 +486,7 @@ function run_insert(
     @debug "Start $(function_name) - trial_number=$(trial_number)"
 
     # save the current time as the start of the 'query' action
-    create_result_measuring_point_start("query", measurement_data)
+    create_result_measuring_point_start("query", benchmark_globals)
 
     #=
     partition_no = 0
@@ -524,8 +524,8 @@ function run_insert(
     # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
     create_result_measuring_point_end(
         "query",
+        benchmark_globals,
         config,
-        measurement_data,
         result_file,
         trial_number,
         "insert",
@@ -633,11 +633,11 @@ end
 
 function run_select(
     benchmark_core_multiplier::Int64,
+    benchmark_globals::Vector{Any},
     benchmark_number_partitions::Int64,
     bulk_data_partitions::Dict{Int64,DataFrames.DataFrame},
     config::Dict{String,Any},
     connections::Dict{Int64,Oracle.Connection},
-    measurement_data::Vector{Any},
     result_file::IOStream,
     sql_select::String,
     trial_number::Int64,
@@ -646,7 +646,7 @@ function run_select(
     @debug "Start $(function_name) - trial_number=$(trial_number)"
 
     # save the current time as the start of the 'query' action
-    create_result_measuring_point_start("query", measurement_data)
+    create_result_measuring_point_start("query", benchmark_globals)
 
     #=
     partition_no = 0
@@ -684,8 +684,8 @@ function run_select(
     # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
     create_result_measuring_point_end(
         "query",
+        benchmark_globals,
         config,
-        measurement_data,
         result_file,
         trial_number,
         "select",
@@ -748,18 +748,18 @@ end
 # ----------------------------------------------------------------------------------
 
 function run_trial(
-    config::Dict{String,Any},
-    result_file::IOStream,
-    measurement_data::Vector{Any},
-    connections::Dict{Int64,Oracle.Connection},
+    benchmark_globals::Vector{Any},
     bulk_data_partitions::Dict{Int64,DataFrames.DataFrame},
+    config::Dict{String,Any},
+    connections::Dict{Int64,Oracle.Connection},
+    result_file::IOStream,
     trial_number::Int64,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name) - trial_number=$(trial_number)"
 
     # save the current time as the start of the 'trial' action
-    create_result_measuring_point_start("trial", measurement_data)
+    create_result_measuring_point_start("trial", benchmark_globals)
 
     @info "Start trial no. $(string(trial_number))"
 
@@ -802,12 +802,12 @@ function run_trial(
     run_insert(
         benchmark_batch_size,
         benchmark_core_multiplier,
+        benchmark_globals,
         benchmark_number_partitions,
         benchmark_transaction_size,
         bulk_data_partitions,
         config,
         connections,
-        measurement_data,
         result_file,
         sql_insert,
         trial_number,
@@ -822,11 +822,11 @@ function run_trial(
 
     run_select(
         benchmark_core_multiplier,
+        benchmark_globals,
         benchmark_number_partitions,
         bulk_data_partitions,
         config,
         connections,
-        measurement_data,
         result_file,
         sql_select,
         trial_number,
@@ -839,8 +839,8 @@ function run_trial(
     # WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
     create_result_measuring_point_end(
         "trial",
+        benchmark_globals,
         config,
-        measurement_data,
         result_file,
         trial_number,
     )
