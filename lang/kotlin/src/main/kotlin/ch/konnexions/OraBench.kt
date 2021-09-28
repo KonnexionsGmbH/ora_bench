@@ -434,11 +434,11 @@ class OraBench {
         if (action == "trial") {
             logger.info("Duration (ms) trial         : " + Precision.round(duration / 1000000.0, 0).toLong());
 
-            if (maxTrialDurationNano == 0L) || (maxTrialDurationNano < duration) {
+            if ((maxTrialDurationNano == 0L) || (maxTrialDurationNano < duration)) {
                 maxTrialDurationNano = duration;
             }
 
-            if (minTrialDurationNano == 0L) || (minTrialDurationNano > duration) {
+            if ((minTrialDurationNano == 0L) || (minTrialDurationNano > duration)) {
                 minTrialDurationNano = duration;
             }
 

@@ -217,11 +217,11 @@ public class Result {
 
         long duration = System.nanoTime() - lastTrialNano;
 
-        if (maxTrialNano == 0) ||(maxTrialNano<duration) {
-                maxTrialNano = duration;
+        if ((maxTrialNano == 0) || (maxTrialNano < duration)) {
+            maxTrialNano = duration;
         }
 
-        if (minTrialNano == 0) ||(minTrialNano > duration) {
+        if ((minTrialNano == 0) || (minTrialNano > duration)) {
             minTrialNano = duration;
         }
 
