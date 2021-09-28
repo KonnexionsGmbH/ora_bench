@@ -303,9 +303,28 @@ func runBenchmark() {
 	                    bulk_data_partitions)
 	   ENDWHILE
 	*/
+	var duration int64
+	var trial_max int64 = 0
+	var trial_min int64 = 0
+	var trial_sum int64 = 0
+
 	for t := 1; t <= trials; t++ {
-		runTrial(ctx, configs, t, partitions, resultSlice, resultPos)
+		duration = runTrial(ctx, configs, t, partitions, resultSlice, resultPos)
 	}
+
+	if trial_max == 0 {
+		trial_max = duration
+	} else if trial_max < duration {
+		trial_max = duration
+	}
+
+	if trial_min == 0 {
+		trial_min = duration
+	} else if trial_min > duration {
+		trial_min = duration
+	}
+
+	trial_sum += duration
 
 	/*
 	   partition_no = 0
@@ -326,7 +345,9 @@ func runBenchmark() {
 
 	resultWriter(configs, resultSlice)
 
-	log.Info("Duration (ms) trial average : ", math.Round(float64(endBenchTs.Sub(startBenchTs).Nanoseconds()/1000000/int64(trials))))
+	log.Info("Duration (ms) trial min.    : ", math.Round(float64(trial_min/1000000)))
+	log.Info("Duration (ms) trial max.    : ", math.Round(float64(trial_max/1000000)))
+	log.Info("Duration (ms) trial average : ", math.Round(float64(trial_sum/1000000/int64(trials))))
 	log.Info("Duration (ms) benchmark run : ", math.Round(float64(endBenchTs.Sub(startBenchTs).Nanoseconds()/1000000)))
 
 	log.Debug("End   runBenchmark()")
@@ -557,7 +578,7 @@ func runSelectHelper(ctx context.Context, configs map[string]interface{}, trial 
 /*
 Performing a single trial run.
 */
-func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result, resultPos int) {
+func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result, resultPos int) int64 {
 	log.Debug("Start runTrial()")
 
 	// save the current time as the start of the 'trial' action
@@ -600,9 +621,13 @@ func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, 
 		end:    endTrialTs}
 	resultPos++
 
-	log.Info("Duration (ms) trial         : ", math.Round(float64(endTrialTs.Sub(startTrialTs).Nanoseconds()/1000000)))
+	var duration = endTrialTs.Sub(startTrialTs).Nanoseconds()
+
+	log.Info("Duration (ms) trial         : ", math.Round(float64(duration/1000000)))
 
 	log.Debug("End   runTrial()")
+
+	return duration
 }
 
 func tsStr(t time.Time) string {
