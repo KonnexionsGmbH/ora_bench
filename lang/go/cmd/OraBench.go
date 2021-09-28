@@ -310,21 +310,17 @@ func runBenchmark() {
 
 	for t := 1; t <= trials; t++ {
 		duration = runTrial(ctx, configs, t, partitions, resultSlice, resultPos)
-	}
 
-	if trial_max == 0 {
-		trial_max = duration
-	} else if trial_max < duration {
-		trial_max = duration
-	}
+		if trial_max == 0 || trial_max < duration {
+			trial_max = duration
+		}
 
-	if trial_min == 0 {
-		trial_min = duration
-	} else if trial_min > duration {
-		trial_min = duration
-	}
+		if trial_min == 0 || trial_min > duration {
+			trial_min = duration
+		}
 
-	trial_sum += duration
+		trial_sum += duration
+	}
 
 	/*
 	   partition_no = 0

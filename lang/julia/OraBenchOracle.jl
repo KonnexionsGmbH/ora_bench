@@ -148,15 +148,11 @@ function create_result(
     if action == "trial"
         @info "Duration (ms) trial         : $(round(duration_ns / 1000000))"
 
-        if benchmark_globals[IX_DURATION_TRIAL_MAX] == 0
-            benchmark_globals[IX_DURATION_TRIAL_MAX] = duration_ns
-        elseif duration_ns > benchmark_globals[IX_DURATION_TRIAL_MAX]
+        if benchmark_globals[IX_DURATION_TRIAL_MAX] == 0 || duration_ns > benchmark_globals[IX_DURATION_TRIAL_MAX]
             benchmark_globals[IX_DURATION_TRIAL_MAX] = duration_ns
         end
 
-        if benchmark_globals[IX_DURATION_TRIAL_MIN] == 0
-            benchmark_globals[IX_DURATION_TRIAL_MIN] = duration_ns
-        elseif duration_ns < benchmark_globals[IX_DURATION_TRIAL_MIN]
+        if benchmark_globals[IX_DURATION_TRIAL_MIN] == 0 || duration_ns < benchmark_globals[IX_DURATION_TRIAL_MIN]
             benchmark_globals[IX_DURATION_TRIAL_MIN] = duration_ns
         end
 

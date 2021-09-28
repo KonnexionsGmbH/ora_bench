@@ -126,14 +126,10 @@ def create_result(logger,
     if action == "trial":
         logger.info("Duration (ms) trial         : " + str(round(duration_ns / 1000000)))
 
-        if benchmark_globals[IX_DURATION_TRIAL_MAX] == 0:
-            benchmark_globals[IX_DURATION_TRIAL_MAX] = duration_ns
-        elif benchmark_globals[IX_DURATION_TRIAL_MAX] < duration_ns:
+        if benchmark_globals[IX_DURATION_TRIAL_MAX] == 0 or benchmark_globals[IX_DURATION_TRIAL_MAX] < duration_ns:
             benchmark_globals[IX_DURATION_TRIAL_MAX] = duration_ns
 
-        if benchmark_globals[IX_DURATION_TRIAL_MIN] == 0:
-            benchmark_globals[IX_DURATION_TRIAL_MIN] = duration_ns
-        elif benchmark_globals[IX_DURATION_TRIAL_MIN] > duration_ns:
+        if benchmark_globals[IX_DURATION_TRIAL_MIN] == 0 or benchmark_globals[IX_DURATION_TRIAL_MIN] > duration_ns:
             benchmark_globals[IX_DURATION_TRIAL_MIN] = duration_ns
 
         benchmark_globals[IX_DURATION_TRIAL_TOTAL] += duration_ns
