@@ -99,7 +99,7 @@ func initDb(ctx context.Context, configs map[string]interface{}) {
 	log.Debug("End   initDb()")
 }
 
-func loadBulk(benchmarkNumberPartitions int, fileBulkName string, fileBulkDelimiter string) []bulkPartition {
+func loadBulk(benchmarkNumberPartitions int, fileBulkDelimiter string, fileBulkName string) []bulkPartition {
 	log.Debug("Start loadBulk()")
 
 	log.Info("Start Distribution of the data in the partitions")
@@ -288,8 +288,8 @@ func runBenchmark() {
 	// READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
 	partitions := loadBulk(
 		benchmarkNumberPartitions,
-		configs["file.bulk.name"].(string),
-		configs["file.bulk.delimiter"].(string))
+		configs["file.bulk.delimiter"].(string),
+		configs["file.bulk.name"].(string))
 
 	// create a separate database connection (without auto commit behaviour) for each partition
 	ctx, cancel := context.WithCancel(context.Background())
