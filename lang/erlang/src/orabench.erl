@@ -43,7 +43,6 @@ main([ConfigFile]) ->
     sql_insert := SqlInsert,
     sql_select := SqlSelect
   } = Config,
-
   StartTsGross = os:timestamp(),
   {ok, Fd} = file:open(BulkFile, [read, raw, binary, {read_ahead, 1024 * 1024}]),
   io:format(
