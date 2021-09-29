@@ -23,6 +23,12 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 )
 
+if ["%ORA_BENCH_VCVARSALL_PATH%"] EQU [""] (
+    set ORA_BENCH_VCVARSALL_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\"
+)
+
+call %ORA_BENCH_VCVARSALL_PATH%vcvarsall.bat x64
+
 echo ===============================================================================
 echo Start %0
 echo -------------------------------------------------------------------------------
