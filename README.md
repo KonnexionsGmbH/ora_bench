@@ -110,17 +110,11 @@ Alternatively, in an Ubuntu 20.04 based environment, e.g.: in a virtual machine,
 
 ### <a name="2.3_benchmark"></a> 2.3 Benchmark Operation
 
-#### 2.3.1  Script `run_bench_all_dbs_props_std`
+#### 2.3.1  Script `run_ora_bench`
 
 This script executes the `run_properties_standard` script for each of the databases listed in chapter Introduction with standard properties. At the beginning of
-the script it is possible to exclude individual databases or drivers from the current benchmark. The run log is stored in the `run_bench_all_dbs_props_std.log`
+the script it is possible to exclude individual databases or drivers from the current benchmark. The run log is stored in the `run_ora_bench.log`
 file.
-
-##### 2.3.2 Script `run_bench_all_dbs_props_var`
-
-This script executes the `run_properties_variations` script for each of the databases listed in chapter Introduction with variations of properties. At the
-beginning of the script it is possible to exclude individual databases or drivers from the current benchmark. The run log is stored in
-the `run_bench_all_dbs_props_var.log` file.
 
 ### <a name="2.4_benchmark"></a> 2.4 Benchmark Results
 

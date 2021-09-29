@@ -2,10 +2,13 @@
 
 set -e
 
+export ORA_BENCH_PROPERTIES=variations
+export ORA_BENCH_PROPERTIES=standard
+
 # ----------------------------------------------------------------------------------
 #
-# run_bench_all_dbs_props_std.sh: Oracle Benchmark for all database versions
-#                                 with standard properties.
+# run_ora_bench.sh: Oracle Benchmark for all database versions
+#                   with ${ORA_BENCH_PROPERTIES} properties.
 #
 # ----------------------------------------------------------------------------------
 
@@ -93,7 +96,7 @@ fi
 echo ""
 echo "Script $0 is now running"
 
-export LOG_FILE=run_bench_all_dbs_props_std.log
+export LOG_FILE=run_ora_bench.log
 
 echo ""
 echo "You can find the run log in the file $LOG_FILE"
@@ -105,7 +108,7 @@ sleep .1
 echo "=============================================================================="
 echo "Start $0"
 echo "------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - all databases with standard properties."
+echo "ora_bench - Oracle benchmark - all databases with ${ORA_BENCH_PROPERTIES} properties."
 echo "------------------------------------------------------------------------------"
 echo "CHOICE_DRIVER                     : ${ORA_BENCH_CHOICE_DRIVER}"
 echo "CHOICE_DB                         : ${ORA_BENCH_CHOICE_DB}"
@@ -122,7 +125,7 @@ export ORA_BENCH_BULKFILE_EXISTING=true
 if [ "${ORA_BENCH_RUN_DB_18_4_XE}" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
     export ORA_BENCH_CONNECTION_SERVICE=xe
-    if ! { /bin/bash scripts/run_properties_standard.sh; }; then
+    if ! { /bin/bash scripts/run_properties_${ORA_BENCH_PROPERTIES}.sh; }; then
         exit 255
     fi
 fi
@@ -130,7 +133,7 @@ fi
 if [ "${ORA_BENCH_RUN_DB_19_3_EE}" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    if ! { /bin/bash scripts/run_properties_standard.sh; }; then
+    if ! { /bin/bash scripts/run_properties_${ORA_BENCH_PROPERTIES}.sh; }; then
         exit 255
     fi
 fi
@@ -138,7 +141,7 @@ fi
 if [ "${ORA_BENCH_RUN_DB_21_3_EE}" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
-    if ! { /bin/bash scripts/run_properties_standard.sh; }; then
+    if ! { /bin/bash scripts/run_properties_${ORA_BENCH_PROPERTIES}.sh; }; then
         exit 255
     fi
 fi
