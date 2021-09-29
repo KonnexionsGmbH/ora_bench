@@ -273,11 +273,11 @@ Performing a complete benchmark run that can consist of several trial runs.
 func runBenchmark() {
 	log.Debug("Start runBenchmark()")
 
-	// save the current time as the start of the 'benchmark' action
-	startBenchTs := time.Now()
-
 	// READ the configuration parameters into the memory (config params `file.configuration.name ...`)
 	configs := loadConfig(os.Args[1])
+
+	// save the current time as the start of the 'benchmark' action
+	startBenchTs := time.Now()
 
 	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
 	trials := configs["benchmark.trials"].(int)
