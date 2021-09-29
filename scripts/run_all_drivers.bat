@@ -2,7 +2,7 @@
 
 rem --------------------------------------------------------------------------------
 rem
-rem run_bench_all_drivers.bat: Oracle benchmark for all database drivers.
+rem run_all_drivers.bat: Oracle benchmark for all database drivers.
 rem
 rem --------------------------------------------------------------------------------
 

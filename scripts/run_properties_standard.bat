@@ -145,9 +145,9 @@ if %ERRORLEVEL% neq 0 (
     exit -1073741510
 )
 
-call scripts\run_bench_all_drivers.bat
+call scripts\run_all_drivers.bat
 if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'call scripts\run_bench_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 

@@ -2,8 +2,8 @@
 
 rem --------------------------------------------------------------------------------
 rem
-rem run_bench_all_dbs_props_var.bat: Oracle Benchmark for all database versions
-rem                                  with variations of properties.
+rem run_all_dbs_props_var.bat: Oracle Benchmark for all database versions
+rem                            with variations of properties.
 rem
 rem --------------------------------------------------------------------------------
 
@@ -101,12 +101,12 @@ if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
 echo.
 echo Script %0 is now running
 echo.
-echo You can find the run log in the file run_bench_all_dbs_props_var.log
+echo You can find the run log in the file run_all_dbs_props_var.log
 echo.
 echo Please wait ...
 echo.
 
-> run_bench_all_dbs_props_var.log 2>&1 (
+> run_all_dbs_props_var.log 2>&1 (
 
     echo ===============================================================================
     echo Start %0

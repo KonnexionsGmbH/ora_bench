@@ -125,7 +125,7 @@ if ! { /bin/bash scripts/run_db_setup.sh; }; then
     exit 255
 fi
 
-if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
+if ! { /bin/bash scripts/run_all_drivers.sh; }; then
     exit 255
 fi
 

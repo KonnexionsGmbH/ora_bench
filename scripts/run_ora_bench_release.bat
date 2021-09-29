@@ -111,9 +111,9 @@ rem > run_ora_bench_release.log 2>&1 (
             docker ps -a
             docker start ora_bench_db
     
-            call scripts\run_bench_all_drivers.bat
+            call scripts\run_all_drivers.bat
             if %ERRORLEVEL% neq 0 (
-                echo Processing of the script: %0 - step: 'call scripts\run_bench_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
+                echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
                 exit -1073741510
             )
         )
@@ -147,9 +147,9 @@ rem > run_ora_bench_release.log 2>&1 (
                 exit -1073741510
             )
     
-            call scripts\run_bench_all_drivers.bat
+            call scripts\run_all_drivers.bat
             if %ERRORLEVEL% neq 0 (
-                echo Processing of the script: %0 - step: 'call scripts\run_bench_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
+                echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
                 exit -1073741510
             )
         )

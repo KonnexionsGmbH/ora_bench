@@ -130,7 +130,7 @@ fi
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=${ORA_BENCH_BENCHMARK_BATCH_SIZE}_DEFAULT
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=${ORA_BENCH_BENCHMARK_CORE_MULTIPLIER}_DEFAULT
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=${ORA_BENCH_BENCHMARK_TRANSACTION_SIZE}_DEFAULT
-if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
+if ! { /bin/bash scripts/run_all_drivers.sh; }; then
     exit 255
 fi
 
@@ -138,7 +138,7 @@ fi
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=${ORA_BENCH_BENCHMARK_BATCH_SIZE}_DEFAULT
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=${ORA_BENCH_BENCHMARK_TRANSACTION_SIZE}_DEFAULT
-if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
+if ! { /bin/bash scripts/run_all_drivers.sh; }; then
     exit 255
 fi
 
@@ -146,7 +146,7 @@ fi
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=${ORA_BENCH_BENCHMARK_CORE_MULTIPLIER}_DEFAULT
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=${ORA_BENCH_BENCHMARK_TRANSACTION_SIZE}_DEFAULT
-if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
+if ! { /bin/bash scripts/run_all_drivers.sh; }; then
     exit 255
 fi
 
@@ -154,7 +154,7 @@ fi
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=${ORA_BENCH_BENCHMARK_CORE_MULTIPLIER}_DEFAULT
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
+if ! { /bin/bash scripts/run_all_drivers.sh; }; then
     exit 255
 fi
 
@@ -162,7 +162,7 @@ fi
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=${ORA_BENCH_BENCHMARK_TRANSACTION_SIZE}_DEFAULT
-if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
+if ! { /bin/bash scripts/run_all_drivers.sh; }; then
     exit 255
 fi
 
@@ -170,7 +170,7 @@ fi
 export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
+if ! { /bin/bash scripts/run_all_drivers.sh; }; then
     exit 255
 fi
 

@@ -4,8 +4,8 @@ set -e
 
 # ----------------------------------------------------------------------------------
 #
-# run_bench_all_dbs_props_var.sh: Oracle Benchmark for all database versions
-#                                 with variations of properties.
+# run_all_dbs_props_var.sh: Oracle Benchmark for all database versions
+#                           with variations of properties.
 #
 # ----------------------------------------------------------------------------------
 
@@ -95,7 +95,7 @@ fi
 echo ""
 echo "Script $0 is now running"
 
-export LOG_FILE=run_bench_all_dbs_props_var.log
+export LOG_FILE=run_all_dbs_props_var.log
 
 echo ""
 echo "You can find the run log in the file $LOG_FILE"

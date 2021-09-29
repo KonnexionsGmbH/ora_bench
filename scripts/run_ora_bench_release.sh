@@ -4,9 +4,14 @@ set -e
 
 # ------------------------------------------------------------------------------
 #
-# run_ora_bench_release.bat: Release run for VMWare and WSL2.
+# run_ora_bench_release.sh: Release run for VMWare and WSL2.
 #
 # ------------------------------------------------------------------------------
+
+echo ""
+echo "Script $0 is now running"
+
+export LOG_FILE=run_ora_bench_release.log
 
 echo ""
 echo "You can find the run log in the file $LOG_FILE"
@@ -103,7 +108,7 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         docker ps -a
         docker start ora_bench_db
 
-        if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
+        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
             exit 255
         fi
     fi
@@ -135,7 +140,7 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
             exit 255
         fi
 
-        if ! { /bin/bash scripts/run_bench_all_drivers.sh; }; then
+        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
             exit 255
         fi
     fi
