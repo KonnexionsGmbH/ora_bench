@@ -43,6 +43,7 @@ main([ConfigFile]) ->
     sql_insert := SqlInsert,
     sql_select := SqlSelect
   } = Config,
+  StartTsGross = os:timestamp(),
   {ok, Fd} = file:open(BulkFile, [read, raw, binary, {read_ahead, 1024 * 1024}]),
   io:format(
     "[~p:~p]       ~p - Start load_data~n",
@@ -90,7 +91,8 @@ main([ConfigFile]) ->
       end,
       Rows
     ),
-  #{startTime := StartTs, endTime := EndTs} = Results = run_trials(Trials),
+  {#{startTime := StartTs, endTime := EndTs} = Results, TrialMax, TrialMin, TrialSum} =
+    run_trials(Trials),
   ok = application:load(oranif),
   {ok, OranifVsn} = application:get_key(oranif, vsn),
   BMDrv = lists:flatten(io_lib:format("oranif (Version ~s)", [OranifVsn])),
@@ -231,6 +233,13 @@ main([ConfigFile]) ->
         DurationMicros * 1000
       ]
     ),
+  io:format("Duration (ms) trial min.    : ~p~n", [round(TrialMin / 1000)]),
+  io:format("Duration (ms) trial max.    : ~p~n", [round(TrialMax / 1000)]),
+  io:format("Duration (ms) trial average : ~p~n", [round(TrialSum / 1000 / Trials)]),
+  io:format(
+    "Duration (ms) benchmark run : ~p~n",
+    [round(timer:now_diff(EndTs, StartTsGross) / 1000)]
+  ),
   ok = file:close(RFd),
   io:format("[~p:~p] End ~p~n", [?FUNCTION_NAME, ?LINE, ?MODULE]),
   halt(0).
@@ -245,6 +254,9 @@ ts_str({_, _, Micro} = Timestamp) ->
     io_lib:format("~4..0B-~2..0B-~2..0B ~2..0B:~2..0B:~2..0B.~-9..0B", [Y, M, D, H, Mi, S, Micro])
   ).
 
+%% ===================================================================
+%% Performing the trial run.
+%% -------------------------------------------------------------------
 
 run_trials(Trials) ->
   #{
@@ -264,22 +276,22 @@ run_trials(Trials) ->
       connection_string => list_to_binary(io_lib:format("~s:~p/~s", [Host, Port, Service]))
     }
   ),
-  run_trials(1, Trials, Ctx, #{startTime => os:timestamp()}).
+  run_trials(1, Trials, Ctx, #{startTime => os:timestamp()}, 0, 0, 0).
 
 
-run_trials(Trial, Trials, Ctx, Stats) when Trial > Trials ->
+run_trials(Trial, Trials, Ctx, Stats, TrialMax, TrialMin, TrialSum) when Trial > Trials ->
   #{} = get(conf),
   ok = dpi:context_destroy(Ctx),
-  Stats#{endTime => os:timestamp()};
+  {Stats#{endTime => os:timestamp()}, TrialMax, TrialMin, TrialSum};
 
-run_trials(Trial, Trials, Ctx, Stats) ->
+run_trials(Trial, Trials, Ctx, Stats, TrialMax, TrialMin, TrialSum) ->
   #{
     connection_user := User,
     connection_password := Password,
     sql_create := Create,
     sql_drop := Drop
   } = Conf = get(conf),
-  io:format("[~p:~p:~p] Start trial no ~p... ", [?MODULE, ?FUNCTION_NAME, ?LINE, Trial]),
+  io:format("[~p:~p:~p] Start trial no ~p~n", [?MODULE, ?FUNCTION_NAME, ?LINE, Trial]),
   StartTime = os:timestamp(),
   #{connection_string := ConnectString} = Conf,
   Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
@@ -321,7 +333,8 @@ run_trials(Trial, Trials, Ctx, Stats) ->
     true -> ok
   end,
   EndTime = os:timestamp(),
-  io:format("~p seconds~n", [round(timer:now_diff(EndTime, StartTime) / 1000000)]),
+  Duration = timer:now_diff(EndTime, StartTime),
+  io:format("Duration (ms) trial         : ~p~n", [round(Duration / 1000)]),
   run_trials(
     Trial + 1,
     Trials,
@@ -330,9 +343,21 @@ run_trials(Trial, Trials, Ctx, Stats) ->
       Trial
       =>
       #{startTime => StartTime, endTime => EndTime, insert => InsertStat, select => SelectStat}
-    }
+    },
+    if
+      TrialMax == 0 orelse TrialMax < Duration -> Duration;
+      true -> TrialMax
+    end,
+    if
+      TrialMin == 0 orelse TrialMin > Duration -> Duration;
+      true -> TrialMin
+    end,
+    TrialSum + Duration
   ).
 
+%% ===================================================================
+%% Supervise function for inserting data into the database.
+%% -------------------------------------------------------------------
 
 run_insert(Ctx) ->
   Rows = get(rows),
@@ -349,6 +374,9 @@ run_insert(Ctx) ->
     ],
   thread_join(Threads).
 
+%% ===================================================================
+%% Supervise function for retrieving of the database data.
+%% -------------------------------------------------------------------
 
 run_select(Ctx) ->
   #{benchmark_number_partitions := Partitions} = Config = get(conf),
@@ -360,6 +388,9 @@ run_select(Ctx) ->
     ],
   thread_join(Threads).
 
+%% ===================================================================
+%% Helper function for inserting data into the database.
+%% -------------------------------------------------------------------
 
 insert_partition(
   Partition,
@@ -465,6 +496,9 @@ insert_partition(
     #{start => Start, 'end' => os:timestamp(), rows => length(Rows), partition => Partition}
   }.
 
+%% ===================================================================
+%% Helper function for retrieving data from the database.
+%% -------------------------------------------------------------------
 
 select_partition(
   Partition,
