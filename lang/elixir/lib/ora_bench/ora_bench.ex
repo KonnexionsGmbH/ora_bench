@@ -482,10 +482,10 @@ defmodule OraBench do
   def run_benchmark() do
     Logger.debug("Start ==========> <==========")
 
-    start_date_time = DateTime.utc_now()
-
     config = get_config()
     #    IO.inspect(config, label: "config")
+
+    start_date_time = DateTime.utc_now()
 
     measurement_data = %{
       :last_benchmark => start_date_time,
