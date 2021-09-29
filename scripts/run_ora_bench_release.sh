@@ -8,6 +8,13 @@ set -e
 #
 # ------------------------------------------------------------------------------
 
+echo ""
+echo "You can find the run log in the file $LOG_FILE"
+echo ""
+
+exec &> >(tee -i $LOG_FILE) 2>&1
+sleep .1
+
 echo "================================================================================"
 echo "Start $0"
 echo "--------------------------------------------------------------------------------"
@@ -32,9 +39,9 @@ export ORA_BENCH_PASSWORD_SYS=oracle
 export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 export ORA_BENCH_RUN_GODROR_GO=true
 export ORA_BENCH_RUN_JDBC_JAVA=true
-export ORA_BENCH_RUN_JDBC_JL_JULIA=true
+export ORA_BENCH_RUN_JDBC_JL_JULIA=false
 export ORA_BENCH_RUN_JDBC_KOTLIN=true
-export ORA_BENCH_RUN_ODPI_C=true
+export ORA_BENCH_RUN_ODPI_C=false
 export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
 export ORA_BENCH_RUN_ORANIF_ELIXIR=true
 export ORA_BENCH_RUN_ORANIF_ERLANG=true
@@ -53,6 +60,14 @@ echo "RUN_ODPI_C               : ${ORA_BENCH_RUN_ODPI_C}"
 echo "RUN_ORACLE_JL_JULIA      : ${ORA_BENCH_RUN_ORACLE_JL_JULIA}"
 echo "RUN_ORANIF_ELIXIR        : ${ORA_BENCH_RUN_ORANIF_ELIXIR}"
 echo "RUN_ORANIF_ERLANG        : ${ORA_BENCH_RUN_ORANIF_ERLANG}"
+echo "================================================================================"
+export ORA_BENCH_BATCH_SIZE=512
+export ORA_BENCH_CORE_MULTIPLIER=0
+export ORA_BENCH_TRANSACTION_SIZE=512
+
+echo "BATCH_SIZE               : ${ORA_BENCH_BATCH_SIZE}"
+echo "CORE_MULTIPLIER          : ${ORA_BENCH_CORE_MULTIPLIER}"
+echo "TRANSACTION_SIZE         : ${ORA_BENCH_TRANSACTION_SIZE}"
 echo "================================================================================"
 
 if [ "${ORA_BENCH_ORACLE_DATABASE_EXISTING}" = "true" ] \
