@@ -73,11 +73,10 @@ defmodule OraBench do
          sql_operation,
          sql_statement,
          start_date_time,
+         end_date_time,
          trial_number
        ) do
     Logger.debug("Start ==========> action: #{action} <==========")
-
-    end_date_time = DateTime.utc_now()
 
     duration_ns = DateTime.diff(end_date_time, start_date_time, :nanosecond)
     duration_ss = DateTime.diff(end_date_time, start_date_time, :second)
@@ -218,7 +217,8 @@ defmodule OraBench do
          result_file,
          sql_operation,
          sql_statement,
-         trial_number
+         trial_number,
+         end_date_time
        ) do
     Logger.debug("Start ==========> action: #{action} <==========")
 
@@ -233,6 +233,7 @@ defmodule OraBench do
           sql_operation,
           sql_statement,
           measurement_data[:last_query],
+          end_date_time,
           trial_number
         )
       "trial" ->
@@ -245,6 +246,7 @@ defmodule OraBench do
           sql_operation,
           sql_statement,
           measurement_data[:last_trial],
+          end_date_time,
           trial_number
         )
       "benchmark" ->
@@ -257,6 +259,7 @@ defmodule OraBench do
           sql_operation,
           sql_statement,
           measurement_data[:last_benchmark],
+          end_date_time,
           trial_number
         )
         File.close(result_file)
@@ -276,14 +279,14 @@ defmodule OraBench do
   # Recording the results of the benchmark - start processing.
   # ----------------------------------------------------------------------------------------------
 
-  defp create_result_measuring_point_start(action, measurement_data) do
+  defp create_result_measuring_point_start(action, measurement_data, start_date_time) do
     Logger.debug("Start ==========> action: #{action} <==========")
 
     case action do
       "query" ->
-        Map.put(measurement_data, :last_query, DateTime.utc_now())
+        Map.put(measurement_data, :last_query, start_date_time)
       "trial" ->
-        Map.put(measurement_data, :last_trial, DateTime.utc_now())
+        Map.put(measurement_data, :last_trial, start_date_time)
       _ ->
         raise(
           "[Error in create_result_measuring_point_start] unknown action='#{
@@ -479,11 +482,13 @@ defmodule OraBench do
   def run_benchmark() do
     Logger.debug("Start ==========> <==========")
 
+    start_date_time = DateTime.utc_now()
+
     config = get_config()
     #    IO.inspect(config, label: "config")
 
     measurement_data = %{
-      :last_benchmark => DateTime.utc_now(),
+      :last_benchmark => start_date_time,
       :last_trial => "n/a",
       :last_query => "n/a",
       :duration_insert_sum => 0,
@@ -510,7 +515,7 @@ defmodule OraBench do
     connections = create_database_objects(config, driver)
     #   IO.inspect(connections, label: "connections")
 
-    measurement_data_run_trial = run_trial(
+    {measurement_data_run_trial, trial_max, trial_min, trial_sum} = run_trial(
       benchmark_driver,
       bulk_data_partitions,
       config,
@@ -519,7 +524,10 @@ defmodule OraBench do
       measurement_data,
       result_file,
       String.to_integer(config["benchmark.trials"]),
-      1
+      1,
+      0,
+      0,
+      0
     )
     #    IO.inspect(measurement_data_run_trial, label: "measurement_data_run_trial")
 
@@ -532,6 +540,8 @@ defmodule OraBench do
 
     :ok = :dpi.context_destroy(driver)
 
+    end_date_time = DateTime.utc_now()
+
     create_result_measuring_point_end(
       "benchmark",
       benchmark_driver,
@@ -540,7 +550,37 @@ defmodule OraBench do
       result_file,
       "",
       "",
-      0
+      0,
+      end_date_time
+    )
+
+    Logger.info(
+      "Duration (ms) trial min.    : #{
+        trial_min / 1000000.0
+        |> Decimal.from_float()
+        |> Decimal.round(0)
+      }"
+    )
+    Logger.info(
+      "Duration (ms) trial max.    : #{
+        trial_max / 1000000.0
+        |> Decimal.from_float()
+        |> Decimal.round(0)
+      }"
+    )
+    Logger.info(
+      "Duration (ms) trial average : #{
+        trial_sum / 1000000.0 / String.to_integer(config["benchmark.trials"])
+        |> Decimal.from_float()
+        |> Decimal.round(0)
+      }"
+    )
+    Logger.info(
+      "Duration (ms) benchmark run : #{
+        DateTime.diff(end_date_time, start_date_time, :nanosecond) / 1000000.0
+        |> Decimal.from_float()
+        |> Decimal.round(0)
+      }"
     )
   end
 
@@ -562,9 +602,12 @@ defmodule OraBench do
       "Start ==========> <=========="
     )
 
+    start_date_time = DateTime.utc_now()
+
     measurement_data_start = create_result_measuring_point_start(
       "query",
-      measurement_data
+      measurement_data,
+      start_date_time
     )
     #    IO.inspect(measurement_data_start, label: "measurement_data_start - partition key: #{partition_key_current}")
 
@@ -580,6 +623,8 @@ defmodule OraBench do
       trial_number
     )
 
+    end_date_time = DateTime.utc_now()
+
     create_result_measuring_point_end(
       "query",
       benchmark_driver,
@@ -588,7 +633,8 @@ defmodule OraBench do
       result_file,
       "insert",
       config["sql.insert"],
-      trial_number
+      trial_number,
+      end_date_time
     )
   end
 
@@ -711,9 +757,12 @@ defmodule OraBench do
        ) do
     Logger.debug("Start ==========> <==========")
 
+    start_date_time = DateTime.utc_now()
+
     measurement_data_start = create_result_measuring_point_start(
       "query",
-      measurement_data
+      measurement_data,
+      start_date_time
     )
     #    IO.inspect(measurement_data_start, label: "measurement_data_start - partition key: #{partition_key_current}")
 
@@ -730,6 +779,8 @@ defmodule OraBench do
       trial_number
     )
 
+    end_date_time = DateTime.utc_now()
+
     create_result_measuring_point_end(
       "query",
       benchmark_driver,
@@ -738,7 +789,8 @@ defmodule OraBench do
       result_file,
       "select",
       config["sql.select"],
-      trial_number
+      trial_number,
+      end_date_time
     )
   end
 
@@ -845,12 +897,15 @@ defmodule OraBench do
          measurement_data,
          _result_file,
          0,
-         _trial_number_current
+         _trial_number_current,
+         trial_max,
+         trial_min,
+         trial_sum
        ) do
     Logger.debug("Start ==========> final <==========")
 
     #    IO.inspect(measurement_data, label: "measurement_data - final")
-    measurement_data
+    {measurement_data, trial_max, trial_min, trial_sum}
   end
 
   defp run_trial(
@@ -862,15 +917,21 @@ defmodule OraBench do
          measurement_data,
          result_file,
          trial_number,
-         trial_number_current
+         trial_number_current,
+         trial_max,
+         trial_min,
+         trial_sum
        ) do
     Logger.debug(
       "Start ==========> trial no.: #{trial_number_current} <=========="
     )
 
+    start_date_time = DateTime.utc_now()
+
     measurement_data_start = create_result_measuring_point_start(
       "trial",
-      measurement_data
+      measurement_data,
+      start_date_time
     )
     #    IO.inspect(measurement_data_start, label: "measurement_data_start - trial no.: #{trial_number_current}")
 
@@ -895,11 +956,12 @@ defmodule OraBench do
       0 = :dpi.stmt_execute(sql_create, [])
       Logger.debug(~s(Last DDL statement=#{config["sql.create"]}))
     rescue
-      _ -> 0 = :dpi.stmt_execute(sql_drop, [])
-           0 = :dpi.stmt_execute(sql_create, [])
-           Logger.debug(
-             ~s(Last DDL statement after DROP=#{config["sql.create"]})
-           )
+      _ ->
+        0 = :dpi.stmt_execute(sql_drop, [])
+        0 = :dpi.stmt_execute(sql_create, [])
+        Logger.debug(
+          ~s(Last DDL statement after DROP=#{config["sql.create"]})
+        )
     end
 
     :ok = :dpi.stmt_close(sql_create, <<>>)
@@ -932,6 +994,8 @@ defmodule OraBench do
     :ok = :dpi.stmt_close(sql_drop, <<>>)
     Logger.debug(~s(last DDL statement=#{config["sql.drop"]}))
 
+    end_date_time = DateTime.utc_now()
+
     measurement_data_end = create_result_measuring_point_end(
       "trial",
       benchmark_driver,
@@ -940,9 +1004,20 @@ defmodule OraBench do
       result_file,
       "",
       "",
-      trial_number_current
+      trial_number_current,
+      end_date_time
     )
     #   IO.inspect(measurement_data_end, label: "measurement_data_end - trial no.: #{trial_number_current}")
+
+    duration_ns = DateTime.diff(end_date_time, start_date_time, :nanosecond)
+
+    Logger.info(
+      "Duration (ms) trial         : #{
+        duration_ns / 1000000.0
+        |> Decimal.from_float()
+        |> Decimal.round(0)
+      }"
+    )
 
     run_trial(
       benchmark_driver,
@@ -953,7 +1028,18 @@ defmodule OraBench do
       measurement_data_end,
       result_file,
       trial_number - 1,
-      trial_number_current + 1
+      trial_number_current + 1,
+      if trial_max == 0 or trial_max < duration_ns  do
+        duration_ns
+      else
+        trial_max
+      end,
+      if trial_min == 0 or trial_min > duration_ns  do
+        duration_ns
+      else
+        trial_min
+      end,
+      trial_sum + duration_ns
     )
   end
 
