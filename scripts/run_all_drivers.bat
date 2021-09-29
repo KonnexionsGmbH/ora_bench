@@ -23,6 +23,10 @@ echo RUN_ORACLE_JL_JULIA               : %ORA_BENCH_RUN_ORACLE_JL_JULIA%
 echo RUN_ORANIF_ELIXIR                 : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG                 : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo -------------------------------------------------------------------------------
+echo BATCH_SIZE                        : %ORA_BENCH_BATCH_SIZE%
+echo CORE_MULTIPLIER                   : %ORA_BENCH_CORE_MULTIPLIER%
+echo TRANSACTION_SIZE                  : %ORA_BENCH_TRANSACTION_SIZE%
+echo -------------------------------------------------------------------------------
 echo:| TIME
 echo ===============================================================================
 

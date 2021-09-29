@@ -66,15 +66,6 @@ echo "RUN_ORACLE_JL_JULIA      : ${ORA_BENCH_RUN_ORACLE_JL_JULIA}"
 echo "RUN_ORANIF_ELIXIR        : ${ORA_BENCH_RUN_ORANIF_ELIXIR}"
 echo "RUN_ORANIF_ERLANG        : ${ORA_BENCH_RUN_ORANIF_ERLANG}"
 echo "================================================================================"
-export ORA_BENCH_BATCH_SIZE=512
-export ORA_BENCH_CORE_MULTIPLIER=0
-export ORA_BENCH_TRANSACTION_SIZE=512
-
-echo "BATCH_SIZE               : ${ORA_BENCH_BATCH_SIZE}"
-echo "CORE_MULTIPLIER          : ${ORA_BENCH_CORE_MULTIPLIER}"
-echo "TRANSACTION_SIZE         : ${ORA_BENCH_TRANSACTION_SIZE}"
-echo "================================================================================"
-
 if [ "${ORA_BENCH_ORACLE_DATABASE_EXISTING}" = "true" ] \
 || [ "${ORA_BENCH_ORACLE_DATABASE_18C}" = "true" ] \
 || [ "${ORA_BENCH_ORACLE_DATABASE_19C}" = "true" ] \
@@ -140,8 +131,52 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
             exit 255
         fi
 
+        export ORA_BENCH_BATCH_SIZE=0
+        export ORA_BENCH_CORE_MULTIPLIER=0
+        export ORA_BENCH_TRANSACTION_SIZE=0
+
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
-            exit 255
+                exit 255
+        fi
+
+        export ORA_BENCH_BATCH_SIZE=0
+        export ORA_BENCH_CORE_MULTIPLIER=0
+        export ORA_BENCH_TRANSACTION_SIZE=512
+
+        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+                exit 255
+        fi
+
+        export ORA_BENCH_BATCH_SIZE=1
+        export ORA_BENCH_CORE_MULTIPLIER=0
+        export ORA_BENCH_TRANSACTION_SIZE=0
+
+        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+                exit 255
+        fi
+
+        export ORA_BENCH_BATCH_SIZE=1
+        export ORA_BENCH_CORE_MULTIPLIER=0
+        export ORA_BENCH_TRANSACTION_SIZE=512
+
+        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+                exit 255
+        fi
+
+        export ORA_BENCH_BATCH_SIZE=512
+        export ORA_BENCH_CORE_MULTIPLIER=0
+        export ORA_BENCH_TRANSACTION_SIZE=0
+
+        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+                exit 255
+        fi
+
+        export ORA_BENCH_BATCH_SIZE=512
+        export ORA_BENCH_CORE_MULTIPLIER=0
+        export ORA_BENCH_TRANSACTION_SIZE=512
+
+        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+                exit 255
         fi
     fi
 fi
