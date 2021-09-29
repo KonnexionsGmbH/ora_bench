@@ -1,4 +1,4 @@
-package main.kotlin.ch.konnexions/*
+package ch.konnexions/*
  * 
  */
 
@@ -366,7 +366,7 @@ class OraBench {
         }
     }
 
-    private fun createMeasuringPoint(endDateTime: LocalDateTime, duration: Long, trials: Int) {
+    private fun createMeasuringPoint(endDateTime: LocalDateTime, duration: Long) {
         if (isDebug) {
             logger.debug("Start")
         }
@@ -432,22 +432,22 @@ class OraBench {
         }
 
         if (action == "trial") {
-            logger.info("Duration (ms) trial         : " + Precision.round(duration / 1000000.0, 0).toLong());
+            logger.info("Duration (ms) trial         : " + Precision.round(duration / 1000000.0, 0).toLong())
 
             if ((maxTrialDurationNano == 0L) || (maxTrialDurationNano < duration)) {
-                maxTrialDurationNano = duration;
+                maxTrialDurationNano = duration
             }
 
             if ((minTrialDurationNano == 0L) || (minTrialDurationNano > duration)) {
-                minTrialDurationNano = duration;
+                minTrialDurationNano = duration
             }
 
-            sumTrialDurationNano += duration;
+            sumTrialDurationNano += duration
         } else if (action == "benchmark") {
-            logger.info("Duration (ms) trial min.    : " + Precision.round(minTrialDurationNano / 1000000.0, 0).toLong());
-            logger.info("Duration (ms) trial max.    : " + Precision.round(maxTrialDurationNano / 1000000.0, 0).toLong());
-            logger.info("Duration (ms) trial average : " + Precision.round(sumTrialDurationNano / 1000000.0 / benchmarkTrials, 0).toLong());
-            logger.info("Duration (ms) benchmark run : " + Precision.round(duration / 1000000.0, 0).toLong());
+            logger.info("Duration (ms) trial min.    : " + Precision.round(minTrialDurationNano / 1000000.0, 0).toLong())
+            logger.info("Duration (ms) trial max.    : " + Precision.round(maxTrialDurationNano / 1000000.0, 0).toLong())
+            logger.info("Duration (ms) trial average : " + Precision.round(sumTrialDurationNano / 1000000.0 / benchmarkTrials, 0).toLong())
+            logger.info("Duration (ms) benchmark run : " + Precision.round(duration / 1000000.0, 0).toLong())
         }
 
         if (isDebug) {
@@ -603,7 +603,7 @@ class OraBench {
     /**
      * End of the whole benchmark run.
      */
-    private fun resultBenchmarkEnd(benchmarkTrials: Int) {
+    private fun resultBenchmarkEnd() {
         if (isDebug) {
             logger.debug("Start")
         }
@@ -613,8 +613,7 @@ class OraBench {
 
         createMeasuringPoint(
             endDateTime,
-            duration,
-            benchmarkTrials
+            duration
         )
 
         try {
@@ -809,7 +808,7 @@ class OraBench {
         }
 
         // WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
-        resultBenchmarkEnd(benchmarkTrials)
+        resultBenchmarkEnd()
 
         if (isDebug) {
             logger.debug("End")
@@ -1131,7 +1130,7 @@ fun main(args: Array<String>) {
     oraBench.logger.info("main() - number arguments=$numberArgs")
 
     if (numberArgs != 0) {
-        oraBench.logger.info("main() - 1st argument=" + args[0]);
+        oraBench.logger.info("main() - 1st argument=" + args[0])
         oraBench.logger.error("main() - Unknown command line argument(s)")
     }
 

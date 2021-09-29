@@ -304,22 +304,22 @@ func runBenchmark() {
 	   ENDWHILE
 	*/
 	var duration int64
-	var trial_max int64 = 0
-	var trial_min int64 = 0
-	var trial_sum int64 = 0
+	var trialMax int64 = 0
+	var trialMin int64 = 0
+	var trialSum int64 = 0
 
 	for t := 1; t <= trials; t++ {
 		duration = runTrial(ctx, configs, t, partitions, resultSlice, resultPos)
 
-		if trial_max == 0 || trial_max < duration {
-			trial_max = duration
+		if trialMax == 0 || trialMax < duration {
+			trialMax = duration
 		}
 
-		if trial_min == 0 || trial_min > duration {
-			trial_min = duration
+		if trialMin == 0 || trialMin > duration {
+			trialMin = duration
 		}
 
-		trial_sum += duration
+		trialSum += duration
 	}
 
 	/*
@@ -341,9 +341,9 @@ func runBenchmark() {
 
 	resultWriter(configs, resultSlice)
 
-	log.Info("Duration (ms) trial min.    : ", math.Round(float64(trial_min/1000000)))
-	log.Info("Duration (ms) trial max.    : ", math.Round(float64(trial_max/1000000)))
-	log.Info("Duration (ms) trial average : ", math.Round(float64(trial_sum/1000000/int64(trials))))
+	log.Info("Duration (ms) trial min.    : ", math.Round(float64(trialMin/1000000)))
+	log.Info("Duration (ms) trial max.    : ", math.Round(float64(trialMax/1000000)))
+	log.Info("Duration (ms) trial average : ", math.Round(float64(trialSum/1000000/int64(trials))))
 	log.Info("Duration (ms) benchmark run : ", math.Round(float64(endBenchTs.Sub(startBenchTs).Nanoseconds()/1000000)))
 
 	log.Debug("End   runBenchmark()")
