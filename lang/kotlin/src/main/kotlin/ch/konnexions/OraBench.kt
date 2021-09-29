@@ -1,5 +1,5 @@
-package ch.konnexions/*
- * 
+package main.kotlin.ch.konnexions/*
+ *
  */
 
 import org.apache.commons.csv.CSVFormat

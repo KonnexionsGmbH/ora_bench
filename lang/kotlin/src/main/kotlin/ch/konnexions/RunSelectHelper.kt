@@ -1,4 +1,4 @@
-package ch.konnexions
+package main.kotlin.ch.konnexions
 
 import org.apache.logging.log4j.Logger
 import java.sql.Statement
