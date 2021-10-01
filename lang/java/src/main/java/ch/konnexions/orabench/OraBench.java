@@ -421,9 +421,7 @@ public class OraBench {
             }
 
             // commit
-            if ((config.getBenchmarkTransactionSize() == 0) || (count % config.getBenchmarkTransactionSize() != 0)) {
-                connection.commit();
-            }
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }

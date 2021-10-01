@@ -151,7 +151,7 @@ class OraBench {
                         preparedStatement.execute()
                     } else {
                         preparedStatement.addBatch()
-                        if (count % benchmarkBatchSize == 0) {
+                        if (benchmarkBatchSize > 0 && count % benchmarkBatchSize == 0) {
                             preparedStatement.executeBatch()
                         }
                     }
@@ -176,9 +176,7 @@ class OraBench {
             }
 
             // commit
-            if (benchmarkTransactionSize == 0 || count % benchmarkTransactionSize != 0) {
-                connection.commit()
-            }
+            connection.commit()
 
             if (isDebug) {
                 logger.debug("End")

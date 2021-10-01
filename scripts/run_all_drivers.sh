@@ -30,8 +30,20 @@ echo "--------------------------------------------------------------------------
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "=============================================================================="
 
-if [ "${ORA_BENCH_RUN_CX_ORACLE_PYTHON}" = "true" ]; then
-    if ! { /bin/bash lang/python/scripts/run_bench_cx_oracle.sh; }; then
+if [ "${ORA_BENCH_RUN_ODPI_C}" = "true" ]; then
+    if ! { /bin/bash lang/c/scripts/run_bench_odpi.sh; }; then
+        exit 255
+    fi
+fi
+
+if [ "${ORA_BENCH_RUN_ORANIF_ELIXIR}" = "true" ]; then
+    if ! { /bin/bash lang/elixir/scripts/run_bench_oranif.sh; }; then
+        exit 255
+    fi
+fi
+
+if [ "${ORA_BENCH_RUN_ORANIF_ERLANG}" = "true" ]; then
+    if ! { /bin/bash lang/erlang/scripts/run_bench_oranif.sh; }; then
         exit 255
     fi
 fi
@@ -54,32 +66,20 @@ if [ "${ORA_BENCH_RUN_JDBC_JL_JULIA}" = "true" ]; then
     fi
 fi
 
-if [ "${ORA_BENCH_RUN_JDBC_KOTLIN}" = "true" ]; then
-    if ! { /bin/bash lang/kotlin/scripts/run_bench_jdbc.sh; }; then
-        exit 255
-    fi
-fi
-
-if [ "${ORA_BENCH_RUN_ODPI_C}" = "true" ]; then
-    if ! { /bin/bash lang/c/scripts/run_bench_odpi.sh; }; then
-        exit 255
-    fi
-fi
-
 if [ "${ORA_BENCH_RUN_ORACLE_JL_JULIA}" = "true" ]; then
     if ! { /bin/bash lang/julia/scripts/run_bench_oracle_jl.sh; }; then
         exit 255
     fi
 fi
 
-if [ "${ORA_BENCH_RUN_ORANIF_ELIXIR}" = "true" ]; then
-    if ! { /bin/bash lang/elixir/scripts/run_bench_oranif.sh; }; then
+if [ "${ORA_BENCH_RUN_JDBC_KOTLIN}" = "true" ]; then
+    if ! { /bin/bash lang/kotlin/scripts/run_bench_jdbc.sh; }; then
         exit 255
     fi
 fi
 
-if [ "${ORA_BENCH_RUN_ORANIF_ERLANG}" = "true" ]; then
-    if ! { /bin/bash lang/erlang/scripts/run_bench_oranif.sh; }; then
+if [ "${ORA_BENCH_RUN_CX_ORACLE_PYTHON}" = "true" ]; then
+    if ! { /bin/bash lang/python/scripts/run_bench_cx_oracle.sh; }; then
         exit 255
     fi
 fi
