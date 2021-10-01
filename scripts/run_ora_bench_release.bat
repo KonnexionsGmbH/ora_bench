@@ -10,15 +10,67 @@ setlocal EnableDelayedExpansion
 
 set ERRORLEVEL=
 
-rem echo.
-rem echo Script %0 is now running
-rem echo.
-rem echo You can find the run log in the file run_ora_bench_release.log
-rem echo.
-rem echo Please wait ...
-rem echo.
+set ORA_BENCH_BENCHMARK_COMMENT="Release"
+set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
+set ORA_BENCH_CONNECTION_HOST=localhost
+set ORA_BENCH_CONNECTION_PORT=1521
 
-rem > run_ora_bench_release.log 2>&1 (
+set ORA_BENCH_ORACLE_DATABASE_ANY=false
+set ORA_BENCH_ORACLE_DATABASE_18C=false
+set ORA_BENCH_ORACLE_DATABASE_19C=false
+set ORA_BENCH_ORACLE_DATABASE_21C=true
+set ORA_BENCH_ORACLE_DATABASE_EXISTING=false
+
+rem wwe
+set ORA_BENCH_ORACLE_DATABASE_21C=false
+set ORA_BENCH_ORACLE_DATABASE_EXISTING=true
+
+set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
+set ORA_BENCH_PASSWORD_SYS=oracle
+
+set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
+set ORA_BENCH_RUN_GODROR_GO=true
+set ORA_BENCH_RUN_JDBC_JAVA=true
+set ORA_BENCH_RUN_JDBC_JL_JULIA=true
+set ORA_BENCH_RUN_JDBC_KOTLIN=true
+set ORA_BENCH_RUN_ODPI_C=true
+set ORA_BENCH_RUN_ORACLE_JL_JULIA=false
+set ORA_BENCH_RUN_ORANIF_ELIXIR=true
+set ORA_BENCH_RUN_ORANIF_ERLANG=true
+
+rem wwe
+set ORA_BENCH_RUN_CX_ORACLE_PYTHON=false
+set ORA_BENCH_RUN_GODROR_GO=true
+set ORA_BENCH_RUN_JDBC_JAVA=false
+set ORA_BENCH_RUN_JDBC_JL_JULIA=false
+set ORA_BENCH_RUN_JDBC_KOTLIN=false
+set ORA_BENCH_RUN_ODPI_C=false
+set ORA_BENCH_RUN_ORACLE_JL_JULIA=false
+set ORA_BENCH_RUN_ORANIF_ELIXIR=false
+set ORA_BENCH_RUN_ORANIF_ERLANG=false
+
+if ["%ORA_BENCH_ORACLE_DATABASE_EXISTING%"] EQU ["true"] (
+    set ORA_BENCH_ORACLE_DATABASE_ANY=true
+)
+if ["%ORA_BENCH_ORACLE_DATABASE_18C%"] EQU ["true"] (
+    set ORA_BENCH_ORACLE_DATABASE_ANY=true
+)
+if ["%ORA_BENCH_ORACLE_DATABASE_19C%"] EQU ["true"] (
+    set ORA_BENCH_ORACLE_DATABASE_ANY=true
+)
+if ["%ORA_BENCH_ORACLE_DATABASE_21C%"] EQU ["true"] (
+    set ORA_BENCH_ORACLE_DATABASE_ANY=true
+)
+
+echo.
+echo Script %0 is now running
+echo.
+echo You can find the run log in the file run_ora_bench_release.log
+echo.
+echo Please wait ...
+echo.
+
+> run_ora_bench_release.log 2>&1 (
 
     echo ================================================================================
     echo Start %0
@@ -27,31 +79,6 @@ rem > run_ora_bench_release.log 2>&1 (
     echo --------------------------------------------------------------------------------
     echo:| TIME
     echo ================================================================================
-
-    set ORA_BENCH_BENCHMARK_COMMENT="Release"
-    set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
-    set ORA_BENCH_CONNECTION_HOST=localhost
-    set ORA_BENCH_CONNECTION_PORT=1521
-
-    set ORA_BENCH_ORACLE_DATABASE_ANY=false
-    set ORA_BENCH_ORACLE_DATABASE_18C=false
-    set ORA_BENCH_ORACLE_DATABASE_19C=false
-    set ORA_BENCH_ORACLE_DATABASE_21C=true
-    set ORA_BENCH_ORACLE_DATABASE_EXISTING=false
-
-    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
-    set ORA_BENCH_PASSWORD_SYS=oracle
-    
-    set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
-    set ORA_BENCH_RUN_GODROR_GO=true
-    set ORA_BENCH_RUN_JDBC_JAVA=true
-    set ORA_BENCH_RUN_JDBC_JL_JULIA=true
-    set ORA_BENCH_RUN_JDBC_KOTLIN=true
-    set ORA_BENCH_RUN_ODPI_C=true
-    set ORA_BENCH_RUN_ORACLE_JL_JULIA=false
-    set ORA_BENCH_RUN_ORANIF_ELIXIR=true
-    set ORA_BENCH_RUN_ORANIF_ERLANG=true
-
     echo ORACLE_DATABASE_EXISTING : %ORA_BENCH_ORACLE_DATABASE_EXISTING%
     echo ORACLE_DATABASE_18C      : %ORA_BENCH_ORACLE_DATABASE_18C%
     echo ORACLE_DATABASE_19C      : %ORA_BENCH_ORACLE_DATABASE_19C%
@@ -68,20 +95,8 @@ rem > run_ora_bench_release.log 2>&1 (
     echo RUN_ORANIF_ERLANG        : %ORA_BENCH_RUN_ORANIF_ERLANG%
     echo ================================================================================
 
-    if ["%ORA_BENCH_ORACLE_DATABASE_EXISTING%"] EQU ["true"] (
-        set ORA_BENCH_ORACLE_DATABASE_ANY=true
-    )
-    if ["%ORA_BENCH_ORACLE_DATABASE_18C%"] EQU ["true"] (
-        set ORA_BENCH_ORACLE_DATABASE_ANY=true
-    )
-    if ["%ORA_BENCH_ORACLE_DATABASE_19C%"] EQU ["true"] (
-        set ORA_BENCH_ORACLE_DATABASE_ANY=true
-    )
-    if ["%ORA_BENCH_ORACLE_DATABASE_21C%"] EQU ["true"] (
-        set ORA_BENCH_ORACLE_DATABASE_ANY=true
-    )
-
     if ["%ORA_BENCH_ORACLE_DATABASE_ANY%"] EQU ["true"] (
+
         if exist ora_bench.log del /f /q ora_bench.log
         if exist priv\ora_bench_result.csv del /f /q priv\ora_bench_result.csv
         if exist priv\ora_bench_result.tsv del /f /q priv\ora_bench_result.tsv
@@ -111,6 +126,10 @@ rem > run_ora_bench_release.log 2>&1 (
             docker ps -a
             docker start ora_bench_db
     
+            set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+            set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+            set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
+
             call scripts\run_all_drivers.bat
             if %ERRORLEVEL% neq 0 (
                 echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
@@ -147,6 +166,10 @@ rem > run_ora_bench_release.log 2>&1 (
                 exit -1073741510
             )
     
+            set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+            set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+            set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
+
             call scripts\run_all_drivers.bat
             if %ERRORLEVEL% neq 0 (
                 echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
@@ -160,4 +183,4 @@ rem > run_ora_bench_release.log 2>&1 (
     echo --------------------------------------------------------------------------------
     echo End   %0
     echo ================================================================================
-rem )
+)

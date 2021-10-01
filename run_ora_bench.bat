@@ -100,6 +100,7 @@ set ORA_BENCH_PASSWORD_SYS=oracle
 if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 )
+
 echo.
 echo Script %0 is now running
 echo.

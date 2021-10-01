@@ -99,8 +99,52 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         docker ps -a
         docker start ora_bench_db
 
+        export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
-            exit 255
+                exit 255
+        fi
+
+        export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
+
+        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+                exit 255
+        fi
+
+        export ORA_BENCH_BENCHMARK_BATCH_SIZE=1
+        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+
+        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+                exit 255
+        fi
+
+        export ORA_BENCH_BENCHMARK_BATCH_SIZE=1
+        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
+
+        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+                exit 255
+        fi
+
+        export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
+        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+
+        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+                exit 255
+        fi
+
+        export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
+        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
+
+        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+                exit 255
         fi
     fi
 
@@ -131,49 +175,49 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
             exit 255
         fi
 
-        export ORA_BENCH_BATCH_SIZE=0
-        export ORA_BENCH_CORE_MULTIPLIER=0
-        export ORA_BENCH_TRANSACTION_SIZE=0
+        export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
 
-        export ORA_BENCH_BATCH_SIZE=0
-        export ORA_BENCH_CORE_MULTIPLIER=0
-        export ORA_BENCH_TRANSACTION_SIZE=512
+        export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
 
-        export ORA_BENCH_BATCH_SIZE=1
-        export ORA_BENCH_CORE_MULTIPLIER=0
-        export ORA_BENCH_TRANSACTION_SIZE=0
+        export ORA_BENCH_BENCHMARK_BATCH_SIZE=1
+        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
 
-        export ORA_BENCH_BATCH_SIZE=1
-        export ORA_BENCH_CORE_MULTIPLIER=0
-        export ORA_BENCH_TRANSACTION_SIZE=512
+        export ORA_BENCH_BENCHMARK_BATCH_SIZE=1
+        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
 
-        export ORA_BENCH_BATCH_SIZE=512
-        export ORA_BENCH_CORE_MULTIPLIER=0
-        export ORA_BENCH_TRANSACTION_SIZE=0
+        export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
+        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
 
-        export ORA_BENCH_BATCH_SIZE=512
-        export ORA_BENCH_CORE_MULTIPLIER=0
-        export ORA_BENCH_TRANSACTION_SIZE=512
+        export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
+        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
