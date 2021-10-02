@@ -865,7 +865,7 @@ class OraBench {
             ENDIF
         ENDWHILE
         */
-        if (benchmarkCoreMultiplier != 0) {
+        if (benchmarkCoreMultiplier > 0) {
             executorService = Executors.newFixedThreadPool(benchmarkNumberPartitions)
         }
 
@@ -879,16 +879,18 @@ class OraBench {
                     bulkDataPartitions[i]
                 )
             } else {
-                RunInsertHelper(
-                    logger,
-                    isDebug,
-                    connections[i],
-                    preparedStatements[i],
-                    benchmarkCoreMultiplier,
-                    i,
-                    bulkDataPartitions[i],
-                    benchmarkBatchSize,
-                    benchmarkTransactionSize
+                executorService?.execute(
+                    RunInsertHelper(
+                        logger,
+                        isDebug,
+                        connections[i],
+                        preparedStatements[i],
+                        benchmarkCoreMultiplier,
+                        i,
+                        bulkDataPartitions[i],
+                        benchmarkBatchSize,
+                        benchmarkTransactionSize
+                    )
                 )
             }
         }
