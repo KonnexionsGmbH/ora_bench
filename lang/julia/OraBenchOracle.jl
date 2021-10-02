@@ -510,6 +510,7 @@ function run_insert(
         for partition_key = 1:benchmark_number_partitions
             run_insert_helper(
                 benchmark_batch_size,
+                benchmark_core_multiplier,
                 benchmark_transaction_size,
                 bulk_data_partitions[partition_key],
                 connections[partition_key],
@@ -522,6 +523,7 @@ function run_insert(
             @async for partition_key = 1:benchmark_number_partitions
                 Threads.@spawn run_insert_helper(
                     benchmark_batch_size,
+                    benchmark_core_multiplier,
                     benchmark_transaction_size,
                     bulk_data_partitions[partition_key],
                     connections[partition_key],
@@ -553,6 +555,7 @@ end
 
 function run_insert_helper(
     benchmark_batch_size::Int64,
+    benchmark_core_multiplier::Int64,
     benchmark_transaction_size::Int64,
     bulk_data_partition::DataFrames.DataFrame,
     connection::Oracle.Connection,
@@ -561,6 +564,10 @@ function run_insert_helper(
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name) - partition_key=$(partition_key)"
+
+    if benchmark_core_multiplier > 0
+        @info "Start $(function_name) - partition_key=$(partition_key)"
+    end
 
     #=
     count = 0
@@ -643,6 +650,10 @@ function run_insert_helper(
 
     Oracle.close(stmt)
 
+    if benchmark_core_multiplier > 0
+        @info "End   $(function_name) - partition_key=$(partition_key)"
+    end
+
     @debug "End   $(function_name) - partition_key=$(partition_key)"
     nothing
 end
@@ -685,6 +696,7 @@ function run_select(
     if benchmark_core_multiplier == 0
         for partition_key = 1:benchmark_number_partitions
             run_select_helper(
+                benchmark_core_multiplier,
                 connections[partition_key],
                 size(bulk_data_partitions[partition_key], 1),
                 partition_key,
@@ -695,6 +707,7 @@ function run_select(
         @sync begin
             @async for partition_key = 1:benchmark_number_partitions
                 Threads.@spawn run_select_helper(
+                    benchmark_core_multiplier,
                     connections[partition_key],
                     size(bulk_data_partitions[partition_key], 1),
                     partition_key,
@@ -724,6 +737,7 @@ end
 # ----------------------------------------------------------------------------------
 
 function run_select_helper(
+    benchmark_core_multiplier::Int64,
     connection::Oracle.Connection,
     count_expected::Int64,
     partition_key::Int64,
@@ -731,6 +745,10 @@ function run_select_helper(
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name) - partition_key=$(partition_key)"
+
+    if benchmark_core_multiplier > 0
+        @info "Start $(function_name) - partition_key=$(partition_key)"
+    end
 
     # execute the SQL statement in config param 'sql.select'
     stmt = Oracle.Stmt(
@@ -760,6 +778,10 @@ function run_select_helper(
     if count != count_expected
         @error "Partition $(partition_key - 1) number rows: expected=$(count_expected) - found=$(count)"
         throw(ErrorException)
+    end
+
+    if benchmark_core_multiplier > 0
+        @info "End   $(function_name) - partition_key=$(partition_key)"
     end
 
     @debug "End   $(function_name) - partition_key=$(partition_key)"

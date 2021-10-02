@@ -477,7 +477,7 @@ class OraBench {
             logger.debug("Start")
         }
 
-        if (benchmarkCoreMultiplier != 0) {
+        if (benchmarkCoreMultiplier > 0) {
             executorService!!.shutdown()
 
             try {
