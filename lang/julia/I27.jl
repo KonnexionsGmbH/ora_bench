@@ -1,32 +1,14 @@
-#= 
-OraBenchOracle:
-- Author: Konnexions GmbH
-- Date: 2021-06-26
-=#
-
 module I27
 
 using Pkg
 
-Pkg.add("CSV")
-Pkg.add("DataFrames")
 Pkg.add("Formatting")
 Pkg.add("Oracle")
-Pkg.add("TimesDates")
 
 using Base.Threads
-using CSV
-using DataFrames
-using Dates
 using Formatting
 using Logging
 using Oracle
-using TOML
-using TimesDates
-
-# ----------------------------------------------------------------------------------
-# Main function.
-# ----------------------------------------------------------------------------------
 
 function main()
     logger = SimpleLogger(stdout, Logging.Debug)
@@ -48,7 +30,7 @@ function main()
     for i = 1:number_connections
         try
             @debug "      $(function_name) Connection #$(i) - to be openend"
-            connections[i] = Oracle.Connection(pool)
+            connections[i] = Oracle.Connection(connection_user, connection_password,connection_string)
             @debug "      $(function_name) Connection #$(i) - is now open"
         catch reason
             @info "i=$(i)"
@@ -71,12 +53,6 @@ function main()
     @debug "End   $(function_name)"
     nothing
 end
-
-
-
-# ----------------------------------------------------------------------------------
-# Entry point.
-# ----------------------------------------------------------------------------------
 
 if abspath(PROGRAM_FILE) == @__FILE__
     main()
