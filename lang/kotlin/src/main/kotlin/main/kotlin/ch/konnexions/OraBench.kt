@@ -863,6 +863,8 @@ class OraBench {
             if (benchmarkCoreMultiplier == 0) {
                 runInsertHelper(
                     connections[i],
+                    benchmarkCoreMultiplier,
+                    i,
                     preparedStatements[i],
                     bulkDataPartitions[i]
                 )
@@ -872,6 +874,8 @@ class OraBench {
                     isDebug,
                     connections[i],
                     preparedStatements[i],
+                    benchmarkCoreMultiplier,
+                    i,
                     bulkDataPartitions[i],
                     benchmarkBatchSize,
                     benchmarkTransactionSize
@@ -902,6 +906,8 @@ class OraBench {
     private fun runInsertHelper(
         connection: Connection,
         preparedStatement: PreparedStatement,
+        benchmarkCoreMultiplier: Int,
+        partitionKey: Int,
         bulkDataPartition: ArrayList<Array<String>>
     ) {
         if (isDebug) {
@@ -913,6 +919,8 @@ class OraBench {
             isDebug,
             connection,
             preparedStatement,
+            benchmarkCoreMultiplier,
+            partitionKey,
             bulkDataPartition,
             benchmarkBatchSize,
             benchmarkTransactionSize
@@ -1011,7 +1019,7 @@ class OraBench {
         }
 
         if (benchmarkCoreMultiplier > 0) {
-            logger.info("Start partitionKey=$partitionKey")
+            logger.info("Start runSelectHelper(): partitionKey=$partitionKey")
         }
 
         runSelectHelper(
@@ -1026,7 +1034,7 @@ class OraBench {
         )
 
         if (benchmarkCoreMultiplier > 0) {
-            logger.info("End   partitionKey=$partitionKey")
+            logger.info("End   runSelectHelper(): partitionKey=$partitionKey")
         }
 
         if (isDebug) {
