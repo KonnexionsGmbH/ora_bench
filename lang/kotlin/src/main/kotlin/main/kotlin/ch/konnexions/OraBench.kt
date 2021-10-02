@@ -102,12 +102,18 @@ class OraBench {
             isDebug: Boolean,
             connection: Connection,
             preparedStatement: PreparedStatement,
+            benchmarkCoreMultiplier: Int,
+            partitionKey: Int,
             bulkDataPartition: ArrayList<Array<String>>,
             benchmarkBatchSize: Int,
             benchmarkTransactionSize: Int
         ) {
             if (isDebug) {
-                logger.debug("Start")
+                logger.debug("Start $partitionKey")
+            }
+
+            if (benchmarkCoreMultiplier > 0) {
+                logger.info("Start fun runInsertHelper(): $partitionKey")
             }
 
             /*
@@ -178,8 +184,12 @@ class OraBench {
             // commit
             connection.commit()
 
+            if (benchmarkCoreMultiplier > 0) {
+                logger.info("End   fun runInsertHelper(): $partitionKey")
+            }
+
             if (isDebug) {
-                logger.debug("End")
+                logger.debug("End   $partitionKey")
             }
         }
 
@@ -205,7 +215,7 @@ class OraBench {
             }
 
             if (benchmarkCoreMultiplier > 0) {
-                logger.info("Start $partitionKey")
+                logger.info("Start fun runSelectHelper(): $partitionKey")
             }
 
             var count = 0
@@ -243,7 +253,7 @@ class OraBench {
             }
 
             if (benchmarkCoreMultiplier > 0) {
-                logger.info("End   $partitionKey")
+                logger.info("End   fun runSelectHelper(): $partitionKey")
             }
 
             if (isDebug) {
@@ -863,9 +873,9 @@ class OraBench {
             if (benchmarkCoreMultiplier == 0) {
                 runInsertHelper(
                     connections[i],
+                    preparedStatements[i],
                     benchmarkCoreMultiplier,
                     i,
-                    preparedStatements[i],
                     bulkDataPartitions[i]
                 )
             } else {
@@ -914,6 +924,10 @@ class OraBench {
             logger.debug("Start")
         }
 
+        if (benchmarkCoreMultiplier > 0) {
+            logger.info("Start fun runInsertHelper(): partitionKey=$partitionKey")
+        }
+
         runInsertHelper(
             logger,
             isDebug,
@@ -925,6 +939,10 @@ class OraBench {
             benchmarkBatchSize,
             benchmarkTransactionSize
         )
+
+        if (benchmarkCoreMultiplier > 0) {
+            logger.info("End   fun runInsertHelper(): partitionKey=$partitionKey")
+        }
 
         if (isDebug) {
             logger.debug("End")
@@ -1019,7 +1037,7 @@ class OraBench {
         }
 
         if (benchmarkCoreMultiplier > 0) {
-            logger.info("Start runSelectHelper(): partitionKey=$partitionKey")
+            logger.info("Start fun runSelectHelper(): partitionKey=$partitionKey")
         }
 
         runSelectHelper(
@@ -1034,7 +1052,7 @@ class OraBench {
         )
 
         if (benchmarkCoreMultiplier > 0) {
-            logger.info("End   runSelectHelper(): partitionKey=$partitionKey")
+            logger.info("End   fun runSelectHelper(): partitionKey=$partitionKey")
         }
 
         if (isDebug) {
