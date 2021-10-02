@@ -142,7 +142,7 @@ public class OraBench {
      * and Statement.
      *
      * @return the array list containing the database objects of the classes
-     *         Connection, PreparedStatement and Statement
+     * Connection, PreparedStatement and Statement
      */
     private ArrayList<Object> createDatabaseObjects() {
         if (isDebug) {
@@ -216,7 +216,7 @@ public class OraBench {
                      * 'benchmark.number.partitions')
                      */
                     partitionKey = (keyValue.charAt(0) * 251 + keyValue.charAt(1)) % numberPartitions;
-                    bulkDataPartitions.get(partitionKey).add(new String[] { keyValue, record.get("data") });
+                    bulkDataPartitions.get(partitionKey).add(new String[]{keyValue, record.get("data")});
                 }
             }
 
@@ -311,7 +311,7 @@ public class OraBench {
      * @param result             the result
      */
     private void runInsert(ArrayList<Connection> connections, ArrayList<PreparedStatement> preparedStatements,
-            int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
+                           int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -327,20 +327,19 @@ public class OraBench {
          * connections(partition_no), bulk_data_partitions(partition_no)) as a thread
          * ENDIF ENDWHILE
          */
-        if (config.getBenchmarkCoreMultiplier() != 0) {
+        if (config.getBenchmarkCoreMultiplier() > 0) {
             executorService = Executors.newFixedThreadPool(config.getBenchmarkNumberPartitions());
         }
 
         for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
             if (config.getBenchmarkCoreMultiplier() == 0) {
-                runInsertHelper(connections.get(i), preparedStatements.get(i), bulkDataPartitions.get(i), config);
+                runInsertHelper(connections.get(i), preparedStatements.get(i), bulkDataPartitions.get(i), i, config);
             } else {
-                executorService.execute(
-                        new Insert(config, connections.get(i), preparedStatements.get(i), bulkDataPartitions.get(i)));
+                executorService.execute(new Insert(config, connections.get(i), preparedStatements.get(i), bulkDataPartitions.get(i), i));
             }
         }
 
-        if (config.getBenchmarkCoreMultiplier() != 0) {
+        if (config.getBenchmarkCoreMultiplier() > 0) {
             executorService.shutdown();
             try {
                 while (!executorService.awaitTermination(1, TimeUnit.SECONDS)) {
@@ -369,9 +368,13 @@ public class OraBench {
      * @param config            the configuration parameters
      */
     public static void runInsertHelper(Connection connection, PreparedStatement preparedStatement,
-            ArrayList<String[]> bulkDataPartition, Config config) {
+                                       ArrayList<String[]> bulkDataPartition, int partitionKey, Config config) {
         if (isDebug) {
-            logger.debug("Start");
+            logger.debug("Start runInsertHelper(): partitionKey=" + partitionKey);
+        }
+
+        if (config.getBenchmarkCoreMultiplier() > 0) {
+            logger.info("Start runInsertHelper(): partitionKey=" + partitionKey);
         }
 
         // count = 0
@@ -426,8 +429,12 @@ public class OraBench {
             e.printStackTrace();
         }
 
+        if (config.getBenchmarkCoreMultiplier() > 0) {
+            logger.info("End   runInsertHelper(): partitionKey=" + partitionKey);
+        }
+
         if (isDebug) {
-            logger.debug("End");
+            logger.debug("End   runInsertHelper(): partitionKey=" + partitionKey);
         }
     }
 
@@ -440,7 +447,7 @@ public class OraBench {
      * @param result             the result
      */
     private void runSelect(ArrayList<Statement> statements, int trialNumber,
-            ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
+                           ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -456,7 +463,7 @@ public class OraBench {
          * run_select_helper(database connections(partition_no),
          * bulk_data_partitions(partition_no, partition_no) as a thread ENDIF ENDWHILE
          */
-        if (config.getBenchmarkCoreMultiplier() != 0) {
+        if (config.getBenchmarkCoreMultiplier() > 0) {
             executorService = Executors.newFixedThreadPool(config.getBenchmarkNumberPartitions());
         }
 
@@ -468,7 +475,7 @@ public class OraBench {
             }
         }
 
-        if (config.getBenchmarkCoreMultiplier() != 0) {
+        if (config.getBenchmarkCoreMultiplier() > 0) {
             executorService.shutdown();
             try {
                 while (!executorService.awaitTermination(1, TimeUnit.SECONDS)) {
@@ -497,9 +504,13 @@ public class OraBench {
      * @param config            the config
      */
     public static void runSelectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey,
-            Config config) {
+                                       Config config) {
         if (isDebug) {
-            logger.debug("Start");
+            logger.debug("Start runSelectHelper(): partitionKey=" + partitionKey);
+        }
+
+        if (config.getBenchmarkCoreMultiplier() > 0) {
+            logger.info("Start runSelectHelper(): partitionKey=" + partitionKey);
         }
 
         try {
@@ -530,8 +541,12 @@ public class OraBench {
             e.printStackTrace();
         }
 
+        if (config.getBenchmarkCoreMultiplier() > 0) {
+            logger.info("End   runSelectHelper(): partitionKey=" + partitionKey);
+        }
+
         if (isDebug) {
-            logger.debug("End");
+            logger.debug("End   runSelectHelper(): partitionKey=" + partitionKey);
         }
     }
 
@@ -546,8 +561,8 @@ public class OraBench {
      * @param result             the result
      */
     private void runTrial(ArrayList<Connection> connections, ArrayList<PreparedStatement> preparedStatements,
-            ArrayList<Statement> statements, int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions,
-            Result result) {
+                          ArrayList<Statement> statements, int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions,
+                          Result result) {
         if (isDebug) {
             logger.debug("Start");
         }

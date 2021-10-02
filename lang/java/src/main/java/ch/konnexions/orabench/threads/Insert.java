@@ -29,6 +29,8 @@ public class Insert implements Runnable {
 
     private final Connection connection;
 
+    private final int partitionKey;
+
     private final PreparedStatement preparedStatement;
 
     /**
@@ -40,7 +42,7 @@ public class Insert implements Runnable {
      * @param bulkDataPartition the bulk data partition
      */
     public Insert(Config config, Connection connection, PreparedStatement preparedStatement,
-            ArrayList<String[]> bulkDataPartition) {
+                  ArrayList<String[]> bulkDataPartition, int partitionKey) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -49,6 +51,7 @@ public class Insert implements Runnable {
         this.connection = connection;
         this.preparedStatement = preparedStatement;
         this.bulkDataPartition = bulkDataPartition;
+        this.partitionKey = partitionKey;
 
         if (isDebug) {
             logger.debug("End");
@@ -64,7 +67,7 @@ public class Insert implements Runnable {
             logger.debug("Start");
         }
 
-        OraBench.runInsertHelper(connection, preparedStatement, bulkDataPartition, config);
+        OraBench.runInsertHelper(connection, preparedStatement, bulkDataPartition, partitionKey, config);
 
         if (isDebug) {
             logger.debug("End");
