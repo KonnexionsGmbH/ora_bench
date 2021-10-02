@@ -201,7 +201,11 @@ class OraBench {
             sqlSelect: String
         ) {
             if (isDebug) {
-                logger.debug("Start")
+                logger.debug("Start $partitionKey")
+            }
+
+            if (benchmarkCoreMultiplier > 0) {
+                logger.info("Start $partitionKey")
             }
 
             var count = 0
@@ -238,8 +242,12 @@ class OraBench {
                 exitProcess(1)
             }
 
+            if (benchmarkCoreMultiplier > 0) {
+                logger.info("End   $partitionKey")
+            }
+
             if (isDebug) {
-                logger.debug("End")
+                logger.debug("End   $partitionKey")
             }
         }
     }
@@ -997,7 +1005,7 @@ class OraBench {
      * @param bulkDataPartition the bulk data partition
      * @param partitionKey      the partition key
      */
-    private fun runSelectHelper(statement: Statement, benchmarkCoreMultiplier, bulkDataPartition: ArrayList<Array<String>>, partitionKey: Int) {
+    private fun runSelectHelper(statement: Statement, benchmarkCoreMultiplier: Int, bulkDataPartition: ArrayList<Array<String>>, partitionKey: Int) {
         if (isDebug) {
             logger.debug("Start partitionKey=$partitionKey")
         }

@@ -10,7 +10,7 @@ class RunSelectHelper(
     logger: Logger,
     isDebug: Boolean,
     statement: Statement,
-    benchmarkCoreMultiplier ::Int,
+    benchmarkCoreMultiplier: Int,
     bulkDataPartition: ArrayList<Array<String>>,
     partitionKey: Int,
     connectionFetchSize: Int,
