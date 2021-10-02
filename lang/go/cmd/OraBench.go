@@ -370,15 +370,22 @@ func runInsert(ctx context.Context, configs map[string]interface{}, trialNo int,
 	       ENDIF
 	   ENDWHILE
 	*/
+	benchmarkCoreMultiplier := configs["benchmark.core.multiplier"].(int)
 	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
+
 	var wg sync.WaitGroup
 	wg.Add(benchmarkNumberPartitions)
+
 	for p := 0; p < benchmarkNumberPartitions; p++ {
-		if configs["benchmark.core.multiplier"].(int) == 0 {
-			runInsertHelper(ctx, configs, trialNo, p, partitions[p], &wg)
+		if benchmarkCoreMultiplier == 0 {
+			runInsertHelper(benchmarkCoreMultiplier, configs, ctx, p, partitions[p], trialNo, &wg)
 		} else {
-			go runInsertHelper(ctx, configs, trialNo, p, partitions[p], &wg)
+			go runInsertHelper(benchmarkCoreMultiplier, configs, ctx, p, partitions[p], trialNo, &wg)
 		}
+	}
+
+	if benchmarkCoreMultiplier > 0 {
+		wg.Wait()
 	}
 
 	// WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
@@ -396,8 +403,20 @@ func runInsert(ctx context.Context, configs map[string]interface{}, trialNo int,
 /*
 Helper function for inserting data into the database.
 */
-func runInsertHelper(ctx context.Context, configs map[string]interface{}, trial int, partition int, rows bulkPartition, wg *sync.WaitGroup) {
-	log.Debug("Start runInsertHelper()")
+func runInsertHelper(
+	benchmarkCoreMultiplier int,
+	configs map[string]interface{},
+	ctx context.Context,
+	partition int,
+	rows bulkPartition,
+	trial int,
+	wg *sync.WaitGroup,
+) {
+	log.Debug("Start runInsertHelper(): partition_key=", partition)
+
+	if benchmarkCoreMultiplier > 0 {
+		log.Info("Start runInsertHelper(): partition_key=", partition)
+	}
 
 	defer wg.Done()
 
@@ -471,7 +490,11 @@ func runInsertHelper(ctx context.Context, configs map[string]interface{}, trial 
 		log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(db)", partition))
 	}(db)
 
-	log.Debug("End   runInsertHelper()")
+	if benchmarkCoreMultiplier > 0 {
+		log.Info("End   runInsertHelper(): partition_key=", partition)
+	}
+
+	log.Debug("End   runInsertHelper(): partition_key=", partition)
 }
 
 /*
@@ -497,15 +520,22 @@ func runSelect(ctx context.Context, configs map[string]interface{}, trialNo int,
 	       ENDIF
 	   ENDWHILE
 	*/
+	benchmarkCoreMultiplier := configs["benchmark.core.multiplier"].(int)
 	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
+
 	var wg sync.WaitGroup
 	wg.Add(benchmarkNumberPartitions)
+
 	for p := 0; p < benchmarkNumberPartitions; p++ {
-		if configs["benchmark.core.multiplier"].(int) == 0 {
-			runSelectHelper(ctx, configs, trialNo, p, len(partitions[p].keys), &wg)
+		if benchmarkCoreMultiplier == 0 {
+			runSelectHelper(benchmarkCoreMultiplier, configs, ctx, len(partitions[p].keys), trialNo, p, &wg)
 		} else {
-			go runSelectHelper(ctx, configs, trialNo, p, len(partitions[p].keys), &wg)
+			go runSelectHelper(benchmarkCoreMultiplier, configs, ctx, len(partitions[p].keys), trialNo, p, &wg)
 		}
+	}
+
+	if benchmarkCoreMultiplier > 0 {
+		wg.Wait()
 	}
 
 	// WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
@@ -523,8 +553,19 @@ func runSelect(ctx context.Context, configs map[string]interface{}, trialNo int,
 /*
 Helper function for retrieving data from the database.
 */
-func runSelectHelper(ctx context.Context, configs map[string]interface{}, trial int, partition int, expect int, wg *sync.WaitGroup) {
-	log.Debug("Start runSelectHelper()")
+func runSelectHelper(
+	benchmarkCoreMultiplier int,
+	configs map[string]interface{},
+	ctx context.Context,
+	expect int,
+	trial int, partition int,
+	wg *sync.WaitGroup,
+) {
+	log.Debug("Start runSelectHelper(): partition_key=", partition)
+
+	if benchmarkCoreMultiplier > 0 {
+		log.Info("Start runSelectHelper(): partition_key=", partition)
+	}
 
 	defer wg.Done()
 
@@ -568,7 +609,11 @@ func runSelectHelper(ctx context.Context, configs map[string]interface{}, trial 
 				trial, partition, expect, i))
 	}
 
-	log.Debug("End   runSelectHelper()")
+	if benchmarkCoreMultiplier > 0 {
+		log.Info("End   runSelectHelper(): partition_key=", partition)
+	}
+
+	log.Debug("End   runSelectHelper(): partition_key=", partition)
 }
 
 /*
