@@ -14,7 +14,7 @@ handlers:
 
   file_handler:
     class: logging.FileHandler
-    level: DEBUG
+    level: INFO
     filename: ora_bench.log
     formatter: extended
 
