@@ -142,7 +142,7 @@ public class OraBench {
      * and Statement.
      *
      * @return the array list containing the database objects of the classes
-     * Connection, PreparedStatement and Statement
+     *         Connection, PreparedStatement and Statement
      */
     private ArrayList<Object> createDatabaseObjects() {
         if (isDebug) {
@@ -216,7 +216,7 @@ public class OraBench {
                      * 'benchmark.number.partitions')
                      */
                     partitionKey = (keyValue.charAt(0) * 251 + keyValue.charAt(1)) % numberPartitions;
-                    bulkDataPartitions.get(partitionKey).add(new String[]{keyValue, record.get("data")});
+                    bulkDataPartitions.get(partitionKey).add(new String[] { keyValue, record.get("data") });
                 }
             }
 
@@ -311,7 +311,7 @@ public class OraBench {
      * @param result             the result
      */
     private void runInsert(ArrayList<Connection> connections, ArrayList<PreparedStatement> preparedStatements,
-                           int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
+            int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -335,7 +335,8 @@ public class OraBench {
             if (config.getBenchmarkCoreMultiplier() == 0) {
                 runInsertHelper(connections.get(i), preparedStatements.get(i), bulkDataPartitions.get(i), i, config);
             } else {
-                executorService.execute(new Insert(config, connections.get(i), preparedStatements.get(i), bulkDataPartitions.get(i), i));
+                executorService.execute(new Insert(config, connections.get(i), preparedStatements.get(i),
+                        bulkDataPartitions.get(i), i));
             }
         }
 
@@ -365,10 +366,11 @@ public class OraBench {
      * @param connection        the database connection
      * @param preparedStatement the prepared statement
      * @param bulkDataPartition the bulk data partition
+     * @param partitionKey      the partition key
      * @param config            the configuration parameters
      */
     public static void runInsertHelper(Connection connection, PreparedStatement preparedStatement,
-                                       ArrayList<String[]> bulkDataPartition, int partitionKey, Config config) {
+            ArrayList<String[]> bulkDataPartition, int partitionKey, Config config) {
         if (isDebug) {
             logger.debug("Start runInsertHelper(): partitionKey=" + partitionKey);
         }
@@ -447,7 +449,7 @@ public class OraBench {
      * @param result             the result
      */
     private void runSelect(ArrayList<Statement> statements, int trialNumber,
-                           ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
+            ArrayList<ArrayList<String[]>> bulkDataPartitions, Result result) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -504,7 +506,7 @@ public class OraBench {
      * @param config            the config
      */
     public static void runSelectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey,
-                                       Config config) {
+            Config config) {
         if (isDebug) {
             logger.debug("Start runSelectHelper(): partitionKey=" + partitionKey);
         }
@@ -554,15 +556,15 @@ public class OraBench {
      * Performing a single trial run.
      *
      * @param connections        the database connections
-     * @param statements         the statements
      * @param preparedStatements the prepared statements
+     * @param statements         the statements
      * @param trialNumber        the trial number
      * @param bulkDataPartitions the bulk data partitioned
      * @param result             the result
      */
     private void runTrial(ArrayList<Connection> connections, ArrayList<PreparedStatement> preparedStatements,
-                          ArrayList<Statement> statements, int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions,
-                          Result result) {
+            ArrayList<Statement> statements, int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions,
+            Result result) {
         if (isDebug) {
             logger.debug("Start");
         }

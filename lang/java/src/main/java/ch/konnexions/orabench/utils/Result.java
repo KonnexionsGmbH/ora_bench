@@ -77,7 +77,7 @@ public class Result {
     }
 
     private void createMeasuringPoint(int trialNo, LocalDateTime startDateTime, LocalDateTime endDateTime,
-                                      long duration) {
+            long duration) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -102,7 +102,7 @@ public class Result {
     }
 
     private void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime,
-                                      LocalDateTime endDateTime, long duration) {
+            LocalDateTime endDateTime, long duration) {
         if (isDebug) {
             logger.debug("Start");
         }

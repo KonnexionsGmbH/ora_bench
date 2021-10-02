@@ -19,16 +19,23 @@ import ch.konnexions.orabench.utils.Config;
  * The Class Select.
  */
 public class Select implements Runnable {
+
+    /** The Constant logger. */
     private static final Logger logger = LogManager.getLogger(Select.class);
 
+    /** The Constant isDebug. */
     private final static boolean isDebug = logger.isDebugEnabled();
 
+    /** The bulk data partition. */
     private final ArrayList<String[]> bulkDataPartition;
 
+    /** The config. */
     private final Config config;
 
+    /** The partition key. */
     private final int partitionKey;
 
+    /** The statement. */
     private final Statement statement;
 
     /**
