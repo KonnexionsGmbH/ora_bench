@@ -194,6 +194,7 @@ class OraBench {
             logger: Logger,
             isDebug: Boolean,
             statement: Statement,
+            benchmarkCoreMultiplier: Int,
             bulkDataPartition: ArrayList<Array<String>>,
             partitionKey: Int,
             connectionFetchSize: Int,
@@ -947,7 +948,7 @@ class OraBench {
             ENDIF
         ENDWHILE
         */
-        if (benchmarkCoreMultiplier != 0) {
+        if (benchmarkCoreMultiplier > 0) {
             executorService = Executors.newFixedThreadPool(benchmarkNumberPartitions)
         }
 
@@ -955,6 +956,7 @@ class OraBench {
             if (benchmarkCoreMultiplier == 0) {
                 runSelectHelper(
                     statements[i],
+                    benchmarkCoreMultiplier,
                     bulkDataPartitions[i],
                     i
                 )
@@ -964,6 +966,7 @@ class OraBench {
                         logger,
                         isDebug,
                         statements[i],
+                        benchmarkCoreMultiplier,
                         bulkDataPartitions[i],
                         i,
                         connectionFetchSize,
@@ -990,26 +993,36 @@ class OraBench {
      * Helper function for retrieving data from the database.
      *
      * @param statement         the statement
+     * @param benchmarkCoreMultiplier the multithreading parameter
      * @param bulkDataPartition the bulk data partition
      * @param partitionKey      the partition key
      */
-    private fun runSelectHelper(statement: Statement, bulkDataPartition: ArrayList<Array<String>>, partitionKey: Int) {
+    private fun runSelectHelper(statement: Statement, benchmarkCoreMultiplier, bulkDataPartition: ArrayList<Array<String>>, partitionKey: Int) {
         if (isDebug) {
-            logger.debug("Start")
+            logger.debug("Start partitionKey=$partitionKey")
+        }
+
+        if (benchmarkCoreMultiplier > 0) {
+            logger.info("Start partitionKey=$partitionKey")
         }
 
         runSelectHelper(
             logger,
             isDebug,
             statement,
+            benchmarkCoreMultiplier,
             bulkDataPartition,
             partitionKey,
             connectionFetchSize,
             sqlSelect
         )
 
+        if (benchmarkCoreMultiplier > 0) {
+            logger.info("End   partitionKey=$partitionKey")
+        }
+
         if (isDebug) {
-            logger.debug("End")
+            logger.debug("End   partitionKey=$partitionKey")
         }
     }
 
