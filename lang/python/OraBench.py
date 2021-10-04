@@ -417,7 +417,7 @@ def run_benchmark(logger):
     # READ the configuration parameters into the memory (config params `file.configuration.name ...`)
     config = get_config(logger)
 
-    # save the current time as the start of the "benchmark" action
+    # save the current time as the start time of the "benchmark" action
     measurement_data_result_file = create_result_measuring_point_start_benchmark(logger, config)
 
     benchmark_globals = measurement_data_result_file[0]
@@ -431,11 +431,21 @@ def run_benchmark(logger):
     connections = connections_cursors[0]
     cursors = connections_cursors[1]
 
+    # trial_max = 0
+    # trial_min = 0
     # trial_no = 0
-    # WHILE trial_no < config_param "benchmark.trials"
-    #     DO run_trial(database connections,
-    #                           trial_no,
-    #                           bulk_data_partitions)
+    # trial_sum = 0
+    # WHILE trial_no < config_param 'benchmark.trials'
+    #       duration_trial = DO run_trial(database connections,
+    #                                     trial_no,
+    #                                     bulk_data_partitions)
+    # IF trial_max == 0 OR duration_trial > trial_max
+    #    trial_max = duration_trial
+    # END IF
+    # IF trial_min == 0 OR duration_trial < trial_min
+    #    trial_min = duration_trial
+    # END IF
+    # trial_sum + duration_trial
     # ENDWHILE
     benchmark_trials = config["benchmark.trials"]
     sql_create = config["sql.create"]
@@ -444,8 +454,8 @@ def run_benchmark(logger):
     for trial_number in range(0, benchmark_trials):
         run_trial(logger, benchmark_globals, bulk_data_partitions, config, connections, cursors, result_file, sql_create, sql_drop, trial_number + 1)
 
-    # partition_no = 0
-    # WHILE partition_no < config_param "benchmark.number.partitions"
+    # partition_key = 0
+    # WHILE partition_key < config_param "benchmark.number.partitions"
     #     close the database connection
     # ENDWHILE
     for cursor in cursors:
@@ -456,6 +466,12 @@ def run_benchmark(logger):
 
     # WRITE an entry for the action "benchmark" in the result file (config param "file.result.name")
     create_result_measuring_point_end(logger, "benchmark", benchmark_globals, config, result_file)
+
+    # INFO  Duration (ms) trial min.    : trial_min
+    # INFO  Duration (ms) trial max.    : trial_max
+    # INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
+    
+    # INFO  Duration (ms) benchmark run : duration_benchmark
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("End")
@@ -484,14 +500,16 @@ def run_insert(logger,
     # save the current time as the start of the "query" action
     benchmark_globals = create_result_measuring_point_start(logger, "query", benchmark_globals)
 
-    # partition_no = 0
-    # WHILE partition_no < config_param "benchmark.number.partitions"
+    # partition_key = 0
+    # WHILE partition_key < config_param "benchmark.number.partitions"
     #     IF config_param "benchmark.core.multiplier" = 0
-    #         DO run_insert_helper(database connections(partition_no),
-    #                                       bulk_data_partitions(partition_no))
+    #         DO run_insert_helper(database connections(partition_key),
+    #                                       bulk_data_partitions(partition_key),
+    #                                       partition_key)
     #     ELSE
-    #         DO run_insert_helper (database connections(partition_no),
-    #                                        bulk_data_partitions(partition_no)) as a thread
+    #         DO run_insert_helper (database connections(partition_key),
+    #                                        bulk_data_partitions(partition_key),
+    #                                        partition_key) as a thread
     #     ENDIF
     # ENDWHILE
     threads = list()
@@ -540,6 +558,7 @@ def run_insert_helper(logger,
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
+    # INFO Start insert partition_key=partition_key
     logger.info("Start insert partition_key=" + str(partition_key))
 
     # count = 0
@@ -586,6 +605,7 @@ def run_insert_helper(logger,
 
     connection.commit()
 
+    # INFO End   insert partition_key=partition_key
     logger.info("End   insert partition_ley=" + str(partition_key))
 
     if logger.isEnabledFor(logging.DEBUG):
@@ -612,16 +632,16 @@ def run_select(logger,
     # save the current time as the start of the "query" action
     benchmark_globals = create_result_measuring_point_start(logger, "query", benchmark_globals)
 
-    # partition_no = 0
-    # WHILE partition_no < config_param "benchmark.number.partitions"
+    # partition_key = 0
+    # WHILE partition_key < config_param "benchmark.number.partitions"
     #     IF config_param "benchmark.core.multiplier" = 0
-    #         DO run_select_helper(database connections(partition_no), 
-    #                              bulk_data_partitions(partition_no, 
-    #                              partition_no)
+    #         DO run_select_helper(database connections(partition_key), 
+    #                              bulk_data_partitions(partition_key, 
+    #                              partition_key)
     #     ELSE
-    #         DO run_select_helper(database connections(partition_no), 
-    #                              bulk_data_partitions(partition_no, 
-    #                              partition_no) as a thread
+    #         DO run_select_helper(database connections(partition_key), 
+    #                              bulk_data_partitions(partition_key, 
+    #                              partition_key) as a thread
     #     ENDIF
     # ENDWHILE
     threads = list()
@@ -662,6 +682,7 @@ def run_select_helper(logger,
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
+    # INFO Start select partition_key=partition_key
     logger.info("Start select partition_key=" + str(partition_key))
 
     # execute the SQL statement in config param "sql.select"
@@ -683,6 +704,7 @@ def run_select_helper(logger,
         logger.error("Number rows: expected=" + str(len(bulk_size_partition)) + " - found=" + str(count))
         sys.exit(1)
 
+    # INFO End   select partition_key=partition_key
     logger.info("End   select partition_ley=" + str(partition_key))
 
     if logger.isEnabledFor(logging.DEBUG):
@@ -706,7 +728,7 @@ def run_trial(logger,
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
-    # save the current time as the start of the "trial" action
+    # save the current time as the start time of the "trial" action
     benchmark_globals = create_result_measuring_point_start(logger, "trial", benchmark_globals)
 
     logger.info("Start trial no. " + str(trial_number))

@@ -29,9 +29,9 @@
         - create a separate database connection (without auto commit behaviour) for each partition                            
         
         - trial_max = 0
-        - trial_min = 0
-        - trial_no = 0
-        - trial_sum = 0
+          trial_min = 0
+          trial_no = 0
+          trial_sum = 0
           WHILE trial_no < config_param 'benchmark.trials'
               duration_trial = DO run_trial(database connections, 
                                             trial_no, 
