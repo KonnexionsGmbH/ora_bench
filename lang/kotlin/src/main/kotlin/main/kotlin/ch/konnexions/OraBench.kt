@@ -770,7 +770,7 @@ class OraBench {
             logger.debug("Start")
         }
 
-        // save the current time as the start of the 'benchmark' action
+        // save the current time as the start time of the 'benchmark' action
         resultBenchmarkStart()
 
         // READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
@@ -790,12 +790,22 @@ class OraBench {
         val statements: ArrayList<Statement> = databaseObjects[2] as ArrayList<Statement>
 
         /*
+        trial_max = 0
+        trial_min = 0
         trial_no = 0
+        trial_sum = 0
         WHILE trial_no < config_param 'benchmark.trials'
-            DO run_trial(database connections,
-                         trial_no,
-                         bulk_data_partitions)
-        ENDWHILE
+              duration_trial = DO run_trial(database connections, 
+                                            trial_no, 
+                                            bulk_data_partitions)
+              IF trial_max == 0 OR duration_trial > trial_max
+                 trial_max = duration_trial
+              END IF                       
+              IF trial_min == 0 OR duration_trial < trial_min
+                 trial_min = duration_trial
+              END IF     
+              trial_sum + duration_trial                  
+        ENDWHILE    
         */
         for (i in 1..benchmarkTrials) {
             runTrial(
@@ -808,8 +818,8 @@ class OraBench {
         }
 
         /*  
-        partition_no = 0
-        WHILE partition_no < config_param 'benchmark.number.partitions'
+        partition_key = 0
+        WHILE partition_key < config_param 'benchmark.number.partitions'
             close the database connection
         ENDWHILE
         */
@@ -826,6 +836,14 @@ class OraBench {
 
         // WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
         resultBenchmarkEnd()
+
+        /*
+        INFO  Duration (ms) trial min.    : trial_min
+        INFO  Duration (ms) trial max.    : trial_max
+        INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
+        */
+
+        // INFO  Duration (ms) benchmark run : duration_benchmark
 
         if (isDebug) {
             logger.debug("End")
@@ -854,14 +872,14 @@ class OraBench {
         resultQueryStart()
 
         /*
-        partition_no = 0
-        WHILE partition_no < config_param 'benchmark.number.partitions'
+        partition_key = 0
+        WHILE partition_key < config_param 'benchmark.number.partitions'
             IF config_param 'benchmark.core.multiplier' = 0
-                DO run_insert_helper(database connections(partition_no),
-                        bulk_data_partitions(partition_no))
+                DO run_insert_helper(database connections(partition_key),
+                        bulk_data_partitions(partition_key))
             ELSE
-                DO run_insert_helper (database connections(partition_no),
-                        bulk_data_partitions(partition_no)) as a thread
+                DO run_insert_helper (database connections(partition_key),
+                        bulk_data_partitions(partition_key)) as a thread
             ENDIF
         ENDWHILE
         */
@@ -926,9 +944,8 @@ class OraBench {
             logger.debug("Start")
         }
 
-        if (benchmarkCoreMultiplier > 0) {
-            logger.info("Start fun runInsertHelper(): partitionKey=$partitionKey")
-        }
+        // INFO Start insert partition_key=partition_key
+        logger.info("Start insert partitionKey=$partitionKey")
 
         runInsertHelper(
             logger,
@@ -942,9 +959,8 @@ class OraBench {
             benchmarkTransactionSize
         )
 
-        if (benchmarkCoreMultiplier > 0) {
-            logger.info("End   fun runInsertHelper(): partitionKey=$partitionKey")
-        }
+        // INFO End   insert partition_key=partition_key
+        logger.info("End   insert partitionKey=$partitionKey")
 
         if (isDebug) {
             logger.debug("End")
@@ -971,16 +987,16 @@ class OraBench {
         resultQueryStart()
 
         /*
-        partition_no = 0
-        WHILE partition_no < config_param 'benchmark.number.partitions'
+        partition_key = 0
+        WHILE partition_key < config_param 'benchmark.number.partitions'
             IF config_param 'benchmark.core.multiplier' = 0
-                DO run_select_helper(database connections(partition_no), 
-                                     bulk_data_partitions(partition_no, 
-                                     partition_no)
+                DO run_select_helper(database connections(partition_key), 
+                                     bulk_data_partitions(partition_key, 
+                                     partition_key)
             ELSE
-                DO run_select_helper(database connections(partition_no), 
-                                     bulk_data_partitions(partition_no, 
-                                     partition_no) as a thread
+                DO run_select_helper(database connections(partition_key), 
+                                     bulk_data_partitions(partition_key, 
+                                     partition_key) as a thread
             ENDIF
         ENDWHILE
         */
@@ -1035,12 +1051,11 @@ class OraBench {
      */
     private fun runSelectHelper(statement: Statement, benchmarkCoreMultiplier: Int, bulkDataPartition: ArrayList<Array<String>>, partitionKey: Int) {
         if (isDebug) {
-            logger.debug("Start partitionKey=$partitionKey")
+            logger.debug("Start")
         }
 
-        if (benchmarkCoreMultiplier > 0) {
-            logger.info("Start fun runSelectHelper(): partitionKey=$partitionKey")
-        }
+        // INFO Start select partition_key=partition_key
+        logger.info("Start select partitionKey=$partitionKey")
 
         runSelectHelper(
             logger,
@@ -1053,12 +1068,11 @@ class OraBench {
             sqlSelect
         )
 
-        if (benchmarkCoreMultiplier > 0) {
-            logger.info("End   fun runSelectHelper(): partitionKey=$partitionKey")
-        }
+        // INFO End   select partition_key=partition_key
+        logger.info("End   select partitionKey=$partitionKey")
 
         if (isDebug) {
-            logger.debug("End   partitionKey=$partitionKey")
+            logger.debug("End")
         }
     }
 
@@ -1082,7 +1096,7 @@ class OraBench {
             logger.debug("Start")
         }
 
-        // save the current time as the start of the 'trial' action
+        // save the current time as the start time of the 'trial' action
         resultTrialStart()
 
         logger.info("Start trial no. $trialNumber")
