@@ -538,10 +538,9 @@ def run_insert_helper(logger,
                       partition_key,
                       sql_insert):
     if logger.isEnabledFor(logging.DEBUG):
-        logger.debug("Start partition_key=" + str(partition_key))
+        logger.debug("Start")
 
-    if benchmark_core_multiplier > 0:
-        logger.info("Start run_insert_helper(): partition_key=" + str(partition_key))
+    logger.info("Start insert partition_key=" + str(partition_key))
 
     # count = 0
     # collection batch_collection = empty
@@ -587,11 +586,10 @@ def run_insert_helper(logger,
 
     connection.commit()
 
-    if benchmark_core_multiplier > 0:
-        logger.info("End   run_insert_helper(): partition_ley=" + str(partition_key))
+    logger.info("End   insert partition_ley=" + str(partition_key))
 
     if logger.isEnabledFor(logging.DEBUG):
-        logger.debug("End   partition_ley=" + str(partition_key))
+        logger.debug("End")
 
 
 # ----------------------------------------------------------------------------------
@@ -662,10 +660,9 @@ def run_select_helper(logger,
                       partition_key,
                       sql_statement):
     if logger.isEnabledFor(logging.DEBUG):
-        logger.debug("Start partition_key=" + str(partition_key))
+        logger.debug("Start")
 
-    if benchmark_core_multiplier > 0:
-        logger.info("Start run_select_helper(): partition_key=" + str(partition_key))
+    logger.info("Start select partition_key=" + str(partition_key))
 
     # execute the SQL statement in config param "sql.select"
     cursor.execute(sql_statement + " where partition_key = " + str(partition_key))
@@ -686,11 +683,10 @@ def run_select_helper(logger,
         logger.error("Number rows: expected=" + str(len(bulk_size_partition)) + " - found=" + str(count))
         sys.exit(1)
 
-    if benchmark_core_multiplier > 0:
-        logger.info("End   run_select_helper(): partition_ley=" + str(partition_key))
+    logger.info("End   select partition_ley=" + str(partition_key))
 
     if logger.isEnabledFor(logging.DEBUG):
-        logger.debug("End   partition_key=" + str(partition_key))
+        logger.debug("End")
 
 
 # ----------------------------------------------------------------------------------
