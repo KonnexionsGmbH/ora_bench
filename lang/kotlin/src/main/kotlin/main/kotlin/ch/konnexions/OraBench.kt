@@ -821,7 +821,7 @@ class OraBench {
         /*  
         partition_key = 0
         WHILE partition_key < config_param 'benchmark.number.partitions'
-            close the database connection
+              close the database connection
         ENDWHILE
         */
         for (i in 0 until benchmarkNumberPartitions) {
@@ -838,11 +838,9 @@ class OraBench {
         // WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
         val durationBenchmark: Long = resultBenchmarkEnd()
 
-        /*
-        INFO  Duration (ms) trial min.    : trial_min
-        INFO  Duration (ms) trial max.    : trial_max
-        INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
-        */
+        // INFO  Duration (ms) trial min.    : trial_min
+        // INFO  Duration (ms) trial max.    : trial_max
+        // INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
         logger.info("Duration (ms) trial min.    : " + Precision.round(minTrialDurationNano / 1000000.0, 0).toLong())
         logger.info("Duration (ms) trial max.    : " + Precision.round(maxTrialDurationNano / 1000000.0, 0).toLong())
         logger.info("Duration (ms) trial average : " + Precision.round(sumTrialDurationNano / 1000000.0 / benchmarkTrials, 0).toLong())
@@ -879,13 +877,13 @@ class OraBench {
         /*
         partition_key = 0
         WHILE partition_key < config_param 'benchmark.number.partitions'
-            IF config_param 'benchmark.core.multiplier' = 0
-                DO run_insert_helper(database connections(partition_key),
-                        bulk_data_partitions(partition_key))
-            ELSE
-                DO run_insert_helper (database connections(partition_key),
-                        bulk_data_partitions(partition_key)) as a thread
-            ENDIF
+              IF config_param 'benchmark.core.multiplier' = 0
+                 DO run_insert_helper(database connections(partition_key),
+                                      bulk_data_partitions(partition_key))
+              ELSE
+                 DO run_insert_helper (database connections(partition_key),
+                                       bulk_data_partitions(partition_key)) as a thread
+              ENDIF
         ENDWHILE
         */
         if (benchmarkCoreMultiplier > 0) {
@@ -994,15 +992,15 @@ class OraBench {
         /*
         partition_key = 0
         WHILE partition_key < config_param 'benchmark.number.partitions'
-            IF config_param 'benchmark.core.multiplier' = 0
-                DO run_select_helper(database connections(partition_key), 
-                                     bulk_data_partitions(partition_key, 
-                                     partition_key)
-            ELSE
-                DO run_select_helper(database connections(partition_key), 
-                                     bulk_data_partitions(partition_key, 
-                                     partition_key) as a thread
-            ENDIF
+              IF config_param 'benchmark.core.multiplier' = 0
+                 DO run_select_helper(database connections(partition_key), 
+                                      bulk_data_partitions(partition_key, 
+                                      partition_key)
+              ELSE
+                 DO run_select_helper(database connections(partition_key), 
+                                      bulk_data_partitions(partition_key, 
+                                      partition_key) as a thread
+              ENDIF
         ENDWHILE
         */
         if (benchmarkCoreMultiplier > 0) {
@@ -1109,8 +1107,8 @@ class OraBench {
         /*  
         create the database table (config param 'sql.create')
         IF error
-            drop the database table (config param 'sql.drop')
-            create the database table (config param 'sql.create')
+           drop the database table (config param 'sql.drop')
+           create the database table (config param 'sql.create')
         ENDIF
         */
         try {

@@ -453,7 +453,7 @@ def run_benchmark(logger):
 
     # partition_key = 0
     # WHILE partition_key < config_param "benchmark.number.partitions"
-    #     close the database connection
+    #       close the database connection
     # ENDWHILE
     for cursor in cursors:
         cursor.close()
@@ -504,13 +504,13 @@ def run_insert(logger,
     # partition_key = 0
     # WHILE partition_key < config_param "benchmark.number.partitions"
     #     IF config_param "benchmark.core.multiplier" = 0
-    #         DO run_insert_helper(database connections(partition_key),
-    #                                       bulk_data_partitions(partition_key),
-    #                                       partition_key)
+    #        DO run_insert_helper(database connections(partition_key),
+    #                             bulk_data_partitions(partition_key),
+    #                             partition_key)
     #     ELSE
-    #         DO run_insert_helper (database connections(partition_key),
-    #                                        bulk_data_partitions(partition_key),
-    #                                        partition_key) as a thread
+    #        DO run_insert_helper (database connections(partition_key),
+    #                              bulk_data_partitions(partition_key),
+    #                              partition_key) as a thread
     #     ENDIF
     # ENDWHILE
     threads = list()
@@ -565,21 +565,21 @@ def run_insert_helper(logger,
     # count = 0
     # collection batch_collection = empty
     # WHILE iterating through the collection bulk_data_partition
-    #     count + 1
+    #       count + 1
     #
-    #     add the SQL statement in config param "sql.insert" with the current bulk_data entry to the collection batch_collection
+    #       add the SQL statement in config param "sql.insert" with the current bulk_data entry to the collection batch_collection
     #
-    #     IF config_param "benchmark.batch.size" > 0
-    #         IF count modulo config param "benchmark.batch.size" = 0
+    #       IF config_param "benchmark.batch.size" > 0
+    #          IF count modulo config param "benchmark.batch.size" = 0
     #             execute the SQL statements in the collection batch_collection
     #             batch_collection = empty
-    #         ENDIF
-    #     ENDIF
+    #          ENDIF
+    #       ENDIF
     #
-    #     IF  config param "benchmark.transaction.size" > 0
-    #     AND count modulo config param "benchmark.transaction.size" = 0
-    #         commit
-    #     ENDIF
+    #       IF  config param "benchmark.transaction.size" > 0
+    #       AND count modulo config param "benchmark.transaction.size" = 0
+    #           commit
+    #       ENDIF
     # ENDWHILE
     count = 0
     batch_data = list()
@@ -599,7 +599,7 @@ def run_insert_helper(logger,
             connection.commit()
 
     # IF collection batch_collection is not empty
-    #     execute the SQL statements in the collection batch_collection
+    #    execute the SQL statements in the collection batch_collection
     # ENDIF
     if benchmark_batch_size == 0 or batch_data.__len__() > 0:
         cursor.executemany(sql_insert, batch_data)
@@ -635,15 +635,15 @@ def run_select(logger,
 
     # partition_key = 0
     # WHILE partition_key < config_param "benchmark.number.partitions"
-    #     IF config_param "benchmark.core.multiplier" = 0
-    #         DO run_select_helper(database connections(partition_key),
-    #                              bulk_data_partitions(partition_key,
-    #                              partition_key)
-    #     ELSE
-    #         DO run_select_helper(database connections(partition_key),
-    #                              bulk_data_partitions(partition_key,
-    #                              partition_key) as a thread
-    #     ENDIF
+    #       IF config_param "benchmark.core.multiplier" = 0
+    #          DO run_select_helper(database connections(partition_key),
+    #                               bulk_data_partitions(partition_key,
+    #                               partition_key)
+    #       ELSE
+    #          DO run_select_helper(database connections(partition_key),
+    #                               bulk_data_partitions(partition_key,
+    #                               partition_key) as a thread
+    #       ENDIF
     # ENDWHILE
     threads = list()
 
@@ -691,7 +691,7 @@ def run_select_helper(logger,
 
     # int count = 0;
     # WHILE iterating through the result set
-    #     count + 1
+    #       count + 1
     # ENDWHILE
     count = 0
 
@@ -699,7 +699,7 @@ def run_select_helper(logger,
         count += 1
 
     # IF NOT count = size(bulk_data_partition)
-    #     display an error message
+    #    display an error message
     # ENDIF
     if count != len(bulk_size_partition):
         logger.error("Number rows: expected=" + str(len(bulk_size_partition)) + " - found=" + str(count))
@@ -736,8 +736,8 @@ def run_trial(logger,
 
     # create the database table (config param "sql.create")
     # IF error
-    #     drop the database table (config param "sql.drop")
-    #     create the database table (config param "sql.create")
+    #    drop the database table (config param "sql.drop")
+    #    create the database table (config param "sql.create")
     # ENDIF
     try:
         cursors[0].execute(sql_create)
@@ -751,14 +751,14 @@ def run_trial(logger,
     benchmark_number_partitions = config["benchmark.number.partitions"]
 
     # DO run_insert(database connections,
-    #                        trial_no,
-    #                        bulk_data_partitions)
+    #               trial_no,
+    #               bulk_data_partitions)
     run_insert(logger, config["benchmark.batch.size"], benchmark_core_multiplier, benchmark_globals, benchmark_number_partitions,
                config["benchmark.transaction.size"], bulk_data_partitions, config, connections, cursors, result_file, config["sql.insert"], trial_number)
 
     # DO run_select(database connections,
-    #                        trial_no,
-    #                        bulk_data_partitions)
+    #               trial_no,
+    #               bulk_data_partitions)
     run_select(logger, benchmark_core_multiplier, benchmark_globals, benchmark_number_partitions, bulk_data_partitions, config, cursors, result_file,
                config["sql.select"], trial_number)
 
