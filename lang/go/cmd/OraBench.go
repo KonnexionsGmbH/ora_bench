@@ -361,7 +361,7 @@ func runInsert(ctx context.Context, configs map[string]interface{}, trialNo int,
 	/*
 	   partition_no = 0
 	   WHILE partition_no < config_param 'benchmark.number.partitions'
-	       IF config_param 'benchmark.core.multiplier' = 0
+	       IF config_param 'benchmark.core.multiplier' == 0
 	           DO run_insert_helper(database connections(partition_no),
 	                   bulk_data_partitions(partition_no))
 	       ELSE
@@ -429,14 +429,14 @@ func runInsertHelper(
 	     add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection
 
 	     IF config_param 'benchmark.batch.size' > 0
-	         IF count modulo config param 'benchmark.batch.size' = 0
+	         IF count modulo config param 'benchmark.batch.size' == 0
 	             execute the SQL statements in the collection batch_collection
 	             batch_collection = empty
 	         ENDIF
 	     ENDIF
 
 	     IF  config param 'benchmark.transaction.size' > 0
-	     AND count modulo config param 'benchmark.transaction.size' = 0
+	     AND count modulo config param 'benchmark.transaction.size' == 0
 	         commit
 	     ENDIF
 	   ENDWHILE
@@ -509,7 +509,7 @@ func runSelect(ctx context.Context, configs map[string]interface{}, trialNo int,
 	/*
 	   partition_no = 0
 	   WHILE partition_no < config_param 'benchmark.number.partitions'
-	       IF config_param 'benchmark.core.multiplier' = 0
+	       IF config_param 'benchmark.core.multiplier' == 0
 	           DO run_select_helper(database connections(partition_no),
 	                                bulk_data_partitions(partition_no,
 	                                partition_no)

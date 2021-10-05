@@ -33,21 +33,21 @@
           trial_no = 0
           trial_sum = 0
           WHILE trial_no < config_param 'benchmark.trials'
-              duration_trial = DO run_trial(database connections, 
-                                            trial_no, 
-                                            bulk_data_partitions)
-              IF trial_max == 0 OR duration_trial > trial_max
-                  trial_max = duration_trial
-              END IF                       
-              IF trial_min == 0 OR duration_trial < trial_min
-                  trial_min = duration_trial
-              END IF     
-              trial_sum + duration_trial                  
+                duration_trial = DO run_trial(database connections, 
+                                              trial_no, 
+                                              bulk_data_partitions)
+                IF trial_max == 0 OR duration_trial > trial_max
+                   trial_max = duration_trial
+                END IF                       
+                IF trial_min == 0 OR duration_trial < trial_min
+                   trial_min = duration_trial
+                END IF     
+                trial_sum + duration_trial                  
           ENDWHILE    
         
         - partition_key = 0
           WHILE partition_key < config_param 'benchmark.number.partitions'
-              close the database connection
+                close the database connection
           ENDWHILE    
         
         - WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
@@ -68,8 +68,8 @@
     
         - create the database table (config param 'sql.create')
           IF error
-              drop the database table (config param 'sql.drop')
-              create the database table (config param 'sql.create')
+             drop the database table (config param 'sql.drop')
+             create the database table (config param 'sql.create')
           ENDIF    
         
         - DO run_benchmark_insert(database connections,
@@ -98,15 +98,15 @@
      
         - partition_key = 0
           WHILE partition_key < config_param 'benchmark.number.partitions'
-              IF config_param 'benchmark.core.multiplier' = 0
-                  DO run_insert_helper(database connections(partition_key), 
-                                       bulk_data_partitions(partition_key), 
-                                       partition_key) 
-              ELSE    
-                  DO run_insert_helper(database connections(partition_key), 
+                IF config_param 'benchmark.core.multiplier' == 0
+                   DO run_insert_helper(database connections(partition_key), 
+                                        bulk_data_partitions(partition_key), 
+                                        partition_key) 
+                ELSE     
+                   DO run_insert_helper(database connections(partition_key), 
                                        bulk_data_partitions(partition_key), 
                                        partition_key) as a thread
-              ENDIF
+                ENDIF
           ENDWHILE    
 
         - WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
@@ -124,25 +124,25 @@
         - count = 0
           collection batch_collection = empty
           WHILE iterating through the collection bulk_data_partition
-              count + 1
+                count + 1
               
-              add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection 
+                add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection 
               
-              IF config_param 'benchmark.batch.size' > 0
-                  IF count modulo config param 'benchmark.batch.size' = 0 
+                IF config_param 'benchmark.batch.size' > 0
+                   IF count modulo config param 'benchmark.batch.size' == 0 
                       execute the SQL statements in the collection batch_collection
                       batch_collection = empty
-                  ENDIF                    
-              ENDIF                
+                   ENDIF                    
+                ENDIF                
               
-              IF  config param 'benchmark.transaction.size' > 0 
-              AND count modulo config param 'benchmark.transaction.size' = 0
-                  commit
-              ENDIF    
+                IF  config param 'benchmark.transaction.size' > 0 
+                AND count modulo config param 'benchmark.transaction.size' == 0
+                    commit
+                ENDIF    
           ENDWHILE
 
         - IF collection batch_collection is not empty
-              execute the SQL statements in the collection batch_collection
+             execute the SQL statements in the collection batch_collection
           ENDIF
 
         - commit
@@ -161,15 +161,15 @@
      
         - partition_key = 0
           WHILE partition_key < config_param 'benchmark.number.partitions'
-              IF config_param 'benchmark.core.multiplier' = 0
-                  DO run_select_helper(database connections(partition_key), 
-                                       bulk_data_partitions(partition_key, 
-                                       partition_key) 
-              ELSE    
-                  DO run_select_helper(database connections(partition_key), 
-                                       bulk_data_partitions(partition_key, 
-                                       partition_key) as a thread
-              ENDIF
+                IF config_param 'benchmark.core.multiplier' == 0
+                   DO run_select_helper(database connections(partition_key), 
+                                        bulk_data_partitions(partition_key, 
+                                        partition_key) 
+                ELSE    
+                   DO run_select_helper(database connections(partition_key), 
+                                        bulk_data_partitions(partition_key, 
+                                        partition_key) as a thread
+                ENDIF
           ENDWHILE    
 
         - WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
@@ -188,11 +188,11 @@
 
         - count = 0
           WHILE iterating through the result set
-              count + 1
+                count + 1
           ENDWHILE
 
         - IF NOT count = size(bulk_data_partition)
-              display an error message            
+             display an error message            
           ENDIF                    
     
         - INFO End   select partition_key=partition_key

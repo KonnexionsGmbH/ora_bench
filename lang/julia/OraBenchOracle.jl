@@ -383,25 +383,16 @@ function run_benchmark(config::Dict{String,Any})
         0::Int64,
         # DURATION_SELECT_SUM
         0::Int64,
-        # DURATION_TRIAL_MAX
-        0::Int64,
-        # DURATION_TRIAL_MIN
-        0::Int64,
-        # DURATION_TRIAL_TOTAL
-        0::Int64,
         # BENCHMARK_DRIVER
         ""::String,
         # BENCHMARK_LANGUAGE
         ""::String,
     ])::Vector{Any}
 
-    global IX_BENCHMARK_DRIVER = 9::Int64
-    global IX_BENCHMARK_LANGUAGE = 10::Int64
+    global IX_BENCHMARK_DRIVER = 6::Int64
+    global IX_BENCHMARK_LANGUAGE = 7::Int64
     global IX_DURATION_INSERT_SUM = 4::Int64
     global IX_DURATION_SELECT_SUM = 5::Int64
-    global IX_DURATION_TRIAL_MAX = 6::Int64
-    global IX_DURATION_TRIAL_MIN = 7::Int64
-    global IX_DURATION_TRIAL_TOTAL = 8::Int64
     global IX_LAST_BENCHMARK = 1::Int64
     global IX_LAST_QUERY = 3::Int64
     global IX_LAST_TRIAL = 2::Int64
@@ -432,12 +423,22 @@ function run_benchmark(config::Dict{String,Any})
     (pool, connections) = create_connections(benchmark_number_partitions, config)
 
     #=
-    trial_no = 0
-    WHILE trial_no < config_param 'benchmark.trials'
-        DO run_trial(database connections,
-                     trial_no,
-                     bulk_data_partitions)
-    ENDWHILE
+      trial_max = 0
+      trial_min = 0
+      trial_no = 0
+      trial_sum = 0
+      WHILE trial_no < config_param 'benchmark.trials'
+            duration_trial = DO run_trial(database connections, 
+                                          trial_no, 
+                                          bulk_data_partitions)
+            IF trial_max == 0 OR duration_trial > trial_max
+               trial_max = duration_trial
+            END IF                       
+            IF trial_min == 0 OR duration_trial < trial_min
+               trial_min = duration_trial
+            END IF     
+            trial_sum + duration_trial                  
+      ENDWHILE    
     =#
     for trial_number = 1:parse(Int64, config["DEFAULT"]["benchmark_trials"])
         run_trial(
@@ -451,10 +452,10 @@ function run_benchmark(config::Dict{String,Any})
     end
 
     #=
-    partition_no = 0
-    WHILE partition_no < config_param 'benchmark.number.partitions'
-        close the database connection
-    ENDWHILE
+      partition_key = 0
+      WHILE partition_key < config_param 'benchmark.number.partitions'
+            close the database connection
+      ENDWHILE    
     =#
     for partition_key = 1:benchmark_number_partitions
         @debug "      $(function_name) Connection #$(partition_key) - to be closed"
@@ -466,6 +467,13 @@ function run_benchmark(config::Dict{String,Any})
 
     # WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
     create_result_measuring_point_end("benchmark", benchmark_globals, config, result_file)
+
+        
+    # INFO  Duration (ms) trial min.    : trial_min
+    # INFO  Duration (ms) trial max.    : trial_max
+    # INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
+    
+    # INFO  Duration (ms) benchmark run : duration_benchmark
 
     @debug "End   $(function_name)"
     nothing
@@ -495,16 +503,18 @@ function run_insert(
     create_result_measuring_point_start("query", benchmark_globals)
 
     #=
-    partition_no = 0
-    WHILE partition_no < config_param 'benchmark.number.partitions'
-        IF config_param 'benchmark.core.multiplier' = 0
-            DO run_insert_helper(database connections(partition_no),
-                    bulk_data_partitions(partition_no))
-        ELSE
-            DO run_insert_helper (database connections(partition_no),
-                    bulk_data_partitions(partition_no)) as a thread
-        ENDIF
-    ENDWHILE
+      partition_key = 0
+      WHILE partition_key < config_param 'benchmark.number.partitions'
+            IF config_param 'benchmark.core.multiplier' == 0
+               DO run_insert_helper(database connections(partition_key), 
+                                    bulk_data_partitions(partition_key), 
+                                    partition_key) 
+            ELSE     
+               DO run_insert_helper(database connections(partition_key), 
+                                   bulk_data_partitions(partition_key), 
+                                   partition_key) as a thread
+            ENDIF
+      ENDWHILE    
     =#
     if benchmark_core_multiplier == 0
         for partition_key = 1:benchmark_number_partitions
@@ -563,32 +573,31 @@ function run_insert_helper(
     sql_insert::String,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name) - partition_key=$(partition_key)"
+    @debug "Start $(function_name)"
 
-    if benchmark_core_multiplier > 0
-        @info "Start $(function_name) - partition_key=$(partition_key)"
-    end
+    # INFO Start insert partition_key=partition_key
+    @info "Start insert partition_key=$(partition_key)"
 
     #=
-    count = 0
-    collection batch_collection =  empty
-    WHILE iterating through the collection bulk_data_partition
-        count + 1
-
-        add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection
-
-        IF config_param 'benchmark.batch.size' > 0
-            IF count modulo config param 'benchmark.batch.size' = 0
-                execute the SQL statements in the collection batch_collection
-                batch_collection = empty
-            ENDIF
-        ENDIF
-
-        IF  config param 'benchmark.transaction.size' > 0
-        AND count modulo config param 'benchmark.transaction.size' = 0
-            commit
-        ENDIF
-    ENDWHILE
+      count = 0
+      collection batch_collection = empty
+      WHILE iterating through the collection bulk_data_partition
+            count + 1
+          
+            add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection 
+          
+            IF config_param 'benchmark.batch.size' > 0
+               IF count modulo config param 'benchmark.batch.size' == 0 
+                  execute the SQL statements in the collection batch_collection
+                  batch_collection = empty
+               ENDIF                    
+            ENDIF                
+          
+            IF  config param 'benchmark.transaction.size' > 0 
+            AND count modulo config param 'benchmark.transaction.size' == 0
+                commit
+            ENDIF    
+      ENDWHILE
     =#
     stmt = Oracle.Stmt(connection, sql_insert)::Oracle.Stmt{Oracle.ORA_STMT_TYPE_INSERT}
 
@@ -629,9 +638,9 @@ function run_insert_helper(
     end
 
     #=
-    IF collection batch_collection is not empty
-        execute the SQL statements in the collection batch_collection
-    ENDIF
+      IF collection batch_collection is not empty
+         execute the SQL statements in the collection batch_collection
+      ENDIF
     =#
     if size(batch_collection_keys, 1) != 0
         @debug "      $(function_name) - partition_key=$(partition_key) - before bulk final"
@@ -650,11 +659,10 @@ function run_insert_helper(
 
     Oracle.close(stmt)
 
-    if benchmark_core_multiplier > 0
-        @info "End   $(function_name) - partition_key=$(partition_key)"
-    end
+    # INFO End   insert partition_key=partition_key
+    @info "End   insert partition_key=$(partition_key)"
 
-    @debug "End   $(function_name) - partition_key=$(partition_key)"
+    @debug "End   $(function_name)"
     nothing
 end
 
@@ -680,18 +688,18 @@ function run_select(
     create_result_measuring_point_start("query", benchmark_globals)
 
     #=
-    partition_no = 0
-    WHILE partition_no < config_param 'benchmark.number.partitions'
-        IF config_param 'benchmark.core.multiplier' = 0
-            DO run_select_helper(database connections(partition_no),
-                                 bulk_data_partitions(partition_no,
-                                 partition_no)
-        ELSE
-            DO run_select_helper(database connections(partition_no),
-                                 bulk_data_partitions(partition_no,
-                                 partition_no) as a thread
-        ENDIF
-    ENDWHILE
+      partition_key = 0
+      WHILE partition_key < config_param 'benchmark.number.partitions'
+            IF config_param 'benchmark.core.multiplier' == 0
+               DO run_select_helper(database connections(partition_key), 
+                                    bulk_data_partitions(partition_key, 
+                                    partition_key) 
+            ELSE    
+               DO run_select_helper(database connections(partition_key), 
+                                    bulk_data_partitions(partition_key, 
+                                    partition_key) as a thread
+            ENDIF
+      ENDWHILE    
     =#
     if benchmark_core_multiplier == 0
         for partition_key = 1:benchmark_number_partitions
@@ -744,11 +752,10 @@ function run_select_helper(
     sql_select::String,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name) - partition_key=$(partition_key)"
+    @debug "Start $(function_name)"
 
-    if benchmark_core_multiplier > 0
-        @info "Start $(function_name) - partition_key=$(partition_key)"
-    end
+    # INFO Start select partition_key=partition_key
+    @info "Start select partition_key=$(partition_key)"
 
     # execute the SQL statement in config param 'sql.select'
     stmt = Oracle.Stmt(
@@ -757,10 +764,10 @@ function run_select_helper(
     )::Oracle.Stmt{Oracle.ORA_STMT_TYPE_SELECT}
 
     #=
-    int count = 0;
-    WHILE iterating through the result set
-        count + 1
-    ENDWHILE
+      count = 0
+      WHILE iterating through the result set
+            count + 1
+      ENDWHILE
     =#
     count = 0
 
@@ -771,20 +778,19 @@ function run_select_helper(
     end
 
     #=
-    IF NOT count = size(bulk_data_partition)
-        display an error message
-    ENDIF
+      IF NOT count = size(bulk_data_partition)
+         display an error message            
+      ENDIF                    
     =#
     if count != count_expected
         @error "Partition $(partition_key - 1) number rows: expected=$(count_expected) - found=$(count)"
         throw(ErrorException)
     end
 
-    if benchmark_core_multiplier > 0
-        @info "End   $(function_name) - partition_key=$(partition_key)"
-    end
+    # INFO End   select partition_key=partition_key
+    @info "End   select partition_key=$(partition_key)"
 
-    @debug "End   $(function_name) - partition_key=$(partition_key)"
+    @debug "End   $(function_name)"
     nothing
 end
 
