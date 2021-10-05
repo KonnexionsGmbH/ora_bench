@@ -368,7 +368,7 @@ function run_benchmark(config::Dict{String,Any})
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
-    # save the current time as the start of the 'benchmark' action
+    # save the current time as the start time of the 'benchmark' action
     file_result_name = config["DEFAULT"]["file_result_name"]
 
     benchmark_globals = Array([
@@ -493,7 +493,7 @@ end
 #     function_name = string(StackTraces.stacktrace()[1].func)
 #     @debug "Start $(function_name) - trial_number=$(trial_number)"
 # 
-#     # save the current time as the start of the 'query' action
+#     # save the current time as the start time of the 'query' action
 #     create_result_measuring_point_start("query", benchmark_globals)
 # 
 #     #=
@@ -658,7 +658,7 @@ end
 #     function_name = string(StackTraces.stacktrace()[1].func)
 #     @debug "Start $(function_name) - trial_number=$(trial_number)"
 # 
-#     # save the current time as the start of the 'query' action
+#     # save the current time as the start time of the 'query' action
 #     create_result_measuring_point_start("query", benchmark_globals)
 # 
 #     #=
@@ -774,7 +774,7 @@ end
 #     function_name = string(StackTraces.stacktrace()[1].func)
 #     @debug "Start $(function_name) - trial_number=$(trial_number)"
 # 
-#     # save the current time as the start of the 'trial' action
+#     # save the current time as the start time of the 'trial' action
 #     create_result_measuring_point_start("trial", benchmark_globals)
 # 
 #     @info "Start trial no. $(string(trial_number))"

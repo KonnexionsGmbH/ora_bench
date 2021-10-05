@@ -868,7 +868,7 @@ class OraBench {
             logger.debug("Start")
         }
 
-        // save the current time as the start of the 'query' action
+        // save the current time as the start time of the 'query' action
         resultQueryStart()
 
         /*
@@ -983,7 +983,7 @@ class OraBench {
             logger.debug("Start")
         }
 
-        // save the current time as the start of the 'query' action
+        // save the current time as the start time of the 'query' action
         resultQueryStart()
 
         /*

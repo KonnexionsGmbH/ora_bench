@@ -94,7 +94,7 @@
                trial_no, 
                bulk_data_partitions)
     
-        - save the current time as the start of the 'query' action
+        - save the current time as the start time of the 'query' action
      
         - partition_key = 0
           WHILE partition_key < config_param 'benchmark.number.partitions'
@@ -157,7 +157,7 @@
                         trial_no, 
                         bulk_data_partitions)
     
-        - save the current time as the start of the 'query' action
+        - save the current time as the start time of the 'query' action
      
         - partition_key = 0
           WHILE partition_key < config_param 'benchmark.number.partitions'

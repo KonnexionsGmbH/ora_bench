@@ -276,7 +276,7 @@ func runBenchmark() {
 	// READ the configuration parameters into the memory (config params `file.configuration.name ...`)
 	configs := loadConfig(os.Args[1])
 
-	// save the current time as the start of the 'benchmark' action
+	// save the current time as the start time of the 'benchmark' action
 	startBenchTs := time.Now()
 
 	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
@@ -355,7 +355,7 @@ Supervise function for inserting data into the database.
 func runInsert(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result, resultPos int) {
 	log.Debug("Start runInsert()")
 
-	// save the current time as the start of the 'query' action
+	// save the current time as the start time of the 'query' action
 	start := time.Now()
 
 	/*
@@ -503,7 +503,7 @@ Supervise function for retrieving of the database data.
 func runSelect(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result, resultPos int) {
 	log.Debug("Start runSelect()")
 
-	// save the current time as the start of the 'query' action
+	// save the current time as the start time of the 'query' action
 	start := time.Now()
 
 	/*
@@ -622,7 +622,7 @@ Performing a single trial run.
 func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result, resultPos int) int64 {
 	log.Debug("Start runTrial()")
 
-	// save the current time as the start of the 'trial' action
+	// save the current time as the start time of the 'trial' action
 	startTrialTs := time.Now()
 
 	log.Info("Start trial no.", trialNo)

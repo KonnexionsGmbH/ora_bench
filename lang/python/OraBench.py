@@ -497,7 +497,7 @@ def run_insert(logger,
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
-    # save the current time as the start of the "query" action
+    # save the current time as the start time of the "query" action
     benchmark_globals = create_result_measuring_point_start(logger, "query", benchmark_globals)
 
     # partition_key = 0
@@ -629,7 +629,7 @@ def run_select(logger,
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
-    # save the current time as the start of the "query" action
+    # save the current time as the start time of the "query" action
     benchmark_globals = create_result_measuring_point_start(logger, "query", benchmark_globals)
 
     # partition_key = 0
