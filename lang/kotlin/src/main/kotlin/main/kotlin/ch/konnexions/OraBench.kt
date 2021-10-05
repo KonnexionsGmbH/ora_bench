@@ -78,16 +78,12 @@ class OraBench {
     private var lastTrial: LocalDateTime? = null
     private var lastTrialNano: Long = 0
 
-    private var maxTrialDurationNano: Long = 0
-    private var minTrialDurationNano: Long = 0
-
     private var resultFile: CSVPrinter? = null
 
     private lateinit var sqlCreate: String
     private lateinit var sqlDrop: String
     private lateinit var sqlInsert: String
     private lateinit var sqlSelect: String
-    private var sumTrialDurationNano: Long = 0
 
     companion object {
         /**
@@ -450,21 +446,6 @@ class OraBench {
 
         if (action == "trial") {
             logger.info("Duration (ms) trial         : " + Precision.round(duration / 1000000.0, 0).toLong())
-
-            if ((maxTrialDurationNano == 0L) || (maxTrialDurationNano < duration)) {
-                maxTrialDurationNano = duration
-            }
-
-            if ((minTrialDurationNano == 0L) || (minTrialDurationNano > duration)) {
-                minTrialDurationNano = duration
-            }
-
-            sumTrialDurationNano += duration
-        } else if (action == "benchmark") {
-            logger.info("Duration (ms) trial min.    : " + Precision.round(minTrialDurationNano / 1000000.0, 0).toLong())
-            logger.info("Duration (ms) trial max.    : " + Precision.round(maxTrialDurationNano / 1000000.0, 0).toLong())
-            logger.info("Duration (ms) trial average : " + Precision.round(sumTrialDurationNano / 1000000.0 / benchmarkTrials, 0).toLong())
-            logger.info("Duration (ms) benchmark run : " + Precision.round(duration / 1000000.0, 0).toLong())
         }
 
         if (isDebug) {
@@ -620,7 +601,7 @@ class OraBench {
     /**
      * End of the whole benchmark run.
      */
-    private fun resultBenchmarkEnd() {
+    private fun resultBenchmarkEnd(): Long {
         if (isDebug) {
             logger.debug("Start")
         }
@@ -646,6 +627,8 @@ class OraBench {
         if (isDebug) {
             logger.debug("End")
         }
+
+        return duration
     }
 
     private fun resultBenchmarkStart() {
@@ -729,21 +712,25 @@ class OraBench {
      *
      * @param trialNo the current trial number
      */
-    private fun resultTrialEnd(trialNo: Int) {
+    private fun resultTrialEnd(trialNo: Int): Long {
         if (isDebug) {
             logger.debug("Start")
         }
+
+        val duration: Long = System.nanoTime() - lastTrialNano
 
         createMeasuringPoint(
             trialNo,
             lastTrial!!,
             LocalDateTime.now(),
-            System.nanoTime() - lastTrialNano
+            duration
         )
 
         if (isDebug) {
             logger.debug("End")
         }
+
+        return duration
     }
 
     /**
@@ -807,14 +794,28 @@ class OraBench {
               trial_sum + duration_trial                  
         ENDWHILE    
         */
+        var maxTrialDurationNano: Long = 0
+        var minTrialDurationNano: Long = 0
+        var sumTrialDurationNano: Long = 0
+
         for (i in 1..benchmarkTrials) {
-            runTrial(
+            val duration: Long = runTrial(
                 connections,
                 preparedStatements,
                 statements,
                 i,
                 bulkDataPartitions
             )
+
+            if ((maxTrialDurationNano == 0L) || (maxTrialDurationNano < duration)) {
+                maxTrialDurationNano = duration
+            }
+
+            if ((minTrialDurationNano == 0L) || (minTrialDurationNano > duration)) {
+                minTrialDurationNano = duration
+            }
+
+            sumTrialDurationNano += duration
         }
 
         /*  
@@ -835,15 +836,19 @@ class OraBench {
         }
 
         // WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
-        resultBenchmarkEnd()
+        val durationBenchmark: Long = resultBenchmarkEnd()
 
         /*
         INFO  Duration (ms) trial min.    : trial_min
         INFO  Duration (ms) trial max.    : trial_max
         INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
         */
+        logger.info("Duration (ms) trial min.    : " + Precision.round(minTrialDurationNano / 1000000.0, 0).toLong())
+        logger.info("Duration (ms) trial max.    : " + Precision.round(maxTrialDurationNano / 1000000.0, 0).toLong())
+        logger.info("Duration (ms) trial average : " + Precision.round(sumTrialDurationNano / 1000000.0 / benchmarkTrials, 0).toLong())
 
         // INFO  Duration (ms) benchmark run : duration_benchmark
+        logger.info("Duration (ms) benchmark run : " + Precision.round(durationBenchmark / 1000000.0, 0).toLong())
 
         if (isDebug) {
             logger.debug("End")
@@ -1091,7 +1096,7 @@ class OraBench {
         statements: ArrayList<Statement>,
         trialNumber: Int,
         bulkDataPartitions: ArrayList<ArrayList<Array<String>>>
-    ) {
+    ): Long {
         if (isDebug) {
             logger.debug("Start")
         }
@@ -1163,13 +1168,14 @@ class OraBench {
         }
 
         // WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
-        resultTrialEnd(trialNumber)
+        val duration: Long = resultTrialEnd(trialNumber)
 
         if (isDebug) {
             logger.debug("End")
         }
-    }
 
+        return duration
+    }
 }
 
 /**
