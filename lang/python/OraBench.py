@@ -18,13 +18,10 @@ import yaml
 
 FILE_CONFIGURATION_NAME_PYTHON = "priv/properties/ora_bench_python.properties"
 
-IX_BENCHMARK_DRIVER = 8
-IX_BENCHMARK_LANGUAGE = 9
+IX_BENCHMARK_DRIVER = 6
+IX_BENCHMARK_LANGUAGE = 6
 IX_DURATION_INSERT_SUM = 3
 IX_DURATION_SELECT_SUM = 4
-IX_DURATION_TRIAL_MAX = 5
-IX_DURATION_TRIAL_MIN = 6
-IX_DURATION_TRIAL_TOTAL = 7
 IX_LAST_BENCHMARK = 0
 IX_LAST_QUERY = 2
 IX_LAST_TRIAL = 1
@@ -35,7 +32,7 @@ IX_LAST_TRIAL = 1
 # ----------------------------------------------------------------------------------
 
 def create_database_objects(logger,
-                            config):
+        config):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
@@ -71,14 +68,14 @@ def create_database_objects(logger,
 # ----------------------------------------------------------------------------------
 
 def create_result(logger,
-                  action,
-                  benchmark_globals,
-                  config,
-                  result_file,
-                  sql_operation,
-                  sql_statement,
-                  start_date_time,
-                  trial_number):
+        action,
+        benchmark_globals,
+        config,
+        result_file,
+        sql_operation,
+        sql_statement,
+        start_date_time,
+        trial_number):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
@@ -86,9 +83,6 @@ def create_result(logger,
     global IX_BENCHMARK_LANGUAGE
     global IX_DURATION_INSERT_SUM
     global IX_DURATION_SELECT_SUM
-    global IX_DURATION_TRIAL_MAX
-    global IX_DURATION_TRIAL_MIN
-    global IX_DURATION_TRIAL_TOTAL
 
     end_date_time = datetime.datetime.now()
 
@@ -126,21 +120,10 @@ def create_result(logger,
     if action == "trial":
         logger.info("Duration (ms) trial         : " + str(round(duration_ns / 1000000)))
 
-        if benchmark_globals[IX_DURATION_TRIAL_MAX] == 0 or benchmark_globals[IX_DURATION_TRIAL_MAX] < duration_ns:
-            benchmark_globals[IX_DURATION_TRIAL_MAX] = duration_ns
-
-        if benchmark_globals[IX_DURATION_TRIAL_MIN] == 0 or benchmark_globals[IX_DURATION_TRIAL_MIN] > duration_ns:
-            benchmark_globals[IX_DURATION_TRIAL_MIN] = duration_ns
-
-        benchmark_globals[IX_DURATION_TRIAL_TOTAL] += duration_ns
-    elif action == "benchmark":
-        logger.info("Duration (ms) trial min.    : " + str(round(benchmark_globals[IX_DURATION_TRIAL_MIN] / 1000000)))
-        logger.info("Duration (ms) trial max.    : " + str(round(benchmark_globals[IX_DURATION_TRIAL_MAX] / 1000000)))
-        logger.info("Duration (ms) trial average : " + str(round(benchmark_globals[IX_DURATION_TRIAL_TOTAL] / 1000000 / config["benchmark.trials"])))
-        logger.info("Duration (ms) benchmark run : " + str(round(duration_ns / 1000000)))
-
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("End")
+
+    return duration_ns
 
 
 # ----------------------------------------------------------------------------------
@@ -148,7 +131,7 @@ def create_result(logger,
 # ----------------------------------------------------------------------------------
 
 def create_result_file(logger,
-                       config):
+        config):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
@@ -171,13 +154,13 @@ def create_result_file(logger,
 # ----------------------------------------------------------------------------------
 
 def create_result_measuring_point_end(logger,
-                                      action,
-                                      benchmark_globals,
-                                      config,
-                                      result_file,
-                                      sql_operation="",
-                                      sql_statement="",
-                                      trial_number=0):
+        action,
+        benchmark_globals,
+        config,
+        result_file,
+        sql_operation="",
+        sql_statement="",
+        trial_number=0):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
@@ -186,38 +169,38 @@ def create_result_measuring_point_end(logger,
     global IX_LAST_TRIAL
 
     if action == "query":
-        create_result(logger,
-                      action,
-                      benchmark_globals,
-                      config,
-                      result_file,
-                      sql_operation,
-                      sql_statement,
-                      benchmark_globals[IX_LAST_QUERY],
-                      trial_number
-                      )
+        duration_ns = create_result(logger,
+                                    action,
+                                    benchmark_globals,
+                                    config,
+                                    result_file,
+                                    sql_operation,
+                                    sql_statement,
+                                    benchmark_globals[IX_LAST_QUERY],
+                                    trial_number
+                                    )
     elif action == "trial":
-        create_result(logger,
-                      action,
-                      benchmark_globals,
-                      config,
-                      result_file,
-                      sql_operation,
-                      sql_statement,
-                      benchmark_globals[IX_LAST_TRIAL],
-                      trial_number
-                      )
+        duration_ns = create_result(logger,
+                                    action,
+                                    benchmark_globals,
+                                    config,
+                                    result_file,
+                                    sql_operation,
+                                    sql_statement,
+                                    benchmark_globals[IX_LAST_TRIAL],
+                                    trial_number
+                                    )
     elif action == "benchmark":
-        create_result(logger,
-                      action,
-                      benchmark_globals,
-                      config,
-                      result_file,
-                      sql_operation,
-                      sql_statement,
-                      benchmark_globals[IX_LAST_BENCHMARK],
-                      trial_number
-                      )
+        duration_ns = create_result(logger,
+                                    action,
+                                    benchmark_globals,
+                                    config,
+                                    result_file,
+                                    sql_operation,
+                                    sql_statement,
+                                    benchmark_globals[IX_LAST_BENCHMARK],
+                                    trial_number
+                                    )
         result_file.close()
     else:
         logger.error("action='" + action + "' state=end")
@@ -230,14 +213,16 @@ def create_result_measuring_point_end(logger,
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("End")
 
+    return duration_ns
+
 
 # ----------------------------------------------------------------------------------
 # Recording the results of the benchmark - start processing.
 # ----------------------------------------------------------------------------------
 
 def create_result_measuring_point_start(logger,
-                                        action,
-                                        benchmark_globals):
+        action,
+        benchmark_globals):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
@@ -259,7 +244,7 @@ def create_result_measuring_point_start(logger,
 
 
 def create_result_measuring_point_start_benchmark(logger,
-                                                  config):
+        config):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
@@ -285,7 +270,7 @@ def create_result_measuring_point_start_benchmark(logger,
 # ----------------------------------------------------------------------------------
 
 def get_bulk_data_partitions(logger,
-                             config):
+        config):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
@@ -439,20 +424,32 @@ def run_benchmark(logger):
     #       duration_trial = DO run_trial(database connections,
     #                                     trial_no,
     #                                     bulk_data_partitions)
-    # IF trial_max == 0 OR duration_trial > trial_max
-    #    trial_max = duration_trial
-    # END IF
-    # IF trial_min == 0 OR duration_trial < trial_min
-    #    trial_min = duration_trial
-    # END IF
-    # trial_sum + duration_trial
+    #       IF trial_max == 0 OR duration_trial > trial_max
+    #          trial_max = duration_trial
+    #       END IF
+    #       IF trial_min == 0 OR duration_trial < trial_min
+    #          trial_min = duration_trial
+    #       END IF
+    #       trial_sum + duration_trial
     # ENDWHILE
     benchmark_trials = config["benchmark.trials"]
     sql_create = config["sql.create"]
     sql_drop = config["sql.drop"]
+    trial_max = 0
+    trial_min = 0
+    trial_sum = 0
 
     for trial_number in range(0, benchmark_trials):
-        run_trial(logger, benchmark_globals, bulk_data_partitions, config, connections, cursors, result_file, sql_create, sql_drop, trial_number + 1)
+        duration_ns_trial = run_trial(logger, benchmark_globals, bulk_data_partitions, config, connections, cursors, result_file, sql_create, sql_drop,
+                                      trial_number + 1)
+
+        if trial_max == 0 or trial_max < duration_ns_trial:
+            trial_max = duration_ns_trial
+
+        if trial_min == 0 or trial_min > duration_ns_trial:
+            trial_min = duration_ns_trial
+
+        trial_sum += duration_ns_trial
 
     # partition_key = 0
     # WHILE partition_key < config_param "benchmark.number.partitions"
@@ -465,13 +462,17 @@ def run_benchmark(logger):
         connection.close()
 
     # WRITE an entry for the action "benchmark" in the result file (config param "file.result.name")
-    create_result_measuring_point_end(logger, "benchmark", benchmark_globals, config, result_file)
+    duration_ns_benchmark = create_result_measuring_point_end(logger, "benchmark", benchmark_globals, config, result_file)
 
     # INFO  Duration (ms) trial min.    : trial_min
     # INFO  Duration (ms) trial max.    : trial_max
     # INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
-    
+    logger.info("Duration (ms) trial min.    : " + str(round(trial_min / 1000000)))
+    logger.info("Duration (ms) trial max.    : " + str(round(trial_max / 1000000)))
+    logger.info("Duration (ms) trial average : " + str(round(trial_sum / 1000000 / benchmark_trials)))
+
     # INFO  Duration (ms) benchmark run : duration_benchmark
+    logger.info("Duration (ms) benchmark run : " + str(round(duration_ns_benchmark / 1000000)))
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("End")
@@ -482,18 +483,18 @@ def run_benchmark(logger):
 # ----------------------------------------------------------------------------------
 
 def run_insert(logger,
-               benchmark_batch_size,
-               benchmark_core_multiplier,
-               benchmark_globals,
-               benchmark_number_partitions,
-               benchmark_transaction_size,
-               bulk_data_partitions,
-               config,
-               connections,
-               cursors,
-               result_file,
-               sql_insert,
-               trial_number):
+        benchmark_batch_size,
+        benchmark_core_multiplier,
+        benchmark_globals,
+        benchmark_number_partitions,
+        benchmark_transaction_size,
+        bulk_data_partitions,
+        config,
+        connections,
+        cursors,
+        result_file,
+        sql_insert,
+        trial_number):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
@@ -522,10 +523,10 @@ def run_insert(logger,
         else:
             thread = threading.Thread(target=run_insert_helper,
                                       args=(
-                                          logger, benchmark_batch_size, benchmark_core_multiplier, benchmark_transaction_size,
-                                          bulk_data_partitions[partition_key],
-                                          connections[partition_key],
-                                          cursors[partition_key], partition_key, sql_insert))
+                                              logger, benchmark_batch_size, benchmark_core_multiplier, benchmark_transaction_size,
+                                              bulk_data_partitions[partition_key],
+                                              connections[partition_key],
+                                              cursors[partition_key], partition_key, sql_insert))
             threads.append(thread)
             thread.start()
 
@@ -547,14 +548,14 @@ def run_insert(logger,
 # ----------------------------------------------------------------------------------
 
 def run_insert_helper(logger,
-                      benchmark_batch_size,
-                      benchmark_core_multiplier,
-                      benchmark_transaction_size,
-                      bulk_data_partition,
-                      connection,
-                      cursor,
-                      partition_key,
-                      sql_insert):
+        benchmark_batch_size,
+        benchmark_core_multiplier,
+        benchmark_transaction_size,
+        bulk_data_partition,
+        connection,
+        cursor,
+        partition_key,
+        sql_insert):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
@@ -565,16 +566,16 @@ def run_insert_helper(logger,
     # collection batch_collection = empty
     # WHILE iterating through the collection bulk_data_partition
     #     count + 1
-    # 
+    #
     #     add the SQL statement in config param "sql.insert" with the current bulk_data entry to the collection batch_collection
-    # 
+    #
     #     IF config_param "benchmark.batch.size" > 0
     #         IF count modulo config param "benchmark.batch.size" = 0
     #             execute the SQL statements in the collection batch_collection
     #             batch_collection = empty
     #         ENDIF
     #     ENDIF
-    #     
+    #
     #     IF  config param "benchmark.transaction.size" > 0
     #     AND count modulo config param "benchmark.transaction.size" = 0
     #         commit
@@ -617,15 +618,15 @@ def run_insert_helper(logger,
 # ----------------------------------------------------------------------------------
 
 def run_select(logger,
-               benchmark_core_multiplier,
-               benchmark_globals,
-               benchmark_number_partitions,
-               bulk_data_partitions,
-               config,
-               cursors,
-               result_file,
-               sql_select,
-               trial_number):
+        benchmark_core_multiplier,
+        benchmark_globals,
+        benchmark_number_partitions,
+        bulk_data_partitions,
+        config,
+        cursors,
+        result_file,
+        sql_select,
+        trial_number):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
@@ -635,12 +636,12 @@ def run_select(logger,
     # partition_key = 0
     # WHILE partition_key < config_param "benchmark.number.partitions"
     #     IF config_param "benchmark.core.multiplier" = 0
-    #         DO run_select_helper(database connections(partition_key), 
-    #                              bulk_data_partitions(partition_key, 
+    #         DO run_select_helper(database connections(partition_key),
+    #                              bulk_data_partitions(partition_key,
     #                              partition_key)
     #     ELSE
-    #         DO run_select_helper(database connections(partition_key), 
-    #                              bulk_data_partitions(partition_key, 
+    #         DO run_select_helper(database connections(partition_key),
+    #                              bulk_data_partitions(partition_key,
     #                              partition_key) as a thread
     #     ENDIF
     # ENDWHILE
@@ -674,11 +675,11 @@ def run_select(logger,
 # ----------------------------------------------------------------------------------
 
 def run_select_helper(logger,
-                      benchmark_core_multiplier,
-                      bulk_size_partition,
-                      cursor,
-                      partition_key,
-                      sql_statement):
+        benchmark_core_multiplier,
+        bulk_size_partition,
+        cursor,
+        partition_key,
+        sql_statement):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
@@ -699,7 +700,7 @@ def run_select_helper(logger,
 
     # IF NOT count = size(bulk_data_partition)
     #     display an error message
-    # ENDIF     
+    # ENDIF
     if count != len(bulk_size_partition):
         logger.error("Number rows: expected=" + str(len(bulk_size_partition)) + " - found=" + str(count))
         sys.exit(1)
@@ -716,15 +717,15 @@ def run_select_helper(logger,
 # ----------------------------------------------------------------------------------
 
 def run_trial(logger,
-              benchmark_globals,
-              bulk_data_partitions,
-              config,
-              connections,
-              cursors,
-              result_file,
-              sql_create,
-              sql_drop,
-              trial_number):
+        benchmark_globals,
+        bulk_data_partitions,
+        config,
+        connections,
+        cursors,
+        result_file,
+        sql_create,
+        sql_drop,
+        trial_number):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
@@ -766,12 +767,12 @@ def run_trial(logger,
     logger.debug("last DDL statement=" + sql_drop)
 
     # RITE an entry for the action "trial" in the result file (config param "file.result.name")
-    create_result_measuring_point_end(logger, "trial", benchmark_globals, config, result_file, "", "", trial_number)
+    duration_ns = create_result_measuring_point_end(logger, "trial", benchmark_globals, config, result_file, "", "", trial_number)
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("End")
 
-    return benchmark_globals
+    return duration_ns
 
 
 # ----------------------------------------------------------------------------------
