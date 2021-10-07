@@ -8,7 +8,8 @@ rem ----------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
-echo 000
+set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
+
 echo ===============================================================================
 echo Start %0
 echo -------------------------------------------------------------------------------

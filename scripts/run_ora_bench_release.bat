@@ -11,7 +11,6 @@ setlocal EnableDelayedExpansion
 set ERRORLEVEL=
 
 set ORA_BENCH_BENCHMARK_COMMENT="Release"
-set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
 set ORA_BENCH_CONNECTION_HOST=localhost
 set ORA_BENCH_CONNECTION_PORT=1521
 

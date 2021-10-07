@@ -296,12 +296,22 @@ func runBenchmark() {
 	defer cancel()
 
 	/*
-	   trial_no = 0
-	   WHILE trial_no < config_param 'benchmark.trials'
-	       DO run_trial(database connections,
-	                    trial_no,
-	                    bulk_data_partitions)
-	   ENDWHILE
+		 trial_max = 0
+		 trial_min = 0
+		 trial_no = 0
+		 trial_sum = 0
+		 WHILE trial_no < config_param 'benchmark.trials'
+			   duration_trial = DO run_trial(database connections,
+											 trial_no,
+											 bulk_data_partitions)
+			   IF trial_max == 0 OR duration_trial > trial_max
+				  trial_max = duration_trial
+			   END IF
+			   IF trial_min == 0 OR duration_trial < trial_min
+				  trial_min = duration_trial
+			   END IF
+			   trial_sum + duration_trial
+		 ENDWHILE
 	*/
 	var duration int64
 	var trialMax int64 = 0
@@ -323,10 +333,10 @@ func runBenchmark() {
 	}
 
 	/*
-	   partition_no = 0
-	   WHILE partition_no < config_param 'benchmark.number.partitions'
-	       close the database connection
-	   ENDWHILE
+		 partition_key = 0
+		 WHILE partition_key < config_param 'benchmark.number.partitions'
+			   close the database connection
+		 ENDWHILE
 	*/
 	// n/a
 
@@ -341,9 +351,14 @@ func runBenchmark() {
 
 	resultWriter(configs, resultSlice)
 
+	// INFO  Duration (ms) trial min.    : trial_min
+	// INFO  Duration (ms) trial max.    : trial_max
+	// INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
 	log.Info("Duration (ms) trial min.    : ", math.Round(float64(trialMin/1000000)))
 	log.Info("Duration (ms) trial max.    : ", math.Round(float64(trialMax/1000000)))
 	log.Info("Duration (ms) trial average : ", math.Round(float64(trialSum/1000000/int64(trials))))
+
+	// INFO  Duration (ms) benchmark run : duration_benchmark
 	log.Info("Duration (ms) benchmark run : ", math.Round(float64(endBenchTs.Sub(startBenchTs).Nanoseconds()/1000000)))
 
 	log.Debug("End   runBenchmark()")
@@ -359,16 +374,18 @@ func runInsert(ctx context.Context, configs map[string]interface{}, trialNo int,
 	start := time.Now()
 
 	/*
-	   partition_no = 0
-	   WHILE partition_no < config_param 'benchmark.number.partitions'
-	       IF config_param 'benchmark.core.multiplier' == 0
-	           DO run_insert_helper(database connections(partition_no),
-	                   bulk_data_partitions(partition_no))
-	       ELSE
-	           DO run_insert_helper (database connections(partition_no),
-	                   bulk_data_partitions(partition_no)) as a thread
-	       ENDIF
-	   ENDWHILE
+		 partition_key = 0
+		 WHILE partition_key < config_param 'benchmark.number.partitions'
+			   IF config_param 'benchmark.core.multiplier' == 0
+				  DO run_insert_helper(database connections(partition_key),
+									   bulk_data_partitions(partition_key),
+									   partition_key)
+			   ELSE
+				  DO run_insert_helper(database connections(partition_key),
+									  bulk_data_partitions(partition_key),
+									  partition_key) as a thread
+			   ENDIF
+		 ENDWHILE
 	*/
 	benchmarkCoreMultiplier := configs["benchmark.core.multiplier"].(int)
 	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
@@ -378,9 +395,9 @@ func runInsert(ctx context.Context, configs map[string]interface{}, trialNo int,
 
 	for p := 0; p < benchmarkNumberPartitions; p++ {
 		if benchmarkCoreMultiplier == 0 {
-			runInsertHelper(benchmarkCoreMultiplier, configs, ctx, p, partitions[p], trialNo, &wg)
+			runInsertHelper(configs, ctx, p, partitions[p], trialNo, &wg)
 		} else {
-			go runInsertHelper(benchmarkCoreMultiplier, configs, ctx, p, partitions[p], trialNo, &wg)
+			go runInsertHelper(configs, ctx, p, partitions[p], trialNo, &wg)
 		}
 	}
 
@@ -404,7 +421,6 @@ func runInsert(ctx context.Context, configs map[string]interface{}, trialNo int,
 Helper function for inserting data into the database.
 */
 func runInsertHelper(
-	benchmarkCoreMultiplier int,
 	configs map[string]interface{},
 	ctx context.Context,
 	partition int,
@@ -412,34 +428,33 @@ func runInsertHelper(
 	trial int,
 	wg *sync.WaitGroup,
 ) {
-	log.Debug("Start runInsertHelper(): partition_key=", partition)
+	log.Debug("Start runInsertHelper()")
 
-	if benchmarkCoreMultiplier > 0 {
-		log.Info("Start runInsertHelper(): partition_key=", partition)
-	}
+	// INFO Start insert partition_key=partition_key
+	log.Info("Start insert partition_key=", partition)
 
 	defer wg.Done()
 
 	/*
-	   count = 0
-	   collection batch_collection = empty
-	   WHILE iterating through the collection bulk_data_partition
-	     count + 1
+		 count = 0
+		 collection batch_collection = empty
+		 WHILE iterating through the collection bulk_data_partition
+			   count + 1
 
-	     add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection
+			   add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection
 
-	     IF config_param 'benchmark.batch.size' > 0
-	         IF count modulo config param 'benchmark.batch.size' == 0
-	             execute the SQL statements in the collection batch_collection
-	             batch_collection = empty
-	         ENDIF
-	     ENDIF
+			   IF config_param 'benchmark.batch.size' > 0
+				  IF count modulo config param 'benchmark.batch.size' == 0
+					 execute the SQL statements in the collection batch_collection
+					 batch_collection = empty
+				  ENDIF
+			   ENDIF
 
-	     IF  config param 'benchmark.transaction.size' > 0
-	     AND count modulo config param 'benchmark.transaction.size' == 0
-	         commit
-	     ENDIF
-	   ENDWHILE
+			   IF  config param 'benchmark.transaction.size' > 0
+			   AND count modulo config param 'benchmark.transaction.size' == 0
+				   commit
+			   ENDIF
+		 ENDWHILE
 	*/
 	log.Debug(fmt.Sprintf("      doInsert(%2d) - connection.dsn=%v", partition, configs["connection.dsn"]))
 
@@ -470,9 +485,9 @@ func runInsertHelper(
 	}
 
 	/*
-	   IF collection batch_collection is not empty
-	     execute the SQL statements in the collection batch_collection
-	   ENDIF
+		 IF collection batch_collection is not empty
+			execute the SQL statements in the collection batch_collection
+		 ENDIF
 	*/
 
 	// commit
@@ -490,11 +505,10 @@ func runInsertHelper(
 		log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(db)", partition))
 	}(db)
 
-	if benchmarkCoreMultiplier > 0 {
-		log.Info("End   runInsertHelper(): partition_key=", partition)
-	}
+	// INFO End   insert partition_key=partition_key
+	log.Info("End   insert partition_key=", partition)
 
-	log.Debug("End   runInsertHelper(): partition_key=", partition)
+	log.Debug("End   runInsertHelper()")
 }
 
 /*
@@ -507,18 +521,18 @@ func runSelect(ctx context.Context, configs map[string]interface{}, trialNo int,
 	start := time.Now()
 
 	/*
-	   partition_no = 0
-	   WHILE partition_no < config_param 'benchmark.number.partitions'
-	       IF config_param 'benchmark.core.multiplier' == 0
-	           DO run_select_helper(database connections(partition_no),
-	                                bulk_data_partitions(partition_no,
-	                                partition_no)
-	       ELSE
-	           DO run_select_helper(database connections(partition_no),
-	                                bulk_data_partitions(partition_no,
-	                                partition_no) as a thread
-	       ENDIF
-	   ENDWHILE
+		 partition_key = 0
+		 WHILE partition_key < config_param 'benchmark.number.partitions'
+			   IF config_param 'benchmark.core.multiplier' == 0
+				  DO run_select_helper(database connections(partition_key),
+									   bulk_data_partitions(partition_key,
+									   partition_key)
+			   ELSE
+				  DO run_select_helper(database connections(partition_key),
+									   bulk_data_partitions(partition_key,
+									   partition_key) as a thread
+			   ENDIF
+		 ENDWHILE
 	*/
 	benchmarkCoreMultiplier := configs["benchmark.core.multiplier"].(int)
 	benchmarkNumberPartitions := configs["benchmark.number.partitions"].(int)
@@ -528,9 +542,9 @@ func runSelect(ctx context.Context, configs map[string]interface{}, trialNo int,
 
 	for p := 0; p < benchmarkNumberPartitions; p++ {
 		if benchmarkCoreMultiplier == 0 {
-			runSelectHelper(benchmarkCoreMultiplier, configs, ctx, len(partitions[p].keys), trialNo, p, &wg)
+			runSelectHelper(configs, ctx, len(partitions[p].keys), trialNo, p, &wg)
 		} else {
-			go runSelectHelper(benchmarkCoreMultiplier, configs, ctx, len(partitions[p].keys), trialNo, p, &wg)
+			go runSelectHelper(configs, ctx, len(partitions[p].keys), trialNo, p, &wg)
 		}
 	}
 
@@ -554,18 +568,16 @@ func runSelect(ctx context.Context, configs map[string]interface{}, trialNo int,
 Helper function for retrieving data from the database.
 */
 func runSelectHelper(
-	benchmarkCoreMultiplier int,
 	configs map[string]interface{},
 	ctx context.Context,
 	expect int,
 	trial int, partition int,
 	wg *sync.WaitGroup,
 ) {
-	log.Debug("Start runSelectHelper(): partition_key=", partition)
+	log.Debug("Start runSelectHelper()")
 
-	if benchmarkCoreMultiplier > 0 {
-		log.Info("Start runSelectHelper(): partition_key=", partition)
-	}
+	// INFO Start select partition_key=partition_key
+	log.Info("Start select partition_key=", partition)
 
 	defer wg.Done()
 
@@ -587,10 +599,10 @@ func runSelectHelper(
 	}
 
 	/*
-	   int count = 0;
-	   WHILE iterating through the result set
-	       count + 1
-	   ENDWHILE
+		 count = 0
+		 WHILE iterating through the result set
+			   count + 1
+		 ENDWHILE
 	*/
 	i := 0
 	for rows.Next() {
@@ -598,9 +610,9 @@ func runSelectHelper(
 	}
 
 	/*
-	   IF NOT count = size(bulk_data_partition)
-	       display an error message
-	   ENDIF
+		 IF NOT count = size(bulk_data_partition)
+			display an error message
+		 ENDIF
 	*/
 	if i != expect {
 		log.Fatal(
@@ -609,11 +621,10 @@ func runSelectHelper(
 				trial, partition, expect, i))
 	}
 
-	if benchmarkCoreMultiplier > 0 {
-		log.Info("End   runSelectHelper(): partition_key=", partition)
-	}
+	// INFO End   select partition_key=partition_key
+	log.Info("End   select partition_key=", partition)
 
-	log.Debug("End   runSelectHelper(): partition_key=", partition)
+	log.Debug("End   runSelectHelper()")
 }
 
 /*
@@ -662,13 +673,13 @@ func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, 
 		end:    endTrialTs}
 	resultPos++
 
-	var duration = endTrialTs.Sub(startTrialTs).Nanoseconds()
+	var duration_ns = endTrialTs.Sub(startTrialTs).Nanoseconds()
 
-	log.Info("Duration (ms) trial         : ", math.Round(float64(duration/1000000)))
+	log.Info("Duration (ms) trial         : ", math.Round(float64(duration_ns/1000000)))
 
 	log.Debug("End   runTrial()")
 
-	return duration
+	return duration_ns
 }
 
 func tsStr(t time.Time) string {
