@@ -407,6 +407,7 @@ insert_partition(
     file_bulk_length := Size
   } = Config
 ) ->
+  io:format("Start insert partition_key=~p~n", [artition]),
   #{connection_string := ConnectString} = Config,
   Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
   Start = os:timestamp(),
@@ -488,6 +489,7 @@ insert_partition(
   ok = dpi:var_release(maps:get(dataVar, Params)),
   ok = dpi:stmt_close(InsStmt, <<>>),
   ok = dpi:conn_close(Conn, [], <<>>),
+  io:format("End   insert partition_key=~p~n", [Partition]),
   Master
   !
   {
@@ -511,6 +513,7 @@ select_partition(
     connection_fetch_size := FetchSize
   } = Config
 ) ->
+  io:format("Start select partition_key=~p~n", [Partition]),
   #{connection_string := ConnectString} = Config,
   Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
   SelectSql = list_to_binary(io_lib:format("~s WHERE partition_key = ~p", [Select, Partition])),
@@ -523,6 +526,7 @@ select_partition(
   #{selectStmt := SelStmt} = Params,
   ok = dpi:stmt_close(SelStmt, <<>>),
   ok = dpi:conn_close(Conn, [], <<>>),
+  io:format("End   select partition_key=~p~n", [Partition]),
   Master
   !
   {

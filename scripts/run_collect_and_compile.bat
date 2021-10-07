@@ -8,7 +8,9 @@ rem ----------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
-set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
+if ["%ORA_BENCH_VCVARSALL_PATH%"] EQU [""] (
+    set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
+)
 
 echo ===============================================================================
 echo Start %0
@@ -31,6 +33,8 @@ echo ---------------------------------------------------------------------------
 echo GOROOT                     : %GOROOT%
 echo GRADLE_HOME                : %GRADLE_HOME%
 echo LD_LIBRARY_PATH            : %LD_LIBRARY_PATH%
+echo -------------------------------------------------------------------------------
+echo VCVARSALL_PATH             : %ORA_BENCH_VCVARSALL_PATH%
 echo -------------------------------------------------------------------------------
 echo:| TIME
 echo ===============================================================================

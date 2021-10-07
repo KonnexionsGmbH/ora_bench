@@ -24,10 +24,8 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
 )
 
 if ["%ORA_BENCH_VCVARSALL_PATH%"] EQU [""] (
-    set ORA_BENCH_VCVARSALL_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\"
+    set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
 )
-
-call %ORA_BENCH_VCVARSALL_PATH%vcvarsall.bat x64
 
 echo ===============================================================================
 echo Start %0
@@ -47,8 +45,21 @@ echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo -------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
 echo -------------------------------------------------------------------------------
+echo VCVARSALL_PATH             : %ORA_BENCH_VCVARSALL_PATH%
+echo -------------------------------------------------------------------------------
 echo:| TIME
 echo ===============================================================================
+
+echo --------------------------------------------------------------------------------
+echo Set environment variables for C / C++ compilation.
+echo --------------------------------------------------------------------------------
+if exist "%ORA_BENCH_BENCHMARK_VCVARSALL%" (
+    call "%ORA_BENCH_BENCHMARK_VCVARSALL%" x64
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+)
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     call lang\java\scripts\run_gradle

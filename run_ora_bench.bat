@@ -14,6 +14,8 @@ setlocal EnableDelayedExpansion
 
 set ORA_BENCH_BENCHMARK_COMMENT="Standard tests (locally)"
 
+set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
+
 if exist ora_bench.log del /f /q ora_bench.log
 if exist priv\ora_bench_result.csv del /f /q priv\ora_bench_result.csv
 if exist priv\ora_bench_result.tsv del /f /q priv\ora_bench_result.tsv
