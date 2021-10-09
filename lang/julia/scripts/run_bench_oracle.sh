@@ -2,7 +2,7 @@
 
 # ----------------------------------------------------------------------------------
 #
-# run_bench_jdbc_jl.sh: Oracle Benchmark based on Julia.
+# run_bench_oracle.sh: Oracle Benchmark based on Julia.
 #
 # ----------------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ fi
 echo "=============================================================================="
 echo "Start $0"
 echo "------------------------------------------------------------------------------"
-echo "ora_bench - Oracle benchmark - JDBC.jl and Julia."
+echo "ora_bench - Oracle benchmark - Oracle.jl and Julia."
 echo "------------------------------------------------------------------------------"
 echo "MULTIPLE_RUN               : ${ORA_BENCH_MULTIPLE_RUN}"
 echo "------------------------------------------------------------------------------"
@@ -54,7 +54,7 @@ if ! java -jar priv/libs/ora_bench_java.jar setup_toml; then
     exit 255
 fi
 
-if ! julia --threads 32 lang/julia/OraBenchJdbc.jl priv/properties/ora_bench_toml.properties; then
+if ! julia --threads 32 lang/julia/OraBenchOracle.jl priv/properties/ora_bench_toml.properties; then
     exit 255
 fi
 

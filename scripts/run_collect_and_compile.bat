@@ -23,10 +23,10 @@ echo ---------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON       : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_GODROR_GO              : %ORA_BENCH_RUN_GODROR_GO%
 echo RUN_JDBC_JAVA              : %ORA_BENCH_RUN_JDBC_JAVA%
-echo RUN_JDBC_JL_JULIA          : %ORA_BENCH_RUN_JDBC_JL_JULIA%
+echo RUN_JDBC_JULIA             : %ORA_BENCH_RUN_JDBC_JULIA%
 echo RUN_JDBC_KOTLIN            : %ORA_BENCH_RUN_JDBC_KOTLIN%
 echo RUN_ODPI_C                 : %ORA_BENCH_RUN_ODPI_C%
-echo RUN_ORACLE_JL_JULIA        : %ORA_BENCH_RUN_ORACLE_JL_JULIA%
+echo RUN_ORACLE_JULIA           : %ORA_BENCH_RUN_ORACLE_JULIA%
 echo RUN_ORANIF_ELIXIR          : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG          : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo -------------------------------------------------------------------------------
