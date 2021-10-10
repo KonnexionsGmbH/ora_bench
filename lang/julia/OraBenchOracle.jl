@@ -152,7 +152,7 @@ function create_result(
     end
 
     @debug "End   $(function_name)"
-    
+
     return duration_ns
 end
 
@@ -213,7 +213,7 @@ function create_result_measuring_point_end(
     end
 
     @debug "End   $(function_name)"
-    
+
     return duration_ns
 end
 
@@ -469,15 +469,20 @@ function run_benchmark(config::Dict{String,Any})
     Oracle.close(pool)
 
     # WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
-    duration_ns_benchmark = create_result_measuring_point_end("benchmark", benchmark_globals, config, result_file)
-        
+    duration_ns_benchmark = create_result_measuring_point_end(
+        "benchmark",
+        benchmark_globals,
+        config,
+        result_file,
+    )
+
     # INFO  Duration (ms) trial min.    : trial_min
     # INFO  Duration (ms) trial max.    : trial_max
     # INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
     @info "Duration (ms) trial min.    : $(round(trial_min / 1000000))"
     @info "Duration (ms) trial max.    : $(round(trial_max / 1000000))"
     @info "Duration (ms) trial average : $(round(trial_sum / 1000000 / parse(Int64, config["DEFAULT"]["benchmark_trials"])))"
-    
+
     # INFO  Duration (ms) benchmark run : duration_benchmark
     @info "Duration (ms) benchmark run : $(round(duration_ns_benchmark / 1000000))"
 
@@ -536,8 +541,8 @@ function run_insert(
         end
     else
         if thread_type_spawn == true
-         @sync for partition_key = 1:benchmark_number_partitions
-                 Threads.@spawn run_insert_helper(
+            @sync for partition_key = 1:benchmark_number_partitions
+                Threads.@spawn run_insert_helper(
                     benchmark_batch_size,
                     benchmark_core_multiplier,
                     benchmark_transaction_size,
@@ -546,10 +551,10 @@ function run_insert(
                     partition_key,
                     sql_insert,
                 )
-         end
-         else
-         @threads for partition_key = 1:benchmark_number_partitions
-                 run_insert_helper(
+            end
+        else
+            @threads for partition_key = 1:benchmark_number_partitions
+                run_insert_helper(
                     benchmark_batch_size,
                     benchmark_core_multiplier,
                     benchmark_transaction_size,
@@ -558,8 +563,8 @@ function run_insert(
                     partition_key,
                     sql_insert,
                 )
-         end
-         end
+            end
+        end
     end
 
     # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
@@ -601,16 +606,16 @@ function run_insert_helper(
       collection batch_collection = empty
       WHILE iterating through the collection bulk_data_partition
             count + 1
-          
+              
             add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection 
-          
+              
             IF config_param 'benchmark.batch.size' > 0
                IF count modulo config param 'benchmark.batch.size' == 0 
                   execute the SQL statements in the collection batch_collection
                   batch_collection = empty
                ENDIF                    
             ENDIF                
-          
+              
             IF  config param 'benchmark.transaction.size' > 0 
             AND count modulo config param 'benchmark.transaction.size' == 0
                 commit
@@ -731,8 +736,8 @@ function run_select(
         end
     else
         if thread_type_spawn == true
-            @sync  for partition_key = 1:benchmark_number_partitions
-                  Threads.@spawn run_select_helper(
+            @sync for partition_key = 1:benchmark_number_partitions
+                Threads.@spawn run_select_helper(
                     benchmark_core_multiplier,
                     connections[partition_key],
                     size(bulk_data_partitions[partition_key], 1),
@@ -740,17 +745,17 @@ function run_select(
                     sql_select,
                 )
             end
-            else
-            @threads  for partition_key = 1:benchmark_number_partitions
-                   run_select_helper(
+        else
+            @threads for partition_key = 1:benchmark_number_partitions
+                run_select_helper(
                     benchmark_core_multiplier,
                     connections[partition_key],
                     size(bulk_data_partitions[partition_key], 1),
                     partition_key,
                     sql_select,
                 )
-                end
-                end
+            end
+        end
     end
 
     # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
@@ -925,7 +930,7 @@ function run_trial(
     )
 
     @debug "End   $(function_name) - trial_number=$(trial_number)"
-    
+
     return duration_ns
 end
 

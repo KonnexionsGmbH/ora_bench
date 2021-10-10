@@ -54,7 +54,8 @@ if ! java -jar priv/libs/ora_bench_java.jar setup_toml; then
     exit 255
 fi
 
-if ! julia --threads 32 lang/julia/OraBenchJdbc.jl priv/properties/ora_bench_toml.properties; then
+export JULIA_COPY_STACKS=yes
+if ! julia --threads 8 lang/julia/OraBenchJdbc.jl priv/properties/ora_bench_toml.properties; then
     exit 255
 fi
 

@@ -12,6 +12,7 @@ Pkg.add("CSV")
 Pkg.add("DataFrames")
 Pkg.add("Formatting")
 Pkg.add("JDBC")
+Pkg.add("Oracle")
 Pkg.add("TimesDates")
 
 using Base.Threads
@@ -21,8 +22,11 @@ using Dates
 using Formatting
 using JDBC
 using Logging
+using Oracle
 using TOML
 using TimesDates
+
+thread_type_spawn = true
 
 # ----------------------------------------------------------------------------------
 # Creating the database connections.
@@ -34,17 +38,21 @@ function create_connections(
 )::Dict{Int64,JDBC.Connection}
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
-    
+
     connection_user = config["DEFAULT"]["connection_user"]::String
     connection_password = config["DEFAULT"]["connection_password"]::String
-    connection_string = "jdbc:oracle:thin:@//$(config["DEFAULT"]["connection_host"]::String):$(config["DEFAULT"]["connection_port"]::String)/$(config["DEFAULT"]["connection_service"]::String)?oracle.net.disableOob=true"::String
+    connection_string = 
+        "jdbc:oracle:thin:@//$(config["DEFAULT"]["connection_host"]::String):$(config["DEFAULT"]["connection_port"]::String)/$(config["DEFAULT"]["connection_service"]::String)?oracle.net.disableOob=true"::String
 
     connections = Dict{Int64,JDBC.Connection}()
-
+    
     for partition_key = 1:benchmark_number_partitions
         try
             @debug "      $(function_name) Connection #$(partition_key) - to be openend"
-            connections[partition_key] = JDBC.Connection(connection_string,Dict("username" => connection_user,"password" => connection_password))
+            connections[partition_key] = JDBC.Connection(
+                connection_string,
+                 props = Dict("user" => connection_user, "password" => connection_password),
+            )
             @debug "      $(function_name) Connection #$(partition_key) - is now open"
         catch reason
             @info "partition_key      =$(partition_key)"
@@ -145,7 +153,7 @@ function create_result(
     end
 
     @debug "End   $(function_name)"
-    
+
     return duration_ns
 end
 
@@ -206,7 +214,7 @@ function create_result_measuring_point_end(
     end
 
     @debug "End   $(function_name)"
-    
+
     return duration_ns
 end
 
@@ -404,7 +412,7 @@ function run_benchmark(config::Dict{String,Any})
 
     JDBC.usedriver("priv/libs/ojdbc.jar")
     JDBC.init()
-    
+
     connections = create_connections(benchmark_number_partitions, config)
 
     #=
@@ -465,15 +473,20 @@ function run_benchmark(config::Dict{String,Any})
     JDBC.destroy()
 
     # WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
-    duration_ns_benchmark = create_result_measuring_point_end("benchmark", benchmark_globals, config, result_file)
-        
+    duration_ns_benchmark = create_result_measuring_point_end(
+        "benchmark",
+        benchmark_globals,
+        config,
+        result_file,
+    )
+
     # INFO  Duration (ms) trial min.    : trial_min
     # INFO  Duration (ms) trial max.    : trial_max
     # INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
     @info "Duration (ms) trial min.    : $(round(trial_min / 1000000))"
     @info "Duration (ms) trial max.    : $(round(trial_max / 1000000))"
     @info "Duration (ms) trial average : $(round(trial_sum / 1000000 / parse(Int64, config["DEFAULT"]["benchmark_trials"])))"
-    
+
     # INFO  Duration (ms) benchmark run : duration_benchmark
     @info "Duration (ms) benchmark run : $(round(duration_ns_benchmark / 1000000))"
 
@@ -531,9 +544,21 @@ function run_insert(
             )
         end
     else
-        @sync begin
-            @async for partition_key = 1:benchmark_number_partitions
+        if thread_type_spawn == true
+            @sync for partition_key = 1:benchmark_number_partitions
                 Threads.@spawn run_insert_helper(
+                    benchmark_batch_size,
+                    benchmark_core_multiplier,
+                    benchmark_transaction_size,
+                    bulk_data_partitions[partition_key],
+                    connections[partition_key],
+                    partition_key,
+                    sql_insert,
+                )
+            end
+        else
+            @threads for partition_key = 1:benchmark_number_partitions
+                run_insert_helper(
                     benchmark_batch_size,
                     benchmark_core_multiplier,
                     benchmark_transaction_size,
@@ -585,16 +610,16 @@ function run_insert_helper(
       collection batch_collection = empty
       WHILE iterating through the collection bulk_data_partition
             count + 1
-          
+              
             add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection 
-          
+              
             IF config_param 'benchmark.batch.size' > 0
                IF count modulo config param 'benchmark.batch.size' == 0 
                   execute the SQL statements in the collection batch_collection
                   batch_collection = empty
                ENDIF                    
             ENDIF                
-          
+              
             IF  config param 'benchmark.transaction.size' > 0 
             AND count modulo config param 'benchmark.transaction.size' == 0
                 commit
@@ -714,9 +739,19 @@ function run_select(
             )
         end
     else
-        @sync begin
-            @async for partition_key = 1:benchmark_number_partitions
+        if thread_type_spawn == true
+            @sync for partition_key = 1:benchmark_number_partitions
                 Threads.@spawn run_select_helper(
+                    benchmark_core_multiplier,
+                    connections[partition_key],
+                    size(bulk_data_partitions[partition_key], 1),
+                    partition_key,
+                    sql_select,
+                )
+            end
+        else
+            @threads for partition_key = 1:benchmark_number_partitions
+                run_select_helper(
                     benchmark_core_multiplier,
                     connections[partition_key],
                     size(bulk_data_partitions[partition_key], 1),
@@ -899,7 +934,7 @@ function run_trial(
     )
 
     @debug "End   $(function_name) - trial_number=$(trial_number)"
-    
+
     return duration_ns
 end
 
