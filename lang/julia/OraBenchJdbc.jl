@@ -45,6 +45,8 @@ function create_connections(
         "jdbc:oracle:thin:@//$(config["DEFAULT"]["connection_host"]::String):$(config["DEFAULT"]["connection_port"]::String)/$(config["DEFAULT"]["connection_service"]::String)?oracle.net.disableOob=true"::String
 
     connections = Dict{Int64,JDBC.Connection}()
+    prepared_statements = Dict{Int64,JDBC.prepared_statements}()
+    statements = Dict{Int64,JDBC.Statement}()
     
     for partition_key = 1:benchmark_number_partitions
         try
@@ -53,6 +55,8 @@ function create_connections(
                 connection_string,
                  props = Dict("user" => connection_user, "password" => connection_password),
             )
+            prepared_statements[partition_key] = JDBC.preparedStement(connections[partition_key],config["DEFAULT"]["sql_insert"].replace(":key", "?").replace(":data", "?"))
+            statements[partition_key] = JDBC.createStatement(connections[partition_key])
             @debug "      $(function_name) Connection #$(partition_key) - is now open"
         catch reason
             @info "partition_key      =$(partition_key)"
@@ -66,7 +70,7 @@ function create_connections(
     end
 
     @debug "End   $(function_name)"
-    return connections
+    return (connections,prepared_statements,statements)
 end
 
 # ----------------------------------------------------------------------------------
@@ -413,7 +417,7 @@ function run_benchmark(config::Dict{String,Any})
     JDBC.usedriver("priv/libs/ojdbc.jar")
     JDBC.init()
 
-    connections = create_connections(benchmark_number_partitions, config)
+    (connections,prepared_statements,statements) = create_connections(benchmark_number_partitions, config)
 
     #=
       trial_max = 0
