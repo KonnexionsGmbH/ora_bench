@@ -35,7 +35,8 @@ thread_type_spawn = true
 function create_connections(
     benchmark_number_partitions::Int64, 
     config::Dict{String,Any}, 
-)::Dict{Int64,JDBC.Connection}
+    sql_insert::String
+)::Tuple{Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}},Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}},Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}}}
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
@@ -44,19 +45,19 @@ function create_connections(
     connection_string = 
         "jdbc:oracle:thin:@//$(config["DEFAULT"]["connection_host"]::String):$(config["DEFAULT"]["connection_port"]::String)/$(config["DEFAULT"]["connection_service"]::String)?oracle.net.disableOob=true"::String
 
-    connections = Dict{Int64,JDBC.Connection}()
-    prepared_statements = Dict{Int64,JDBC.prepared_statements}()
-    statements = Dict{Int64,JDBC.Statement}()
+    connections = Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}}()
+    statements = Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}}()
+    prepared_statements = Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}}()
     
     for partition_key = 1:benchmark_number_partitions
         try
             @debug "      $(function_name) Connection #$(partition_key) - to be openend"
-            connections[partition_key] = JDBC.Connection(
+            connections[partition_key] = JDBC.DriverManager.getConnection(
                 connection_string,
-                 props = Dict("user" => connection_user, "password" => connection_password),
+                 Dict("user" => connection_user, "password" => connection_password),
             )
-            prepared_statements[partition_key] = JDBC.preparedStement(connections[partition_key],config["DEFAULT"]["sql_insert"].replace(":key", "?").replace(":data", "?"))
             statements[partition_key] = JDBC.createStatement(connections[partition_key])
+            prepared_statements[partition_key] = JDBC.prepareStatement(connections[partition_key],sql_insert)
             @debug "      $(function_name) Connection #$(partition_key) - is now open"
         catch reason
             @info "partition_key      =$(partition_key)"
@@ -70,7 +71,8 @@ function create_connections(
     end
 
     @debug "End   $(function_name)"
-    return (connections,prepared_statements,statements)
+    
+    (connections,statements,prepared_statements)
 end
 
 # ----------------------------------------------------------------------------------
@@ -413,11 +415,16 @@ function run_benchmark(config::Dict{String,Any})
     # create a separate database connection (without auto commit behaviour) for each partition
     benchmark_number_partitions = 
         parse(Int64, config["DEFAULT"]["benchmark_number_partitions"])::Int64
-
+        
     JDBC.usedriver("priv/libs/ojdbc.jar")
     JDBC.init()
 
-    (connections,prepared_statements,statements) = create_connections(benchmark_number_partitions, config)
+    sql_insert = replace(
+        replace(config["DEFAULT"]["sql_insert"], ":key" => "?"),
+        ":data" => "?",
+    )::String
+        
+    (connections,statements,prepared_statements) = create_connections(benchmark_number_partitions, config, sql_insert)
 
     #=
       trial_max = 0
@@ -447,7 +454,10 @@ function run_benchmark(config::Dict{String,Any})
             bulk_data_partitions,
             config,
             connections,
+            prepared_statements,
             result_file,
+            sql_insert,
+            statements,
             trial_number,
         )
 
@@ -510,7 +520,8 @@ function run_insert(
     benchmark_transaction_size::Int64, 
     bulk_data_partitions::Dict{Int64,DataFrames.DataFrame}, 
     config::Dict{String,Any}, 
-    connections::Dict{Int64,Oracle.Connection}, 
+    connections::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}}, 
+    prepared_statements::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}}, 
     result_file::IOStream, 
     sql_insert::String, 
     trial_number::Int64, 
@@ -544,6 +555,7 @@ function run_insert(
                 bulk_data_partitions[partition_key],
                 connections[partition_key],
                 partition_key,
+                prepared_statements[partition_key],
                 sql_insert,
             )
         end
@@ -557,6 +569,7 @@ function run_insert(
                     bulk_data_partitions[partition_key],
                     connections[partition_key],
                     partition_key,
+                    prepared_statements[partition_key],
                     sql_insert,
                 )
             end
@@ -569,6 +582,7 @@ function run_insert(
                     bulk_data_partitions[partition_key],
                     connections[partition_key],
                     partition_key,
+                    prepared_statements[partition_key],
                     sql_insert,
                 )
             end
@@ -599,8 +613,9 @@ function run_insert_helper(
     benchmark_core_multiplier::Int64, 
     benchmark_transaction_size::Int64, 
     bulk_data_partition::DataFrames.DataFrame, 
-    connection::Oracle.Connection, 
+    connection::JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}, 
     partition_key::Int64, 
+    prepared_statement::JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}, 
     sql_insert::String, 
 )
     function_name = string(StackTraces.stacktrace()[1].func)
@@ -630,39 +645,31 @@ function run_insert_helper(
             ENDIF    
       ENDWHILE
     =#
-    stmt = Oracle.Stmt(connection, sql_insert)::Oracle.Stmt{Oracle.ORA_STMT_TYPE_INSERT}
 
     count = 0
-    batch_collection_keys = Vector{String}()
-    batch_collection_data = Vector{String}()
 
     for bulk_data_row in eachrow(bulk_data_partition)
+        JDBC.setString(prepared_statement, 1, bulk_data_row.key);
+        JDBC.setString(prepared_statement, 2, bulk_data_row.data);
+
         count += 1
 
-        if benchmark_batch_size == 1
-            stmt[:1] = bulk_data_row.key
-            stmt[:2] = bulk_data_row.data
-            Oracle.execute(stmt)
+#         if benchmark_batch_size == 1
+        if benchmark_batch_size >= 0
+            JDBC.executeUpdate(prepared_statement)
         else
-            push!(batch_collection_keys, bulk_data_row.key)
-            push!(batch_collection_data, bulk_data_row.data)
+            JDBC.addBatch(prepared_statement)
             if benchmark_batch_size > 0 && mod(count, benchmark_batch_size) == 0
                 @debug "      $(function_name) - partition_key=$(partition_key) - before bulk"
-                Oracle.execute_many(
-                    connection,
-                    sql_insert,
-                    [batch_collection_keys, batch_collection_data],
-                )
+                JDBC.executeBatch()
                 @debug "      $(function_name) - partition_key=$(partition_key) - after  bulk"
-                batch_collection_keys = Vector{String}()
-                batch_collection_data = Vector{String}()
             end
         end
 
         if benchmark_transaction_size > 0
             if mod(count, benchmark_transaction_size) == 0
                 @debug "      $(function_name) - partition_key=$(partition_key) - before commit"
-                Oracle.execute(connection, "commit")
+                JDBC.commit(connection)
                 @debug "      $(function_name) - partition_key=$(partition_key) - after  commit"
             end
         end
@@ -673,22 +680,16 @@ function run_insert_helper(
          execute the SQL statements in the collection batch_collection
       ENDIF
     =#
-    if size(batch_collection_keys, 1) != 0
+    if benchmark_batch_size > 0 && mod(count, benchmark_batch_size) > 0
         @debug "      $(function_name) - partition_key=$(partition_key) - before bulk final"
-        Oracle.execute_many(
-            connection,
-            sql_insert,
-            [batch_collection_keys, batch_collection_data],
-        )
+        JDBC.executeBatch()
         @debug "      $(function_name) - partition_key=$(partition_key) - after  bulk final"
     end
 
     # commit
     @debug "      $(function_name) - partition_key=$(partition_key) - before commit - final"
-    Oracle.execute(connection, "commit")
+    JDBC.commit(connection)
     @debug "      $(function_name) - partition_key=$(partition_key) - after  commit - final"
-
-    Oracle.close(stmt)
 
     # INFO End   insert partition_key=partition_key
     @info "End   insert partition_key=$(partition_key)"
@@ -707,9 +708,9 @@ function run_select(
     benchmark_number_partitions::Int64, 
     bulk_data_partitions::Dict{Int64,DataFrames.DataFrame}, 
     config::Dict{String,Any}, 
-    connections::Dict{Int64,Oracle.Connection}, 
     result_file::IOStream, 
     sql_select::String, 
+    statements::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}}, 
     trial_number::Int64, 
 )
     function_name = string(StackTraces.stacktrace()[1].func)
@@ -736,10 +737,10 @@ function run_select(
         for partition_key = 1:benchmark_number_partitions
             run_select_helper(
                 benchmark_core_multiplier,
-                connections[partition_key],
                 size(bulk_data_partitions[partition_key], 1),
                 partition_key,
                 sql_select,
+                statements[partition_key],
             )
         end
     else
@@ -747,21 +748,21 @@ function run_select(
             @sync for partition_key = 1:benchmark_number_partitions
                 Threads.@spawn run_select_helper(
                     benchmark_core_multiplier,
-                    connections[partition_key],
                     size(bulk_data_partitions[partition_key], 1),
                     partition_key,
                     sql_select,
+                    statements[partition_key],
                 )
             end
         else
             @threads for partition_key = 1:benchmark_number_partitions
                 run_select_helper(
                     benchmark_core_multiplier,
-                    connections[partition_key],
                     size(bulk_data_partitions[partition_key], 1),
                     partition_key,
                     sql_select,
-                )
+                    statements[partition_key],
+            )
             end
         end
     end
@@ -787,10 +788,10 @@ end
 
 function run_select_helper(
     benchmark_core_multiplier::Int64, 
-    connection::Oracle.Connection, 
     count_expected::Int64, 
     partition_key::Int64, 
     sql_select::String, 
+    statement::JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}, 
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
@@ -799,10 +800,10 @@ function run_select_helper(
     @info "Start select partition_key=$(partition_key)"
 
     # execute the SQL statement in config param 'sql.select'
-    stmt = Oracle.Stmt(
-        connection,
+    result_set = JDBC.executeQuery(
+        statement,
         sql_select * " where partition_key = $(partition_key - 1)",
-    )::Oracle.Stmt{Oracle.ORA_STMT_TYPE_SELECT}
+    )
 
     #=
       count = 0
@@ -812,11 +813,9 @@ function run_select_helper(
     =#
     count = 0
 
-    Oracle.query(stmt) do cursor
-        for row in cursor
+        for _ in result_set
             count += 1
         end
-    end
 
     #=
       IF NOT count = size(bulk_data_partition)
@@ -843,8 +842,11 @@ function run_trial(
     benchmark_globals::Vector{Any}, 
     bulk_data_partitions::Dict{Int64,DataFrames.DataFrame}, 
     config::Dict{String,Any}, 
-    connections::Dict{Int64,Oracle.Connection}, 
+    connections::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}}, 
+    prepared_statements::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}}, 
     result_file::IOStream, 
+    sql_insert::String, 
+    statements::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}}, 
     trial_number::Int64, 
 )::Int64
     function_name = string(StackTraces.stacktrace()[1].func)
@@ -866,11 +868,11 @@ function run_trial(
     sql_drop = config["DEFAULT"]["sql_drop"]
 
     try
-        Oracle.execute(connections[1], sql_create)
+        JDBC.executeUpdate(statements[1], sql_create)
         @debug "last DDL statement=$(sql_create)"
     catch
-        Oracle.execute(connections[1], sql_drop)
-        Oracle.execute(connections[1], sql_create)
+        JDBC.executeUpdate(statements[1], sql_drop)
+        JDBC.executeUpdate(statements[1], sql_create)
         @debug "last DDL statement after DROP=$(sql_create)"
     end
 
@@ -886,11 +888,6 @@ function run_trial(
     benchmark_transaction_size = 
         parse(Int64, config["DEFAULT"]["benchmark_transaction_size"])
 
-    sql_insert = replace(
-        replace(config["DEFAULT"]["sql_insert"], ":key" => ":1"),
-        ":data" => ":2",
-    )::String
-
     run_insert(
         benchmark_batch_size,
         benchmark_core_multiplier,
@@ -900,6 +897,7 @@ function run_trial(
         bulk_data_partitions,
         config,
         connections,
+        prepared_statements,
         result_file,
         sql_insert,
         trial_number,
@@ -918,14 +916,14 @@ function run_trial(
         benchmark_number_partitions,
         bulk_data_partitions,
         config,
-        connections,
         result_file,
         sql_select,
+        statements,
         trial_number,
     )
 
     # drop the database table (config param 'sql.drop')
-    Oracle.execute(connections[1], sql_drop)
+    JDBC.executeUpdate(statements[1], sql_drop)
     @debug "last DDL statement=$(sql_drop)"
 
     # WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
