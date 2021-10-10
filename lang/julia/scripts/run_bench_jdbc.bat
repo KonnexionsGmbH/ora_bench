@@ -2,7 +2,7 @@
 
 rem --------------------------------------------------------------------------------
 rem
-rem run_bench_oracle_jl.bat: Oracle Benchmark based on Julia.
+rem run_bench_jdbc.bat: Oracle Benchmark based on Julia.
 rem
 rem --------------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
 echo ===============================================================================
 echo Start %0
 echo -------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - Oracle.jl and Julia.
+echo ora_bench - Oracle benchmark - JDBC.jl and Julia.
 echo -------------------------------------------------------------------------------
 echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
 echo -------------------------------------------------------------------------------
@@ -58,9 +58,9 @@ if %ERRORLEVEL% neq 0 (
     exit -1073741510
 )
 
-julia --threads 32 lang\julia\OraBenchOracle.jl priv\properties\ora_bench_toml.properties
+julia --threads 32 lang\julia\OraBenchJdbc.jl priv\properties\ora_bench_toml.properties
 if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'julia OraBenchOracle.jl' was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'julia OraBenchJdbc.jl' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 

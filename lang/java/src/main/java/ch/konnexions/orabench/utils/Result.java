@@ -51,9 +51,6 @@ public class Result {
     private LocalDateTime lastTrial;
 
     private long lastTrialNano;
-    private long maxTrialNano = 0L;
-    private long minTrialNano = 0L;
-    private long sumTrialNano = 0L;
 
     private CSVPrinter resultFile;
 
@@ -132,8 +129,9 @@ public class Result {
      * End of the whole benchmark run.
      *
      * @param benchmarkTrials
+     * @return duration (nanoseconds)
      */
-    public final void endBenchmark(int benchmarkTrials) {
+    public final long endBenchmark(int benchmarkTrials) {
         if (isDebug) {
             logger.debug("Start");
         }
@@ -152,15 +150,11 @@ public class Result {
             e.printStackTrace();
         }
 
-        logger.info("Duration (ms) trial min.    : " + (long) Precision.round(minTrialNano / 1000000.0, 0));
-        logger.info("Duration (ms) trial max.    : " + (long) Precision.round(maxTrialNano / 1000000.0, 0));
-        logger.info("Duration (ms) trial average : "
-                + (long) Precision.round(sumTrialNano / 1000000.0 / benchmarkTrials, 0));
-        logger.info("Duration (ms) benchmark run : " + (long) Precision.round(duration / 1000000.0, 0));
-
         if (isDebug) {
             logger.debug("End");
         }
+
+        return duration;
     }
 
     /**
@@ -209,23 +203,14 @@ public class Result {
      * End of the current trial.
      *
      * @param trialNo the current trial number
+     * @return duration (nanoseconds)
      */
-    public final void endTrial(int trialNo) {
+    public final long endTrial(int trialNo) {
         if (isDebug) {
             logger.debug("Start");
         }
 
         long duration = System.nanoTime() - lastTrialNano;
-
-        if ((maxTrialNano == 0) || (maxTrialNano < duration)) {
-            maxTrialNano = duration;
-        }
-
-        if ((minTrialNano == 0) || (minTrialNano > duration)) {
-            minTrialNano = duration;
-        }
-
-        sumTrialNano += duration;
 
         createMeasuringPoint(trialNo, lastTrial, LocalDateTime.now(), duration);
 
@@ -234,6 +219,9 @@ public class Result {
         if (isDebug) {
             logger.debug("End");
         }
+        ;
+
+        return duration;
     }
 
     private void openResultFile() {

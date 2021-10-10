@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.math3.util.Precision;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -211,8 +212,10 @@ public class OraBench {
                 String keyValue = record.get("key");
                 if (!(keyValue.equals("key"))) {
                     /*
-                     * partition key = modulo (ASCII value of 1st byte of key 251 + ASCII value of
-                     * 2nd byte of key), number partitions (config param
+                     * partition key = modulo (ASCII value of 1st byte of key 
+                     *                       * 251 
+                     *                       + ASCII value of 2nd byte of key), 
+                     *                         number partitions (config param
                      * 'benchmark.number.partitions')
                      */
                     partitionKey = (keyValue.charAt(0) * 251 + keyValue.charAt(1)) % numberPartitions;
@@ -250,7 +253,7 @@ public class OraBench {
             logger.debug("Start");
         }
 
-        // save the current time as the start of the 'benchmark' action
+        // save the current time as the start time of the 'benchmark' action
         Result result = new Result(config);
 
         int benchmarkTrials = config.getBenchmarkTrials();
@@ -271,16 +274,46 @@ public class OraBench {
         ArrayList<Statement> statements = (ArrayList<Statement>) databaseObjects.get(2);
 
         /*
-         * trial_no = 0 WHILE trial_no < config_param 'benchmark.trials' DO
-         * run_trial(database connections, trial_no, bulk_data_partitions) ENDWHILE
+         * trial_max = 0 
+         * trial_min = 0 
+         * trial_no = 0 
+         * trial_sum = 0 
+         * WHILE trial_no < config_param 'benchmark.trials' 
+         *       duration_trial = DO run_trial(database connections, 
+         *                                     trial_no, 
+         *                                     bulk_data_partitions) 
+         *       IF trial_max == 0 OR duration_trial > trial_max 
+         *          trial_max = duration_trial 
+         *       END IF 
+         *       IF trial_min == 0 OR duration_trial < trial_min 
+         *          trial_min = duration_trial 
+         *       END IF 
+         *       trial_sum + duration_trial 
+         * ENDWHILE
          */
+        long maxTrialNano = 0L;
+        long minTrialNano = 0L;
+        long sumTrialNano = 0L;
+
         for (int i = 1; i <= benchmarkTrials; i++) {
-            runTrial(connections, preparedStatements, statements, i, bulkDataPartitions, result);
+            long durationTrial = runTrial(connections, preparedStatements, statements, i, bulkDataPartitions, result);
+
+            if ((maxTrialNano == 0) || (maxTrialNano < durationTrial)) {
+                maxTrialNano = durationTrial;
+            }
+
+            if ((minTrialNano == 0) || (minTrialNano > durationTrial)) {
+                minTrialNano = durationTrial;
+            }
+
+            sumTrialNano += durationTrial;
         }
 
         /*
-         * partition_no = 0 WHILE partition_no < config_param
-         * 'benchmark.number.partitions' close the database connection ENDWHILE
+         * partition_key = 0 
+         * WHILE partition_key < config_param 'benchmark.number.partitions' 
+         *       close the database connection 
+         * ENDWHILE
          */
         for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
             try {
@@ -294,7 +327,19 @@ public class OraBench {
 
         // WRITE an entry for the action 'benchmark' in the result file (config param
         // 'file.result.name')
-        result.endBenchmark(benchmarkTrials);
+        long durationBenchmark = result.endBenchmark(benchmarkTrials);
+
+        // INFO Duration (ms) trial min. : trial_min
+        // INFO Duration (ms) trial max. : trial_max
+        // INFO Duration (ms) trial average : trial_sum / config_param
+        // 'benchmark.trials'
+        logger.info("Duration (ms) trial min.    : " + (long) Precision.round(minTrialNano / 1000000.0, 0));
+        logger.info("Duration (ms) trial max.    : " + (long) Precision.round(maxTrialNano / 1000000.0, 0));
+        logger.info("Duration (ms) trial average : "
+                + (long) Precision.round(sumTrialNano / 1000000.0 / benchmarkTrials, 0));
+
+        // INFO Duration (ms) benchmark run : duration_benchmark
+        logger.info("Duration (ms) benchmark run : " + (long) Precision.round(durationBenchmark / 1000000.0, 0));
 
         if (isDebug) {
             logger.debug("End");
@@ -316,16 +361,22 @@ public class OraBench {
             logger.debug("Start");
         }
 
-        // save the current time as the start of the 'query' action
+        // save the current time as the start time of the 'query' action
         result.startQuery();
 
         /*
-         * partition_no = 0 WHILE partition_no < config_param
-         * 'benchmark.number.partitions' IF config_param 'benchmark.core.multiplier' = 0
-         * DO run_insert_helper(database connections(partition_no),
-         * bulk_data_partitions(partition_no)) ELSE DO run_insert_helper (database
-         * connections(partition_no), bulk_data_partitions(partition_no)) as a thread
-         * ENDIF ENDWHILE
+         * partition_key = 0 
+         * WHILE partition_key < config_param 'benchmark.number.partitions' 
+         *       IF config_param 'benchmark.core.multiplier' == 0
+         *          DO run_insert_helper(database connections(partition_key),
+         *                               bulk_data_partitions(partition_key), 
+         *                               partition_key) 
+         *       ELSE 
+         *          DO run_insert_helper(database connections(partition_key),
+         *                               bulk_data_partitions(partition_key), 
+         *                               partition_key) as a thread 
+         *       ENDIF
+         * ENDWHILE
          */
         if (config.getBenchmarkCoreMultiplier() > 0) {
             executorService = Executors.newFixedThreadPool(config.getBenchmarkNumberPartitions());
@@ -372,31 +423,35 @@ public class OraBench {
     public static void runInsertHelper(Connection connection, PreparedStatement preparedStatement,
             ArrayList<String[]> bulkDataPartition, int partitionKey, Config config) {
         if (isDebug) {
-            logger.debug("Start runInsertHelper(): partitionKey=" + partitionKey);
+            logger.debug("Start");
         }
 
-        if (config.getBenchmarkCoreMultiplier() > 0) {
-            logger.info("Start runInsertHelper(): partitionKey=" + partitionKey);
-        }
-
-        // count = 0
-        // collection batch_collection = empty
-        int count = 0;
+        // INFO Start insert partition_key=partition_key
+        logger.info("Start insert partitionKey=" + partitionKey);
 
         try {
             /*
-             * WHILE iterating through the collection bulk_data_partition count + 1
-             *
-             * add the SQL statement in config param 'sql.insert' with the current bulk_data
-             * entry to the collection batch_collection
-             *
-             * IF config_param 'benchmark.batch.size' > 0 IF count modulo config param
-             * 'benchmark.batch.size' = 0 execute the SQL statements in the collection
-             * batch_collection batch_collection = empty ENDIF ENDIF
-             *
-             * IF config param 'benchmark.transaction.size' > 0 AND count modulo config
-             * param 'benchmark.transaction.size' = 0 commit ENDIF ENDWHILE
+             * count = 0 
+             * collection batch_collection = empty 
+             * WHILE iterating through the collection bulk_data_partition 
+             *       count + 1
+             * 
+             *       add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection
+             * 
+             *       IF config_param 'benchmark.batch.size' > 0 
+             *          IF count modulo config param 'benchmark.batch.size' == 0 
+             *             execute the SQL statements in the collection batch_collection 
+             *             batch_collection = empty 
+             *          ENDIF
+             *       ENDIF
+             * 
+             *       IF config param 'benchmark.transaction.size' > 0 AND count modulo config param 'benchmark.transaction.size' == 0 
+             *          commit
+             *       ENDIF 
+             * ENDWHILE
              */
+            int count = 0;
+
             for (String[] value : bulkDataPartition) {
                 preparedStatement.setString(1, value[0]);
                 preparedStatement.setString(2, value[1]);
@@ -418,8 +473,9 @@ public class OraBench {
             }
 
             /*
-             * IF collection batch_collection is not empty execute the SQL statements in the
-             * collection batch_collection ENDIF
+             * IF collection batch_collection is not empty 
+             *    execute the SQL statements in the collection batch_collection 
+             * ENDIF
              */
             if ((config.getBenchmarkBatchSize() == 0) || (count % config.getBenchmarkBatchSize() != 0)) {
                 preparedStatement.executeBatch();
@@ -431,12 +487,11 @@ public class OraBench {
             e.printStackTrace();
         }
 
-        if (config.getBenchmarkCoreMultiplier() > 0) {
-            logger.info("End   runInsertHelper(): partitionKey=" + partitionKey);
-        }
+        // INFO End insert partition_key=partition_key
+        logger.info("End   insert partitionKey=" + partitionKey);
 
         if (isDebug) {
-            logger.debug("End   runInsertHelper(): partitionKey=" + partitionKey);
+            logger.debug("End");
         }
     }
 
@@ -454,16 +509,22 @@ public class OraBench {
             logger.debug("Start");
         }
 
-        // save the current time as the start of the 'query' action
+        // save the current time as the start time of the 'query' action
         result.startQuery();
 
         /*
-         * partition_no = 0 WHILE partition_no < config_param
-         * 'benchmark.number.partitions' IF config_param 'benchmark.core.multiplier' = 0
-         * DO run_select_helper(database connections(partition_no),
-         * bulk_data_partitions(partition_no, partition_no) ELSE DO
-         * run_select_helper(database connections(partition_no),
-         * bulk_data_partitions(partition_no, partition_no) as a thread ENDIF ENDWHILE
+         * partition_key = 0 
+         * WHILE partition_key < config_param 'benchmark.number.partitions' 
+         *       IF config_param 'benchmark.core.multiplier' == 0
+         *          DO run_select_helper(database connections(partition_key),
+         *                               bulk_data_partitions(partition_key, 
+         *                               partition_key) 
+         *       ELSE 
+         *          DO run_select_helper(database connections(partition_key),
+         *                               bulk_data_partitions(partition_key, 
+         *                               partition_key) as a thread 
+         *       ENDIF 
+         * ENDWHILE
          */
         if (config.getBenchmarkCoreMultiplier() > 0) {
             executorService = Executors.newFixedThreadPool(config.getBenchmarkNumberPartitions());
@@ -508,12 +569,11 @@ public class OraBench {
     public static void runSelectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey,
             Config config) {
         if (isDebug) {
-            logger.debug("Start runSelectHelper(): partitionKey=" + partitionKey);
+            logger.debug("Start");
         }
 
-        if (config.getBenchmarkCoreMultiplier() > 0) {
-            logger.info("Start runSelectHelper(): partitionKey=" + partitionKey);
-        }
+        // INFO Start select partition_key=partition_key
+        logger.info("Start select partitionKey=" + partitionKey);
 
         try {
             if (config.getConnectionFetchSize() > 0) {
@@ -525,7 +585,10 @@ public class OraBench {
                     .executeQuery(config.getSqlSelect() + " WHERE partition_key = " + partitionKey);
 
             /*
-             * count = 0; WHILE iterating through the result set count + 1 ENDWHILE
+             * count = 0 
+             * WHILE iterating through the result set 
+             *       count + 1 
+             * ENDWHILE
              */
             int count = 0;
             while (resultSet.next()) {
@@ -533,7 +596,9 @@ public class OraBench {
             }
 
             /*
-             * IF NOT count = size(bulk_data_partition) display an error message ENDIF
+             * IF NOT count = size(bulk_data_partition) 
+             *    display an error message 
+             * ENDIF
              */
             if (count != bulkDataPartition.size()) {
                 logger.error("Number rows: expected=" + bulkDataPartition.size() + " - found=" + count);
@@ -543,12 +608,11 @@ public class OraBench {
             e.printStackTrace();
         }
 
-        if (config.getBenchmarkCoreMultiplier() > 0) {
-            logger.info("End   runSelectHelper(): partitionKey=" + partitionKey);
-        }
+        // INFO End select partition_key=partition_key
+        logger.info("End   select partitionKey=" + partitionKey);
 
         if (isDebug) {
-            logger.debug("End   runSelectHelper(): partitionKey=" + partitionKey);
+            logger.debug("End");
         }
     }
 
@@ -561,23 +625,26 @@ public class OraBench {
      * @param trialNumber        the trial number
      * @param bulkDataPartitions the bulk data partitioned
      * @param result             the result
+     * @return duration (nanoseconds)
      */
-    private void runTrial(ArrayList<Connection> connections, ArrayList<PreparedStatement> preparedStatements,
+    private long runTrial(ArrayList<Connection> connections, ArrayList<PreparedStatement> preparedStatements,
             ArrayList<Statement> statements, int trialNumber, ArrayList<ArrayList<String[]>> bulkDataPartitions,
             Result result) {
         if (isDebug) {
             logger.debug("Start");
         }
 
-        // save the current time as the start of the 'trial' action
+        // save the current time as the start time of the 'trial' action
         result.startTrial();
 
         logger.info("Start trial no. " + trialNumber);
 
         /*
-         * create the database table (config param 'sql.create') IF error drop the
-         * database table (config param 'sql.drop') create the database table (config
-         * param 'sql.create') ENDIF
+         * create the database table (config param 'sql.create') 
+         * IF error 
+         *    drop the database table (config param 'sql.drop') 
+         *    create the database table (config param 'sql.create') 
+         * ENDIF
          */
         try {
             statements.get(0).executeUpdate(config.getSqlCreate());
@@ -597,12 +664,14 @@ public class OraBench {
         }
 
         /*
-         * DO run_insert(database connections, trial_no, bulk_data_partitions)
+         * DO run_benchmark_insert(database connections, trial_no, bulk_data_partitions)
          */
         runInsert(connections, preparedStatements, trialNumber, bulkDataPartitions, result);
 
         /*
-         * DO run_select(database connections, trial_no, bulk_data_partitions)
+         * DO run_benchmark_select(database connections, 
+         *                         trial_no, 
+         *                         bulk_data_partitions)
          */
         runSelect(statements, trialNumber, bulkDataPartitions, result);
 
@@ -618,10 +687,12 @@ public class OraBench {
 
         // WRITE an entry for the action 'trial' in the result file (config param
         // 'file.result.name')
-        result.endTrial(trialNumber);
+        long duration = result.endTrial(trialNumber);
 
         if (isDebug) {
             logger.debug("End");
         }
+
+        return duration;
     }
 }

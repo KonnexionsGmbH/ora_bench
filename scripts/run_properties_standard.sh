@@ -18,10 +18,10 @@ fi
 export ORA_BENCH_RUN_CX_ORACLE_PYTHON=false
 export ORA_BENCH_RUN_GODROR_GO=false
 export ORA_BENCH_RUN_JDBC_JAVA=false
-export ORA_BENCH_RUN_JDBC_JL_JULIA=false
+export ORA_BENCH_RUN_JDBC_JULIA=false
 export ORA_BENCH_RUN_JDBC_KOTLIN=false
 export ORA_BENCH_RUN_ODPI_C=false
-export ORA_BENCH_RUN_ORACLE_JL_JULIA=false
+export ORA_BENCH_RUN_ORACLE_JULIA=false
 export ORA_BENCH_RUN_ORANIF_ELIXIR=false
 export ORA_BENCH_RUN_ORANIF_ERLANG=false
 
@@ -29,10 +29,10 @@ if [ "${ORA_BENCH_CHOICE_DRIVER}" = "complete" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
     export ORA_BENCH_RUN_GODROR_GO=true
     export ORA_BENCH_RUN_JDBC_JAVA=true
-    export ORA_BENCH_RUN_JDBC_JL_JULIA=true
+    export ORA_BENCH_RUN_JDBC_JULIA=true
     export ORA_BENCH_RUN_JDBC_KOTLIN=true
     export ORA_BENCH_RUN_ODPI_C=false
-    export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
+    export ORA_BENCH_RUN_ORACLE_JULIA=true
     export ORA_BENCH_RUN_ORANIF_ELIXIR=true
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "c" ]; then
@@ -47,9 +47,9 @@ elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "go" ]; then
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "java" ]; then
     export ORA_BENCH_RUN_JDBC_JAVA=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "julia_jdbc" ]; then
-    export ORA_BENCH_RUN_JDBC_JL_JULIA=true
+    export ORA_BENCH_RUN_JDBC_JULIA=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "julia_oracle" ]; then
-    export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
+    export ORA_BENCH_RUN_ORACLE_JULIA=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "kotlin" ]; then
     export ORA_BENCH_RUN_JDBC_KOTLIN=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "python" ]; then
@@ -95,10 +95,10 @@ echo "--------------------------------------------------------------------------
 echo "RUN_CX_ORACLE_PYTHON              : ${ORA_BENCH_RUN_CX_ORACLE_PYTHON}"
 echo "RUN_GODROR_GO                     : ${ORA_BENCH_RUN_GODROR_GO}"
 echo "RUN_JDBC_JAVA                     : ${ORA_BENCH_RUN_JDBC_JAVA}"
-echo "RUN_JDBC_JL_JULIA                 : ${ORA_BENCH_RUN_JDBC_JL_JULIA}"
+echo "RUN_JDBC_JULIA                    : ${ORA_BENCH_RUN_JDBC_JULIA}"
 echo "RUN_JDBC_KOTLIN                   : ${ORA_BENCH_RUN_JDBC_KOTLIN}"
 echo "RUN_ODPI_C                        : ${ORA_BENCH_RUN_ODPI_C}"
-echo "RUN_ORACLE_JL_JULIA               : ${ORA_BENCH_RUN_ORACLE_JL_JULIA}"
+echo "RUN_ORACLE_JULIA                  : ${ORA_BENCH_RUN_ORACLE_JULIA}"
 echo "RUN_ORANIF_ELIXIR                 : ${ORA_BENCH_RUN_ORANIF_ELIXIR}"
 echo "RUN_ORANIF_ERLANG                 : ${ORA_BENCH_RUN_ORANIF_ERLANG}"
 echo "------------------------------------------------------------------------------"
