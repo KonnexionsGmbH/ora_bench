@@ -24,6 +24,8 @@ using Oracle
 using TOML
 using TimesDates
 
+thread_type_spawn = true
+
 # ----------------------------------------------------------------------------------
 # Creating the database connections.
 # ----------------------------------------------------------------------------------
@@ -533,6 +535,7 @@ function run_insert(
             )
         end
     else
+        if thread_type_spawn == true
          @sync for partition_key = 1:benchmark_number_partitions
                  Threads.@spawn run_insert_helper(
                     benchmark_batch_size,
@@ -543,6 +546,19 @@ function run_insert(
                     partition_key,
                     sql_insert,
                 )
+         end
+         else
+         @threads for partition_key = 1:benchmark_number_partitions
+                 run_insert_helper(
+                    benchmark_batch_size,
+                    benchmark_core_multiplier,
+                    benchmark_transaction_size,
+                    bulk_data_partitions[partition_key],
+                    connections[partition_key],
+                    partition_key,
+                    sql_insert,
+                )
+         end
          end
     end
 
@@ -714,6 +730,7 @@ function run_select(
             )
         end
     else
+        if thread_type_spawn == true
             @sync  for partition_key = 1:benchmark_number_partitions
                   Threads.@spawn run_select_helper(
                     benchmark_core_multiplier,
@@ -723,6 +740,17 @@ function run_select(
                     sql_select,
                 )
             end
+            else
+            @threads  for partition_key = 1:benchmark_number_partitions
+                   run_select_helper(
+                    benchmark_core_multiplier,
+                    connections[partition_key],
+                    size(bulk_data_partitions[partition_key], 1),
+                    partition_key,
+                    sql_select,
+                )
+                end
+                end
     end
 
     # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
