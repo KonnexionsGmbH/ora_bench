@@ -533,9 +533,8 @@ function run_insert(
             )
         end
     else
-        @sync begin
-            @async for partition_key = 1:benchmark_number_partitions
-                Threads.@spawn run_insert_helper(
+         @sync for partition_key = 1:benchmark_number_partitions
+                 Threads.@spawn run_insert_helper(
                     benchmark_batch_size,
                     benchmark_core_multiplier,
                     benchmark_transaction_size,
@@ -544,8 +543,7 @@ function run_insert(
                     partition_key,
                     sql_insert,
                 )
-            end
-        end
+         end
     end
 
     # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
@@ -716,9 +714,8 @@ function run_select(
             )
         end
     else
-        @sync begin
-            @async for partition_key = 1:benchmark_number_partitions
-                Threads.@spawn run_select_helper(
+            @sync  for partition_key = 1:benchmark_number_partitions
+                  Threads.@spawn run_select_helper(
                     benchmark_core_multiplier,
                     connections[partition_key],
                     size(bulk_data_partitions[partition_key], 1),
@@ -726,7 +723,6 @@ function run_select(
                     sql_select,
                 )
             end
-        end
     end
 
     # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
