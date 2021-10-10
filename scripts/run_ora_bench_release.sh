@@ -193,20 +193,24 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         fi
 
         export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+        export ORA_BENCH_RUN_ORACLE_JL_JULIA=false
         export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
         export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
+        export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
 
         export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+        export ORA_BENCH_RUN_ORACLE_JL_JULIA=false
         export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
         export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
+        export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
 
         export ORA_BENCH_BENCHMARK_BATCH_SIZE=1
         export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
@@ -225,20 +229,24 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         fi
 
         export ORA_BENCH_BENCHMARK_BATCH_SIZE=1
+        export ORA_BENCH_RUN_ORACLE_JL_JULIA=false
         export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
         export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
+        export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
 
         export ORA_BENCH_BENCHMARK_BATCH_SIZE=1
+        export ORA_BENCH_RUN_ORACLE_JL_JULIA=false
         export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
         export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
+        export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
 
         export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
         export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
@@ -257,20 +265,24 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         fi
 
         export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
+        export ORA_BENCH_RUN_ORACLE_JL_JULIA=false
         export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
         export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
+        export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
 
         export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
+        export ORA_BENCH_RUN_ORACLE_JL_JULIA=false
         export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
         export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
+        export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
     fi
 fi
 
