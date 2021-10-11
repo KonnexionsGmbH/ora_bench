@@ -9,11 +9,12 @@
 
 ## Version 1.1.0
 
-Release Date: xx.xx.2021
+Release Date: 11.10.2021
 
 ### New Features
 
 - Oracle Database 21c
+- Programming language [`Julia`](https://julialang.org) and database driver [`JDBC.jl`](https://github.com/JuliaDatabases/JDBC.jl)
 - Programming language [`Julia`](https://julialang.org) and database driver [`Oracle.jl`](https://github.com/felipenoris/Oracle.jl)
 
 ### Applied Software
@@ -21,24 +22,29 @@ Release Date: xx.xx.2021
 | Software              | Type     | Version           | Remark |
 | ---                   | ---      | ---               | ---    |
 | C++ (gcc)             | Language | 10.3.0            | upgrade |
-| Elixir                | Language | 1.12.1-otp-24     |   |
-| Erlang                | Language | 24.0.5            | upgrade |
-| Go                    | Language | 1.17              | upgrade |
-| godror                | Driver   | v0.9.0            |   |
-| Java                  | Language | openjdk-16.0.2    | upgrade |
-| Julia                 | Language | v1.6.2            | new |
-| Kotlin                | Language | 1.5.30            | upgrade |
+| Elixir                | Language | 1.12.3-otp-24     | upgrade |
+| Erlang                | Language | 24.1.2            | upgrade |
+| Go                    | Language | 1.17.2            | upgrade |
+| godror                | Driver   | v0.27.1           | upgrade |
+| Java                  | Language | openjdk-17        | upgrade |
+| JDBC.jl               | Driver   | v0.5.0            | new |
+| Julia                 | Language | v1.6.3            | new |
+| Kotlin                | Language | 1.5.31            | upgrade |
 | Oracle cx_Oracle      | Driver   | 8.2.1             |   |
-| Oracle Instant Client | Driver   | 19.11.0.0.0       |   |
-| Oracle JDBC           | Driver   | 21.1.0.0          |   |
+| Oracle Instant Client | Driver   | 21.3.0.0.0        | upgrade |
+| Oracle JDBC           | Driver   | 21.3.0.0          | upgrade |
 | Oracle ODPI-C         | Driver   | 4.2.1             |   |
 | Oracle.jl             | Driver   | v0.3.1            | new |
 | oranif                | Driver   | 0.2.3             |   |
-| Python 3              | Language | 3.9.6             | upgrade |
+| Python 3              | Language | 3.10.0            | upgrade |
 
 ### Open issues
 
 - C & ODPI-C: (see [here](#issues_c_odpi))
+- Elixir & oranif: (see [here](#issues_elixir_oranif))
+- Erlang & oranif: (see [here](#issues_erlang_oranif))
+- Julia & JDBC,jl: (see [here](#issues_julia_jdbc))
+- Julia & Oracle,jl: (see [here](#issues_julia_oracle))
 
 ----
 
