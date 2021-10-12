@@ -17,7 +17,7 @@
 **[2.4 Benchmark Results](#2.4_benchmark)**<br>
 **[2.5 Bulk File](#2.5_bulk)**<br>
 **[3. Driver Specific Features](#4_driver)**<br>
-**[3.1 Oracle cx_Oracle and Python](#4.1_oracle)**<br>
+**[3.1 cx_Oracle and Python](#4.1_oracle)**<br>
 **[3.2 Oracle JDBC and Java](#4.2_oracle)**<br>
 **[3.3 Oracle JDBC and Kotlin](#4.3_oracle)**<br>
 **[3.4 Oracle ODPI-C and C++ (gcc)](#4.4_oracle)**<br>
@@ -34,8 +34,9 @@ The currently supported database drivers are:
 
 | Driver | Programming Language(s) |
 | :---   | :---                    |
+| [cx_Oracle](https://oracle.github.io/python-cx_Oracle) | [Python 3](https://www.python.org) |
 | [godror](https://golangrepo.com/repo/godror-godror-go-database-drivers) | [Go](https://golang.org)|
-| [Oracle cx_Oracle](https://oracle.github.io/python-cx_Oracle) | [Python 3](https://www.python.org) |
+| [JDBC.jl](https://github.com/felipenoris/JDBC.jl) | [Julia](https://julialang.org) |
 | [Oracle JDBC](https://www.oracle.com/database/technologies/appdev/jdbc.html) | [Java](https://openjdk.java.net) &amp; [Kotlin](https://kotlinlang.org) |
 | [Oracle ODPI-C](https://oracle.github.io/odpi) | [C++](https://docs.microsoft.com/en-us/cpp/?view=msvc-160) ([gcc](https://gcc.gnu.org)) |
 | [Oracle.jl](https://github.com/felipenoris/Oracle.jl) | [Julia](https://julialang.org) |
@@ -64,6 +65,7 @@ For reasons of convenience the following files are generated:
 - the configuration file `priv/ora_bench_c.propperties` for C++ (gcc),
 - the configuration file `priv/ora_bench_erlang.properties` with a corresponding map for Erlang, and
 - the configuration file `priv/ora_bench_python.propperties` for Python 3.
+- the configuration file `priv/ora_bench_toml.propperties` for Julia.
 
 All the file names specified here are also part of the configuration file and can be changed if necessary.
 
@@ -74,13 +76,14 @@ link [here](https://github.com/KonnexionsGmbH/ora_bench).
 
 **`OraBench`** is tested under [Ubuntu](https://ubuntu.com).
 
-To download the repository [Git](https://git-scm.com) is needed and for compilation the following software components are needed:
+[Git](https://git-scm.com) is needed to download the repository and for compilation the following software components are needed:
 
-- [Erlang](https://www.erlang.org/downloads/)
 - [Elixir](https://elixir-lang.org/install.html#windows)
+- [Erlang](https://www.erlang.org/downloads/)
+- [gcc Windows](https://jmeubank.github.io/tdm-gcc/) or [gcc Ubuntu](https://gcc.gnu.org/)
 - [Go](https://golang.org/dl/)
 - [Gradle Build Tool](https://gradle.org/releases/)
-- Java, e.g.: the [open-source JDK](https://openjdk.java.net)
+- [Java, e.g. the open-source JDK](https://openjdk.java.net)
 - [Julia](https://julialang.org/downloads/)
 - [Kotlin](https://kotlinlang.org/docs/tutorials/command-line.html)
 - [Oracle Instant Client](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
@@ -91,13 +94,12 @@ For changes to the **`OraBench`** repository it is best to use an editor (e.g. [
 databases in operational mode, [Docker Desktop](https://www.docker.com/products/docker-desktop) must also be installed. For the respective software versions,
 please consult the document [release notes](Release-Notes.md).
 
-The whole software environment for the operation and further development of OraBench can be created most easily by using a Docker container based on the
-Konnexions Development Image (version 2.0.4 from [here](https://hub.docker.com/repository/docker/konnexionsgmbh/kxn_dev)).
+The whole software environment for the operation and further development of OraBench can be created most easily by using a Docker container (version 1.1.0 from [here](https://hub.docker.com/repository/docker/konnexionsgmbh/ora_bench_dev)).
 
 Alternatively, in an Ubuntu 20.04 based environment, e.g.: in a virtual machine, the two following scripts can be used to install the necessary software:
 
-- `scripts/kxn_dev/run_install_4-vm_wsl2_1.sh`
-- `scripts/kxn_dev/run_install_4-vm_wsl2_2.sh`
+- `scripts/1.1.0/run_install_4-vm_wsl2_1.sh`
+- `scripts/1.1.0/run_install_4-vm_wsl2_2.sh`
 
     - run `sudo apt update`
     - run `sudo apt install git`
@@ -171,7 +173,7 @@ The data column in the bulk file is randomly generated with a unique key column 
 
 ## <a name="driver_specifica"></a> 3. Driver Specific Features
 
-### <a name="3.1_oracle"></a> 3.1 Oracle cx_Oracle and Python 3
+### <a name="3.1_oracle"></a> 3.1 cx_Oracle and Python 3
 
 - all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.python`)
 - Python 3 uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`

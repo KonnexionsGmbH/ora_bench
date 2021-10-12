@@ -19,9 +19,7 @@ if [ -z "${ORA_BENCH_CONNECTION_SERVICE}" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
 
-if [ -z "${ORA_BENCH_FILE_CONFIGURATION_NAME}" ]; then
-    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-fi
+export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench_c.properties
 
 echo "=============================================================================="
 echo "Start $0"
@@ -71,11 +69,11 @@ if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
 fi
 
 if [ "$OSTYPE" = "msys" ]; then
-    if ! ./OraBench.exe priv/properties/ora_bench_c.properties; then
+    if ! ./OraBench.exe ${ORA_BENCH_FILE_CONFIGURATION_NAME}; then
         exit 255
     fi
 else
-    if ! ./OraBench priv/properties/ora_bench_c.properties; then
+    if ! ./OraBench ${ORA_BENCH_FILE_CONFIGURATION_NAME}; then
         exit 255
     fi
 fi

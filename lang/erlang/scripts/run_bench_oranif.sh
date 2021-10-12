@@ -19,9 +19,7 @@ if [ -z "${ORA_BENCH_CONNECTION_SERVICE}" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
 
-if [ -z "${ORA_BENCH_FILE_CONFIGURATION_NAME}" ]; then
-    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-fi
+export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench_erlang.properties
 
 echo "=============================================================================="
 echo "Start $0"
@@ -70,7 +68,7 @@ fi
     fi
 )
 
-if ! lang/erlang/_build/default/bin/orabench priv/properties/ora_bench_erlang.properties; then
+if ! lang/erlang/_build/default/bin/orabench ${ORA_BENCH_FILE_CONFIGURATION_NAME}; then
     exit 255
 fi
 

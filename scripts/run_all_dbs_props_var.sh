@@ -40,7 +40,7 @@ if [ -z "$1" ]; then
     echo "julia_jdbc         - Julia and JDBC.jl"
     echo "julia_oracle       - Julia and Oracle.jl"
     echo "kotlin             - Kotlin and Oracle JDBC"
-    echo "python             - Python 3 and Oracle cx_Oracle"
+    echo "python             - Python 3 and cx_Oracle"
     echo "------------------------------------------------------------------------------"
     read -rp "Enter the desired programming language (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
     export ORA_BENCH_CHOICE_DRIVER=${ORA_BENCH_CHOICE_DRIVER}
@@ -153,7 +153,3 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "------------------------------------------------------------------------------"
 echo "End   $0"
 echo "=============================================================================="
-
-if ! start priv/audio/end_of_series.mp3; then
-    exit 255
-fi

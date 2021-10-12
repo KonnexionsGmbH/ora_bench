@@ -19,9 +19,7 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
     set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 )
 
-if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
-    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-)
+set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 
 echo ===============================================================================
 echo Start %0
@@ -66,7 +64,7 @@ if %ERRORLEVEL% neq 0 (
     exit -1073741510
 )
 
-lang\go\OraBench.exe priv\properties\ora_bench.properties
+lang\go\OraBench.exe %ORA_BENCH_FILE_CONFIGURATION_NAME%
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'OraBench.exe priv\properties\ora_bench.properties' was aborted, error code=%ERRORLEVEL%
     exit -1073741510

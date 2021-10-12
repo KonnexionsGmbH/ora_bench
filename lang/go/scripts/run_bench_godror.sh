@@ -19,9 +19,7 @@ if [ -z "${ORA_BENCH_CONNECTION_SERVICE}" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
 
-if [ -z "${ORA_BENCH_FILE_CONFIGURATION_NAME}" ]; then
-    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-fi
+export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 
 echo "=============================================================================="
 echo "Start $0"
@@ -60,7 +58,7 @@ if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
     exit 255
 fi
 
-if ! lang/go/OraBench priv/properties/ora_bench.properties; then
+if ! lang/go/OraBench ${ORA_BENCH_FILE_CONFIGURATION_NAME}; then
     exit 255
 fi
 

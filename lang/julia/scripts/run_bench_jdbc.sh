@@ -19,9 +19,7 @@ if [ -z "${ORA_BENCH_CONNECTION_SERVICE}" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
 
-if [ -z "${ORA_BENCH_FILE_CONFIGURATION_NAME}" ]; then
-    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-fi
+export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench_toml.properties
 
 echo "=============================================================================="
 echo "Start $0"
@@ -55,7 +53,7 @@ if ! java -jar priv/libs/ora_bench_java.jar setup_toml; then
 fi
 
 export JULIA_COPY_STACKS=yes
-if ! julia --threads 8 lang/julia/OraBenchJdbc.jl priv/properties/ora_bench_toml.properties; then
+if ! julia --threads 8 lang/julia/OraBenchJdbc.jl ${ORA_BENCH_FILE_CONFIGURATION_NAME}; then
     exit 255
 fi
 

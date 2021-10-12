@@ -38,7 +38,7 @@ if ["%1"] EQU [""] (
     echo julia_jdbc         - Julia and JDBC.jl
     echo julia_oracle       - Julia and Oracle.jl
     echo kotlin             - Kotlin and Oracle JDBC
-    echo python             - Python 3 and Oracle cx_Oracle
+    echo python             - Python 3 and cx_Oracle
     echo -------------------------------------------------------------------------------
     set /P ORA_BENCH_CHOICE_DRIVER="Enter the desired programming language (and database driver) [default: %ORA_BENCH_CHOICE_DRIVER_DEFAULT%] "
 

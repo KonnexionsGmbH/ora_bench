@@ -253,12 +253,7 @@ func resultWriter(configs map[string]interface{}, resultSlice []result) {
 			"%d",
 			"\n"}, fileResultDelimiter)
 
-		log.Info("wwe result.trial =", result.trial)
-		log.Info("wwe result.sql   =", result.sql)
-		log.Info("wwe result.action=", result.action)
-
 		d := result.end.Sub(result.start)
-		log.Info("wwe d            =", d)
 		_, err := fmt.Fprintf(resultFile, resultFormat, result.trial, result.sql,
 			result.action, tsStr(result.start), tsStr(result.end), d.Seconds(),
 			d.Nanoseconds())
@@ -349,13 +344,11 @@ func runBenchmark() {
 
 	// WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
 	endBenchTs := time.Now()
-	log.Info("wwe resultPos =", resultPos)
 	resultSlice[resultPos] = result{trial: 0,
 		sql:    "",
 		action: "benchmark",
 		start:  startBenchTs,
 		end:    endBenchTs}
-	log.Info("wwe resultSlice[resultPos].action =", resultSlice[resultPos].action)
 	resultPos++
 
 	resultWriter(configs, resultSlice)
@@ -416,13 +409,11 @@ func runInsert(ctx context.Context, configs map[string]interface{}, trialNo int,
 
 	// WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 	end := time.Now()
-	log.Info("wwe resultPos =", resultPos)
 	resultSlice[resultPos] = result{trial: trialNo,
 		sql:    configs["sql.insert"].(string),
 		action: "query",
 		start:  start,
 		end:    end}
-	log.Info("wwe resultSlice[resultPos].action =", resultSlice[resultPos].action)
 	resultPos++
 
 	log.Debug("End   runInsert()")
@@ -565,13 +556,11 @@ func runSelect(ctx context.Context, configs map[string]interface{}, trialNo int,
 
 	// WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 	end := time.Now()
-	log.Info("wwe resultPos =", resultPos)
 	resultSlice[resultPos] = result{trial: trialNo,
 		sql:    configs["sql.insert"].(string),
 		action: "query",
 		start:  start,
 		end:    end}
-	log.Info("wwe resultSlice[resultPos].action =", resultSlice[resultPos].action)
 	resultPos++
 
 	log.Debug("End   runSelect()")
@@ -679,22 +668,20 @@ func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, 
 
 	// WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
 	endTrialTs := time.Now()
-	log.Info("wwe resultPos =", resultPos)
 	resultSlice[resultPos] = result{trial: trialNo,
 		sql:    "",
 		action: "trial",
 		start:  startTrialTs,
 		end:    endTrialTs}
-	log.Info("wwe resultSlice[resultPos].action =", resultSlice[resultPos].action)
 	resultPos++
 
-	var duration_ns = endTrialTs.Sub(startTrialTs).Nanoseconds()
+	var durationNs = endTrialTs.Sub(startTrialTs).Nanoseconds()
 
-	log.Info("Duration (ms) trial         : ", math.Round(float64(duration_ns/1000000)))
+	log.Info("Duration (ms) trial         : ", math.Round(float64(durationNs/1000000)))
 
 	log.Debug("End   runTrial()")
 
-	return duration_ns
+	return durationNs
 }
 
 func tsStr(t time.Time) string {

@@ -19,9 +19,7 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
     set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 )
 
-if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
-    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-)
+set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench_toml.properties
 
 echo ===============================================================================
 echo Start %0
@@ -58,7 +56,7 @@ if %ERRORLEVEL% neq 0 (
     exit -1073741510
 )
 
-julia --threads 8 lang\julia\OraBenchOracle.jl priv\properties\ora_bench_toml.properties
+julia --threads 8 lang\julia\OraBenchOracle.jl %ORA_BENCH_FILE_CONFIGURATION_NAME%
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'julia OraBenchOracle.jl' was aborted, error code=%ERRORLEVEL%
     exit -1073741510

@@ -19,9 +19,7 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
     set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 )
 
-if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
-    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
-)
+set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench_erlang.properties
 
 if ["%ORA_BENCH_BENCHMARK_VCVARSALL%"] EQU [""] (
     set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
@@ -92,7 +90,7 @@ if %ERRORLEVEL% neq 0 (
 
 cd ..\..
 
-lang\erlang\_build\default\bin\orabench priv\properties\ora_bench_erlang.properties
+lang\erlang\_build\default\bin\orabench %ORA_BENCH_FILE_CONFIGURATION_NAME%
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'lang\erlang\_build\default\bin\orabench priv\properties\ora_bench_erlang.properties' was aborted, error code=%ERRORLEVEL%
     exit -1073741510

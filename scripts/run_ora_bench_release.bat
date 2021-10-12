@@ -221,6 +221,12 @@ echo.
             )
         )
     )
+   
+    start priv\audio\end_of_series.mp3
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'start priv\audio\end_of_series.mp3' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
 
     echo --------------------------------------------------------------------------------
     echo:| TIME

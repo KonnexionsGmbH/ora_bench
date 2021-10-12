@@ -257,7 +257,7 @@ def create_result_measuring_point_start_benchmark(logger,
 
     benchmark_globals[IX_LAST_BENCHMARK] = datetime.datetime.now()
 
-    benchmark_globals[IX_BENCHMARK_DRIVER] = "Oracle cx_Oracle (Version v" + cx_Oracle.version + ")"
+    benchmark_globals[IX_BENCHMARK_DRIVER] = "cx_Oracle (Version v" + cx_Oracle.version + ")"
     benchmark_globals[IX_BENCHMARK_LANGUAGE] = "Python 3 " + sys.version
 
     measurement_data_result_file = (benchmark_globals, create_result_file(logger,

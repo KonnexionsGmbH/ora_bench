@@ -19,9 +19,7 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
     set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 )
 
-if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
-    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-)
+set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 
 echo ===============================================================================
 echo Start %0
