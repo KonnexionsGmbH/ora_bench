@@ -407,7 +407,7 @@ insert_partition(
     file_bulk_length := Size
   } = Config
 ) ->
-  io:format("Start insert partition_key=~p~n", [artition]),
+  io:format("Start insert partition_key=~p~n", [Partition]),
   #{connection_string := ConnectString} = Config,
   Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
   Start = os:timestamp(),

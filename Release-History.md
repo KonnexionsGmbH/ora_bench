@@ -21,20 +21,20 @@ Release Date: 21.06.2021
 
 ### Applied Software
 
-| Software              | Type     | Version           |
-| ---                   | ---      | ---               |
-| C++ (gcc)             | Language | 10.2.0            |
-| Elixir                | Language | 1.12.1-otp-24     |
-| Erlang                | Language | 24.0.2            |
-| Go                    | Language | 1.16.5            |  
-| godror                | Driver   | v0.9.0            |  
-| Java                  | Language | openjdk-16.0.1    |  
-| Kotlin                | Language | 1.5.10 [?1.4.32?] |  
-| Oracle cx_Oracle      | Driver   | 8.2.1             |  
-| Oracle Instant Client | Driver   | 19.11.0.0.0       |
-| Oracle JDBC           | Driver   | 21.1.0.0          |  
-| Oracle ODPI-C         | Driver   | 4.2.1             |  
-| oranif                | Driver   | 0.2.3             |  
-| Python 3              | Language | 3.9.5             |
+| Software              | Type     | Version        |
+| ---                   | ---      | ---            |
+| C++ (gcc)             | Language | 10.2.0         |
+| Elixir                | Language | 1.12.1-otp-24  |
+| Erlang                | Language | 24.0.2         |
+| Go                    | Language | 1.16.5         |  
+| godror                | Driver   | v0.9.0         |  
+| Java                  | Language | openjdk-16.0.1 |  
+| Kotlin                | Language | 1.5.10         |  
+| Oracle cx_Oracle      | Driver   | 8.2.1          |  
+| Oracle Instant Client | Driver   | 19.11.0.0.0    |
+| Oracle JDBC           | Driver   | 21.1.0.0       |  
+| Oracle ODPI-C         | Driver   | 4.2.1          |  
+| oranif                | Driver   | 0.2.3          |  
+| Python 3              | Language | 3.9.5          |
 
 ----

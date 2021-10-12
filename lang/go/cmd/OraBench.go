@@ -29,6 +29,8 @@ type result struct {
 	end    time.Time
 }
 
+var resultPos = 0
+
 func main() {
 	//log.SetLevel(log.DebugLevel)
 
@@ -196,7 +198,7 @@ func loadConfig(configFile string) map[string]interface{} {
 	return configurations
 }
 
-func resultWriter(configs map[string]interface{}, resultChn []result) {
+func resultWriter(configs map[string]interface{}, resultSlice []result) {
 	log.Debug("Start resultWriter()")
 
 	fileResultDelimiter, err := strconv.Unquote("\"" +
@@ -224,7 +226,7 @@ func resultWriter(configs map[string]interface{}, resultChn []result) {
 
 	resultFile := bufio.NewWriter(rf)
 
-	for _, result := range resultChn {
+	for _, result := range resultSlice {
 		resultFormat := strings.Join([]string{
 			configs["benchmark.release"].(string),
 			configs["benchmark.id"].(string),
@@ -248,9 +250,15 @@ func resultWriter(configs map[string]interface{}, resultChn []result) {
 			"%s",   // start day time
 			"%s",   // end day time
 			"%.0f", // duration (sec)
-			"%d"}, fileResultDelimiter)
+			"%d",
+			"\n"}, fileResultDelimiter)
+
+		log.Info("wwe result.trial =", result.trial)
+		log.Info("wwe result.sql   =", result.sql)
+		log.Info("wwe result.action=", result.action)
 
 		d := result.end.Sub(result.start)
+		log.Info("wwe d            =", d)
 		_, err := fmt.Fprintf(resultFile, resultFormat, result.trial, result.sql,
 			result.action, tsStr(result.start), tsStr(result.end), d.Seconds(),
 			d.Nanoseconds())
@@ -283,7 +291,6 @@ func runBenchmark() {
 	trials := configs["benchmark.trials"].(int)
 
 	resultSlice := make([]result, trials*3+1)
-	resultPos := 0
 
 	// READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
 	partitions := loadBulk(
@@ -319,7 +326,7 @@ func runBenchmark() {
 	var trialSum int64 = 0
 
 	for t := 1; t <= trials; t++ {
-		duration = runTrial(ctx, configs, t, partitions, resultSlice, resultPos)
+		duration = runTrial(ctx, configs, t, partitions, resultSlice)
 
 		if trialMax == 0 || trialMax < duration {
 			trialMax = duration
@@ -342,11 +349,13 @@ func runBenchmark() {
 
 	// WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
 	endBenchTs := time.Now()
+	log.Info("wwe resultPos =", resultPos)
 	resultSlice[resultPos] = result{trial: 0,
 		sql:    "",
 		action: "benchmark",
 		start:  startBenchTs,
 		end:    endBenchTs}
+	log.Info("wwe resultSlice[resultPos].action =", resultSlice[resultPos].action)
 	resultPos++
 
 	resultWriter(configs, resultSlice)
@@ -367,7 +376,7 @@ func runBenchmark() {
 /*
 Supervise function for inserting data into the database.
 */
-func runInsert(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result, resultPos int) {
+func runInsert(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result) {
 	log.Debug("Start runInsert()")
 
 	// save the current time as the start time of the 'query' action
@@ -407,11 +416,13 @@ func runInsert(ctx context.Context, configs map[string]interface{}, trialNo int,
 
 	// WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 	end := time.Now()
+	log.Info("wwe resultPos =", resultPos)
 	resultSlice[resultPos] = result{trial: trialNo,
 		sql:    configs["sql.insert"].(string),
 		action: "query",
 		start:  start,
 		end:    end}
+	log.Info("wwe resultSlice[resultPos].action =", resultSlice[resultPos].action)
 	resultPos++
 
 	log.Debug("End   runInsert()")
@@ -514,7 +525,7 @@ func runInsertHelper(
 /*
 Supervise function for retrieving of the database data.
 */
-func runSelect(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result, resultPos int) {
+func runSelect(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result) {
 	log.Debug("Start runSelect()")
 
 	// save the current time as the start time of the 'query' action
@@ -554,11 +565,13 @@ func runSelect(ctx context.Context, configs map[string]interface{}, trialNo int,
 
 	// WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 	end := time.Now()
+	log.Info("wwe resultPos =", resultPos)
 	resultSlice[resultPos] = result{trial: trialNo,
 		sql:    configs["sql.insert"].(string),
 		action: "query",
 		start:  start,
 		end:    end}
+	log.Info("wwe resultSlice[resultPos].action =", resultSlice[resultPos].action)
 	resultPos++
 
 	log.Debug("End   runSelect()")
@@ -618,7 +631,7 @@ func runSelectHelper(
 		log.Fatal(
 			errors.Errorf(
 				"      doSelect(%2d) - Trial %d, Partition %d : failed to get %d rows (got %d)",
-				trial, partition, expect, i))
+				partition, trial, partition, expect, i))
 	}
 
 	// INFO End   select partition_key=partition_key
@@ -630,7 +643,7 @@ func runSelectHelper(
 /*
 Performing a single trial run.
 */
-func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result, resultPos int) int64 {
+func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, partitions []bulkPartition, resultSlice []result) int64 {
 	log.Debug("Start runTrial()")
 
 	// save the current time as the start time of the 'trial' action
@@ -652,25 +665,27 @@ func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, 
 	                 trial_no,
 	                 bulk_data_partitions)
 	*/
-	runInsert(ctx, configs, trialNo, partitions, resultSlice, resultPos)
+	runInsert(ctx, configs, trialNo, partitions, resultSlice)
 
 	/*
 	   DO run_select(database connections,
 	                 trial_no,
 	                 bulk_data_partitions)
 	*/
-	runSelect(ctx, configs, trialNo, partitions, resultSlice, resultPos)
+	runSelect(ctx, configs, trialNo, partitions, resultSlice)
 
 	// drop the database table (config param 'sql.drop')
 	// n/a
 
 	// WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
 	endTrialTs := time.Now()
+	log.Info("wwe resultPos =", resultPos)
 	resultSlice[resultPos] = result{trial: trialNo,
 		sql:    "",
 		action: "trial",
 		start:  startTrialTs,
 		end:    endTrialTs}
+	log.Info("wwe resultSlice[resultPos].action =", resultSlice[resultPos].action)
 	resultPos++
 
 	var duration_ns = endTrialTs.Sub(startTrialTs).Nanoseconds()
