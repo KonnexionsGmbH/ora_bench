@@ -654,17 +654,17 @@ function run_insert_helper(
 
         count += 1
 
-#         if benchmark_batch_size == 1
-        if benchmark_batch_size >= 0
-            JDBC.executeUpdate(prepared_statement)
-        else
-            JDBC.addBatch(prepared_statement)
-            if benchmark_batch_size > 0 && mod(count, benchmark_batch_size) == 0
-                @debug "      $(function_name) - partition_key=$(partition_key) - before bulk"
-                JDBC.executeBatch()
-                @debug "      $(function_name) - partition_key=$(partition_key) - after  bulk"
-            end
-        end
+        JDBC.executeUpdate(prepared_statement)
+#         if benchmark_batch_size >= 0
+#             JDBC.executeUpdate(prepared_statement)
+#         else
+#             JDBC.addBatch(prepared_statement)
+#             if benchmark_batch_size > 0 && mod(count, benchmark_batch_size) == 0
+#                 @debug "      $(function_name) - partition_key=$(partition_key) - before bulk"
+#                 JDBC.executeBatch()
+#                 @debug "      $(function_name) - partition_key=$(partition_key) - after  bulk"
+#             end
+#         end
 
         if benchmark_transaction_size > 0
             if mod(count, benchmark_transaction_size) == 0
@@ -680,11 +680,11 @@ function run_insert_helper(
          execute the SQL statements in the collection batch_collection
       ENDIF
     =#
-    if benchmark_batch_size > 0 && mod(count, benchmark_batch_size) > 0
-        @debug "      $(function_name) - partition_key=$(partition_key) - before bulk final"
-        JDBC.executeBatch()
-        @debug "      $(function_name) - partition_key=$(partition_key) - after  bulk final"
-    end
+#     if benchmark_batch_size > 0 && mod(count, benchmark_batch_size) > 0
+#         @debug "      $(function_name) - partition_key=$(partition_key) - before bulk final"
+#         JDBC.executeBatch()
+#         @debug "      $(function_name) - partition_key=$(partition_key) - after  bulk final"
+#     end
 
     # commit
     @debug "      $(function_name) - partition_key=$(partition_key) - before commit - final"
