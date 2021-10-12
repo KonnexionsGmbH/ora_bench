@@ -3,7 +3,7 @@
 ![Travis (.org)](https://img.shields.io/travis/KonnexionsGmbH/ora_bench.svg?branch=master)
 ![GitHub release](https://img.shields.io/github/release/KonnexionsGmbH/ora_bench.svg)
 ![GitHub Release Date](https://img.shields.io/github/release-date/KonnexionsGmbH/ora_bench.svg)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/KonnexionsGmbH/ora_bench/1.1.0.svg)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/KonnexionsGmbH/ora_bench/1.2.0.svg)
 
 ----
 
@@ -88,12 +88,12 @@ For changes to the **`OraBench`** repository it is best to use an editor (e.g. [
 databases in operational mode, [Docker Desktop](https://www.docker.com/products/docker-desktop) must also be installed. For the respective software versions,
 please consult the document [release notes](Release-Notes.md).
 
-The whole software environment for the operation and further development of OraBench can be created most easily by using a Docker container (version 1.1.0 from [here](https://hub.docker.com/repository/docker/konnexionsgmbh/ora_bench_dev)).
+The whole software environment for the operation and further development of OraBench can be created most easily by using a Docker container (version 1.2.0 from [here](https://hub.docker.com/repository/docker/konnexionsgmbh/ora_bench_dev)).
 
 Alternatively, in an Ubuntu 20.04 based environment, e.g.: in a virtual machine, the two following scripts can be used to install the necessary software:
 
-- `scripts/1.1.0/run_install_4-vm_wsl2_1.sh`
-- `scripts/1.1.0/run_install_4-vm_wsl2_2.sh`
+- `scripts/1.2.0/run_install_4-vm_wsl2_1.sh`
+- `scripts/1.2.0/run_install_4-vm_wsl2_2.sh`
 
     - run `sudo apt update`
     - run `sudo apt install git`

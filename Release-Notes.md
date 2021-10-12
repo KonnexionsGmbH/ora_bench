@@ -3,40 +3,38 @@
 ![Travis (.org)](https://img.shields.io/travis/KonnexionsGmbH/ora_bench.svg?branch=master)
 ![GitHub release](https://img.shields.io/github/release/KonnexionsGmbH/ora_bench.svg)
 ![GitHub Release Date](https://img.shields.io/github/release-date/KonnexionsGmbH/ora_bench.svg)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/KonnexionsGmbH/ora_bench/1.1.0.svg)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/KonnexionsGmbH/ora_bench/1.2.0.svg)
 
 ----
 
-## Version 1.1.0
+## Version 1.2.0
 
-Release Date: 11.10.2021
+Release Date: dd.mm.2021
 
 ### New Features
 
-- Oracle Database 21c
-- Programming language [`Julia`](https://julialang.org) and database driver [`JDBC.jl`](https://github.com/JuliaDatabases/JDBC.jl)
-- Programming language [`Julia`](https://julialang.org) and database driver [`Oracle.jl`](https://github.com/felipenoris/Oracle.jl)
+- n/a Programming language [`Julia`](https://julialang.org) and database driver [`JDBC.jl`](https://github.com/JuliaDatabases/JDBC.jl)
 
 ### Applied Software
 
 | Software              | Type     | Version           | Remark |
 | ---                   | ---      | ---               | ---    |
-| C++ (gcc)             | Language | 10.3.0            | upgrade |
+| C++ (gcc)             | Language | 10.3.0            |   |
 | cx_Oracle             | Driver   | 8.2.1             |   |
-| Elixir                | Language | 1.12.3-otp-24     | upgrade |
-| Erlang                | Language | 24.1.2            | upgrade |
-| Go                    | Language | 1.17.2            | upgrade |
-| godror                | Driver   | v0.27.1           | upgrade |
-| JDBC.jl               | Driver   | v0.5.0            | new |
-| Java                  | Language | openjdk-17        | upgrade |
-| Julia                 | Language | v1.6.3            | new |
-| Kotlin                | Language | 1.5.31            | upgrade |
-| Oracle Instant Client | Driver   | 21.3.0.0.0        | upgrade |
-| Oracle JDBC           | Driver   | 21.3.0.0          | upgrade |
+| Elixir                | Language | 1.12.3-otp-24     |   |
+| Erlang                | Language | 24.1.2            |   |
+| Go                    | Language | 1.17.2            |   |
+| godror                | Driver   | v0.27.1           |   |
+| JDBC.jl               | Driver   | v0.5.0            |   |
+| Java                  | Language | openjdk-17        |   |
+| Julia                 | Language | v1.6.3            |   |
+| Kotlin                | Language | 1.5.31            |   |
+| Oracle Instant Client | Driver   | 21.3.0.0.0        |   |
+| Oracle JDBC           | Driver   | 21.3.0.0          |   |
 | Oracle ODPI-C         | Driver   | 4.2.1             |   |
-| Oracle.jl             | Driver   | v0.3.1            | new |
+| Oracle.jl             | Driver   | v0.3.1            |   |
 | oranif                | Driver   | 0.2.3             |   |
-| Python 3              | Language | 3.10.0            | upgrade |
+| Python 3              | Language | 3.10.0            |   |
 
 ### Open issues
 
