@@ -16,12 +16,6 @@
 **[2.3 Benchmark Operation](#2.3_benchmark)**<br>
 **[2.4 Benchmark Results](#2.4_benchmark)**<br>
 **[2.5 Bulk File](#2.5_bulk)**<br>
-**[3. Driver Specific Features](#4_driver)**<br>
-**[3.1 cx_Oracle and Python](#4.1_oracle)**<br>
-**[3.2 Oracle JDBC and Java](#4.2_oracle)**<br>
-**[3.3 Oracle JDBC and Kotlin](#4.3_oracle)**<br>
-**[3.4 Oracle ODPI-C and C++ (gcc)](#4.4_oracle)**<br>
-**[3.5 oranif and Erlang](#4.5_oranif)**<br>
 
 ----
 
@@ -168,33 +162,3 @@ taken into account:
 - `file.bulk.size`
 
 The data column in the bulk file is randomly generated with a unique key column (MD5 hash code).
-
-----
-
-## <a name="driver_specifica"></a> 3. Driver Specific Features
-
-### <a name="3.1_oracle"></a> 3.1 cx_Oracle and Python 3
-
-- all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.python`)
-- Python 3 uses for batch operations the `executemany` method of the `cursor` class for the operation `INSERT`
-- the value fetch size (`connection.fetch.size`) is not used because the operation `SELECT` uses the operation `Cursor.fetchall()`
-
-### <a name="3.2_oracle"></a> 3.2 Oracle JDBC and Java
-
-- the Java source code is compiled with the help of Gradle
-- Java uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
-- Java uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
-
-### <a name="3.3_oracle"></a> 3.3 Oracle JDBC and Kotlin
-
-- the Kotlin source code is compiled with the help of Gradle
-- Kotlin uses the `PreparedStatement` class for the operations `INSERT` and `SELECT`
-- Kotlin uses for batch operations the `executeBatch` method of the `PreparedStatement` class for the operation `INSERT`
-
-### <a name="3.4_oracle"></a> 3.4 Oracle ODPI-C and C++ (gcc)
-
-- all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.c`)
-
-### <a name="3.5_oranif"></a> 3.5 oranif and Erlang
-
-- all configuration parameters are managed by the program OraBench.java and made available in a suitable file (`file.configuration.name.erlang`) 

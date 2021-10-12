@@ -22,15 +22,15 @@ Release Date: 11.10.2021
 | Software              | Type     | Version           | Remark |
 | ---                   | ---      | ---               | ---    |
 | C++ (gcc)             | Language | 10.3.0            | upgrade |
+| cx_Oracle             | Driver   | 8.2.1             |   |
 | Elixir                | Language | 1.12.3-otp-24     | upgrade |
 | Erlang                | Language | 24.1.2            | upgrade |
 | Go                    | Language | 1.17.2            | upgrade |
 | godror                | Driver   | v0.27.1           | upgrade |
-| Java                  | Language | openjdk-17        | upgrade |
 | JDBC.jl               | Driver   | v0.5.0            | new |
+| Java                  | Language | openjdk-17        | upgrade |
 | Julia                 | Language | v1.6.3            | new |
 | Kotlin                | Language | 1.5.31            | upgrade |
-| Oracle cx_Oracle      | Driver   | 8.2.1             |   |
 | Oracle Instant Client | Driver   | 21.3.0.0.0        | upgrade |
 | Oracle JDBC           | Driver   | 21.3.0.0          | upgrade |
 | Oracle ODPI-C         | Driver   | 4.2.1             |   |
@@ -45,28 +45,6 @@ Release Date: 11.10.2021
 - Erlang & oranif: (see [here](#issues_erlang_oranif))
 - Julia & JDBC,jl: (see [here](#issues_julia_jdbc))
 - Julia & Oracle,jl: (see [here](#issues_julia_oracle))
-
-----
-
-## Windows 10 Performance Snapshot
-
-The finishing touch to the work on a new release is a test run with all databases under identical conditions on three different systems - Ubuntu 20.04 via VMware and WSL2, Windows 10.
-The measured time includes the total time required for the DDL effort (database, schema, user, 5 database tables) and the DML effort (insertion of 7011 rows).
-The hardware used includes an AMD Ryzen 9 5950X CPU with 128GB RAM.
-The tests run exclusively on the computer in each case.
-The detailed results can be found in the DBSeeder repository in the `resources/statistics` directory.
-
-The following table shows the results of the Windows 10 run.
-If the database can run with both activated and deactivated constraints (foreign, primary and unique key), the table shows the better value and in the column `Improvement` the relative value to the worse run.
-For example, the MonetDB database is faster with inactive constraints by 21.2% compared to the run with activated constraints.
-
-![](.README_images/Statistics_9.9.9_win10.png)
-
-- **DBMS** - official DBMS name
-- **Type** - client version, embedded version or via trino
-- **ms** - total time of DDL and DML operations in milliseconds
-- **Constraints** - DML operations with active or inactive constraints (foreign, primary and unique key)
-- **Improvement** - improvement of total time if constraints are inactive
 
 ----
 
