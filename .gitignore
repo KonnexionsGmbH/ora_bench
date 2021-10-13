@@ -22,6 +22,8 @@
 /lang/go/OraBench.exe
 /lang/go/orabench
 /lang/go/pkg/
+/lang/rust/Cargo.lock
+/lang/rust/target/
 /lib/kotlin-*.jar
 /ora_bench.iml
 /priv/libs/ora_bench_java.jar

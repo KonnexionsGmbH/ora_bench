@@ -35,6 +35,7 @@ The currently supported database drivers are:
 | [Oracle ODPI-C](https://oracle.github.io/odpi) | [C++](https://docs.microsoft.com/en-us/cpp/?view=msvc-160) ([gcc](https://gcc.gnu.org)) |
 | [Oracle.jl](https://github.com/felipenoris/Oracle.jl) | [Julia](https://julialang.org) |
 | [oranif](https://github.com/KonnexionsGmbH/oranif) | [Elixir](https://elixir-lang.org) &amp; [Erlang](https://www.erlang.org) |
+| [Rust-oracle](https://github.com/kubo/rust-oracle) | [Rust](https://www.rust-lang.org) |
 
 The following Oracle database versions are provided in a benchmark run via Docker container:
 
@@ -83,6 +84,7 @@ link [here](https://github.com/KonnexionsGmbH/ora_bench).
 - [Oracle Instant Client](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
 - [Python 3](https://www.python.org/downloads/)
 - [rebar3](https://www.rebar3.org/)
+- [Rust](https://www.rust-lang.org)
 
 For changes to the **`OraBench`** repository it is best to use an editor (e.g. [Vim](https://www.vim.org)) or a suitable IDE. For using the Docker Image based
 databases in operational mode, [Docker Desktop](https://www.docker.com/products/docker-desktop) must also be installed. For the respective software versions,

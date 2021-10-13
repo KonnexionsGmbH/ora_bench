@@ -13,7 +13,7 @@ Release Date: dd.mm.2021
 
 ### New Features
 
-- n/a Programming language [`Julia`](https://julialang.org) and database driver [`JDBC.jl`](https://github.com/JuliaDatabases/JDBC.jl)
+- Programming language [`Rust`](https://www.rust-lang.org) and database driver [`Rust-oracle`](https://github.com/kubo/rust-oracle)
 
 ### Applied Software
 
@@ -35,6 +35,8 @@ Release Date: dd.mm.2021
 | Oracle.jl             | Driver   | v0.3.1            |   |
 | oranif                | Driver   | 0.2.3             |   |
 | Python 3              | Language | 3.10.0            |   |
+| Rust                  | Language | 1.55.0            | new |
+| Rust-oracle           | Driver   | v0.5.2            | new |
 
 ### Open issues
 
