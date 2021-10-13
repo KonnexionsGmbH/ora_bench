@@ -1,16 +1,12 @@
 .DEFAULT_GOAL := build
 
-clean:
-	cargo clean
-.PHONY:fmt
-
-fmt: clean
+fmt:
 	cargo fmt
 .PHONY:clippy
 
 clippy: fmt
 	cargo clippy
-.PHONY:tidy
+.PHONY:build
 
 build: clippy
 	cargo build $(release)

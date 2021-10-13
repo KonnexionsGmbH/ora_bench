@@ -21,6 +21,9 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
 
 set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 
+set ORA_BENCH_RUST_LOG_LEVEL=info
+set ORA_BENCH_RUST_LOG_LEVEL=debug
+
 echo ===============================================================================
 echo Start %0
 echo -------------------------------------------------------------------------------
@@ -38,6 +41,7 @@ echo BENCHMARK_CORE_MULTIPLIER  : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
 echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo -------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
+echo RUST_LOG_LEVEL             : %ORA_BENCH_RUST_LOG_LEVEL%
 echo -------------------------------------------------------------------------------
 echo:| TIME
 echo ===============================================================================
@@ -50,7 +54,7 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     )
 )
 
-cargo run --manifest-path lang\run\Cargo.toml
+cargo run --manifest-path lang\rust\Cargo.toml
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'cargo run' was aborted, error code=%ERRORLEVEL%
     exit -1073741510

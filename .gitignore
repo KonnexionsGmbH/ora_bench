@@ -25,6 +25,7 @@
 /lang/rust/Cargo.lock
 /lang/rust/target/
 /lib/kotlin-*.jar
+/log/requests.log
 /ora_bench.iml
 /priv/libs/ora_bench_java.jar
 /priv/libs/ora_bench_kotlin.jar

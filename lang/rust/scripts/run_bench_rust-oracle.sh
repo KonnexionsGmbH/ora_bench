@@ -21,6 +21,9 @@ fi
 
 export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 
+export ORA_BENCH_RUST_LOG_LEVEL=info
+export ORA_BENCH_RUST_LOG_LEVEL=debug
+
 echo "=============================================================================="
 echo "Start $0"
 echo "------------------------------------------------------------------------------"
@@ -38,6 +41,7 @@ echo "BENCHMARK_CORE_MULTIPLIER  : ${ORA_BENCH_BENCHMARK_CORE_MULTIPLIER}"
 echo "BENCHMARK_TRANSACTION_SIZE : ${ORA_BENCH_BENCHMARK_TRANSACTION_SIZE}"
 echo "------------------------------------------------------------------------------"
 echo "FILE_CONFIGURATION_NAME    : ${ORA_BENCH_FILE_CONFIGURATION_NAME}"
+echo "RUST_LOG_LEVEL             : ${ORA_BENCH_RUST_LOG_LEVEL}"
 echo "------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "=============================================================================="
@@ -48,7 +52,7 @@ if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
     fi
 fi
 
-if ! cargo run --manifest-path lang/run/Cargo.toml; then
+if ! cargo run --manifest-path lang/rust/Cargo.toml; then
     exit 255
 fi
 
