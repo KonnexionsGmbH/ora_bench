@@ -2,7 +2,7 @@
 
 # ----------------------------------------------------------------------------------
 #
-# run_bench_rust-oracle.sh: Oracle Benchmark based on Go.
+# run_bench_oracle.sh: Oracle Benchmark based on Rust.
 #
 # ----------------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
     fi
 fi
 
-if ! cargo run --manifest-path lang/rust/Cargo.toml; then
+if ! cargo run --manifest-path lang/rust/Cargo.toml ${ORA_BENCH_FILE_CONFIGURATION_NAME}; then
     exit 255
 fi
 

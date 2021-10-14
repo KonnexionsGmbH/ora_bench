@@ -2,7 +2,7 @@
 
 rem --------------------------------------------------------------------------------
 rem
-rem run_bench_rust-oracle.bat: Oracle Benchmark based on Go.
+rem run_bench_oracle.bat: Oracle Benchmark based on Rust.
 rem
 rem --------------------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     )
 )
 
-cargo run --manifest-path lang\rust\Cargo.toml
+cargo run --manifest-path lang\rust\Cargo.toml %ORA_BENCH_FILE_CONFIGURATION_NAME%
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'cargo run' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
