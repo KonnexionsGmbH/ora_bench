@@ -1,6 +1,8 @@
 #[macro_use]
 extern crate log;
+extern crate chrono;
 
+use chrono::prelude::*;
 use env_logger::Env;
 use java_properties::read;
 
@@ -13,9 +15,7 @@ use std::io::BufReader;
 // Load properties from properties file.
 // -----------------------------------------------------------------------------
 
-fn get_config(
-    file_name: String,
-) -> Result<HashMap<String, String>, java_properties::PropertiesError> {
+fn get_config(file_name: String) -> HashMap<String, String> {
     debug!("Start get_config()");
 
     let file = match File::open(&file_name) {
@@ -26,11 +26,31 @@ fn get_config(
         }
     };
 
-    let config = read(BufReader::new(file))?;
+    let config = match read(BufReader::new(file)) {
+        Ok(config) => config,
+        Err(error) => {
+            error!("Problem reading the properties file: {}", error);
+            std::process::exit(1);
+        }
+    };
 
     debug!("End   get_config()");
 
-    Ok(config)
+    config
+}
+
+// =============================================================================
+// Load bulk data from csv / tsv file.
+// -----------------------------------------------------------------------------
+
+fn load_bulk(
+    _benchmark_number_partitions: u32,
+    _file_bulk_delimiter: String,
+    _file_bulk_name: String,
+) -> HashMap<u32, Vec<(String, String)>> {
+    let partitions = HashMap::new();
+
+    partitions
 }
 
 // =============================================================================
@@ -77,11 +97,30 @@ fn run_benchmark(file_name_config: String) {
     debug!("Start run_benchmark()");
 
     // READ the configuration parameters into the memory (config params `file.configuration.name ...`)
-    let _config = get_config(file_name_config);
+    let config = get_config(file_name_config);
 
     // save the current time as the start of the 'benchmark' action
+    let _start_bench_ts = Local::now();
+
+    let file_bulk_delimiter = config.get("file.bulk.delimiter").unwrap().clone();
+    let file_bulk_name = config.get("file.bulk.name").unwrap().clone();
+    let benchmark_number_partitions = config
+        .get("benchmark.number.partitions")
+        .unwrap()
+        .parse::<u32>()
+        .unwrap();
+    let _trials = config
+        .get("benchmark.trials")
+        .unwrap()
+        .parse::<u32>()
+        .unwrap();
 
     // READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
+    let _partitions = load_bulk(
+        benchmark_number_partitions,
+        file_bulk_delimiter,
+        file_bulk_name,
+    );
 
     // create a separate database connection (without auto commit behaviour) for each partition
 
