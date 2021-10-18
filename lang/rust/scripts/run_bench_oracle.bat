@@ -52,6 +52,18 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         echo Processing of the script: %0 - step: 'make' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
+
+    call lang\java\scripts\run_gradle
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+)
+
+java -jar priv/libs/ora_bench_java.jar setup_default
+if %ERRORLEVEL% neq 0 (
+    echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_default' was aborted, error code=%ERRORLEVEL%
+    exit -1073741510
 )
 
 cargo run --manifest-path lang\rust\Cargo.toml %ORA_BENCH_FILE_CONFIGURATION_NAME%
