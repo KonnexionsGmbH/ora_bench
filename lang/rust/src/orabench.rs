@@ -39,11 +39,19 @@ fn get_config(file_name: String) -> HashMap<String, String> {
 // -----------------------------------------------------------------------------
 
 fn load_bulk(
+    config: &HashMap<String, String>,
     benchmark_number_partitions: usize,
-    file_bulk_delimiter: u8,
-    file_bulk_name: String,
 ) -> Vec<Vec<(String, String)>> {
     debug!("Start load_bulk()");
+
+    let file_bulk_delimiter: u8 = *config
+        .get("file.bulk.delimiter")
+        .unwrap()
+        .clone()
+        .as_bytes()
+        .get(0)
+        .unwrap();
+    let file_bulk_name: String = config.get("file.bulk.name").unwrap().clone();
 
     info!("Start Distribution of the data in the partitions");
 
@@ -116,26 +124,9 @@ pub(crate) fn run_benchmark(file_name_config: String) {
         .unwrap()
         .parse::<usize>()
         .unwrap();
-    let file_bulk_delimiter: u8 = *config
-        .get("file.bulk.delimiter")
-        .unwrap()
-        .clone()
-        .as_bytes()
-        .get(0)
-        .unwrap();
-    let file_bulk_name: String = config.get("file.bulk.name").unwrap().clone();
-    let _trials: u32 = config
-        .get("benchmark.trials")
-        .unwrap()
-        .parse::<u32>()
-        .unwrap();
 
     // READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
-    let _partitions: Vec<Vec<(String, String)>> = load_bulk(
-        benchmark_number_partitions,
-        file_bulk_delimiter,
-        file_bulk_name,
-    );
+    let _partitions: Vec<Vec<(String, String)>> = load_bulk(&config, benchmark_number_partitions);
 
     // create a separate database connection (without auto commit behaviour) for each partition
 
@@ -147,6 +138,11 @@ pub(crate) fn run_benchmark(file_name_config: String) {
                      bulk_data_partitions)
     ENDWHILE
     */
+    let _trials: u32 = config
+        .get("benchmark.trials")
+        .unwrap()
+        .parse::<u32>()
+        .unwrap();
 
     /*
     partition_no = 0
