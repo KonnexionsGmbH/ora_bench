@@ -1,10 +1,30 @@
 use chrono::prelude::*;
+use csv::Writer;
 use java_properties::read;
 
+use chrono::Duration;
+use oracle::Connection;
+use rustc_version_runtime::version;
 use std::collections::HashMap;
-
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::io::BufReader;
+use std::path::Path;
+
+// =============================================================================
+// Global constants.
+// -----------------------------------------------------------------------------
+
+const POS_ACTION: usize = 18;
+const POS_DURATION_NS: usize = 22;
+const POS_DURATION_SEC: usize = 21;
+const POS_END_TIME: usize = 20;
+const POS_SQL_STMNT: usize = 11;
+const POS_START_TIME: usize = 19;
+const POS_TRIAL_NO: usize = 10;
+
+// =============================================================================
+// Type definitions.
+// -----------------------------------------------------------------------------
 
 struct StatisticsEntry {
     action: String,
@@ -12,6 +32,128 @@ struct StatisticsEntry {
     sql_stmnt: String,
     start_time: DateTime<Local>,
     trial_no: u32,
+}
+
+// =============================================================================
+// Create the result file.
+// -----------------------------------------------------------------------------
+
+fn create_result_file(config: &HashMap<String, String>, statistics: &mut Vec<StatisticsEntry>) {
+    debug!("Start create_statistics_file()");
+
+    let file_delimiter: u8 = *config
+        .get("file.result.delimiter")
+        .unwrap()
+        .clone()
+        .as_bytes()
+        .get(0)
+        .unwrap();
+    let file_path = Path::new(config.get("file.result.name").unwrap());
+
+    let existing: bool = std::path::Path::new(file_path).is_file();
+
+    let file = match OpenOptions::new()
+        .write(true)
+        .create(true)
+        .append(true)
+        .open(file_path)
+    {
+        Ok(file) => file,
+        Err(error) => {
+            error!("Problem opening the result file: {}", error);
+            std::process::exit(1);
+        }
+    };
+
+    let mut writer: Writer<File> = csv::WriterBuilder::new()
+        .delimiter(file_delimiter)
+        .from_writer(file);
+
+    if !existing {
+        let file_header = config.get("file.result.header").unwrap().split(';');
+
+        match writer.write_record(file_header) {
+            Ok(result) => result,
+            Err(error) => {
+                error!("Problem writing the header of the result file: {}", error);
+                std::process::exit(1);
+            }
+        };
+    }
+
+    let mut result_entry: Vec<String> = Vec::with_capacity((POS_DURATION_NS + 1) as usize);
+
+    result_entry.push(config.get("benchmark.release").unwrap().clone());
+    result_entry.push(config.get("benchmark.id").unwrap().clone());
+    result_entry.push(config.get("benchmark.comment").unwrap().clone());
+    result_entry.push(config.get("benchmark.host.name").unwrap().clone());
+    result_entry.push(config.get("benchmark.number.cores").unwrap().clone());
+    result_entry.push(config.get("benchmark.os").unwrap().clone());
+    result_entry.push(config.get("benchmark.user.name").unwrap().clone());
+    result_entry.push(config.get("benchmark.database").unwrap().clone());
+
+    let mut language: String = "Rust ".to_string();
+    language.push_str(&version().to_string());
+    result_entry.push(language);
+
+    let mut driver: String = "Rust-oracle ".to_string();
+    driver.push_str("0.5.3");
+    result_entry.push(driver);
+
+    result_entry.push("".to_string());
+    result_entry.push("".to_string());
+    result_entry.push(config.get("benchmark.core.multiplier").unwrap().clone());
+    result_entry.push(config.get("connection.fetch.size").unwrap().clone());
+    result_entry.push(config.get("benchmark.transaction.size").unwrap().clone());
+    result_entry.push(config.get("file.bulk.length").unwrap().clone());
+    result_entry.push(config.get("file.bulk.size").unwrap().clone());
+    result_entry.push(config.get("benchmark.batch.size").unwrap().clone());
+    result_entry.push("".to_string());
+    result_entry.push("".to_string());
+    result_entry.push("".to_string());
+    result_entry.push("".to_string());
+    result_entry.push("".to_string());
+
+    for statistics_entry in statistics.iter() {
+        let action = &statistics_entry.action;
+
+        let end_time: DateTime<Local> = if action == "benchmark" {
+            Local::now()
+        } else {
+            statistics_entry.end_time
+        };
+
+        let start_time: DateTime<Local> = statistics_entry.start_time;
+
+        let difference: Duration = end_time - start_time;
+
+        result_entry[POS_TRIAL_NO] = statistics_entry.trial_no.to_string();
+        result_entry[POS_SQL_STMNT] = statistics_entry.sql_stmnt.clone();
+        result_entry[POS_ACTION] = action.clone();
+        result_entry[POS_START_TIME] = start_time.to_string();
+        result_entry[POS_END_TIME] = end_time.to_string();
+
+        result_entry[POS_DURATION_SEC] = difference.num_seconds().to_string();
+        result_entry[POS_DURATION_NS] = difference.num_nanoseconds().unwrap().to_string();
+
+        match writer.write_record(&result_entry) {
+            Ok(result) => result,
+            Err(error) => {
+                error!("Problem writing result file entries: {}", error);
+                std::process::exit(1);
+            }
+        };
+    }
+
+    match writer.flush() {
+        Ok(result) => result,
+        Err(error) => {
+            error!("Problem flushing the result file: {}", error);
+            std::process::exit(1);
+        }
+    };
+
+    debug!("End   create_statistics_file()");
 }
 
 // =============================================================================
@@ -137,6 +279,21 @@ pub(crate) fn run_benchmark(file_name_config: String) {
     let _partitions: Vec<Vec<(String, String)>> = load_bulk(benchmark_number_partitions, &config);
 
     // create a separate database connection (without auto commit behaviour) for each partition
+    let mut connection_string: String = "//".to_string();
+    connection_string.push_str(config.get("connection.host").unwrap());
+    connection_string.push(':');
+    connection_string.push_str(config.get("connection.port").unwrap());
+    connection_string.push('/');
+    connection_string.push_str(config.get("connection.service").unwrap());
+    let password: &String = config.get("connection.password").unwrap();
+    let user: &String = config.get("connection.user").unwrap();
+
+    let mut connections: Vec<Connection> = Vec::with_capacity(benchmark_number_partitions);
+
+    for _ in 0..benchmark_number_partitions {
+        connections
+            .push(Connection::connect(user.clone(), password.clone(), &connection_string).unwrap());
+    }
 
     /*
     trial_no = 0
@@ -158,7 +315,14 @@ pub(crate) fn run_benchmark(file_name_config: String) {
     let mut statistics: Vec<StatisticsEntry> = Vec::with_capacity((trials * 3 + 1) as usize);
 
     for trial_no in 1..=trials {
-        run_trial(&config, &sql_insert, &sql_select, &mut statistics, trial_no);
+        run_trial(
+            &config,
+            &connections,
+            &sql_insert,
+            &sql_select,
+            &mut statistics,
+            trial_no,
+        );
     }
 
     /*
@@ -167,16 +331,20 @@ pub(crate) fn run_benchmark(file_name_config: String) {
         close the database connection
     ENDWHILE
     */
+    for connection in connections.iter() {
+        let _ = connection.close();
+    }
 
     // WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
-
     statistics.push(StatisticsEntry {
         action: "benchmark".to_string(),
-        end_time: Local::now(),
+        end_time: start_time,
         sql_stmnt: "".to_string(),
         start_time,
         trial_no: 0,
     });
+
+    create_result_file(&config, &mut statistics);
 
     debug!("End   run_benchmark()");
 }
@@ -324,8 +492,9 @@ fn run_select(statistics: &mut Vec<StatisticsEntry>, trial_no: u32) {
 
 fn run_trial(
     _config: &HashMap<String, String>,
-    _sql_insert: &String,
-    _sql_select: &String,
+    _connections: &[Connection],
+    _sql_insert: &str,
+    _sql_select: &str,
     statistics: &mut Vec<StatisticsEntry>,
     trial_no: u32,
 ) {
