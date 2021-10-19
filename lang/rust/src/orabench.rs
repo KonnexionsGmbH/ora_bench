@@ -6,6 +6,14 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::BufReader;
 
+struct StatisticsEntry {
+    action: String,
+    end_time: DateTime<Local>,
+    sql_stmnt: String,
+    start_time: DateTime<Local>,
+    trial_no: u32,
+}
+
 // =============================================================================
 // Load properties from properties file.
 // -----------------------------------------------------------------------------
@@ -39,8 +47,8 @@ fn get_config(file_name: String) -> HashMap<String, String> {
 // -----------------------------------------------------------------------------
 
 fn load_bulk(
-    config: &HashMap<String, String>,
     benchmark_number_partitions: usize,
+    config: &HashMap<String, String>,
 ) -> Vec<Vec<(String, String)>> {
     debug!("Start load_bulk()");
 
@@ -117,7 +125,7 @@ pub(crate) fn run_benchmark(file_name_config: String) {
     let config: HashMap<String, String> = get_config(file_name_config);
 
     // save the current time as the start of the 'benchmark' action
-    let _start_bench_ts: DateTime<Local> = Local::now();
+    let start_time: DateTime<Local> = Local::now();
 
     let benchmark_number_partitions: usize = config
         .get("benchmark.number.partitions")
@@ -126,7 +134,7 @@ pub(crate) fn run_benchmark(file_name_config: String) {
         .unwrap();
 
     // READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
-    let _partitions: Vec<Vec<(String, String)>> = load_bulk(&config, benchmark_number_partitions);
+    let _partitions: Vec<Vec<(String, String)>> = load_bulk(benchmark_number_partitions, &config);
 
     // create a separate database connection (without auto commit behaviour) for each partition
 
@@ -138,11 +146,20 @@ pub(crate) fn run_benchmark(file_name_config: String) {
                      bulk_data_partitions)
     ENDWHILE
     */
-    let _trials: u32 = config
+    let sql_insert: String = config.get("sql.insert").unwrap().clone();
+    let sql_select: String = config.get("sql.select").unwrap().clone();
+
+    let trials: u32 = config
         .get("benchmark.trials")
         .unwrap()
         .parse::<u32>()
         .unwrap();
+
+    let mut statistics: Vec<StatisticsEntry> = Vec::with_capacity((trials * 3 + 1) as usize);
+
+    for trial_no in 1..=trials {
+        run_trial(&config, &sql_insert, &sql_select, &mut statistics, trial_no);
+    }
 
     /*
     partition_no = 0
@@ -153,36 +170,52 @@ pub(crate) fn run_benchmark(file_name_config: String) {
 
     // WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
 
+    statistics.push(StatisticsEntry {
+        action: "benchmark".to_string(),
+        end_time: Local::now(),
+        sql_stmnt: "".to_string(),
+        start_time,
+        trial_no: 0,
+    });
+
     debug!("End   run_benchmark()");
 }
 
-// // =============================================================================
-// // Supervise function for inserting data into the database.
-// // -----------------------------------------------------------------------------
-//
-// fn run_insert() {
-//     debug!("Start run_insert()");
-//
-//     // save the current time as the start of the 'query' action
-//
-//     /*
-//     partition_no = 0
-//     WHILE partition_no < config_param 'benchmark.number.partitions'
-//         IF config_param 'benchmark.core.multiplier' = 0
-//             DO run_insert_helper(database connections(partition_no),
-//                     bulk_data_partitions(partition_no))
-//         ELSE
-//             DO run_insert_helper (database connections(partition_no),
-//                     bulk_data_partitions(partition_no)) as a thread
-//         ENDIF
-//     ENDWHILE
-//     */
-//
-//     // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
-//
-//     debug!("End   run_insert()");
-// }
-//
+// =============================================================================
+// Supervise function for inserting data into the database.
+// -----------------------------------------------------------------------------
+
+fn run_insert(statistics: &mut Vec<StatisticsEntry>, trial_no: u32) {
+    debug!("Start run_insert()");
+
+    // save the current time as the start of the 'query' action
+    let start_time: DateTime<Local> = Local::now();
+
+    /*
+    partition_no = 0
+    WHILE partition_no < config_param 'benchmark.number.partitions'
+        IF config_param 'benchmark.core.multiplier' = 0
+            DO run_insert_helper(database connections(partition_no),
+                    bulk_data_partitions(partition_no))
+        ELSE
+            DO run_insert_helper (database connections(partition_no),
+                    bulk_data_partitions(partition_no)) as a thread
+        ENDIF
+    ENDWHILE
+    */
+
+    // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
+    statistics.push(StatisticsEntry {
+        action: "insert".to_string(),
+        end_time: Local::now(),
+        sql_stmnt: "".to_string(),
+        start_time,
+        trial_no,
+    });
+
+    debug!("End   run_insert()");
+}
+
 // // =============================================================================
 // // Helper function for inserting data into the database.
 // // -----------------------------------------------------------------------------
@@ -222,36 +255,44 @@ pub(crate) fn run_benchmark(file_name_config: String) {
 //
 //     debug!("End   run_insert_helper()");
 // }
-//
-// // =============================================================================
-// // Supervise function for retrieving of the database data.
-// // -----------------------------------------------------------------------------
-//
-// fn run_select() {
-//     debug!("Start run_select()");
-//
-//     // save the current time as the start of the 'query' action
-//
-//     /*
-//     partition_no = 0
-//     WHILE partition_no < config_param 'benchmark.number.partitions'
-//         IF config_param 'benchmark.core.multiplier' = 0
-//             DO run_select_helper(database connections(partition_no),
-//                                  bulk_data_partitions(partition_no,
-//                                  partition_no)
-//         ELSE
-//             DO run_select_helper(database connections(partition_no),
-//                                  bulk_data_partitions(partition_no,
-//                                  partition_no) as a thread
-//         ENDIF
-//     ENDWHILE
-//     */
-//
-//     // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
-//
-//     debug!("End   run_select()");
-// }
-//
+
+// =============================================================================
+// Supervise function for retrieving of the database data.
+// -----------------------------------------------------------------------------
+
+fn run_select(statistics: &mut Vec<StatisticsEntry>, trial_no: u32) {
+    debug!("Start run_select()");
+
+    // save the current time as the start of the 'query' action
+    let start_time: DateTime<Local> = Local::now();
+
+    /*
+    partition_no = 0
+    WHILE partition_no < config_param 'benchmark.number.partitions'
+        IF config_param 'benchmark.core.multiplier' = 0
+            DO run_select_helper(database connections(partition_no),
+                                 bulk_data_partitions(partition_no,
+                                 partition_no)
+        ELSE
+            DO run_select_helper(database connections(partition_no),
+                                 bulk_data_partitions(partition_no,
+                                 partition_no) as a thread
+        ENDIF
+    ENDWHILE
+    */
+
+    // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
+    statistics.push(StatisticsEntry {
+        action: "select".to_string(),
+        end_time: Local::now(),
+        sql_stmnt: "".to_string(),
+        start_time,
+        trial_no,
+    });
+
+    debug!("End   run_select()");
+}
+
 // // =============================================================================
 // // Helper function for retrieving data from the database.
 // // -----------------------------------------------------------------------------
@@ -276,39 +317,53 @@ pub(crate) fn run_benchmark(file_name_config: String) {
 //
 //     debug!("End   run_select_helper()");
 // }
-//
-// // =============================================================================
-// // Performing a single trial run.
-// // -----------------------------------------------------------------------------
-//
-// fn run_trial() {
-//     debug!("Start run_trial()");
-//
-//     // save the current time as the start of the 'trial' action
-//
-//     /*
-//     create the database table (config param 'sql.create')
-//     IF error
-//         drop the database table (config param 'sql.drop')
-//         create the database table (config param 'sql.create')
-//     ENDIF
-//     */
-//
-//     /*
-//     DO run_insert(database connections,
-//                   trial_no,
-//                   bulk_data_partitions)
-//     */
-//
-//     /*
-//     DO run_select(database connections,
-//                   trial_no,
-//                   bulk_data_partitions)
-//     */
-//
-//     // drop the database table (config param 'sql.drop')
-//
-//     // WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
-//
-//     debug!("End   run_trial()");
-// }
+
+// =============================================================================
+// Performing a single trial run.
+// -----------------------------------------------------------------------------
+
+fn run_trial(
+    _config: &HashMap<String, String>,
+    _sql_insert: &String,
+    _sql_select: &String,
+    statistics: &mut Vec<StatisticsEntry>,
+    trial_no: u32,
+) {
+    debug!("Start run_trial()");
+
+    // save the current time as the start of the 'trial' action
+    let start_time: DateTime<Local> = Local::now();
+
+    /*
+    create the database table (config param 'sql.create')
+    IF error
+        drop the database table (config param 'sql.drop')
+        create the database table (config param 'sql.create')
+    ENDIF
+    */
+
+    /*
+    DO run_insert(database connections,
+                  trial_no,
+                  bulk_data_partitions)
+    */
+
+    /*
+    DO run_select(database connections,
+                  trial_no,
+                  bulk_data_partitions)
+    */
+
+    // drop the database table (config param 'sql.drop')
+
+    // WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
+    statistics.push(StatisticsEntry {
+        action: "trial".to_string(),
+        end_time: Local::now(),
+        sql_stmnt: "".to_string(),
+        start_time,
+        trial_no,
+    });
+
+    debug!("End   run_trial()");
+}
