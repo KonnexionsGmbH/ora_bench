@@ -3,7 +3,7 @@ use csv::Writer;
 use java_properties::read;
 
 use chrono::Duration;
-use oracle::Connection;
+use oracle::{Connection, DbError, Error};
 use rustc_version_runtime::version;
 use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
@@ -60,7 +60,10 @@ fn create_result_file(config: &HashMap<String, String>, statistics: &mut Vec<Sta
     {
         Ok(file) => file,
         Err(error) => {
-            error!("Problem opening the result file: {}", error);
+            error!(
+                "create_result_file() - Problem opening the result file: {}",
+                error
+            );
             std::process::exit(1);
         }
     };
@@ -75,7 +78,10 @@ fn create_result_file(config: &HashMap<String, String>, statistics: &mut Vec<Sta
         match writer.write_record(file_header) {
             Ok(result) => result,
             Err(error) => {
-                error!("Problem writing the header of the result file: {}", error);
+                error!(
+                    "create_result_file() - Problem writing the header of the result file: {}",
+                    error
+                );
                 std::process::exit(1);
             }
         };
@@ -139,7 +145,10 @@ fn create_result_file(config: &HashMap<String, String>, statistics: &mut Vec<Sta
         match writer.write_record(&result_entry) {
             Ok(result) => result,
             Err(error) => {
-                error!("Problem writing result file entries: {}", error);
+                error!(
+                    "create_result_file() - Problem writing result file entries: {}",
+                    error
+                );
                 std::process::exit(1);
             }
         };
@@ -148,7 +157,10 @@ fn create_result_file(config: &HashMap<String, String>, statistics: &mut Vec<Sta
     match writer.flush() {
         Ok(result) => result,
         Err(error) => {
-            error!("Problem flushing the result file: {}", error);
+            error!(
+                "create_result_file(9 - Problem flushing the result file: {}",
+                error
+            );
             std::process::exit(1);
         }
     };
@@ -156,6 +168,22 @@ fn create_result_file(config: &HashMap<String, String>, statistics: &mut Vec<Sta
     debug!("End   create_statistics_file()");
 }
 
+// // =============================================================================
+// // Drop the database table.
+// // -----------------------------------------------------------------------------
+//
+// fn drop_db_table (connection: &Connection, sql_drop: &str) -> Result<(), DbError> {
+//     match connection.execute(sql_drop, &[]) {
+//         Ok(result) => result,
+//         Err(error) => {
+//             error!("drop_db_table() - Problem dropping the database table: {}", error);
+//             std::process::exit(1);
+//         }
+//     };
+//
+//     Ok(())
+// }
+//
 // =============================================================================
 // Load properties from properties file.
 // -----------------------------------------------------------------------------
@@ -166,7 +194,10 @@ fn get_config(file_name: String) -> HashMap<String, String> {
     let file = match File::open(&file_name) {
         Ok(file) => file,
         Err(error) => {
-            error!("Problem opening the properties file: {}", error);
+            error!(
+                "get_config() - Problem opening the properties file: {}",
+                error
+            );
             std::process::exit(1);
         }
     };
@@ -174,7 +205,10 @@ fn get_config(file_name: String) -> HashMap<String, String> {
     let config = match read(BufReader::new(file)) {
         Ok(config) => config,
         Err(error) => {
-            error!("Problem reading the properties file: {}", error);
+            error!(
+                "get_config() - Problem reading the properties file: {}",
+                error
+            );
             std::process::exit(1);
         }
     };
@@ -208,7 +242,7 @@ fn load_bulk(
     let bulk_file = match File::open(&file_bulk_name) {
         Ok(bulk_file) => bulk_file,
         Err(error) => {
-            error!("Problem opening the bulk file: {}", error);
+            error!("load_bulk() - Problem opening the bulk file: {}", error);
             std::process::exit(1);
         }
     };
@@ -229,7 +263,10 @@ fn load_bulk(
         let record = match result {
             Ok(record) => record,
             Err(error) => {
-                error!("Problem reading CSV from bulk file: {}", error);
+                error!(
+                    "load_bulk() - Problem reading CSV from bulk file: {}",
+                    error
+                );
                 std::process::exit(1);
             }
         };
@@ -260,7 +297,7 @@ fn load_bulk(
 // Performing a complete benchmark run that can consist of several trial runs.
 // -----------------------------------------------------------------------------
 
-pub(crate) fn run_benchmark(file_name_config: String) {
+pub(crate) fn run_benchmark(file_name_config: String) -> Result<(), DbError> {
     debug!("Start run_benchmark()");
 
     // READ the configuration parameters into the memory (config params `file.configuration.name ...`)
@@ -276,7 +313,7 @@ pub(crate) fn run_benchmark(file_name_config: String) {
         .unwrap();
 
     // READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
-    let _partitions: Vec<Vec<(String, String)>> = load_bulk(benchmark_number_partitions, &config);
+    let partitions: Vec<Vec<(String, String)>> = load_bulk(benchmark_number_partitions, &config);
 
     // create a separate database connection (without auto commit behaviour) for each partition
     let mut connection_string: String = "//".to_string();
@@ -303,7 +340,30 @@ pub(crate) fn run_benchmark(file_name_config: String) {
                      bulk_data_partitions)
     ENDWHILE
     */
-    let sql_insert: String = config.get("sql.insert").unwrap().clone();
+    let benchmark_batch_size: u32 = config
+        .get("benchmark.batch.size")
+        .unwrap()
+        .parse::<u32>()
+        .unwrap();
+    let benchmark_core_multiplier: u32 = config
+        .get("benchmark.core.multiplier")
+        .unwrap()
+        .parse::<u32>()
+        .unwrap();
+    let benchmark_transaction_size: u32 = config
+        .get("benchmark.transaction.size")
+        .unwrap()
+        .parse::<u32>()
+        .unwrap();
+
+    let sql_create: String = config.get("sql.create").unwrap().clone();
+    let sql_drop: String = config.get("sql.drop").unwrap().clone();
+    let sql_insert: String = config
+        .get("sql.insert")
+        .unwrap()
+        .clone()
+        .replace(":key", ":1")
+        .replace(":data", ":2");
     let sql_select: String = config.get("sql.select").unwrap().clone();
 
     let trials: u32 = config
@@ -314,15 +374,30 @@ pub(crate) fn run_benchmark(file_name_config: String) {
 
     let mut statistics: Vec<StatisticsEntry> = Vec::with_capacity((trials * 3 + 1) as usize);
 
+    let mut result: Result<_, Error>;
+
     for trial_no in 1..=trials {
-        run_trial(
-            &config,
+        result = run_trial(
+            benchmark_batch_size,
+            benchmark_core_multiplier,
+            benchmark_number_partitions,
+            benchmark_transaction_size,
             &connections,
+            &partitions,
+            &sql_create,
+            &sql_drop,
             &sql_insert,
             &sql_select,
             &mut statistics,
             trial_no,
         );
+        if result.is_err() {
+            error!(
+                "run_benchmark() - Problem in run_trial(): {}",
+                result.err().unwrap()
+            );
+            std::process::exit(1);
+        }
     }
 
     /*
@@ -347,13 +422,25 @@ pub(crate) fn run_benchmark(file_name_config: String) {
     create_result_file(&config, &mut statistics);
 
     debug!("End   run_benchmark()");
+
+    Ok(())
 }
 
 // =============================================================================
 // Supervise function for inserting data into the database.
 // -----------------------------------------------------------------------------
 
-fn run_insert(statistics: &mut Vec<StatisticsEntry>, trial_no: u32) {
+fn run_insert(
+    benchmark_batch_size: u32,
+    benchmark_core_multiplier: u32,
+    benchmark_number_partitions: usize,
+    benchmark_transaction_size: u32,
+    connections: &[Connection],
+    partitions: &[Vec<(String, String)>],
+    sql_insert: &str,
+    statistics: &mut Vec<StatisticsEntry>,
+    trial_no: u32,
+) -> Result<(), Error> {
     debug!("Start run_insert()");
 
     // save the current time as the start of the 'query' action
@@ -371,64 +458,95 @@ fn run_insert(statistics: &mut Vec<StatisticsEntry>, trial_no: u32) {
         ENDIF
     ENDWHILE
     */
+    for benchmark_number_partition in 0..benchmark_number_partitions {
+        if benchmark_core_multiplier == 0 {
+            run_insert_helper(
+                benchmark_batch_size,
+                benchmark_number_partition,
+                benchmark_transaction_size,
+                &connections[benchmark_number_partition],
+                &partitions[benchmark_number_partition],
+                sql_insert,
+            );
+            // } else {
+            //
+        }
+    }
 
     // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
     statistics.push(StatisticsEntry {
         action: "insert".to_string(),
         end_time: Local::now(),
-        sql_stmnt: "".to_string(),
+        sql_stmnt: sql_insert.parse().unwrap(),
         start_time,
         trial_no,
     });
 
     debug!("End   run_insert()");
+
+    Ok(())
 }
 
-// // =============================================================================
-// // Helper function for inserting data into the database.
-// // -----------------------------------------------------------------------------
-//
-// fn run_insert_helper() {
-//     debug!("Start run_insert_helper()");
-//
-//     /*
-//     count = 0
-//     collection batch_collection = empty
-//     WHILE iterating through the collection bulk_data_partition
-//       count + 1
-//
-//       add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection
-//
-//       IF config_param 'benchmark.batch.size' > 0
-//           IF count modulo config param 'benchmark.batch.size' = 0
-//               execute the SQL statements in the collection batch_collection
-//               batch_collection = empty
-//           ENDIF
-//       ENDIF
-//
-//       IF  config param 'benchmark.transaction.size' > 0
-//       AND count modulo config param 'benchmark.transaction.size' = 0
-//           commit
-//       ENDIF
-//     ENDWHILE
-//     */
-//
-//     /*
-//     IF collection batch_collection is not empty
-//       execute the SQL statements in the collection batch_collection
-//     ENDIF
-//     */
-//
-//     // commit
-//
-//     debug!("End   run_insert_helper()");
-// }
+// =============================================================================
+// Helper function for inserting data into the database.
+// -----------------------------------------------------------------------------
+
+fn run_insert_helper(
+    benchmark_batch_size: u32,
+    benchmark_number_partition: usize,
+    benchmark_transaction_size: u32,
+    connection: &Connection,
+    partition: &Vec<(String, String)>,
+    sql_insert: &str,
+) {
+    debug!("Start run_insert_helper()");
+
+    /*
+    count = 0
+    collection batch_collection = empty
+    WHILE iterating through the collection bulk_data_partition
+      count + 1
+
+      add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection
+
+      IF config_param 'benchmark.batch.size' > 0
+          IF count modulo config param 'benchmark.batch.size' = 0
+              execute the SQL statements in the collection batch_collection
+              batch_collection = empty
+          ENDIF
+      ENDIF
+
+      IF  config param 'benchmark.transaction.size' > 0
+      AND count modulo config param 'benchmark.transaction.size' = 0
+          commit
+      ENDIF
+    ENDWHILE
+    */
+
+    /*
+    IF collection batch_collection is not empty
+      execute the SQL statements in the collection batch_collection
+    ENDIF
+    */
+
+    // commit
+
+    debug!("End   run_insert_helper()");
+}
 
 // =============================================================================
 // Supervise function for retrieving of the database data.
 // -----------------------------------------------------------------------------
 
-fn run_select(statistics: &mut Vec<StatisticsEntry>, trial_no: u32) {
+fn run_select(
+    benchmark_core_multiplier: u32,
+    benchmark_number_partitions: usize,
+    connections: &[Connection],
+    partitions: &[Vec<(String, String)>],
+    sql_select: &str,
+    statistics: &mut Vec<StatisticsEntry>,
+    trial_no: u32,
+) -> Result<(), Error> {
     debug!("Start run_select()");
 
     // save the current time as the start of the 'query' action
@@ -448,56 +566,107 @@ fn run_select(statistics: &mut Vec<StatisticsEntry>, trial_no: u32) {
         ENDIF
     ENDWHILE
     */
+    for benchmark_number_partition in 0..benchmark_number_partitions {
+        if benchmark_core_multiplier == 0 {
+            run_select_helper(
+                benchmark_number_partition,
+                &connections[benchmark_number_partition],
+                &partitions[benchmark_number_partition],
+                sql_select,
+            );
+            // } else {
+            //
+        }
+    }
 
     // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
     statistics.push(StatisticsEntry {
         action: "select".to_string(),
         end_time: Local::now(),
-        sql_stmnt: "".to_string(),
+        sql_stmnt: sql_select.parse().unwrap(),
         start_time,
         trial_no,
     });
 
     debug!("End   run_select()");
+
+    Ok(())
 }
 
-// // =============================================================================
-// // Helper function for retrieving data from the database.
-// // -----------------------------------------------------------------------------
-//
-// fn run_select_helper() {
-//     debug!("Start run_select_helper()");
-//
-//     // execute the SQL statement in config param 'sql.select'
-//
-//     /*
-//     int count = 0;
-//     WHILE iterating through the result set
-//         count + 1
-//     ENDWHILE
-//     */
-//
-//     /*
-//     IF NOT count = size(bulk_data_partition)
-//         display an error message
-//     ENDIF
-//     */
-//
-//     debug!("End   run_select_helper()");
-// }
+// =============================================================================
+// Helper function for retrieving data from the database.
+// -----------------------------------------------------------------------------
+
+fn run_select_helper(
+    benchmark_number_partition: usize,
+    connection: &Connection,
+    partition: &Vec<(String, String)>,
+    sql_select: &str,
+) {
+    debug!("Start run_select_helper()");
+
+    // execute the SQL statement in config param 'sql.select
+    let mut sql_select_complete: String = sql_select.to_string();
+    sql_select_complete.push_str(" where partition_key = ");
+    sql_select_complete.push_str(&benchmark_number_partition.to_string().clone());
+    let rows = match connection.query(&sql_select_complete, &[]) {
+        Ok(rows) => rows,
+        Err(error) => {
+            error!(
+                "create_result_file() - Problem with select '{}': {}",
+                sql_select_complete, error
+            );
+            std::process::exit(1);
+        }
+    };
+
+    /*
+    int count = 0;
+    WHILE iterating through the result set
+        count + 1
+    ENDWHILE
+    */
+    let mut count: usize = 0;
+    for _row in rows {
+        count += 1;
+    }
+
+    /*
+    IF NOT count = size(bulk_data_partition)
+        display an error message
+    ENDIF
+    */
+
+    if count != partition.len() {
+        error!(
+            "Number rows: expected={} - found={}",
+            partition.len(),
+            count
+        );
+        std::process::exit(1);
+    }
+
+    debug!("End   run_select_helper()");
+}
 
 // =============================================================================
 // Performing a single trial run.
 // -----------------------------------------------------------------------------
 
 fn run_trial(
-    _config: &HashMap<String, String>,
-    _connections: &[Connection],
-    _sql_insert: &str,
-    _sql_select: &str,
+    benchmark_batch_size: u32,
+    benchmark_core_multiplier: u32,
+    benchmark_number_partitions: usize,
+    benchmark_transaction_size: u32,
+    connections: &[Connection],
+    partitions: &[Vec<(String, String)>],
+    sql_create: &str,
+    sql_drop: &str,
+    sql_insert: &str,
+    sql_select: &str,
     statistics: &mut Vec<StatisticsEntry>,
     trial_no: u32,
-) {
+) -> Result<(), Error> {
     debug!("Start run_trial()");
 
     // save the current time as the start of the 'trial' action
@@ -510,20 +679,87 @@ fn run_trial(
         create the database table (config param 'sql.create')
     ENDIF
     */
+    let mut result_create_drop = connections[0].execute(sql_create, &[]);
+    if result_create_drop.is_ok() {
+        debug!("last DDL statement={}", sql_create);
+    } else {
+        result_create_drop = connections[0].execute(sql_drop, &[]);
+        if result_create_drop.is_err() {
+            error!(
+                "run_trial() - Problem dropping the database table: {}",
+                result_create_drop.err().unwrap()
+            );
+            std::process::exit(1);
+        }
+
+        result_create_drop = connections[0].execute(sql_create, &[]);
+        if result_create_drop.is_err() {
+            error!(
+                "run_trial() - Problem creating the database table: {}",
+                result_create_drop.err().unwrap()
+            );
+            std::process::exit(1);
+        }
+
+        debug!("last DDL statement after DROP={}", sql_create);
+    }
 
     /*
     DO run_insert(database connections,
                   trial_no,
                   bulk_data_partitions)
     */
+    let result_run_insert = run_insert(
+        benchmark_batch_size,
+        benchmark_core_multiplier,
+        benchmark_number_partitions,
+        benchmark_transaction_size,
+        connections,
+        partitions,
+        sql_insert,
+        statistics,
+        trial_no,
+    );
+    if result_run_insert.is_err() {
+        error!(
+            "run_trial() - Problem in run_insert: {}",
+            result_run_insert.err().unwrap()
+        );
+        std::process::exit(1);
+    }
 
     /*
     DO run_select(database connections,
                   trial_no,
                   bulk_data_partitions)
     */
+    let result_run_select = run_select(
+        benchmark_core_multiplier,
+        benchmark_number_partitions,
+        connections,
+        partitions,
+        sql_select,
+        statistics,
+        trial_no,
+    );
+    if result_run_select.is_err() {
+        error!(
+            "run_trial() - Problem in run_select: {}",
+            result_run_select.err().unwrap()
+        );
+        std::process::exit(1);
+    }
 
     // drop the database table (config param 'sql.drop')
+    result_create_drop = connections[0].execute(sql_drop, &[]);
+    if result_create_drop.is_err() {
+        error!(
+            "run_trial() - Problem dropping the database table: {}",
+            result_create_drop.err().unwrap()
+        );
+        std::process::exit(1);
+    }
+    debug!("last DDL statement={}", sql_create);
 
     // WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
     statistics.push(StatisticsEntry {
@@ -535,4 +771,6 @@ fn run_trial(
     });
 
     debug!("End   run_trial()");
+
+    Ok(())
 }
