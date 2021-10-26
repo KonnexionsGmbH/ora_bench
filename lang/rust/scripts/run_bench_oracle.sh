@@ -60,7 +60,7 @@ if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
     exit 255
 fi
 
-if ! cargo run --manifest-path lang/rust/Cargo.toml ${ORA_BENCH_FILE_CONFIGURATION_NAME}; then
+if ! cargo run --manifest-path lang/rust/Cargo.toml --release ${ORA_BENCH_FILE_CONFIGURATION_NAME}; then
     exit 255
 fi
 

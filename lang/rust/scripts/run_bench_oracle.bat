@@ -21,8 +21,8 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
 
 set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 
-set ORA_BENCH_RUST_LOG_LEVEL=info
 set ORA_BENCH_RUST_LOG_LEVEL=debug
+set ORA_BENCH_RUST_LOG_LEVEL=info
 
 echo ===============================================================================
 echo Start %0
@@ -66,7 +66,7 @@ if %ERRORLEVEL% neq 0 (
     exit -1073741510
 )
 
-cargo run --manifest-path lang\rust\Cargo.toml %ORA_BENCH_FILE_CONFIGURATION_NAME%
+cargo run --manifest-path lang\rust\Cargo.toml --release %ORA_BENCH_FILE_CONFIGURATION_NAME%
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'cargo run' was aborted, error code=%ERRORLEVEL%
     exit -1073741510

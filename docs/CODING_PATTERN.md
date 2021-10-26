@@ -66,6 +66,8 @@
     
         - save the current time as the start time of the 'trial' action
     
+        - INFO  Start trial no. trial_no
+
         - create the database table (config param 'sql.create')
           IF error
              drop the database table (config param 'sql.drop')
@@ -84,6 +86,8 @@
         
         - WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
         
+        - INFO  Duration (ms) trial         : duration_trial
+
         - RETURN duration = end time - start time
 ```
 
