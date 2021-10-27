@@ -40,14 +40,7 @@ fn main() {
         std::process::exit(1);
     }
 
-    let result = run_benchmark(file_name_config);
-    if result.is_err() {
-        error!(
-            "main() - Problem in run_benchmark(): {}",
-            result.err().unwrap()
-        );
-        std::process::exit(1);
-    }
+    run_benchmark(file_name_config);
 
     debug!("End   main()");
 }
