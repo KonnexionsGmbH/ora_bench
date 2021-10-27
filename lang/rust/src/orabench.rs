@@ -574,6 +574,11 @@ fn run_insert_helper(
 ) {
     debug!("Start run_insert_helper()");
 
+    /*
+    IF trial_no == 1
+       INFO Start insert partition_key=partition_key
+    ENDIF
+    */
     if trial_no == 1 {
         info!("Start insert partition_key={}", partition_no);
     }
@@ -634,6 +639,11 @@ fn run_insert_helper(
     // commit
     commit(connection);
 
+    /*
+    IF trial_no == 1
+       INFO End   insert partition_key=partition_key
+    ENDIF
+    */
     if trial_no == 1 {
         info!("End   insert partition_key={}", partition_no);
     }
@@ -714,6 +724,11 @@ fn run_select_helper(
 ) {
     debug!("Start run_select_helper()");
 
+    /*
+    IF trial_no == 1
+       INFO Start select partition_key=partition_key
+    ENDIF
+    */
     if trial_no == 1 {
         info!("Start select partition_key={}", partition_no);
     }
@@ -759,6 +774,11 @@ fn run_select_helper(
         std::process::exit(1);
     }
 
+    /*
+    IF trial_no == 1
+       INFO End   select partition_key=partition_key
+    ENDIF
+    */
     if trial_no == 1 {
         info!("End   select partition_key={}", partition_no);
     }
@@ -776,6 +796,7 @@ fn run_trial(mut params: ParamsRunTrial) -> Result<(), Error> {
     // save the current time as the start of the 'trial' action
     let start_time: DateTime<Local> = Local::now();
 
+    // INFO  Start trial no. trial_no
     info!("Start trial no. {}", params.trial_no);
 
     /*
