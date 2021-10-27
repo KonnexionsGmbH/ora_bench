@@ -4,12 +4,13 @@ use java_properties::read;
 
 use chrono::Duration;
 
-use oracle::{Connection, DbError, Error};
+use oracle::{Batch, Connection, DbError, Error};
 use rustc_version_runtime::version;
 use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
 use std::io::BufReader;
 use std::path::Path;
+use std::thread::spawn;
 
 // =============================================================================
 // Global constants.
@@ -32,24 +33,24 @@ struct ParamsRunInsert<'a> {
     benchmark_core_multiplier: u32,
     benchmark_number_partitions: usize,
     benchmark_transaction_size: u32,
-    connections: &'a Vec<Connection>,
-    partitions: &'a Vec<Vec<(String, String)>>,
-    sql_insert: &'a str,
+    connections: &'static Vec<Connection>,
+    partitions: &'static Vec<Vec<(String, String)>>,
+    sql_insert: &'static str,
     statistics: &'a mut Vec<StatisticsEntry>,
     trial_no: u32,
 }
 
-struct ParamsRunTrial<'a> {
+struct ParamsRunTrial <'a>{
     benchmark_batch_size: u32,
     benchmark_core_multiplier: u32,
     benchmark_number_partitions: usize,
     benchmark_transaction_size: u32,
-    connections: &'a Vec<Connection>,
-    partitions: &'a Vec<Vec<(String, String)>>,
-    sql_create: &'a str,
-    sql_drop: &'a str,
-    sql_insert: &'a str,
-    sql_select: &'a str,
+    connections: &'static Vec<Connection>,
+    partitions: &'static Vec<Vec<(String, String)>>,
+    sql_create: &'static str,
+    sql_drop: &'static str,
+    sql_insert: &'static str,
+    sql_select: &'static str,
     statistics: &'a mut Vec<StatisticsEntry>,
     trial_no: u32,
 }
@@ -233,22 +234,23 @@ fn create_result_file(
     (trial_min, trial_max, trial_total)
 }
 
-// // =============================================================================
-// // Drop the database table.
-// // -----------------------------------------------------------------------------
-//
-// fn drop_db_table (connection: &Connection, sql_drop: &str) -> Result<(), DbError> {
-//     match connection.execute(sql_drop, &[]) {
-//         Ok(result) => result,
-//         Err(error) => {
-//             error!("drop_db_table() - Problem dropping the database table: {}", error);
-//             std::process::exit(1);
-//         }
-//     };
-//
-//     Ok(())
-// }
-//
+// =============================================================================
+// Execute batch processing.
+// -----------------------------------------------------------------------------
+
+fn execute_batch(batch_collection: &mut Batch) {
+    match batch_collection.execute() {
+        Ok(_) => {}
+        Err(error) => {
+            error!(
+                "run_insert_helper() - Problem with batch.execute(): {}",
+                error
+            );
+            std::process::exit(1);
+        }
+    };
+}
+
 // =============================================================================
 // Load properties from properties file.
 // -----------------------------------------------------------------------------
@@ -427,23 +429,21 @@ pub(crate) fn run_benchmark(file_name_config: String) -> Result<(), DbError> {
         .unwrap()
         .parse::<u32>()
         .unwrap();
-
     let sql_create: String = config.get("sql.create").unwrap().clone();
     let sql_drop: String = config.get("sql.drop").unwrap().clone();
     let sql_select: String = config.get("sql.select").unwrap().clone();
-
     let trials: u32 = config
         .get("benchmark.trials")
         .unwrap()
         .parse::<u32>()
         .unwrap();
 
+    let mut params_run_trial: ParamsRunTrial;
+    let mut result: Result<_, Error>;
     let mut statistics: Vec<StatisticsEntry> = Vec::with_capacity((trials * 3 + 1) as usize);
 
-    let mut result: Result<_, Error>;
-
     for trial_no in 1..=trials {
-        let params_run_trial = ParamsRunTrial {
+         params_run_trial = ParamsRunTrial {
             benchmark_batch_size,
             benchmark_core_multiplier,
             benchmark_number_partitions,
@@ -529,8 +529,8 @@ fn run_insert(params: ParamsRunInsert) -> Result<(), Error> {
         ENDIF
     ENDWHILE
     */
-    for partition_no in 0..params.benchmark_number_partitions {
-        if params.benchmark_core_multiplier == 0 {
+    if params.benchmark_core_multiplier == 0 {
+        for partition_no in 0..params.benchmark_number_partitions {
             run_insert_helper(
                 params.benchmark_batch_size,
                 params.benchmark_transaction_size,
@@ -540,13 +540,31 @@ fn run_insert(params: ParamsRunInsert) -> Result<(), Error> {
                 params.sql_insert,
                 params.trial_no,
             );
-            // } else {
-            //
+        }
+    } else {
+        let mut thread_handles = vec![];
+
+        for partition_no in 0..params.benchmark_number_partitions {
+            thread_handles.push(spawn(move || {
+                run_insert_helper(
+                    params.benchmark_batch_size,
+                    params.benchmark_transaction_size,
+                    &params.connections[partition_no],
+                    partition_no,
+                    &params.partitions[partition_no],
+                    params.sql_insert,
+                    params.trial_no,
+                )
+            }))
+        }
+
+        for handle in thread_handles {
+            handle.join().unwrap();
         }
     }
 
     // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
-    params.statistics.push(StatisticsEntry {
+     params.statistics.push(StatisticsEntry {
         action: "insert".to_string(),
         end_time: Local::now(),
         sql_stmnt: params.sql_insert.parse().unwrap(),
@@ -564,7 +582,7 @@ fn run_insert(params: ParamsRunInsert) -> Result<(), Error> {
 // -----------------------------------------------------------------------------
 
 fn run_insert_helper(
-    _benchmark_batch_size: u32,
+    benchmark_batch_size: u32,
     benchmark_transaction_size: u32,
     connection: &Connection,
     partition_no: usize,
@@ -605,29 +623,55 @@ fn run_insert_helper(
     ENDWHILE
     */
 
+    let mut batch_collection = connection
+        .batch(
+            sql_insert,
+            if benchmark_batch_size == 0 {
+                partition.len()
+            } else {
+                benchmark_batch_size as usize
+            },
+        )
+        .build()
+        .unwrap();
+
     let mut statement = connection.prepare(sql_insert, &[]).unwrap();
 
     let mut count = 0;
     for record in partition.iter() {
         count += 1;
 
-        // if benchmark_batch_size == 1 {
-        match statement.execute(&[&record.0, &record.1]) {
-            Ok(_) => {}
-            Err(error) => {
-                error!(
-                    "run_insert_helper() - Problem with statement.execute(): {}",
-                    error
-                );
-                std::process::exit(1);
+        if benchmark_batch_size == 1 {
+            match statement.execute(&[&record.0, &record.1]) {
+                Ok(_) => {}
+                Err(error) => {
+                    error!(
+                        "run_insert_helper() - Problem with statement.execute(): {}",
+                        error
+                    );
+                    std::process::exit(1);
+                }
+            }
+        } else {
+            match batch_collection.append_row(&[&record.0, &record.1]) {
+                Ok(_) => {}
+                Err(error) => {
+                    error!(
+                        "run_insert_helper() - Problem with batch.append_row(): {}",
+                        error
+                    );
+                    std::process::exit(1);
+                }
+            };
+
+            if benchmark_batch_size > 1 && (count % benchmark_batch_size == 0) {
+                execute_batch(&mut batch_collection);
             }
         }
 
         if benchmark_transaction_size > 0 && (count % benchmark_transaction_size == 0) {
             commit(connection);
         }
-        //     } else {
-        //     }
     }
 
     /*
@@ -635,6 +679,9 @@ fn run_insert_helper(
       execute the SQL statements in the collection batch_collection
     ENDIF
     */
+    if benchmark_batch_size != 1 {
+        execute_batch(&mut batch_collection);
+    }
 
     // commit
     commit(connection);
@@ -655,13 +702,13 @@ fn run_insert_helper(
 // Supervise function for retrieving of the database data.
 // -----------------------------------------------------------------------------
 
-fn run_select(
+fn run_select<'a>(
     benchmark_core_multiplier: u32,
     benchmark_number_partitions: usize,
-    connections: &[Connection],
-    partitions: &[Vec<(String, String)>],
-    sql_select: &str,
-    statistics: &mut Vec<StatisticsEntry>,
+    connections: &'static [Connection],
+    partitions: &'static [Vec<(String, String)>],
+    sql_select: &'static str,
+    statistics: &'a mut Vec<StatisticsEntry>,
     trial_no: u32,
 ) -> Result<(), Error> {
     debug!("Start run_select()");
@@ -683,8 +730,8 @@ fn run_select(
         ENDIF
     ENDWHILE
     */
-    for partition_no in 0..benchmark_number_partitions {
-        if benchmark_core_multiplier == 0 {
+    if benchmark_core_multiplier == 0 {
+        for partition_no in 0..benchmark_number_partitions {
             run_select_helper(
                 &connections[partition_no],
                 partition_no,
@@ -692,8 +739,24 @@ fn run_select(
                 sql_select,
                 trial_no,
             );
-            // } else {
-            //
+        }
+    } else {
+        let mut thread_handles = vec![];
+
+        for partition_no in 0..benchmark_number_partitions {
+            thread_handles.push(spawn(move || {
+                run_select_helper(
+                    &connections[partition_no],
+                    partition_no,
+                    &partitions[partition_no],
+                    sql_select,
+                    trial_no,
+                );
+            }))
+        }
+
+        for handle in thread_handles {
+            handle.join().unwrap();
         }
     }
 
@@ -715,11 +778,11 @@ fn run_select(
 // Helper function for retrieving data from the database.
 // -----------------------------------------------------------------------------
 
-fn run_select_helper(
-    connection: &Connection,
+fn run_select_helper<'a>(
+    connection: &'static Connection,
     partition_no: usize,
-    partition: &[(String, String)],
-    sql_select: &str,
+    partition: &'static [(String, String)],
+    sql_select: &'static str,
     trial_no: u32,
 ) {
     debug!("Start run_select_helper()");
