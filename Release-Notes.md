@@ -9,7 +9,7 @@
 
 ## Version 1.2.0
 
-Release Date: dd.mm.2021
+Release Date: 27.10.2021
 
 ### New Features
 
