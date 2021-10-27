@@ -4,13 +4,13 @@ use java_properties::read;
 
 use chrono::Duration;
 
+use crossbeam::thread;
 use oracle::{Batch, Connection, Error};
 use rustc_version_runtime::version;
 use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
 use std::io::BufReader;
 use std::path::Path;
-// use std::thread::spawn;
 
 // =============================================================================
 // Global constants.
@@ -542,26 +542,23 @@ fn run_insert(
                 trial_no,
             );
         }
-        // } else {
-        //     let mut thread_handles = vec![];
-        //
-        //     for partition_no in 0..params.benchmark_number_partitions {
-        //         thread_handles.push(spawn(move || {
-        //             run_insert_helper(
-        //                 params.benchmark_batch_size,
-        //                 params.benchmark_transaction_size,
-        //                 &params.connections[partition_no],
-        //                 partition_no,
-        //                 &params.partitions[partition_no],
-        //                 params.sql_insert,
-        //                 trial_no,
-        //             )
-        //         }))
-        //     }
-        //
-        //     for handle in thread_handles {
-        //         handle.join().unwrap();
-        //     }
+    } else {
+        thread::scope(|s| {
+            for partition_no in 0..params.benchmark_number_partitions {
+                s.spawn(move |_| {
+                    run_insert_helper(
+                        params.benchmark_batch_size,
+                        params.benchmark_transaction_size,
+                        &params.connections[partition_no],
+                        partition_no,
+                        &params.partitions[partition_no],
+                        params.sql_insert,
+                        trial_no,
+                    );
+                });
+            }
+        })
+        .unwrap();
     }
 
     // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
@@ -741,24 +738,21 @@ fn run_select<'a>(
                 trial_no,
             );
         }
-        // } else {
-        //     let mut thread_handles = vec![];
-        //
-        //     for partition_no in 0..benchmark_number_partitions {
-        //         thread_handles.push(spawn(move || {
-        //             run_select_helper(
-        //                 &connections[partition_no],
-        //                 partition_no,
-        //                 &partitions[partition_no],
-        //                 sql_select,
-        //                 trial_no,
-        //             );
-        //         }))
-        //     }
-        //
-        //     for handle in thread_handles {
-        //         handle.join().unwrap();
-        //     }
+    } else {
+        thread::scope(|s| {
+            for partition_no in 0..benchmark_number_partitions {
+                s.spawn(move |_| {
+                    run_select_helper(
+                        &connections[partition_no],
+                        partition_no,
+                        &partitions[partition_no],
+                        sql_select,
+                        trial_no,
+                    );
+                });
+            }
+        })
+        .unwrap();
     }
 
     // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')

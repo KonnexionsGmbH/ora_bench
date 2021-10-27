@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 chrono = "0.4.19"
+crossbeam = "0.8.1"
 csv = "1.1.6"
 env_logger = "0.9.0"
 java-properties = "1.4.0"

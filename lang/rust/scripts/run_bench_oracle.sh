@@ -21,8 +21,8 @@ fi
 
 export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 
-export ORA_BENCH_RUST_LOG_LEVEL=info
 export ORA_BENCH_RUST_LOG_LEVEL=debug
+export ORA_BENCH_RUST_LOG_LEVEL=info
 
 echo "=============================================================================="
 echo "Start $0"
