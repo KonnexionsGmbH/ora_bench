@@ -537,6 +537,7 @@ function run_insert(
                 connections[partition_key],
                 partition_key,
                 sql_insert,
+                trial_number,
             )
         end
     else
@@ -550,6 +551,7 @@ function run_insert(
                     connections[partition_key],
                     partition_key,
                     sql_insert,
+                    trial_number,
                 )
             end
         else
@@ -562,6 +564,7 @@ function run_insert(
                     connections[partition_key],
                     partition_key,
                     sql_insert,
+                    trial_number,
                 )
             end
         end
@@ -594,12 +597,19 @@ function run_insert_helper(
     connection::Oracle.Connection, 
     partition_key::Int64, 
     sql_insert::String, 
+    trial_number::Int64, 
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
-    # INFO Start insert partition_key=partition_key
-    @info "Start insert partition_key=$(partition_key)"
+    #=
+      IF trial_no == 1
+         INFO Start insert partition_key=partition_key
+      ENDIF   
+    =#
+    if trial_number == 1
+        @info "Start insert partition_key=$(partition_key)"
+    end
 
     #=
       count = 0
@@ -680,10 +690,14 @@ function run_insert_helper(
     Oracle.execute(connection, "commit")
     @debug "      $(function_name) - partition_key=$(partition_key) - after  commit - final"
 
-    Oracle.close(stmt)
-
-    # INFO End   insert partition_key=partition_key
-    @info "End   insert partition_key=$(partition_key)"
+    #=
+      IF trial_no == 1
+         INFO End   insert partition_key=partition_key
+      ENDIF   
+    =#
+    if trial_number == 1
+        @info "End   insert partition_key=$(partition_key)"
+    end
 
     @debug "End   $(function_name)"
     nothing
@@ -732,6 +746,7 @@ function run_select(
                 size(bulk_data_partitions[partition_key], 1),
                 partition_key,
                 sql_select,
+                trial_number,
             )
         end
     else
@@ -743,6 +758,7 @@ function run_select(
                     size(bulk_data_partitions[partition_key], 1),
                     partition_key,
                     sql_select,
+                    trial_number,
                 )
             end
         else
@@ -753,6 +769,7 @@ function run_select(
                     size(bulk_data_partitions[partition_key], 1),
                     partition_key,
                     sql_select,
+                    trial_number,
                 )
             end
         end
@@ -783,12 +800,19 @@ function run_select_helper(
     count_expected::Int64, 
     partition_key::Int64, 
     sql_select::String, 
+    trial_number::Int64, 
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
-    # INFO Start select partition_key=partition_key
-    @info "Start select partition_key=$(partition_key)"
+    #=
+      IF trial_no == 1
+         INFO Start select partition_key=partition_key
+      ENDIF   
+    =#
+    if trial_number == 1
+        @info "Start select partition_key=$(partition_key)"
+    end
 
     # execute the SQL statement in config param 'sql.select'
     stmt = Oracle.Stmt(
@@ -820,8 +844,14 @@ function run_select_helper(
         throw(ErrorException)
     end
 
-    # INFO End   select partition_key=partition_key
-    @info "End   select partition_key=$(partition_key)"
+    #=
+      IF trial_no == 1
+         INFO End   select partition_key=partition_key
+      ENDIF   
+    =#
+    if trial_number == 1
+        @info "End   select partition_key=$(partition_key)"
+    end
 
     @debug "End   $(function_name)"
     nothing
@@ -845,6 +875,7 @@ function run_trial(
     # save the current time as the start time of the 'trial' action
     create_result_measuring_point_start("trial", benchmark_globals)
 
+    # INFO  Start trial no. trial_no
     @info "Start trial no. $(string(trial_number))"
 
     #=
