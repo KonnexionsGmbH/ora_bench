@@ -2,7 +2,7 @@
 
 %% API exports
 
--export([main/1, insert_partition/5, select_partition/4]).
+-export([main/1, insert_partition/6, select_partition/5]).
 
 -define(DPI_MAJOR_VERSION, 3).
 -define(DPI_MINOR_VERSION, 0).
@@ -15,6 +15,7 @@
 main([ConfigFile]) ->
   io:format("~n[~p:~p] Start ~p~n", [?FUNCTION_NAME, ?LINE, ?MODULE]),
   process_flag(trap_exit, true),
+  io:format("~n[~p:~p] ConfigFile=~p~n", [?FUNCTION_NAME, ?LINE, ConfigFile]),
   {ok, [Config0]} = file:consult(ConfigFile),
   Config = Config0#{},
   #{
@@ -291,7 +292,7 @@ run_trials(Trial, Trials, Ctx, Stats, TrialMax, TrialMin, TrialSum) ->
     sql_create := Create,
     sql_drop := Drop
   } = Conf = get(conf),
-  io:format("[~p:~p:~p] Start trial no ~p~n", [?MODULE, ?FUNCTION_NAME, ?LINE, Trial]),
+  io:format("[~p:~p:~p] Start trial no. ~p~n", [?MODULE, ?FUNCTION_NAME, ?LINE, Trial]),
   StartTime = os:timestamp(),
   #{connection_string := ConnectString} = Conf,
   Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
@@ -316,8 +317,8 @@ run_trials(Trial, Trials, Ctx, Stats, TrialMax, TrialMin, TrialSum) ->
   ok = dpi:stmt_close(CreateStmt, <<>>),
   ok = dpi:stmt_close(DropStmt, <<>>),
   ok = dpi:conn_close(Conn, [], <<>>),
-  InsertStat = run_insert(Ctx),
-  SelectStat = run_select(Ctx),
+  InsertStat = run_insert(Ctx, Trial),
+  SelectStat = run_select(Ctx, Trial),
   InsertPR =
     maps:fold(fun (_Pid, #{partition := P, rows := R}, Map) -> Map#{P => R} end, #{}, InsertStat),
   SelectPR =
@@ -359,7 +360,7 @@ run_trials(Trial, Trials, Ctx, Stats, TrialMax, TrialMin, TrialSum) ->
 %% Supervise function for inserting data into the database.
 %% -------------------------------------------------------------------
 
-run_insert(Ctx) ->
+run_insert(Ctx, Trial) ->
   Rows = get(rows),
   #{benchmark_number_partitions := Partitions} = Config = get(conf),
   Master = self(),
@@ -368,7 +369,7 @@ run_insert(Ctx) ->
       spawn_link(
         ?MODULE,
         insert_partition,
-        [Partition, maps:get(Partition, Rows), Ctx, Master, Config]
+        [Partition, maps:get(Partition, Rows), Ctx, Master, Config, Trial]
       )
       || Partition <- lists:seq(0, Partitions - 1)
     ],
@@ -378,12 +379,12 @@ run_insert(Ctx) ->
 %% Supervise function for retrieving of the database data.
 %% -------------------------------------------------------------------
 
-run_select(Ctx) ->
+run_select(Ctx, Trial) ->
   #{benchmark_number_partitions := Partitions} = Config = get(conf),
   Master = self(),
   Threads =
     [
-      spawn_link(?MODULE, select_partition, [Partition, Ctx, Master, Config])
+      spawn_link(?MODULE, select_partition, [Partition, Ctx, Master, Config, Trial])
       || Partition <- lists:seq(0, Partitions - 1)
     ],
   thread_join(Threads).
@@ -405,9 +406,13 @@ insert_partition(
     benchmark_transaction_size := NumItersCommit,
     file_bulk_size := FBulkSz,
     file_bulk_length := Size
-  } = Config
+  } = Config,
+  Trial
 ) ->
-  io:format("Start insert partition_key=~p~n", [Partition]),
+  case Trial of
+    1 -> io:format("Start insert partition_key=~p~n", [Partition]);
+    _ -> ok
+  end,
   #{connection_string := ConnectString} = Config,
   Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
   Start = os:timestamp(),
@@ -489,7 +494,10 @@ insert_partition(
   ok = dpi:var_release(maps:get(dataVar, Params)),
   ok = dpi:stmt_close(InsStmt, <<>>),
   ok = dpi:conn_close(Conn, [], <<>>),
-  io:format("End   insert partition_key=~p~n", [Partition]),
+  case Trial of
+    1 -> io:format("End   insert partition_key=~p~n", [Partition]);
+    _ -> ok
+  end,
   Master
   !
   {
@@ -511,9 +519,13 @@ select_partition(
     connection_password := Password,
     sql_select := Select,
     connection_fetch_size := FetchSize
-  } = Config
+  } = Config,
+  Trial
 ) ->
-  io:format("Start select partition_key=~p~n", [Partition]),
+  case Trial of
+    1 -> io:format("Start select partition_key=~p~n", [Partition]);
+    _ -> ok
+  end,
   #{connection_string := ConnectString} = Config,
   Conn = dpi:conn_create(Ctx, User, Password, ConnectString, #{}, #{}),
   SelectSql = list_to_binary(io_lib:format("~s WHERE partition_key = ~p", [Select, Partition])),
@@ -526,7 +538,10 @@ select_partition(
   #{selectStmt := SelStmt} = Params,
   ok = dpi:stmt_close(SelStmt, <<>>),
   ok = dpi:conn_close(Conn, [], <<>>),
-  io:format("End   select partition_key=~p~n", [Partition]),
+  case Trial of
+    1 -> io:format("End   select partition_key=~p~n", [Partition]);
+    _ -> ok
+  end,
   Master
   !
   {
