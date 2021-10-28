@@ -1,5 +1,6 @@
 import configparser
 import csv
+import cx_Oracle
 import datetime
 import locale
 import logging
@@ -7,10 +8,8 @@ import logging.config
 import os
 import sys
 import threading
-from pathlib import Path
-
-import cx_Oracle
 import yaml
+from pathlib import Path
 
 # ----------------------------------------------------------------------------------
 # Definition of the global variables.
@@ -564,7 +563,7 @@ def run_insert(logger,
                                               logger, benchmark_batch_size, benchmark_transaction_size,
                                               bulk_data_partitions[partition_key],
                                               connections[partition_key],
-                                              cursors[partition_key], partition_key, sql_insert))
+                                              cursors[partition_key], partition_key, sql_insert, trial_number))
             threads.append(thread)
             thread.start()
 
@@ -715,7 +714,7 @@ def run_select(logger,
         else:
             thread = threading.Thread(target=run_select_helper,
                                       args=(logger, bulk_data_partitions[partition_key], cursors[partition_key], partition_key,
-                                            sql_select))
+                                            sql_select, trial_number))
             threads.append(thread)
             thread.start()
 
