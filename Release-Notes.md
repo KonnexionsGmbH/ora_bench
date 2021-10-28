@@ -22,11 +22,11 @@ Release Date: 27.10.2021
 | C++ (gcc)             | Language | 10.3.0            |   |
 | cx_Oracle             | Driver   | 8.2.1             |   |
 | Elixir                | Language | 1.12.3-otp-24     |   |
-| Erlang                | Language | 24.1.2            |   |
+| Erlang                | Language | 24.1.3            | upgrade |
 | Go                    | Language | 1.17.2            |   |
-| godror                | Driver   | v0.27.1           |   |
+| godror                | Driver   | v0.28.0           | upgrade |
 | JDBC.jl               | Driver   | v0.5.0            |   |
-| Java                  | Language | openjdk-17        |   |
+| Java                  | Language | openjdk-17.0.1    | upgrade |
 | Julia                 | Language | v1.6.3            |   |
 | Kotlin                | Language | 1.5.31            |   |
 | Oracle Instant Client | Driver   | 21.3.0.0.0        |   |
@@ -35,8 +35,8 @@ Release Date: 27.10.2021
 | Oracle.jl             | Driver   | v0.3.1            |   |
 | oranif                | Driver   | 0.2.3             |   |
 | Python 3              | Language | 3.10.0            |   |
-| Rust                  | Language | 1.55.0            | new |
-| Rust-oracle           | Driver   | v0.5.2            | new |
+| Rust                  | Language | 1.56.0            | new |
+| Rust-oracle           | Driver   | v0.5.3            | new |
 
 ### Open issues
 

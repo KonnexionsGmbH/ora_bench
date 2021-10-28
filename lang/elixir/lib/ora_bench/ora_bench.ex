@@ -667,10 +667,12 @@ defmodule OraBench do
       "Start ==========> partition key: #{partition_key_current} <=========="
     )
 
-    Logger.info(
-      "Start insert partition_key=#{partition_key_current}"
-    )
-
+    if trial_number == 1 do
+      Logger.info(
+        "Start insert partition_key=#{partition_key_current}"
+      )
+    end
+      
     curr_key = case config["benchmark.core.multiplier"] do
       "0" -> 1
       _ -> partition_key
@@ -732,9 +734,11 @@ defmodule OraBench do
     )
     :ok = :dpi.stmt_close(sql_insert, <<>>)
 
-    Logger.info(
-      "End   insert partition_key=#{partition_key_current}"
-    )
+    if trial_number == 1 do
+      Logger.info(
+        "End   insert partition_key=#{partition_key_current}"
+      )
+    end
     
     run_insert_partitions(
       benchmark_driver,
@@ -833,9 +837,11 @@ defmodule OraBench do
       "Start ==========> partition key: #{partition_key_current} <=========="
     )
 
-    Logger.info(
-      "Start select partition_key=#{partition_key_current}"
-    )
+    if trial_number == 1 do
+      Logger.info(
+        "Start select partition_key=#{partition_key_current}"
+      )
+    end
 
     curr_key = case config["benchmark.core.multiplier"] do
       "0" -> 1
@@ -882,9 +888,11 @@ defmodule OraBench do
 
     :ok = :dpi.stmt_close(sql_select, <<>>)
 
-    Logger.info(
-      "End   select partition_key=#{partition_key_current}"
-    )
+    if trial_number == 1 do
+      Logger.info(
+        "End   select partition_key=#{partition_key_current}"
+      )
+    end
 
     run_select_partitions(
       benchmark_driver,
