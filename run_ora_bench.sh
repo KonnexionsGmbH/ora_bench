@@ -42,6 +42,7 @@ if [ -z "$1" ]; then
     echo "julia_oracle       - Julia and Oracle.jl"
     echo "kotlin             - Kotlin and Oracle JDBC"
     echo "python             - Python 3 and cx_Oracle"
+    echo "rust               - Rust and Rust-oracle"
     echo "------------------------------------------------------------------------------"
     read -rp "Enter the desired programming language (and database driver) [default: ${ORA_BENCH_CHOICE_DRIVER_DEFAULT}] " ORA_BENCH_CHOICE_DRIVER
     export ORA_BENCH_CHOICE_DRIVER=${ORA_BENCH_CHOICE_DRIVER}

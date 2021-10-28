@@ -155,7 +155,7 @@ function create_result(
     )
 
     if action == "trial"
-        @info "Duration (ms) trial         : $(round(duration_ns / 1000000))"
+        println("Duration (ms) trial         : $(round(duration_ns / 1000000))")
     end
 
     @debug "End   $(function_name)"
@@ -300,17 +300,17 @@ function get_bulk_data_partitions(
         push!(bulk_data_partitions[partition_key], row)
     end
 
-    @info "Start Distribution of the data in the partitions"
+    println("Start Distribution of the data in the partitions")
 
     for partition_key = 1:benchmark_number_partitions
-        @info format(
+        println(format(
             "Partition p{1:0>5d} contains {2:n} rows",
             partition_key - 1,
             size(bulk_data_partitions[partition_key], 1),
-        )
+        ))
     end
 
-    @info "End   Distribution of the data in the partitions"
+    println("End   Distribution of the data in the partitions")
 
     @debug "End   $(function_name)"
     return bulk_data_partitions
@@ -328,18 +328,18 @@ function main()
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
-    @info "Start OraBenchJdbc.jl - Number Threads: $(Threads.nthreads())"
+    println("Start OraBenchJdbc.jl - Number Threads: $(Threads.nthreads())")
 
     numberArgs = size(ARGS, 1)
 
-    @info "main() - number arguments=$(numberArgs)"
+    println("main() - number arguments=$(numberArgs)")
 
     if numberArgs == 0
         @error "main() - no command line argument available"
         throw(ArgumentError)
     end
 
-    @info "main() - 1st argument=$(ARGS[1])"
+    println("main() - 1st argument=$(ARGS[1])")
 
     if numberArgs > 1
         @error "main() - more than one command line argument available"
@@ -351,7 +351,7 @@ function main()
 
     run_benchmark(config)
 
-    @info "End   OraBenchJdbc.jl"
+    println("End   OraBenchJdbc.jl")
 
     @debug "End   $(function_name)"
     nothing
@@ -497,12 +497,12 @@ function run_benchmark(config::Dict{String,Any})
     # INFO  Duration (ms) trial min.    : trial_min
     # INFO  Duration (ms) trial max.    : trial_max
     # INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
-    @info "Duration (ms) trial min.    : $(round(trial_min / 1000000))"
-    @info "Duration (ms) trial max.    : $(round(trial_max / 1000000))"
-    @info "Duration (ms) trial average : $(round(trial_sum / 1000000 / parse(Int64, config["DEFAULT"]["benchmark_trials"])))"
+    println("Duration (ms) trial min.    : $(round(trial_min / 1000000))")
+    println("Duration (ms) trial max.    : $(round(trial_max / 1000000))")
+    println("Duration (ms) trial average : $(round(trial_sum / 1000000 / parse(Int64, config["DEFAULT"]["benchmark_trials"])))")
 
     # INFO  Duration (ms) benchmark run : duration_benchmark
-    @info "Duration (ms) benchmark run : $(round(duration_ns_benchmark / 1000000))"
+    println("Duration (ms) benchmark run : $(round(duration_ns_benchmark / 1000000))")
 
     @debug "End   $(function_name)"
     nothing
@@ -557,6 +557,7 @@ function run_insert(
                 partition_key,
                 prepared_statements[partition_key],
                 sql_insert,
+                trial_number,
             )
         end
     else
@@ -571,6 +572,7 @@ function run_insert(
                     partition_key,
                     prepared_statements[partition_key],
                     sql_insert,
+                    trial_number,
                 )
             end
         else
@@ -584,6 +586,7 @@ function run_insert(
                     partition_key,
                     prepared_statements[partition_key],
                     sql_insert,
+                    trial_number,
                 )
             end
         end
@@ -617,12 +620,19 @@ function run_insert_helper(
     partition_key::Int64, 
     prepared_statement::JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}, 
     sql_insert::String, 
+    trial_number::Int64, 
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
-    # INFO Start insert partition_key=partition_key
-    @info "Start insert partition_key=$(partition_key)"
+    #=
+      IF trial_no == 1
+         INFO Start insert partition_key=partition_key
+      ENDIF   
+    =#
+    if trial_number == 1
+        println("Start insert partition_key=$(partition_key)")
+    end
 
     #=
       count = 0
@@ -691,8 +701,14 @@ function run_insert_helper(
     JDBC.commit(connection)
     @debug "      $(function_name) - partition_key=$(partition_key) - after  commit - final"
 
-    # INFO End   insert partition_key=partition_key
-    @info "End   insert partition_key=$(partition_key)"
+    #=
+      IF trial_no == 1
+         INFO End   insert partition_key=partition_key
+      ENDIF   
+    =#
+    if trial_number == 1
+        println("End   insert partition_key=$(partition_key)")
+    end
 
     @debug "End   $(function_name)"
     nothing
@@ -741,6 +757,7 @@ function run_select(
                 partition_key,
                 sql_select,
                 statements[partition_key],
+                trial_number,
             )
         end
     else
@@ -752,6 +769,7 @@ function run_select(
                     partition_key,
                     sql_select,
                     statements[partition_key],
+                    trial_number,
                 )
             end
         else
@@ -762,6 +780,7 @@ function run_select(
                     partition_key,
                     sql_select,
                     statements[partition_key],
+                    trial_number,
             )
             end
         end
@@ -792,12 +811,19 @@ function run_select_helper(
     partition_key::Int64, 
     sql_select::String, 
     statement::JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}, 
+    trial_number::Int64, 
 )
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "Start $(function_name)"
 
-    # INFO Start select partition_key=partition_key
-    @info "Start select partition_key=$(partition_key)"
+    #=
+      IF trial_no == 1
+         INFO Start select partition_key=partition_key
+      ENDIF   
+    =#
+    if trial_number == 1
+        println("Start select partition_key=$(partition_key)")
+    end
 
     # execute the SQL statement in config param 'sql.select'
     result_set = JDBC.executeQuery(
@@ -827,8 +853,14 @@ function run_select_helper(
         throw(ErrorException)
     end
 
-    # INFO End   select partition_key=partition_key
-    @info "End   select partition_key=$(partition_key)"
+    #=
+      IF trial_no == 1
+         INFO End   select partition_key=partition_key
+      ENDIF   
+    =#
+    if trial_number == 1
+        println("End   select partition_key=$(partition_key)")
+    end
 
     @debug "End   $(function_name)"
     nothing
@@ -855,7 +887,8 @@ function run_trial(
     # save the current time as the start time of the 'trial' action
     create_result_measuring_point_start("trial", benchmark_globals)
 
-    @info "Start trial no. $(string(trial_number))"
+    # INFO  Start trial no. trial_no
+    println("Start trial no. $(string(trial_number))")
 
     #=
     create the database table (config param 'sql.create')

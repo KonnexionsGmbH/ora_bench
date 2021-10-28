@@ -1,5 +1,6 @@
 import configparser
 import csv
+import cx_Oracle
 import datetime
 import locale
 import logging
@@ -7,10 +8,8 @@ import logging.config
 import os
 import sys
 import threading
-from pathlib import Path
-
-import cx_Oracle
 import yaml
+from pathlib import Path
 
 # ----------------------------------------------------------------------------------
 # Definition of the global variables.
@@ -556,14 +555,15 @@ def run_insert(logger,
                               connections[partition_key],
                               cursors[partition_key],
                               partition_key,
-                              sql_insert)
+                              sql_insert,
+                              trial_number)
         else:
             thread = threading.Thread(target=run_insert_helper,
                                       args=(
                                               logger, benchmark_batch_size, benchmark_transaction_size,
                                               bulk_data_partitions[partition_key],
                                               connections[partition_key],
-                                              cursors[partition_key], partition_key, sql_insert))
+                                              cursors[partition_key], partition_key, sql_insert, trial_number))
             threads.append(thread)
             thread.start()
 
@@ -598,12 +598,16 @@ def run_insert_helper(logger,
                       connection,
                       cursor,
                       partition_key,
-                      sql_insert):
+                      sql_insert,
+                      trial_number):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
-    # INFO Start insert partition_key=partition_key
-    logger.info("Start insert partition_key=" + str(partition_key))
+    # IF trial_no == 1
+    #    INFO Start insert partition_key=partition_key
+    # ENDIF
+    if trial_number == 1:
+        logger.info("Start insert partition_key=" + str(partition_key))
 
     # count = 0
     # collection batch_collection = empty
@@ -652,8 +656,11 @@ def run_insert_helper(logger,
 
     connection.commit()
 
-    # INFO End   insert partition_key=partition_key
-    logger.info("End   insert partition_ley=" + str(partition_key))
+    # IF trial_no == 1
+    #    INFO End   insert partition_key=partition_key
+    # ENDIF
+    if trial_number == 1:
+        logger.info("End   insert partition_ley=" + str(partition_key))
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("End")
@@ -702,11 +709,12 @@ def run_select(logger,
                               bulk_data_partitions[partition_key],
                               cursors[partition_key],
                               partition_key,
-                              sql_select)
+                              sql_select,
+                              trial_number)
         else:
             thread = threading.Thread(target=run_select_helper,
                                       args=(logger, bulk_data_partitions[partition_key], cursors[partition_key], partition_key,
-                                            sql_select))
+                                            sql_select, trial_number))
             threads.append(thread)
             thread.start()
 
@@ -738,12 +746,16 @@ def run_select_helper(logger,
                       bulk_size_partition,
                       cursor,
                       partition_key,
-                      sql_statement):
+                      sql_statement,
+                      trial_number):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
-    # INFO Start select partition_key=partition_key
-    logger.info("Start select partition_key=" + str(partition_key))
+    # IF trial_no == 1
+    #    INFO Start select partition_key=partition_key
+    # ENDIF
+    if trial_number == 1:
+        logger.info("Start select partition_key=" + str(partition_key))
 
     # execute the SQL statement in config param "sql.select"
     cursor.execute(sql_statement + " where partition_key = " + str(partition_key))
@@ -764,8 +776,11 @@ def run_select_helper(logger,
         logger.error("Number rows: expected=" + str(len(bulk_size_partition)) + " - found=" + str(count))
         sys.exit(1)
 
-    # INFO End   select partition_key=partition_key
-    logger.info("End   select partition_ley=" + str(partition_key))
+    # IF trial_no == 1
+    #    INFO End   insert partition_key=partition_key
+    # ENDIF
+    if trial_number == 1:
+        logger.info("End   select partition_ley=" + str(partition_key))
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("End")
@@ -793,6 +808,7 @@ def run_trial(logger,
                                                             "trial",
                                                             benchmark_globals)
 
+    # INFO  Start trial no. trial_no
     logger.info("Start trial no. " + str(trial_number))
 
     # create the database table (config param "sql.create")

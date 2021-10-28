@@ -1,0 +1,1053 @@
+================================================================================
+Start ./scripts/run_ora_bench_release.sh
+--------------------------------------------------------------------------------
+OraBench - Release run for VMWare and WSL2.
+--------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:51:12
+================================================================================
+ORACLE_DATABASE_EXISTING : false
+ORACLE_DATABASE_18C      : false
+ORACLE_DATABASE_19C      : false
+ORACLE_DATABASE_21C      : true
+--------------------------------------------------------------------------------
+RUN_CX_ORACLE_PYTHON     : true
+RUN_GODROR_GO            : false
+RUN_JDBC_JAVA            : false
+RUN_JDBC_JULIA           : false
+RUN_JDBC_KOTLIN          : false
+RUN_ODPI_C               : false
+RUN_ORACLE_JULIA         : false
+RUN_ORACLE_RUST          : false
+RUN_ORANIF_ELIXIR        : false
+RUN_ORANIF_ERLANG        : false
+================================================================================
+--------------------------------------------------------------------------------
+Collect libraries and compile.
+--------------------------------------------------------------------------------
+==============================================================================
+Start scripts/run_collect_and_compile.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - collect libraries and compile.
+------------------------------------------------------------------------------
+BULKFILE_EXISTING                 : 
+------------------------------------------------------------------------------
+RUN_CX_ORACLE_PYTHON              : true
+RUN_GODROR_GO                     : false
+RUN_JDBC_JAVA                     : false
+RUN_JDBC_JULIA                    : false
+RUN_JDBC_KOTLIN                   : false
+RUN_ODPI_C                        : false
+RUN_ORACLE_JULIA                  : false
+RUN_ORACLE_RUST                   : false
+RUN_ORANIF_ELIXIR                 : false
+RUN_ORANIF_ERLANG                 : false
+------------------------------------------------------------------------------
+GOROOT                            : 
+GRADLE_HOME                       : 
+LD_LIBRARY_PATH                   : /usr/lib/oracle/21/client64/lib:/usr/lib/oracle/21/client64/lib:
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:51:12
+==============================================================================
+==============================================================================
+Start scripts/run_create_bulk_file.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - setup benchmark run.
+------------------------------------------------------------------------------
+CHOICE_DRIVER                     : 
+------------------------------------------------------------------------------
+FILE_CONFIGURATION_NAME           : priv/properties/ora_bench.properties
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:51:12
+==============================================================================
+==============================================================================
+Start lang/java/scripts/run_gradle.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - Gradle: clean and assemble the Java part of the project.
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:51:12
+==============================================================================
+Starting a Gradle Daemon, 2 incompatible and 2 stopped Daemons could not be reused, use --status for details
+
+> Task :init SKIPPED
+The build file 'build.gradle' already exists. Skipping build initialization.
+
+BUILD SUCCESSFUL in 3s
+> Task :clean
+
+BUILD SUCCESSFUL in 426ms
+1 actionable task: 1 executed
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :fatJar
+> Task :copyJarToLib
+
+BUILD SUCCESSFUL in 2s
+4 actionable tasks: 4 executed
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:51:20
+------------------------------------------------------------------------------
+End   lang/java/scripts/run_gradle.sh
+==============================================================================
+2021-10-28 16:51:21,091 [OraBench.java] INFO  Start OraBench.java
+2021-10-28 16:51:21,093 [OraBench.java] INFO  main() - number arguments=1
+2021-10-28 16:51:21,093 [OraBench.java] INFO  main() - 1st argument=setup
+2021-10-28 16:51:21,190 [Config.java] INFO  benchmarkBatchSize      =512
+2021-10-28 16:51:21,190 [Config.java] INFO  benchmarkCoreMultiplier =0
+2021-10-28 16:51:21,190 [Config.java] INFO  benchmarkTransactionSize=512
+2021-10-28 16:51:21,190 [OraBench.java] INFO  Start Setup OraBench Run
+2021-10-28 16:51:21,724 [Setup.java] INFO  bulk file written: file name=priv/ora_bench_bulk_data.csv size=100000 length=1024
+2021-10-28 16:51:21,725 [Setup.java] INFO  missing result file created: file name=priv/ora_bench_result.tsv
+2021-10-28 16:51:21,725 [OraBench.java] INFO  End   Setup OraBench Run
+2021-10-28 16:51:21,726 [OraBench.java] INFO  End   OraBench.java
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:51:21
+------------------------------------------------------------------------------
+End   scripts/run_create_bulk_file.sh
+==============================================================================
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:51:21
+------------------------------------------------------------------------------
+End   scripts/run_collect_and_compile.sh
+==============================================================================
+--------------------------------------------------------------------------------
+Create bulk file.
+--------------------------------------------------------------------------------
+==============================================================================
+Start scripts/run_create_bulk_file.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - setup benchmark run.
+------------------------------------------------------------------------------
+CHOICE_DRIVER                     : 
+------------------------------------------------------------------------------
+FILE_CONFIGURATION_NAME           : priv/properties/ora_bench.properties
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:51:21
+==============================================================================
+==============================================================================
+Start lang/java/scripts/run_gradle.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - Gradle: clean and assemble the Java part of the project.
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:51:21
+==============================================================================
+
+> Task :init SKIPPED
+The build file 'build.gradle' already exists. Skipping build initialization.
+
+BUILD SUCCESSFUL in 390ms
+> Task :clean
+
+BUILD SUCCESSFUL in 395ms
+1 actionable task: 1 executed
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :fatJar
+> Task :copyJarToLib
+
+BUILD SUCCESSFUL in 1s
+4 actionable tasks: 4 executed
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:51:25
+------------------------------------------------------------------------------
+End   lang/java/scripts/run_gradle.sh
+==============================================================================
+2021-10-28 16:51:26,410 [OraBench.java] INFO  Start OraBench.java
+2021-10-28 16:51:26,411 [OraBench.java] INFO  main() - number arguments=1
+2021-10-28 16:51:26,411 [OraBench.java] INFO  main() - 1st argument=setup
+2021-10-28 16:51:26,483 [Config.java] INFO  benchmarkBatchSize      =512
+2021-10-28 16:51:26,484 [Config.java] INFO  benchmarkCoreMultiplier =0
+2021-10-28 16:51:26,484 [Config.java] INFO  benchmarkTransactionSize=512
+2021-10-28 16:51:26,484 [OraBench.java] INFO  Start Setup OraBench Run
+2021-10-28 16:51:26,998 [Setup.java] INFO  bulk file written: file name=priv/ora_bench_bulk_data.csv size=100000 length=1024
+2021-10-28 16:51:26,999 [OraBench.java] INFO  End   Setup OraBench Run
+2021-10-28 16:51:26,999 [OraBench.java] INFO  End   OraBench.java
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:51:27
+------------------------------------------------------------------------------
+End   scripts/run_create_bulk_file.sh
+==============================================================================
+--------------------------------------------------------------------------------
+Oracle Database 21c.
+--------------------------------------------------------------------------------
+==============================================================================
+Start scripts/run_db_setup.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - database setup.
+------------------------------------------------------------------------------
+BENCHMARK_DATABASE                : db_21_3_ee
+CONNECTION_HOST                   : localhost
+CONNECTION_PORT                   : 1521
+CONNECTION_SERVICE                : orclpdb1
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:51:27
+==============================================================================
+Docker stop/rm ora_bench_db ....................................................
+703321736b0d   konnexionsgmbh/db_21_3_ee   "/bin/sh -c 'exec $O…"   29 minutes ago   Exited (143) 9 minutes ago                                                                                          ora_bench_db
+ora_bench_db
+Docker setup network ...........................................................
+Deleted Networks:
+ora_bench_net
+
+2452c6e3cf6a86fcb9a669595693c6788e4c8cfecc142e711429e48fab2067e1
+NETWORK ID     NAME            DRIVER    SCOPE
+7f497f39cdfb   bridge          bridge    local
+83bcf9e02715   host            host      local
+f0c486fb1033   none            null      local
+2452c6e3cf6a   ora_bench_net   bridge    local
+Docker create ora_bench_db(db_21_3_ee) ......................
+ae40292b35dd79db5a625eab94f0ea65a058763014d42856509230c499a22282
+Docker started ora_bench_db(db_21_3_ee) .....................
+ora_bench_db
+CONTAINER ID   IMAGE                       COMMAND                  CREATED                  STATUS                                     PORTS                                                 NAMES
+ae40292b35dd   konnexionsgmbh/db_21_3_ee   "/bin/sh -c 'exec $O…"   Less than a second ago   Up Less than a second (health: starting)   0.0.0.0:1521->1521/tcp, :::1521->1521/tcp, 5500/tcp   ora_bench_db
+CONTAINER ID   IMAGE                       COMMAND                  CREATED              STATUS                                 PORTS                                                 NAMES
+ae40292b35dd   konnexionsgmbh/db_21_3_ee   "/bin/sh -c 'exec $O…"   About a minute ago   Up About a minute (health: starting)   0.0.0.0:1521->1521/tcp, :::1521->1521/tcp, 5500/tcp   ora_bench_db
+DOCKER ready in 120 seconds .......................................
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Thu Oct 28 16:53:28 2021
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 21c Enterprise Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+===============================================================================
+Current user is now: SYS
+===============================================================================
+Start run_db_setup.sql
+===============================================================================
+Adding database schema SCOTT ...
+<------------------------------------------------------------------------------>
+Executed: ALTER SESSION SET "_ORACLE_SCRIPT"=TRUE
+Executed: CREATE USER SCOTT IDENTIFIED BY regit
+===============================================================================
+Granting privileges to schema SCOTT ...
+<------------------------------------------------------------------------------>
+Executed: GRANT ALTER SYSTEM TO SCOTT
+Executed: GRANT CREATE PROCEDURE TO SCOTT
+Executed: GRANT CREATE SESSION TO SCOTT
+Executed: GRANT CREATE TABLE TO SCOTT
+Executed: GRANT UNLIMITED TABLESPACE TO SCOTT
+Executed: GRANT CREATE TRIGGER TO SCOTT
+-------------------------------------------------------------------------------
+End   run_db_setup.sql
+===============================================================================
+Disconnected from Oracle Database 21c Enterprise Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:53:28
+------------------------------------------------------------------------------
+End   scripts/run_db_setup.sh
+==============================================================================
+==============================================================================
+Start scripts/run_all_drivers.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - all drivers.
+------------------------------------------------------------------------------
+RUN_CX_ORACLE_PYTHON              : true
+RUN_GODROR_GO                     : false
+RUN_JDBC_JAVA                     : false
+RUN_JDBC_JULIA                    : false
+RUN_JDBC_KOTLIN                   : false
+RUN_ODPI_C                        : false
+RUN_ORACLE_JULIA                  : false
+RUN_ORACLE_RUST                   : false
+RUN_ORANIF_ELIXIR                 : false
+RUN_ORANIF_ERLANG                 : false
+------------------------------------------------------------------------------
+BENCHMARK_BATCH_SIZE              : 0
+BENCHMARK_CORE_MULTIPLIER         : 0
+BENCHMARK_TRANSACTION_SIZE        : 0
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:53:28
+==============================================================================
+==============================================================================
+Start lang/python/scripts/run_bench_cx_oracle.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - cx_Oracle and Python 3.
+------------------------------------------------------------------------------
+MULTIPLE_RUN                   : 
+------------------------------------------------------------------------------
+BENCHMARK_DATABASE             : db_21_3_ee
+CONNECTION_HOST                : localhost
+CONNECTION_PORT                : 1521
+CONNECTION_SERVICE             : orclpdb1
+------------------------------------------------------------------------------
+BENCHMARK_BATCH_SIZE           : 0
+BENCHMARK_CORE_MULTIPLIER      : 0
+BENCHMARK_TRANSACTION_SIZE     : 0
+------------------------------------------------------------------------------
+FILE_CONFIGURATION_NAME        : priv/properties/ora_bench.properties
+FILE_CONFIGURATION_NAME_PYTHON : priv/properties/ora_bench_python.properties
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:53:28
+==============================================================================
+==============================================================================
+Start lang/java/scripts/run_gradle.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - Gradle: clean and assemble the Java part of the project.
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:53:28
+==============================================================================
+
+> Task :init SKIPPED
+The build file 'build.gradle' already exists. Skipping build initialization.
+
+BUILD SUCCESSFUL in 362ms
+> Task :clean
+
+BUILD SUCCESSFUL in 368ms
+1 actionable task: 1 executed
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :fatJar
+> Task :copyJarToLib
+
+BUILD SUCCESSFUL in 1s
+4 actionable tasks: 4 executed
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:53:32
+------------------------------------------------------------------------------
+End   lang/java/scripts/run_gradle.sh
+==============================================================================
+2021-10-28 16:53:32,709 [OraBench.java] INFO  Start OraBench.java
+2021-10-28 16:53:32,710 [OraBench.java] INFO  main() - number arguments=1
+2021-10-28 16:53:32,711 [OraBench.java] INFO  main() - 1st argument=setup_python
+2021-10-28 16:53:32,782 [Config.java] INFO  benchmarkBatchSize      =0
+2021-10-28 16:53:32,783 [Config.java] INFO  benchmarkCoreMultiplier =0
+2021-10-28 16:53:32,783 [Config.java] INFO  benchmarkTransactionSize=0
+2021-10-28 16:53:32,783 [OraBench.java] INFO  Start Setup Python 3 OraBench Run
+2021-10-28 16:53:32,785 [OraBench.java] INFO  End   Setup Python 3 OraBench Run
+2021-10-28 16:53:32,785 [OraBench.java] INFO  End   OraBench.java
+Requirement already satisfied: pip in /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages (21.3.1)
+Requirement already satisfied: cx-Oracle in /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages (from -r lang/python/requirements.txt (line 1)) (8.2.1)
+Requirement already satisfied: PyYAML in /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages (from -r lang/python/requirements.txt (line 2)) (6.0)
+=============================================================================> Version Python: 
+ 
+Current version of Python: Python 3.10.0
+ 
+Current version of pip: pip 21.3.1 from /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages/pip (python 3.10)
+ 
+PyYAML==6.0
+ 
+=============================================================================>
+2021-10-28 16:53:35,345 [OraBench.py  ] INFO  Start OraBench.py
+2021-10-28 16:53:35,853 [OraBench.py  ] INFO  Start Distribution of the data in the partitions
+2021-10-28 16:53:35,853 [OraBench.py  ] INFO  Partition p00000 contains 12.566 rows
+2021-10-28 16:53:35,853 [OraBench.py  ] INFO  Partition p00001 contains 12.492 rows
+2021-10-28 16:53:35,853 [OraBench.py  ] INFO  Partition p00002 contains 12.092 rows
+2021-10-28 16:53:35,853 [OraBench.py  ] INFO  Partition p00003 contains 12.604 rows
+2021-10-28 16:53:35,853 [OraBench.py  ] INFO  Partition p00004 contains 13.256 rows
+2021-10-28 16:53:35,854 [OraBench.py  ] INFO  Partition p00005 contains 12.453 rows
+2021-10-28 16:53:35,854 [OraBench.py  ] INFO  Partition p00006 contains 12.162 rows
+2021-10-28 16:53:35,854 [OraBench.py  ] INFO  Partition p00007 contains 12.375 rows
+2021-10-28 16:53:35,854 [OraBench.py  ] INFO  End   Distribution of the data in the partitions
+2021-10-28 16:53:36,050 [OraBench.py  ] INFO  Start trial no. 1
+2021-10-28 16:53:36,155 [OraBench.py  ] INFO  Start insert partition_key=0
+2021-10-28 16:53:36,686 [OraBench.py  ] INFO  End   insert partition_ley=0
+2021-10-28 16:53:36,687 [OraBench.py  ] INFO  Start insert partition_key=1
+2021-10-28 16:53:36,882 [OraBench.py  ] INFO  End   insert partition_ley=1
+2021-10-28 16:53:36,882 [OraBench.py  ] INFO  Start insert partition_key=2
+2021-10-28 16:53:37,068 [OraBench.py  ] INFO  End   insert partition_ley=2
+2021-10-28 16:53:37,068 [OraBench.py  ] INFO  Start insert partition_key=3
+2021-10-28 16:53:37,245 [OraBench.py  ] INFO  End   insert partition_ley=3
+2021-10-28 16:53:37,245 [OraBench.py  ] INFO  Start insert partition_key=4
+2021-10-28 16:53:37,442 [OraBench.py  ] INFO  End   insert partition_ley=4
+2021-10-28 16:53:37,442 [OraBench.py  ] INFO  Start insert partition_key=5
+2021-10-28 16:53:37,610 [OraBench.py  ] INFO  End   insert partition_ley=5
+2021-10-28 16:53:37,611 [OraBench.py  ] INFO  Start insert partition_key=6
+2021-10-28 16:53:37,780 [OraBench.py  ] INFO  End   insert partition_ley=6
+2021-10-28 16:53:37,780 [OraBench.py  ] INFO  Start insert partition_key=7
+2021-10-28 16:53:37,962 [OraBench.py  ] INFO  End   insert partition_ley=7
+2021-10-28 16:53:37,962 [OraBench.py  ] INFO  Start select partition_key=0
+2021-10-28 16:53:38,017 [OraBench.py  ] INFO  End   select partition_ley=0
+2021-10-28 16:53:38,017 [OraBench.py  ] INFO  Start select partition_key=1
+2021-10-28 16:53:38,085 [OraBench.py  ] INFO  End   select partition_ley=1
+2021-10-28 16:53:38,086 [OraBench.py  ] INFO  Start select partition_key=2
+2021-10-28 16:53:38,158 [OraBench.py  ] INFO  End   select partition_ley=2
+2021-10-28 16:53:38,158 [OraBench.py  ] INFO  Start select partition_key=3
+2021-10-28 16:53:38,210 [OraBench.py  ] INFO  End   select partition_ley=3
+2021-10-28 16:53:38,210 [OraBench.py  ] INFO  Start select partition_key=4
+2021-10-28 16:53:38,264 [OraBench.py  ] INFO  End   select partition_ley=4
+2021-10-28 16:53:38,264 [OraBench.py  ] INFO  Start select partition_key=5
+2021-10-28 16:53:38,315 [OraBench.py  ] INFO  End   select partition_ley=5
+2021-10-28 16:53:38,316 [OraBench.py  ] INFO  Start select partition_key=6
+2021-10-28 16:53:38,377 [OraBench.py  ] INFO  End   select partition_ley=6
+2021-10-28 16:53:38,377 [OraBench.py  ] INFO  Start select partition_key=7
+2021-10-28 16:53:38,429 [OraBench.py  ] INFO  End   select partition_ley=7
+2021-10-28 16:53:38,973 [OraBench.py  ] INFO  Duration (ms) trial         : 2923
+2021-10-28 16:53:38,973 [OraBench.py  ] INFO  Start trial no. 2
+2021-10-28 16:53:41,109 [OraBench.py  ] INFO  Duration (ms) trial         : 2136
+2021-10-28 16:53:41,110 [OraBench.py  ] INFO  Start trial no. 3
+2021-10-28 16:53:43,123 [OraBench.py  ] INFO  Duration (ms) trial         : 2013
+2021-10-28 16:53:43,123 [OraBench.py  ] INFO  Start trial no. 4
+2021-10-28 16:53:45,224 [OraBench.py  ] INFO  Duration (ms) trial         : 2101
+2021-10-28 16:53:45,225 [OraBench.py  ] INFO  Start trial no. 5
+2021-10-28 16:53:47,336 [OraBench.py  ] INFO  Duration (ms) trial         : 2112
+2021-10-28 16:53:47,337 [OraBench.py  ] INFO  Start trial no. 6
+2021-10-28 16:53:49,412 [OraBench.py  ] INFO  Duration (ms) trial         : 2076
+2021-10-28 16:53:49,412 [OraBench.py  ] INFO  Start trial no. 7
+2021-10-28 16:53:51,388 [OraBench.py  ] INFO  Duration (ms) trial         : 1975
+2021-10-28 16:53:51,388 [OraBench.py  ] INFO  Start trial no. 8
+2021-10-28 16:53:53,347 [OraBench.py  ] INFO  Duration (ms) trial         : 1959
+2021-10-28 16:53:53,347 [OraBench.py  ] INFO  Start trial no. 9
+2021-10-28 16:53:55,407 [OraBench.py  ] INFO  Duration (ms) trial         : 2060
+2021-10-28 16:53:55,407 [OraBench.py  ] INFO  Start trial no. 10
+2021-10-28 16:53:57,437 [OraBench.py  ] INFO  Duration (ms) trial         : 2030
+2021-10-28 16:53:57,448 [OraBench.py  ] INFO  Duration (ms) trial min.    : 1959
+2021-10-28 16:53:57,448 [OraBench.py  ] INFO  Duration (ms) trial max.    : 2923
+2021-10-28 16:53:57,448 [OraBench.py  ] INFO  Duration (ms) trial average : 2138
+2021-10-28 16:53:57,448 [OraBench.py  ] INFO  Duration (ms) benchmark run : 22102
+2021-10-28 16:53:57,502 [OraBench.py  ] INFO  End   OraBench.py
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:53:57
+------------------------------------------------------------------------------
+End   lang/python/scripts/run_bench_cx_oracle.sh
+==============================================================================
+==============================================================================
+Start scripts/run_finalise_benchmark.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - finalise benchmark run.
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:53:57
+==============================================================================
+2021-10-28 16:53:57,978 [OraBench.java] INFO  Start OraBench.java
+2021-10-28 16:53:57,979 [OraBench.java] INFO  main() - number arguments=1
+2021-10-28 16:53:57,980 [OraBench.java] INFO  main() - 1st argument=finalise
+2021-10-28 16:53:58,057 [Config.java] INFO  benchmarkBatchSize      =0
+2021-10-28 16:53:58,058 [Config.java] INFO  benchmarkCoreMultiplier =0
+2021-10-28 16:53:58,058 [Config.java] INFO  benchmarkTransactionSize=0
+2021-10-28 16:53:58,059 [OraBench.java] INFO  Start Finalise OraBench Run
+2021-10-28 16:53:58,066 [Config.java] INFO  benchmarkBatchSize      =0
+2021-10-28 16:53:58,066 [Config.java] INFO  benchmarkCoreMultiplier =0
+2021-10-28 16:53:58,066 [Config.java] INFO  benchmarkTransactionSize=0
+2021-10-28 16:53:58,068 [OraBench.java] INFO  End   Finalise OraBench Run
+2021-10-28 16:53:58,068 [OraBench.java] INFO  End   OraBench.java
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:53:58
+------------------------------------------------------------------------------
+End   scripts/run_finalise_benchmark.sh
+==============================================================================
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:53:58
+------------------------------------------------------------------------------
+End   scripts/run_all_drivers.sh
+==============================================================================
+==============================================================================
+Start scripts/run_all_drivers.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - all drivers.
+------------------------------------------------------------------------------
+RUN_CX_ORACLE_PYTHON              : true
+RUN_GODROR_GO                     : false
+RUN_JDBC_JAVA                     : false
+RUN_JDBC_JULIA                    : false
+RUN_JDBC_KOTLIN                   : false
+RUN_ODPI_C                        : false
+RUN_ORACLE_JULIA                  : false
+RUN_ORACLE_RUST                   : false
+RUN_ORANIF_ELIXIR                 : false
+RUN_ORANIF_ERLANG                 : false
+------------------------------------------------------------------------------
+BENCHMARK_BATCH_SIZE              : 0
+BENCHMARK_CORE_MULTIPLIER         : 1
+BENCHMARK_TRANSACTION_SIZE        : 0
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:53:58
+==============================================================================
+==============================================================================
+Start lang/python/scripts/run_bench_cx_oracle.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - cx_Oracle and Python 3.
+------------------------------------------------------------------------------
+MULTIPLE_RUN                   : 
+------------------------------------------------------------------------------
+BENCHMARK_DATABASE             : db_21_3_ee
+CONNECTION_HOST                : localhost
+CONNECTION_PORT                : 1521
+CONNECTION_SERVICE             : orclpdb1
+------------------------------------------------------------------------------
+BENCHMARK_BATCH_SIZE           : 0
+BENCHMARK_CORE_MULTIPLIER      : 1
+BENCHMARK_TRANSACTION_SIZE     : 0
+------------------------------------------------------------------------------
+FILE_CONFIGURATION_NAME        : priv/properties/ora_bench.properties
+FILE_CONFIGURATION_NAME_PYTHON : priv/properties/ora_bench_python.properties
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:53:58
+==============================================================================
+==============================================================================
+Start lang/java/scripts/run_gradle.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - Gradle: clean and assemble the Java part of the project.
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:53:58
+==============================================================================
+
+> Task :init SKIPPED
+The build file 'build.gradle' already exists. Skipping build initialization.
+
+BUILD SUCCESSFUL in 395ms
+> Task :clean
+
+BUILD SUCCESSFUL in 372ms
+1 actionable task: 1 executed
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :fatJar
+> Task :copyJarToLib
+
+BUILD SUCCESSFUL in 1s
+4 actionable tasks: 4 executed
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:02
+------------------------------------------------------------------------------
+End   lang/java/scripts/run_gradle.sh
+==============================================================================
+2021-10-28 16:54:02,631 [OraBench.java] INFO  Start OraBench.java
+2021-10-28 16:54:02,633 [OraBench.java] INFO  main() - number arguments=1
+2021-10-28 16:54:02,633 [OraBench.java] INFO  main() - 1st argument=setup_python
+2021-10-28 16:54:02,725 [Config.java] INFO  benchmarkBatchSize      =0
+2021-10-28 16:54:02,725 [Config.java] INFO  benchmarkCoreMultiplier =1
+2021-10-28 16:54:02,725 [Config.java] INFO  benchmarkTransactionSize=0
+2021-10-28 16:54:02,725 [OraBench.java] INFO  Start Setup Python 3 OraBench Run
+2021-10-28 16:54:02,727 [OraBench.java] INFO  End   Setup Python 3 OraBench Run
+2021-10-28 16:54:02,727 [OraBench.java] INFO  End   OraBench.java
+Requirement already satisfied: pip in /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages (21.3.1)
+Requirement already satisfied: cx-Oracle in /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages (from -r lang/python/requirements.txt (line 1)) (8.2.1)
+Requirement already satisfied: PyYAML in /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages (from -r lang/python/requirements.txt (line 2)) (6.0)
+=============================================================================> Version Python: 
+ 
+Current version of Python: Python 3.10.0
+ 
+Current version of pip: pip 21.3.1 from /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages/pip (python 3.10)
+ 
+PyYAML==6.0
+ 
+=============================================================================>
+2021-10-28 16:54:04,996 [OraBench.py  ] INFO  Start OraBench.py
+2021-10-28 16:54:05,468 [OraBench.py  ] INFO  Start Distribution of the data in the partitions
+2021-10-28 16:54:05,468 [OraBench.py  ] INFO  Partition p00000 contains 12.566 rows
+2021-10-28 16:54:05,469 [OraBench.py  ] INFO  Partition p00001 contains 12.492 rows
+2021-10-28 16:54:05,469 [OraBench.py  ] INFO  Partition p00002 contains 12.092 rows
+2021-10-28 16:54:05,469 [OraBench.py  ] INFO  Partition p00003 contains 12.604 rows
+2021-10-28 16:54:05,469 [OraBench.py  ] INFO  Partition p00004 contains 13.256 rows
+2021-10-28 16:54:05,469 [OraBench.py  ] INFO  Partition p00005 contains 12.453 rows
+2021-10-28 16:54:05,469 [OraBench.py  ] INFO  Partition p00006 contains 12.162 rows
+2021-10-28 16:54:05,469 [OraBench.py  ] INFO  Partition p00007 contains 12.375 rows
+2021-10-28 16:54:05,469 [OraBench.py  ] INFO  End   Distribution of the data in the partitions
+2021-10-28 16:54:05,648 [OraBench.py  ] INFO  Start trial no. 1
+2021-10-28 16:54:05,667 [OraBench.py  ] INFO  Start insert partition_key=0
+2021-10-28 16:54:05,673 [OraBench.py  ] INFO  Start insert partition_key=1
+2021-10-28 16:54:05,727 [OraBench.py  ] INFO  Start insert partition_key=2
+2021-10-28 16:54:05,732 [OraBench.py  ] INFO  Start insert partition_key=3
+2021-10-28 16:54:05,763 [OraBench.py  ] INFO  Start insert partition_key=4
+2021-10-28 16:54:05,801 [OraBench.py  ] INFO  Start insert partition_key=5
+2021-10-28 16:54:05,862 [OraBench.py  ] INFO  Start insert partition_key=6
+2021-10-28 16:54:05,863 [OraBench.py  ] INFO  Start insert partition_key=7
+2021-10-28 16:54:06,025 [OraBench.py  ] INFO  End   insert partition_ley=0
+2021-10-28 16:54:06,027 [OraBench.py  ] INFO  End   insert partition_ley=1
+2021-10-28 16:54:06,030 [OraBench.py  ] INFO  End   insert partition_ley=2
+2021-10-28 16:54:06,117 [OraBench.py  ] INFO  End   insert partition_ley=3
+2021-10-28 16:54:06,118 [OraBench.py  ] INFO  End   insert partition_ley=5
+2021-10-28 16:54:06,145 [OraBench.py  ] INFO  End   insert partition_ley=7
+2021-10-28 16:54:06,150 [OraBench.py  ] INFO  End   insert partition_ley=6
+2021-10-28 16:54:06,176 [OraBench.py  ] INFO  End   insert partition_ley=4
+2021-10-28 16:54:06,178 [OraBench.py  ] INFO  Start select partition_key=0
+2021-10-28 16:54:06,178 [OraBench.py  ] INFO  Start select partition_key=1
+2021-10-28 16:54:06,179 [OraBench.py  ] INFO  Start select partition_key=2
+2021-10-28 16:54:06,179 [OraBench.py  ] INFO  Start select partition_key=3
+2021-10-28 16:54:06,184 [OraBench.py  ] INFO  Start select partition_key=4
+2021-10-28 16:54:06,184 [OraBench.py  ] INFO  Start select partition_key=5
+2021-10-28 16:54:06,186 [OraBench.py  ] INFO  Start select partition_key=6
+2021-10-28 16:54:06,187 [OraBench.py  ] INFO  Start select partition_key=7
+2021-10-28 16:54:06,299 [OraBench.py  ] INFO  End   select partition_ley=1
+2021-10-28 16:54:06,301 [OraBench.py  ] INFO  End   select partition_ley=2
+2021-10-28 16:54:06,307 [OraBench.py  ] INFO  End   select partition_ley=5
+2021-10-28 16:54:06,308 [OraBench.py  ] INFO  End   select partition_ley=7
+2021-10-28 16:54:06,311 [OraBench.py  ] INFO  End   select partition_ley=0
+2021-10-28 16:54:06,311 [OraBench.py  ] INFO  End   select partition_ley=3
+2021-10-28 16:54:06,318 [OraBench.py  ] INFO  End   select partition_ley=6
+2021-10-28 16:54:06,321 [OraBench.py  ] INFO  End   select partition_ley=4
+2021-10-28 16:54:06,658 [OraBench.py  ] INFO  Duration (ms) trial         : 1010
+2021-10-28 16:54:06,658 [OraBench.py  ] INFO  Start trial no. 2
+2021-10-28 16:54:07,629 [OraBench.py  ] INFO  Duration (ms) trial         : 970
+2021-10-28 16:54:07,629 [OraBench.py  ] INFO  Start trial no. 3
+2021-10-28 16:54:08,617 [OraBench.py  ] INFO  Duration (ms) trial         : 988
+2021-10-28 16:54:08,617 [OraBench.py  ] INFO  Start trial no. 4
+2021-10-28 16:54:09,617 [OraBench.py  ] INFO  Duration (ms) trial         : 1000
+2021-10-28 16:54:09,617 [OraBench.py  ] INFO  Start trial no. 5
+2021-10-28 16:54:10,605 [OraBench.py  ] INFO  Duration (ms) trial         : 988
+2021-10-28 16:54:10,605 [OraBench.py  ] INFO  Start trial no. 6
+2021-10-28 16:54:11,610 [OraBench.py  ] INFO  Duration (ms) trial         : 1004
+2021-10-28 16:54:11,610 [OraBench.py  ] INFO  Start trial no. 7
+2021-10-28 16:54:12,614 [OraBench.py  ] INFO  Duration (ms) trial         : 1004
+2021-10-28 16:54:12,614 [OraBench.py  ] INFO  Start trial no. 8
+2021-10-28 16:54:13,679 [OraBench.py  ] INFO  Duration (ms) trial         : 1065
+2021-10-28 16:54:13,679 [OraBench.py  ] INFO  Start trial no. 9
+2021-10-28 16:54:14,720 [OraBench.py  ] INFO  Duration (ms) trial         : 1040
+2021-10-28 16:54:14,720 [OraBench.py  ] INFO  Start trial no. 10
+2021-10-28 16:54:15,744 [OraBench.py  ] INFO  Duration (ms) trial         : 1024
+2021-10-28 16:54:15,755 [OraBench.py  ] INFO  Duration (ms) trial min.    : 970
+2021-10-28 16:54:15,755 [OraBench.py  ] INFO  Duration (ms) trial max.    : 1065
+2021-10-28 16:54:15,756 [OraBench.py  ] INFO  Duration (ms) trial average : 1009
+2021-10-28 16:54:15,756 [OraBench.py  ] INFO  Duration (ms) benchmark run : 10759
+2021-10-28 16:54:15,806 [OraBench.py  ] INFO  End   OraBench.py
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:15
+------------------------------------------------------------------------------
+End   lang/python/scripts/run_bench_cx_oracle.sh
+==============================================================================
+==============================================================================
+Start scripts/run_finalise_benchmark.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - finalise benchmark run.
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:15
+==============================================================================
+2021-10-28 16:54:16,290 [OraBench.java] INFO  Start OraBench.java
+2021-10-28 16:54:16,291 [OraBench.java] INFO  main() - number arguments=1
+2021-10-28 16:54:16,292 [OraBench.java] INFO  main() - 1st argument=finalise
+2021-10-28 16:54:16,362 [Config.java] INFO  benchmarkBatchSize      =0
+2021-10-28 16:54:16,363 [Config.java] INFO  benchmarkCoreMultiplier =1
+2021-10-28 16:54:16,363 [Config.java] INFO  benchmarkTransactionSize=0
+2021-10-28 16:54:16,363 [OraBench.java] INFO  Start Finalise OraBench Run
+2021-10-28 16:54:16,370 [Config.java] INFO  benchmarkBatchSize      =0
+2021-10-28 16:54:16,370 [Config.java] INFO  benchmarkCoreMultiplier =1
+2021-10-28 16:54:16,370 [Config.java] INFO  benchmarkTransactionSize=0
+2021-10-28 16:54:16,372 [OraBench.java] INFO  End   Finalise OraBench Run
+2021-10-28 16:54:16,372 [OraBench.java] INFO  End   OraBench.java
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:16
+------------------------------------------------------------------------------
+End   scripts/run_finalise_benchmark.sh
+==============================================================================
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:16
+------------------------------------------------------------------------------
+End   scripts/run_all_drivers.sh
+==============================================================================
+==============================================================================
+Start scripts/run_all_drivers.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - all drivers.
+------------------------------------------------------------------------------
+RUN_CX_ORACLE_PYTHON              : true
+RUN_GODROR_GO                     : false
+RUN_JDBC_JAVA                     : false
+RUN_JDBC_JULIA                    : false
+RUN_JDBC_KOTLIN                   : false
+RUN_ODPI_C                        : false
+RUN_ORACLE_JULIA                  : false
+RUN_ORACLE_RUST                   : false
+RUN_ORANIF_ELIXIR                 : false
+RUN_ORANIF_ERLANG                 : false
+------------------------------------------------------------------------------
+BENCHMARK_BATCH_SIZE              : 512
+BENCHMARK_CORE_MULTIPLIER         : 0
+BENCHMARK_TRANSACTION_SIZE        : 512
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:16
+==============================================================================
+==============================================================================
+Start lang/python/scripts/run_bench_cx_oracle.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - cx_Oracle and Python 3.
+------------------------------------------------------------------------------
+MULTIPLE_RUN                   : 
+------------------------------------------------------------------------------
+BENCHMARK_DATABASE             : db_21_3_ee
+CONNECTION_HOST                : localhost
+CONNECTION_PORT                : 1521
+CONNECTION_SERVICE             : orclpdb1
+------------------------------------------------------------------------------
+BENCHMARK_BATCH_SIZE           : 512
+BENCHMARK_CORE_MULTIPLIER      : 0
+BENCHMARK_TRANSACTION_SIZE     : 512
+------------------------------------------------------------------------------
+FILE_CONFIGURATION_NAME        : priv/properties/ora_bench.properties
+FILE_CONFIGURATION_NAME_PYTHON : priv/properties/ora_bench_python.properties
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:16
+==============================================================================
+==============================================================================
+Start lang/java/scripts/run_gradle.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - Gradle: clean and assemble the Java part of the project.
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:16
+==============================================================================
+
+> Task :init SKIPPED
+The build file 'build.gradle' already exists. Skipping build initialization.
+
+BUILD SUCCESSFUL in 388ms
+> Task :clean
+
+BUILD SUCCESSFUL in 392ms
+1 actionable task: 1 executed
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :fatJar
+> Task :copyJarToLib
+
+BUILD SUCCESSFUL in 1s
+4 actionable tasks: 4 executed
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:20
+------------------------------------------------------------------------------
+End   lang/java/scripts/run_gradle.sh
+==============================================================================
+2021-10-28 16:54:20,959 [OraBench.java] INFO  Start OraBench.java
+2021-10-28 16:54:20,961 [OraBench.java] INFO  main() - number arguments=1
+2021-10-28 16:54:20,961 [OraBench.java] INFO  main() - 1st argument=setup_python
+2021-10-28 16:54:21,052 [Config.java] INFO  benchmarkBatchSize      =512
+2021-10-28 16:54:21,053 [Config.java] INFO  benchmarkCoreMultiplier =0
+2021-10-28 16:54:21,053 [Config.java] INFO  benchmarkTransactionSize=512
+2021-10-28 16:54:21,053 [OraBench.java] INFO  Start Setup Python 3 OraBench Run
+2021-10-28 16:54:21,055 [OraBench.java] INFO  End   Setup Python 3 OraBench Run
+2021-10-28 16:54:21,055 [OraBench.java] INFO  End   OraBench.java
+Requirement already satisfied: pip in /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages (21.3.1)
+Requirement already satisfied: cx-Oracle in /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages (from -r lang/python/requirements.txt (line 1)) (8.2.1)
+Requirement already satisfied: PyYAML in /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages (from -r lang/python/requirements.txt (line 2)) (6.0)
+=============================================================================> Version Python: 
+ 
+Current version of Python: Python 3.10.0
+ 
+Current version of pip: pip 21.3.1 from /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages/pip (python 3.10)
+ 
+PyYAML==6.0
+ 
+=============================================================================>
+2021-10-28 16:54:23,373 [OraBench.py  ] INFO  Start OraBench.py
+2021-10-28 16:54:23,878 [OraBench.py  ] INFO  Start Distribution of the data in the partitions
+2021-10-28 16:54:23,878 [OraBench.py  ] INFO  Partition p00000 contains 12.566 rows
+2021-10-28 16:54:23,878 [OraBench.py  ] INFO  Partition p00001 contains 12.492 rows
+2021-10-28 16:54:23,878 [OraBench.py  ] INFO  Partition p00002 contains 12.092 rows
+2021-10-28 16:54:23,879 [OraBench.py  ] INFO  Partition p00003 contains 12.604 rows
+2021-10-28 16:54:23,879 [OraBench.py  ] INFO  Partition p00004 contains 13.256 rows
+2021-10-28 16:54:23,879 [OraBench.py  ] INFO  Partition p00005 contains 12.453 rows
+2021-10-28 16:54:23,879 [OraBench.py  ] INFO  Partition p00006 contains 12.162 rows
+2021-10-28 16:54:23,879 [OraBench.py  ] INFO  Partition p00007 contains 12.375 rows
+2021-10-28 16:54:23,879 [OraBench.py  ] INFO  End   Distribution of the data in the partitions
+2021-10-28 16:54:24,063 [OraBench.py  ] INFO  Start trial no. 1
+2021-10-28 16:54:24,081 [OraBench.py  ] INFO  Start insert partition_key=0
+2021-10-28 16:54:24,331 [OraBench.py  ] INFO  End   insert partition_ley=0
+2021-10-28 16:54:24,331 [OraBench.py  ] INFO  Start insert partition_key=1
+2021-10-28 16:54:24,529 [OraBench.py  ] INFO  End   insert partition_ley=1
+2021-10-28 16:54:24,530 [OraBench.py  ] INFO  Start insert partition_key=2
+2021-10-28 16:54:24,726 [OraBench.py  ] INFO  End   insert partition_ley=2
+2021-10-28 16:54:24,727 [OraBench.py  ] INFO  Start insert partition_key=3
+2021-10-28 16:54:24,938 [OraBench.py  ] INFO  End   insert partition_ley=3
+2021-10-28 16:54:24,938 [OraBench.py  ] INFO  Start insert partition_key=4
+2021-10-28 16:54:25,158 [OraBench.py  ] INFO  End   insert partition_ley=4
+2021-10-28 16:54:25,158 [OraBench.py  ] INFO  Start insert partition_key=5
+2021-10-28 16:54:25,361 [OraBench.py  ] INFO  End   insert partition_ley=5
+2021-10-28 16:54:25,361 [OraBench.py  ] INFO  Start insert partition_key=6
+2021-10-28 16:54:25,557 [OraBench.py  ] INFO  End   insert partition_ley=6
+2021-10-28 16:54:25,557 [OraBench.py  ] INFO  Start insert partition_key=7
+2021-10-28 16:54:25,762 [OraBench.py  ] INFO  End   insert partition_ley=7
+2021-10-28 16:54:25,762 [OraBench.py  ] INFO  Start select partition_key=0
+2021-10-28 16:54:25,819 [OraBench.py  ] INFO  End   select partition_ley=0
+2021-10-28 16:54:25,819 [OraBench.py  ] INFO  Start select partition_key=1
+2021-10-28 16:54:25,872 [OraBench.py  ] INFO  End   select partition_ley=1
+2021-10-28 16:54:25,873 [OraBench.py  ] INFO  Start select partition_key=2
+2021-10-28 16:54:25,924 [OraBench.py  ] INFO  End   select partition_ley=2
+2021-10-28 16:54:25,924 [OraBench.py  ] INFO  Start select partition_key=3
+2021-10-28 16:54:25,974 [OraBench.py  ] INFO  End   select partition_ley=3
+2021-10-28 16:54:25,974 [OraBench.py  ] INFO  Start select partition_key=4
+2021-10-28 16:54:26,040 [OraBench.py  ] INFO  End   select partition_ley=4
+2021-10-28 16:54:26,040 [OraBench.py  ] INFO  Start select partition_key=5
+2021-10-28 16:54:26,095 [OraBench.py  ] INFO  End   select partition_ley=5
+2021-10-28 16:54:26,095 [OraBench.py  ] INFO  Start select partition_key=6
+2021-10-28 16:54:26,143 [OraBench.py  ] INFO  End   select partition_ley=6
+2021-10-28 16:54:26,143 [OraBench.py  ] INFO  Start select partition_key=7
+2021-10-28 16:54:26,194 [OraBench.py  ] INFO  End   select partition_ley=7
+2021-10-28 16:54:26,542 [OraBench.py  ] INFO  Duration (ms) trial         : 2479
+2021-10-28 16:54:26,543 [OraBench.py  ] INFO  Start trial no. 2
+2021-10-28 16:54:28,925 [OraBench.py  ] INFO  Duration (ms) trial         : 2382
+2021-10-28 16:54:28,925 [OraBench.py  ] INFO  Start trial no. 3
+2021-10-28 16:54:31,418 [OraBench.py  ] INFO  Duration (ms) trial         : 2493
+2021-10-28 16:54:31,419 [OraBench.py  ] INFO  Start trial no. 4
+2021-10-28 16:54:33,795 [OraBench.py  ] INFO  Duration (ms) trial         : 2376
+2021-10-28 16:54:33,795 [OraBench.py  ] INFO  Start trial no. 5
+2021-10-28 16:54:36,118 [OraBench.py  ] INFO  Duration (ms) trial         : 2322
+2021-10-28 16:54:36,118 [OraBench.py  ] INFO  Start trial no. 6
+2021-10-28 16:54:38,502 [OraBench.py  ] INFO  Duration (ms) trial         : 2384
+2021-10-28 16:54:38,502 [OraBench.py  ] INFO  Start trial no. 7
+2021-10-28 16:54:40,828 [OraBench.py  ] INFO  Duration (ms) trial         : 2326
+2021-10-28 16:54:40,828 [OraBench.py  ] INFO  Start trial no. 8
+2021-10-28 16:54:43,267 [OraBench.py  ] INFO  Duration (ms) trial         : 2438
+2021-10-28 16:54:43,267 [OraBench.py  ] INFO  Start trial no. 9
+2021-10-28 16:54:45,592 [OraBench.py  ] INFO  Duration (ms) trial         : 2325
+2021-10-28 16:54:45,592 [OraBench.py  ] INFO  Start trial no. 10
+2021-10-28 16:54:47,972 [OraBench.py  ] INFO  Duration (ms) trial         : 2380
+2021-10-28 16:54:47,981 [OraBench.py  ] INFO  Duration (ms) trial min.    : 2322
+2021-10-28 16:54:47,981 [OraBench.py  ] INFO  Duration (ms) trial max.    : 2493
+2021-10-28 16:54:47,981 [OraBench.py  ] INFO  Duration (ms) trial average : 2391
+2021-10-28 16:54:47,981 [OraBench.py  ] INFO  Duration (ms) benchmark run : 24608
+2021-10-28 16:54:48,037 [OraBench.py  ] INFO  End   OraBench.py
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:48
+------------------------------------------------------------------------------
+End   lang/python/scripts/run_bench_cx_oracle.sh
+==============================================================================
+==============================================================================
+Start scripts/run_finalise_benchmark.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - finalise benchmark run.
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:48
+==============================================================================
+2021-10-28 16:54:48,519 [OraBench.java] INFO  Start OraBench.java
+2021-10-28 16:54:48,520 [OraBench.java] INFO  main() - number arguments=1
+2021-10-28 16:54:48,520 [OraBench.java] INFO  main() - 1st argument=finalise
+2021-10-28 16:54:48,595 [Config.java] INFO  benchmarkBatchSize      =512
+2021-10-28 16:54:48,595 [Config.java] INFO  benchmarkCoreMultiplier =0
+2021-10-28 16:54:48,595 [Config.java] INFO  benchmarkTransactionSize=512
+2021-10-28 16:54:48,596 [OraBench.java] INFO  Start Finalise OraBench Run
+2021-10-28 16:54:48,604 [Config.java] INFO  benchmarkBatchSize      =512
+2021-10-28 16:54:48,604 [Config.java] INFO  benchmarkCoreMultiplier =0
+2021-10-28 16:54:48,604 [Config.java] INFO  benchmarkTransactionSize=512
+2021-10-28 16:54:48,606 [OraBench.java] INFO  End   Finalise OraBench Run
+2021-10-28 16:54:48,606 [OraBench.java] INFO  End   OraBench.java
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:48
+------------------------------------------------------------------------------
+End   scripts/run_finalise_benchmark.sh
+==============================================================================
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:48
+------------------------------------------------------------------------------
+End   scripts/run_all_drivers.sh
+==============================================================================
+==============================================================================
+Start scripts/run_all_drivers.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - all drivers.
+------------------------------------------------------------------------------
+RUN_CX_ORACLE_PYTHON              : true
+RUN_GODROR_GO                     : false
+RUN_JDBC_JAVA                     : false
+RUN_JDBC_JULIA                    : false
+RUN_JDBC_KOTLIN                   : false
+RUN_ODPI_C                        : false
+RUN_ORACLE_JULIA                  : false
+RUN_ORACLE_RUST                   : false
+RUN_ORANIF_ELIXIR                 : false
+RUN_ORANIF_ERLANG                 : false
+------------------------------------------------------------------------------
+BENCHMARK_BATCH_SIZE              : 512
+BENCHMARK_CORE_MULTIPLIER         : 1
+BENCHMARK_TRANSACTION_SIZE        : 512
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:48
+==============================================================================
+==============================================================================
+Start lang/python/scripts/run_bench_cx_oracle.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - cx_Oracle and Python 3.
+------------------------------------------------------------------------------
+MULTIPLE_RUN                   : 
+------------------------------------------------------------------------------
+BENCHMARK_DATABASE             : db_21_3_ee
+CONNECTION_HOST                : localhost
+CONNECTION_PORT                : 1521
+CONNECTION_SERVICE             : orclpdb1
+------------------------------------------------------------------------------
+BENCHMARK_BATCH_SIZE           : 512
+BENCHMARK_CORE_MULTIPLIER      : 1
+BENCHMARK_TRANSACTION_SIZE     : 512
+------------------------------------------------------------------------------
+FILE_CONFIGURATION_NAME        : priv/properties/ora_bench.properties
+FILE_CONFIGURATION_NAME_PYTHON : priv/properties/ora_bench_python.properties
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:48
+==============================================================================
+==============================================================================
+Start lang/java/scripts/run_gradle.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - Gradle: clean and assemble the Java part of the project.
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:48
+==============================================================================
+
+> Task :init SKIPPED
+The build file 'build.gradle' already exists. Skipping build initialization.
+
+BUILD SUCCESSFUL in 416ms
+> Task :clean
+
+BUILD SUCCESSFUL in 392ms
+1 actionable task: 1 executed
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :fatJar
+> Task :copyJarToLib
+
+BUILD SUCCESSFUL in 1s
+4 actionable tasks: 4 executed
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:54:52
+------------------------------------------------------------------------------
+End   lang/java/scripts/run_gradle.sh
+==============================================================================
+2021-10-28 16:54:53,301 [OraBench.java] INFO  Start OraBench.java
+2021-10-28 16:54:53,302 [OraBench.java] INFO  main() - number arguments=1
+2021-10-28 16:54:53,303 [OraBench.java] INFO  main() - 1st argument=setup_python
+2021-10-28 16:54:53,399 [Config.java] INFO  benchmarkBatchSize      =512
+2021-10-28 16:54:53,400 [Config.java] INFO  benchmarkCoreMultiplier =1
+2021-10-28 16:54:53,400 [Config.java] INFO  benchmarkTransactionSize=512
+2021-10-28 16:54:53,400 [OraBench.java] INFO  Start Setup Python 3 OraBench Run
+2021-10-28 16:54:53,402 [OraBench.java] INFO  End   Setup Python 3 OraBench Run
+2021-10-28 16:54:53,402 [OraBench.java] INFO  End   OraBench.java
+Requirement already satisfied: pip in /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages (21.3.1)
+Requirement already satisfied: cx-Oracle in /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages (from -r lang/python/requirements.txt (line 1)) (8.2.1)
+Requirement already satisfied: PyYAML in /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages (from -r lang/python/requirements.txt (line 2)) (6.0)
+=============================================================================> Version Python: 
+ 
+Current version of Python: Python 3.10.0
+ 
+Current version of pip: pip 21.3.1 from /home/walter/.asdf/installs/python/3.10.0/lib/python3.10/site-packages/pip (python 3.10)
+ 
+PyYAML==6.0
+ 
+=============================================================================>
+2021-10-28 16:54:55,889 [OraBench.py  ] INFO  Start OraBench.py
+2021-10-28 16:54:56,397 [OraBench.py  ] INFO  Start Distribution of the data in the partitions
+2021-10-28 16:54:56,397 [OraBench.py  ] INFO  Partition p00000 contains 12.566 rows
+2021-10-28 16:54:56,397 [OraBench.py  ] INFO  Partition p00001 contains 12.492 rows
+2021-10-28 16:54:56,397 [OraBench.py  ] INFO  Partition p00002 contains 12.092 rows
+2021-10-28 16:54:56,397 [OraBench.py  ] INFO  Partition p00003 contains 12.604 rows
+2021-10-28 16:54:56,397 [OraBench.py  ] INFO  Partition p00004 contains 13.256 rows
+2021-10-28 16:54:56,397 [OraBench.py  ] INFO  Partition p00005 contains 12.453 rows
+2021-10-28 16:54:56,397 [OraBench.py  ] INFO  Partition p00006 contains 12.162 rows
+2021-10-28 16:54:56,397 [OraBench.py  ] INFO  Partition p00007 contains 12.375 rows
+2021-10-28 16:54:56,397 [OraBench.py  ] INFO  End   Distribution of the data in the partitions
+2021-10-28 16:54:56,579 [OraBench.py  ] INFO  Start trial no. 1
+2021-10-28 16:54:56,599 [OraBench.py  ] INFO  Start insert partition_key=0
+2021-10-28 16:54:56,600 [OraBench.py  ] INFO  Start insert partition_key=1
+2021-10-28 16:54:56,602 [OraBench.py  ] INFO  Start insert partition_key=2
+2021-10-28 16:54:56,605 [OraBench.py  ] INFO  Start insert partition_key=3
+2021-10-28 16:54:56,605 [OraBench.py  ] INFO  Start insert partition_key=4
+2021-10-28 16:54:56,607 [OraBench.py  ] INFO  Start insert partition_key=5
+2021-10-28 16:54:56,611 [OraBench.py  ] INFO  Start insert partition_key=6
+2021-10-28 16:54:56,611 [OraBench.py  ] INFO  Start insert partition_key=7
+2021-10-28 16:54:56,999 [OraBench.py  ] INFO  End   insert partition_ley=1
+2021-10-28 16:54:57,078 [OraBench.py  ] INFO  End   insert partition_ley=4
+2021-10-28 16:54:57,112 [OraBench.py  ] INFO  End   insert partition_ley=7
+2021-10-28 16:54:57,152 [OraBench.py  ] INFO  End   insert partition_ley=2
+2021-10-28 16:54:57,154 [OraBench.py  ] INFO  End   insert partition_ley=0
+2021-10-28 16:54:57,166 [OraBench.py  ] INFO  End   insert partition_ley=5
+2021-10-28 16:54:57,171 [OraBench.py  ] INFO  End   insert partition_ley=6
+2021-10-28 16:54:57,178 [OraBench.py  ] INFO  End   insert partition_ley=3
+2021-10-28 16:54:57,179 [OraBench.py  ] INFO  Start select partition_key=0
+2021-10-28 16:54:57,179 [OraBench.py  ] INFO  Start select partition_key=1
+2021-10-28 16:54:57,180 [OraBench.py  ] INFO  Start select partition_key=2
+2021-10-28 16:54:57,180 [OraBench.py  ] INFO  Start select partition_key=3
+2021-10-28 16:54:57,180 [OraBench.py  ] INFO  Start select partition_key=4
+2021-10-28 16:54:57,181 [OraBench.py  ] INFO  Start select partition_key=5
+2021-10-28 16:54:57,182 [OraBench.py  ] INFO  Start select partition_key=6
+2021-10-28 16:54:57,185 [OraBench.py  ] INFO  Start select partition_key=7
+2021-10-28 16:54:57,273 [OraBench.py  ] INFO  End   select partition_ley=2
+2021-10-28 16:54:57,281 [OraBench.py  ] INFO  End   select partition_ley=0
+2021-10-28 16:54:57,288 [OraBench.py  ] INFO  End   select partition_ley=1
+2021-10-28 16:54:57,300 [OraBench.py  ] INFO  End   select partition_ley=6
+2021-10-28 16:54:57,307 [OraBench.py  ] INFO  End   select partition_ley=3
+2021-10-28 16:54:57,309 [OraBench.py  ] INFO  End   select partition_ley=7
+2021-10-28 16:54:57,310 [OraBench.py  ] INFO  End   select partition_ley=5
+2021-10-28 16:54:57,319 [OraBench.py  ] INFO  End   select partition_ley=4
+2021-10-28 16:54:57,669 [OraBench.py  ] INFO  Duration (ms) trial         : 1090
+2021-10-28 16:54:57,669 [OraBench.py  ] INFO  Start trial no. 2
+2021-10-28 16:55:00,553 [OraBench.py  ] INFO  Duration (ms) trial         : 2883
+2021-10-28 16:55:00,553 [OraBench.py  ] INFO  Start trial no. 3
+2021-10-28 16:55:01,551 [OraBench.py  ] INFO  Duration (ms) trial         : 998
+2021-10-28 16:55:01,551 [OraBench.py  ] INFO  Start trial no. 4
+2021-10-28 16:55:02,651 [OraBench.py  ] INFO  Duration (ms) trial         : 1100
+2021-10-28 16:55:02,651 [OraBench.py  ] INFO  Start trial no. 5
+2021-10-28 16:55:03,619 [OraBench.py  ] INFO  Duration (ms) trial         : 968
+2021-10-28 16:55:03,619 [OraBench.py  ] INFO  Start trial no. 6
+2021-10-28 16:55:04,633 [OraBench.py  ] INFO  Duration (ms) trial         : 1014
+2021-10-28 16:55:04,633 [OraBench.py  ] INFO  Start trial no. 7
+2021-10-28 16:55:05,660 [OraBench.py  ] INFO  Duration (ms) trial         : 1026
+2021-10-28 16:55:05,660 [OraBench.py  ] INFO  Start trial no. 8
+2021-10-28 16:55:06,733 [OraBench.py  ] INFO  Duration (ms) trial         : 1073
+2021-10-28 16:55:06,733 [OraBench.py  ] INFO  Start trial no. 9
+2021-10-28 16:55:07,739 [OraBench.py  ] INFO  Duration (ms) trial         : 1006
+2021-10-28 16:55:07,739 [OraBench.py  ] INFO  Start trial no. 10
+2021-10-28 16:55:08,758 [OraBench.py  ] INFO  Duration (ms) trial         : 1018
+2021-10-28 16:55:08,768 [OraBench.py  ] INFO  Duration (ms) trial min.    : 968
+2021-10-28 16:55:08,768 [OraBench.py  ] INFO  Duration (ms) trial max.    : 2883
+2021-10-28 16:55:08,768 [OraBench.py  ] INFO  Duration (ms) trial average : 1218
+2021-10-28 16:55:08,768 [OraBench.py  ] INFO  Duration (ms) benchmark run : 12878
+2021-10-28 16:55:08,833 [OraBench.py  ] INFO  End   OraBench.py
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:55:08
+------------------------------------------------------------------------------
+End   lang/python/scripts/run_bench_cx_oracle.sh
+==============================================================================
+==============================================================================
+Start scripts/run_finalise_benchmark.sh
+------------------------------------------------------------------------------
+ora_bench - Oracle benchmark - finalise benchmark run.
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:55:08
+==============================================================================
+2021-10-28 16:55:09,310 [OraBench.java] INFO  Start OraBench.java
+2021-10-28 16:55:09,312 [OraBench.java] INFO  main() - number arguments=1
+2021-10-28 16:55:09,312 [OraBench.java] INFO  main() - 1st argument=finalise
+2021-10-28 16:55:09,402 [Config.java] INFO  benchmarkBatchSize      =512
+2021-10-28 16:55:09,403 [Config.java] INFO  benchmarkCoreMultiplier =1
+2021-10-28 16:55:09,403 [Config.java] INFO  benchmarkTransactionSize=512
+2021-10-28 16:55:09,403 [OraBench.java] INFO  Start Finalise OraBench Run
+2021-10-28 16:55:09,411 [Config.java] INFO  benchmarkBatchSize      =512
+2021-10-28 16:55:09,412 [Config.java] INFO  benchmarkCoreMultiplier =1
+2021-10-28 16:55:09,412 [Config.java] INFO  benchmarkTransactionSize=512
+2021-10-28 16:55:09,413 [OraBench.java] INFO  End   Finalise OraBench Run
+2021-10-28 16:55:09,413 [OraBench.java] INFO  End   OraBench.java
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:55:09
+------------------------------------------------------------------------------
+End   scripts/run_finalise_benchmark.sh
+==============================================================================
+
+------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:55:09
+------------------------------------------------------------------------------
+End   scripts/run_all_drivers.sh
+==============================================================================
+--------------------------------------------------------------------------------
+DATE TIME : 28.10.2021 16:55:09
+--------------------------------------------------------------------------------
+End   ./scripts/run_ora_bench_release.sh
+================================================================================

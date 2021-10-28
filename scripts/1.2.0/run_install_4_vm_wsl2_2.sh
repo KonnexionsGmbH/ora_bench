@@ -50,6 +50,7 @@ sudo rm -rf ~/.asdf/downloads/gradle
 sudo rm -rf ~/.asdf/downloads/java
 sudo rm -rf ~/.asdf/downloads/julia
 sudo rm -rf ~/.asdf/downloads/kotlin
+sudo rm -rf ~/.asdf/downloads/nim
 sudo rm -rf ~/.asdf/downloads/python
 sudo rm -rf ~/.asdf/downloads/rebar
 sudo rm -rf ~/.asdf/downloads/rust
@@ -64,6 +65,7 @@ sudo rm -rf ~/.asdf/installs/gradle
 sudo rm -rf ~/.asdf/installs/java
 sudo rm -rf ~/.asdf/installs/julia
 sudo rm -rf ~/.asdf/installs/kotlin
+sudo rm -rf ~/.asdf/installs/nim
 sudo rm -rf ~/.asdf/installs/python
 sudo rm -rf ~/.asdf/installs/rebar
 sudo rm -rf ~/.asdf/installs/rust
@@ -78,6 +80,7 @@ sudo rm -rf ~/.asdf/plugins/gradle
 sudo rm -rf ~/.asdf/plugins/java
 sudo rm -rf ~/.asdf/plugins/julia
 sudo rm -rf ~/.asdf/plugins/kotlin
+sudo rm -rf ~/.asdf/plugins/nim
 sudo rm -rf ~/.asdf/plugins/python
 sudo rm -rf ~/.asdf/plugins/rebar
 sudo rm -rf ~/.asdf/plugins/rust
@@ -151,6 +154,19 @@ echo " "
 echo "=============================================================================> Version  Julia: "
 echo " "
 echo "Current version of Julia: $(julia -version)"
+echo " "
+echo "=============================================================================="
+
+echo "------------------------------------------------------------------------------"
+echo "Step: Install Nim - Version ${VERSION_NIM}"
+echo "------------------------------------------------------------------------------"
+asdf plugin add nim
+asdf install nim ${VERSION_NIM}
+asdf global nim ${VERSION_NIM}
+echo " "
+echo "=============================================================================> Version  Nim: "
+echo " "
+echo "Current version of Nim: $(nim --version)"
 echo " "
 echo "=============================================================================="
 

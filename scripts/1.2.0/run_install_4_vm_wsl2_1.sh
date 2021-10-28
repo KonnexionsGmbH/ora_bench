@@ -12,26 +12,27 @@ sudo rm -rf /tmp/*
 
 export HOST_ENVIRONMENT_DEFAULT=vm
 
-export VERSION_ORA_BENCH_DEV=1.1.0
+export VERSION_ORA_BENCH_DEV=1.2.0
 
-export VERSION_CMAKE=3.21.3
-export VERSION_DBEAVER=21.2.2
+export VERSION_CMAKE=3.21.4
+export VERSION_DBEAVER=21.2.3
 export VERSION_ECLIPSE_1=2021-09
 export VERSION_ECLIPSE_2=R
 export VERSION_ELIXIR=1.12.3-otp-24
-export VERSION_ERLANG=24.1.2
+export VERSION_ERLANG=24.1.3
 export VERSION_GCC=10
 export VERSION_GO=1.17.2
 export VERSION_GRADLE=7.2
-export VERSION_HTOP=3.1.0
-export VERSION_JAVA=openjdk-17
+export VERSION_HTOP=3.1.1
+export VERSION_JAVA=openjdk-17.0.1
 export VERSION_JULIA=1.6.3
 export VERSION_KOTLIN=1.5.31
+export VERSION_NIM=1.6.0
 export VERSION_ORACLE_INSTANT_CLIENT_1=21
 export VERSION_ORACLE_INSTANT_CLIENT_2=3
 export VERSION_PYTHON3=3.10.0
 export VERSION_REBAR3=3.16.1
-export VERSION_RUST=1.55.0
+export VERSION_RUST=1.56.0
 export VERSION_TMUX=3.2a
 
 if [ -z "$1" ]; then
@@ -229,6 +230,7 @@ eval echo 'export VERSION_HTOP=${VERSION_HTOP}' >> ~/.bashrc
 eval echo 'export VERSION_JAVA=${VERSION_JAVA}' >> ~/.bashrc
 eval echo 'export VERSION_JULIA=${VERSION_JULIA}' >> ~/.bashrc
 eval echo 'export VERSION_KOTLIN=${VERSION_KOTLIN}' >> ~/.bashrc
+eval echo 'export VERSION_NIM=${VERSION_NIM}' >> ~/.bashrc
 eval echo 'export VERSION_ORACLE_INSTANT_CLIENT_1=${VERSION_ORACLE_INSTANT_CLIENT_1}' >> ~/.bashrc
 eval echo 'export VERSION_ORACLE_INSTANT_CLIENT_2=${VERSION_ORACLE_INSTANT_CLIENT_2}' >> ~/.bashrc
 eval echo 'export VERSION_PYTHON3=${VERSION_PYTHON3}' >> ~/.bashrc

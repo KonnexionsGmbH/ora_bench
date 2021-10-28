@@ -66,6 +66,8 @@
     
         - save the current time as the start time of the 'trial' action
     
+        - INFO  Start trial no. trial_no
+
         - create the database table (config param 'sql.create')
           IF error
              drop the database table (config param 'sql.drop')
@@ -84,6 +86,8 @@
         
         - WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
         
+        - INFO  Duration (ms) trial         : duration_trial
+
         - RETURN duration = end time - start time
 ```
 
@@ -119,7 +123,9 @@
                       bulk_data_partition, 
                       partition_key)
     
-        - INFO Start insert partition_key=partition_key
+        - IF trial_no == 1
+             INFO Start insert partition_key=partition_key
+          ENDIF   
      
         - count = 0
           collection batch_collection = empty
@@ -147,7 +153,9 @@
 
         - commit
         
-        - INFO End   insert partition_key=partition_key
+        - IF trial_no == 1
+             INFO End   insert partition_key=partition_key
+          ENDIF   
 ```
 
 ### <a name="run_select"></a> 5 `Select Control Function`
@@ -182,7 +190,9 @@
                       bulk_data_partition, 
                       partition_key)
     
-        - INFO Start select partition_key=partition_key
+        - IF trial_no == 1
+             INFO Start select partition_key=partition_key
+          ENDIF   
      
         - execute the SQL statement in config param 'sql.select' 
 
@@ -195,5 +205,7 @@
              display an error message            
           ENDIF                    
     
-        - INFO End   select partition_key=partition_key
+        - IF trial_no == 1
+             INFO End   select partition_key=partition_key
+          ENDIF   
 ```

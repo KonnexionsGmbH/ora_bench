@@ -897,7 +897,8 @@ class OraBench {
                     preparedStatements[i],
                     benchmarkCoreMultiplier,
                     i,
-                    bulkDataPartitions[i]
+                    bulkDataPartitions[i],
+                    trialNumber
                 )
             } else {
                 executorService?.execute(
@@ -935,20 +936,28 @@ class OraBench {
      * @param connection        the database connection
      * @param preparedStatement the prepared statement
      * @param bulkDataPartition the bulk data partition
+     * @param trialNumber       the trial number
      */
     private fun runInsertHelper(
         connection: Connection,
         preparedStatement: PreparedStatement,
         benchmarkCoreMultiplier: Int,
         partitionKey: Int,
-        bulkDataPartition: ArrayList<Array<String>>
+        bulkDataPartition: ArrayList<Array<String>>,
+        trialNumber: Int
     ) {
         if (isDebug) {
             logger.debug("Start")
         }
 
-        // INFO Start insert partition_key=partition_key
-        logger.info("Start insert partitionKey=$partitionKey")
+        /*
+        IF trial_no == 1
+           INFO Start insert partition_key=partition_key
+        ENDIF
+         */
+        if (trialNumber == 1) {
+            logger.info("Start insert partitionKey=$partitionKey")
+        }
 
         runInsertHelper(
             logger,
@@ -962,8 +971,14 @@ class OraBench {
             benchmarkTransactionSize
         )
 
-        // INFO End   insert partition_key=partition_key
-        logger.info("End   insert partitionKey=$partitionKey")
+        /*
+        IF trial_no == 1
+           INFO End   insert partition_key=partition_key
+        ENDIF
+         */
+        if (trialNumber == 1) {
+            logger.info("End   insert partitionKey=$partitionKey")
+        }
 
         if (isDebug) {
             logger.debug("End")
@@ -1013,7 +1028,8 @@ class OraBench {
                     statements[i],
                     benchmarkCoreMultiplier,
                     bulkDataPartitions[i],
-                    i
+                    i,
+                    trialNumber
                 )
             } else {
                 executorService?.execute(
@@ -1051,14 +1067,27 @@ class OraBench {
      * @param benchmarkCoreMultiplier the multithreading parameter
      * @param bulkDataPartition the bulk data partition
      * @param partitionKey      the partition key
+     * @param trialNumber       the trial number
      */
-    private fun runSelectHelper(statement: Statement, benchmarkCoreMultiplier: Int, bulkDataPartition: ArrayList<Array<String>>, partitionKey: Int) {
+    private fun runSelectHelper(
+        statement: Statement,
+        benchmarkCoreMultiplier: Int,
+        bulkDataPartition: ArrayList<Array<String>>,
+        partitionKey: Int,
+        trialNumber: Int
+    ) {
         if (isDebug) {
             logger.debug("Start")
         }
 
-        // INFO Start select partition_key=partition_key
-        logger.info("Start select partitionKey=$partitionKey")
+        /*
+        IF trial_no == 1
+           INFO Start select partition_key=partition_key
+        ENDIF
+         */
+        if (trialNumber == 1) {
+            logger.info("Start select partitionKey=$partitionKey")
+        }
 
         runSelectHelper(
             logger,
@@ -1071,8 +1100,14 @@ class OraBench {
             sqlSelect
         )
 
-        // INFO End   select partition_key=partition_key
-        logger.info("End   select partitionKey=$partitionKey")
+        /*
+        IF trial_no == 1
+           INFO End   select partition_key=partition_key
+        ENDIF
+         */
+        if (trialNumber == 1) {
+            logger.info("End   select partitionKey=$partitionKey")
+        }
 
         if (isDebug) {
             logger.debug("End")
@@ -1102,6 +1137,7 @@ class OraBench {
         // save the current time as the start time of the 'trial' action
         resultTrialStart()
 
+        // INFO  Start trial no. trial_no
         logger.info("Start trial no. $trialNumber")
 
         /*  

@@ -31,68 +31,69 @@ import org.apache.logging.log4j.Logger;
  */
 public class Database {
 
-    private static final Logger logger = LogManager.getLogger(Database.class);
-    private final static boolean isDebug = logger.isDebugEnabled();
-    private final Config config;
-    private final String connectionHost;
-    private final String connectionPassword;
-    private final int connectionPort;
-    private final String connectionService;
-    private final String connectionUser;
-    private Connection connection;
+  private static final Logger  logger  = LogManager.getLogger(Database.class);
+  private final static boolean isDebug = logger.isDebugEnabled();
+  private final Config         config;
+  private final String         connectionHost;
+  private final String         connectionPassword;
+  private final int            connectionPort;
+  private final String         connectionService;
+  private final String         connectionUser;
+  private Connection           connection;
 
-    /**
-     * Constructs a Database object using the given {@link Config} object.
-     *
-     * @param config the {@link Config} object
-     */
-    public Database(Config config) {
-        if (isDebug) {
-            logger.debug("Start");
-        }
-
-        this.config = config;
-        connectionHost = config.getConnectionHost();
-        connectionPassword = config.getConnectionPassword();
-        connectionPort = config.getConnectionPort();
-        connectionService = config.getConnectionService();
-        connectionUser = config.getConnectionUser();
-
-        if (isDebug) {
-            logger.debug("End");
-        }
+  /**
+   * Constructs a Database object using the given {@link Config} object.
+   *
+   * @param config the {@link Config} object
+   */
+  public Database(Config config) {
+    if (isDebug) {
+      logger.debug("Start");
     }
 
-    /**
-     * Creates a database connection.
-     *
-     * @return the database connection
-     */
-    public final Connection connect() {
-        if (isDebug) {
-            logger.debug("Start");
-        }
+    this.config        = config;
+    connectionHost     = config.getConnectionHost();
+    connectionPassword = config.getConnectionPassword();
+    connectionPort     = config.getConnectionPort();
+    connectionService  = config.getConnectionService();
+    connectionUser     = config.getConnectionUser();
 
-        final String url = "jdbc:oracle:thin:@//" + connectionHost + ":" + connectionPort + "/" + connectionService
-                + "?oracle.net.disableOob=true";
-
-        if (connection == null) {
-            try {
-                connection = DriverManager.getConnection(url, connectionUser, connectionPassword);
-                DatabaseMetaData meta = connection.getMetaData();
-                config.setBenchmarkDriver("Oracle JDBC (Version " + meta.getDriverVersion() + ")");
-            } catch (SQLException ec) {
-                logger.error("connection parameter url     =: " + url);
-                logger.error("connection parameter username=: " + connectionUser);
-                logger.error("connection parameter password=: " + connectionPassword);
-                ec.printStackTrace();
-            }
-        }
-
-        if (isDebug) {
-            logger.debug("End");
-        }
-
-        return connection;
+    if (isDebug) {
+      logger.debug("End");
     }
+  }
+
+  /**
+   * Creates a database connection.
+   *
+   * @return the database connection
+   */
+  public final Connection connect() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
+    final String url = "jdbc:oracle:thin:@//" + connectionHost + ":" + connectionPort + "/" + connectionService + "?oracle.net.disableOob=true";
+
+    if (connection == null) {
+      try {
+        connection = DriverManager.getConnection(url,
+                                                 connectionUser,
+                                                 connectionPassword);
+        DatabaseMetaData meta = connection.getMetaData();
+        config.setBenchmarkDriver("Oracle JDBC (Version " + meta.getDriverVersion() + ")");
+      } catch (SQLException ec) {
+        logger.error("connection parameter url     =: " + url);
+        logger.error("connection parameter username=: " + connectionUser);
+        logger.error("connection parameter password=: " + connectionPassword);
+        ec.printStackTrace();
+      }
+    }
+
+    if (isDebug) {
+      logger.debug("End");
+    }
+
+    return connection;
+  }
 }

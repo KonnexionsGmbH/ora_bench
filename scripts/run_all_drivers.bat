@@ -20,6 +20,7 @@ echo RUN_JDBC_JULIA                    : %ORA_BENCH_RUN_JDBC_JULIA%
 echo RUN_JDBC_KOTLIN                   : %ORA_BENCH_RUN_JDBC_KOTLIN%
 echo RUN_ODPI_C                        : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORACLE_JULIA                  : %ORA_BENCH_RUN_ORACLE_JULIA%
+echo RUN_ORACLE_RUST                   : %ORA_BENCH_RUN_ORACLE_RUST%
 echo RUN_ORANIF_ELIXIR                 : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG                 : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo -------------------------------------------------------------------------------
@@ -98,6 +99,14 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
     call lang\python\scripts\run_bench_cx_oracle.bat
     if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'call lang\python\scripts\run_bench_cx_oracle.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+)
+
+if ["%ORA_BENCH_RUN_ORACLE_RUST%"] EQU ["true"] (
+    call lang\rust\scripts\run_bench_oracle.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\rust\scripts\run_bench_oracle.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 )

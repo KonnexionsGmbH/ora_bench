@@ -22,6 +22,7 @@ set ORA_BENCH_RUN_JDBC_JULIA=false
 set ORA_BENCH_RUN_JDBC_KOTLIN=false
 set ORA_BENCH_RUN_ODPI_C=false
 set ORA_BENCH_RUN_ORACLE_JULIA=false
+set ORA_BENCH_RUN_ORACLE_RUST=false
 set ORA_BENCH_RUN_ORANIF_ELIXIR=false
 set ORA_BENCH_RUN_ORANIF_ERLANG=false
 
@@ -33,6 +34,7 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["complete"] (
     set ORA_BENCH_RUN_JDBC_KOTLIN=true
     set ORA_BENCH_RUN_ODPI_C=false
     set ORA_BENCH_RUN_ORACLE_JULIA=true
+    set ORA_BENCH_RUN_ORACLE_RUST=true
     set ORA_BENCH_RUN_ORANIF_ELIXIR=true
     set ORA_BENCH_RUN_ORANIF_ERLANG=true
 )
@@ -73,6 +75,10 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["kotlin"] (
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["python"] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
+)
+
+if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["rust"] (
+    set ORA_BENCH_RUN_ORACLE_RUST=true
 )
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["18"] (
@@ -116,6 +122,7 @@ echo RUN_JDBC_JULIA                    : %ORA_BENCH_RUN_JDBC_JULIA%
 echo RUN_JDBC_KOTLIN                   : %ORA_BENCH_RUN_JDBC_KOTLIN%
 echo RUN_ODPI_C                        : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORACLE_JULIA                  : %ORA_BENCH_RUN_ORACLE_JULIA%
+echo RUN_ORACLE_RUST                   : %ORA_BENCH_RUN_ORACLE_RUST%
 echo RUN_ORANIF_ELIXIR                 : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG                 : %ORA_BENCH_RUN_ORANIF_ERLANG%
 echo -------------------------------------------------------------------------------

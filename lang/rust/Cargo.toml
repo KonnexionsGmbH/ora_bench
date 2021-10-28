@@ -1,0 +1,17 @@
+[package]
+name = "orabench_rs"
+version = "1.2.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4.19"
+crossbeam = "0.8.1"
+csv = "1.1.6"
+env_logger = "0.9.0"
+java-properties = "1.4.0"
+libmath = "0.2.1"
+log = "0.4.14"
+oracle = "0.5.3"
+rustc_version_runtime = "0.2.1"

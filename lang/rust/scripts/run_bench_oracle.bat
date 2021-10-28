@@ -2,7 +2,7 @@
 
 rem --------------------------------------------------------------------------------
 rem
-rem run_bench_odpi.sh: Oracle Benchmark based on ODPI-C.
+rem run_bench_oracle.bat: Oracle Benchmark based on Rust.
 rem
 rem --------------------------------------------------------------------------------
 
@@ -20,16 +20,14 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
 )
 
 set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
-set ORA_BENCH_FILE_CONFIGURATION_NAME_C=priv\properties\ora_bench_c.properties
 
-if ["%ORA_BENCH_BENCHMARK_VCVARSALL%"] EQU [""] (
-    set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
-)
+set ORA_BENCH_RUST_LOG_LEVEL=debug
+set ORA_BENCH_RUST_LOG_LEVEL=info
 
 echo ===============================================================================
 echo Start %0
 echo -------------------------------------------------------------------------------
-echo ora_bench - Oracle benchmark - ODPI-C and C.
+echo ora_bench - Oracle benchmark - Rust-oracle and Rust.
 echo -------------------------------------------------------------------------------
 echo MULTIPLE_RUN               : %ORA_BENCH_MULTIPLE_RUN%
 echo -------------------------------------------------------------------------------
@@ -41,35 +39,17 @@ echo ---------------------------------------------------------------------------
 echo BENCHMARK_BATCH_SIZE       : %ORA_BENCH_BENCHMARK_BATCH_SIZE%
 echo BENCHMARK_CORE_MULTIPLIER  : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
 echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
-echo BENCHMARK_VCVARSALL        : %ORA_BENCH_BENCHMARK_VCVARSALL%
 echo -------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
-echo FILE_CONFIGURATION_NAME_C  : %ORA_BENCH_FILE_CONFIGURATION_NAME_C%
+echo RUST_LOG_LEVEL             : %ORA_BENCH_RUST_LOG_LEVEL%
 echo -------------------------------------------------------------------------------
 echo:| TIME
 echo ===============================================================================
 
-echo --------------------------------------------------------------------------------
-echo Set environment variables for C / C++ compilation.
-echo --------------------------------------------------------------------------------
-if exist "%ORA_BENCH_BENCHMARK_VCVARSALL%" (
-    call "%ORA_BENCH_BENCHMARK_VCVARSALL%" x64
-    if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
-        exit -1073741510
-    )
-)
-
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
-    nmake -f lang\c\Makefile.win32 clean
+    make -C lang\rust
     if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'nmake -f lang\c\Makefile.win32 clean' was aborted, error code=%ERRORLEVEL%
-        exit -1073741510
-    )
-    
-    nmake -f lang\c\Makefile.win32
-    if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'nmake -f lang\c\Makefile.win32' was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'make' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
@@ -78,17 +58,17 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
-
-    java -jar priv/libs/ora_bench_java.jar setup_c
-    if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_c' was aborted, error code=%ERRORLEVEL%
-        exit -1073741510
-    )
 )
 
-OraBench.exe %ORA_BENCH_FILE_CONFIGURATION_NAME_C%
+java -jar priv/libs/ora_bench_java.jar setup_default
 if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: '.\OraBench.exe priv\properties\ora_bench_c.properties' was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_default' was aborted, error code=%ERRORLEVEL%
+    exit -1073741510
+)
+
+cargo run --manifest-path lang\rust\Cargo.toml --release %ORA_BENCH_FILE_CONFIGURATION_NAME%
+if %ERRORLEVEL% neq 0 (
+    echo Processing of the script: %0 - step: 'cargo run' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 

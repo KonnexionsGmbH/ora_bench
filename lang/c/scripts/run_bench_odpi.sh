@@ -19,7 +19,8 @@ if [ -z "${ORA_BENCH_CONNECTION_SERVICE}" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
 
-export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench_c.properties
+export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+export ORA_BENCH_FILE_CONFIGURATION_NAME_C=priv/properties/ora_bench_c.properties
 
 echo "=============================================================================="
 echo "Start $0"
@@ -38,6 +39,7 @@ echo "BENCHMARK_CORE_MULTIPLIER  : ${ORA_BENCH_BENCHMARK_CORE_MULTIPLIER}"
 echo "BENCHMARK_TRANSACTION_SIZE : ${ORA_BENCH_BENCHMARK_TRANSACTION_SIZE}"
 echo "------------------------------------------------------------------------------"
 echo "FILE_CONFIGURATION_NAME    : ${ORA_BENCH_FILE_CONFIGURATION_NAME}"
+echo "FILE_CONFIGURATION_NAME_C  : ${ORA_BENCH_FILE_CONFIGURATION_NAME_C}"
 echo "------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "=============================================================================="
@@ -69,11 +71,11 @@ if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
 fi
 
 if [ "$OSTYPE" = "msys" ]; then
-    if ! ./OraBench.exe ${ORA_BENCH_FILE_CONFIGURATION_NAME}; then
+    if ! ./OraBench.exe ${ORA_BENCH_FILE_CONFIGURATION_NAME_C}; then
         exit 255
     fi
 else
-    if ! ./OraBench ${ORA_BENCH_FILE_CONFIGURATION_NAME}; then
+    if ! ./OraBench ${ORA_BENCH_FILE_CONFIGURATION_NAME_C}; then
         exit 255
     fi
 fi
