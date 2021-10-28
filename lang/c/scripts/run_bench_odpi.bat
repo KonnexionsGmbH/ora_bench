@@ -19,7 +19,8 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
     set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 )
 
-set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench_c.properties
+set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
+set ORA_BENCH_FILE_CONFIGURATION_NAME_C=priv\properties\ora_bench_c.properties
 
 if ["%ORA_BENCH_BENCHMARK_VCVARSALL%"] EQU [""] (
     set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
@@ -43,6 +44,7 @@ echo BENCHMARK_TRANSACTION_SIZE : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo BENCHMARK_VCVARSALL        : %ORA_BENCH_BENCHMARK_VCVARSALL%
 echo -------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME    : %ORA_BENCH_FILE_CONFIGURATION_NAME%
+echo FILE_CONFIGURATION_NAME_C  : %ORA_BENCH_FILE_CONFIGURATION_NAME_C%
 echo -------------------------------------------------------------------------------
 echo:| TIME
 echo ===============================================================================
@@ -84,7 +86,7 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     )
 )
 
-OraBench.exe %ORA_BENCH_FILE_CONFIGURATION_NAME%
+OraBench.exe %ORA_BENCH_FILE_CONFIGURATION_NAME_C%
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: '.\OraBench.exe priv\properties\ora_bench_c.properties' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
