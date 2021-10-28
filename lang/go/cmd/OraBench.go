@@ -432,8 +432,14 @@ func runInsertHelper(
 ) {
 	log.Debug("Start runInsertHelper()")
 
-	// INFO Start insert partition_key=partition_key
-	log.Info("Start insert partition_key=", partition)
+	/*
+		IF trial_no == 1
+		   INFO Start insert partition_key=partition_key
+		ENDIF
+	*/
+	if trial == 1 {
+		log.Info("Start insert partition_key=", partition)
+	}
 
 	defer wg.Done()
 
@@ -507,8 +513,14 @@ func runInsertHelper(
 		log.Debug(fmt.Sprintf("End   doInsert(%2d) - defer(db)", partition))
 	}(db)
 
-	// INFO End   insert partition_key=partition_key
-	log.Info("End   insert partition_key=", partition)
+	/*
+		IF trial_no == 1
+		   INFO End   insert partition_key=partition_key
+		ENDIF
+	*/
+	if trial == 1 {
+		log.Info("End   insert partition_key=", partition)
+	}
 
 	log.Debug("End   runInsertHelper()")
 }
@@ -578,8 +590,14 @@ func runSelectHelper(
 ) {
 	log.Debug("Start runSelectHelper()")
 
-	// INFO Start select partition_key=partition_key
-	log.Info("Start select partition_key=", partition)
+	/*
+		IF trial_no == 1
+		   INFO Start select partition_key=partition_key
+		ENDIF
+	*/
+	if trial == 1 {
+		log.Info("Start select partition_key=", partition)
+	}
 
 	defer wg.Done()
 
@@ -623,8 +641,14 @@ func runSelectHelper(
 				partition, trial, partition, expect, i))
 	}
 
-	// INFO End   select partition_key=partition_key
-	log.Info("End   select partition_key=", partition)
+	/*
+		IF trial_no == 1
+		   INFO End   select partition_key=partition_key
+		ENDIF
+	*/
+	if trial == 1 {
+		log.Info("End   select partition_key=", partition)
+	}
 
 	log.Debug("End   runSelectHelper()")
 }
@@ -638,7 +662,8 @@ func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, 
 	// save the current time as the start time of the 'trial' action
 	startTrialTs := time.Now()
 
-	log.Info("Start trial no.", trialNo)
+	// INFO  Start trial no. trial_no
+	log.Info("Start trial no. ", trialNo)
 
 	/*
 	   create the database table (config param 'sql.create')
