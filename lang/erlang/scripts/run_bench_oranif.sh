@@ -19,8 +19,8 @@ if [ -z "${ORA_BENCH_CONNECTION_SERVICE}" ]; then
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
 fi
 
-exoprt ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-exoprt ORA_BENCH_FILE_CONFIGURATION_NAME_ERLANG=priv/properties/ora_bench_erlang.properties
+export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+export ORA_BENCH_FILE_CONFIGURATION_NAME_ERLANG=priv/properties/ora_bench_erlang.properties
 
 echo "=============================================================================="
 echo "Start $0"
