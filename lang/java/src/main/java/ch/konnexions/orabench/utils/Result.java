@@ -35,257 +35,295 @@ import org.apache.logging.log4j.Logger;
  * This class is used to record the results of the Oracle JDBC benchmark.
  */
 public class Result {
-    private static final Logger logger = LogManager.getLogger(Result.class);
+  private static final Logger     logger            = LogManager.getLogger(Result.class);
 
-    private final static boolean isDebug = logger.isDebugEnabled();
+  private final static boolean    isDebug           = logger.isDebugEnabled();
 
-    private final Config config;
+  private final Config            config;
 
-    private final DecimalFormat decimalFormat = new DecimalFormat("#########");
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
-    private final LocalDateTime lastBenchmark = LocalDateTime.now();
-    private final long lastBenchmarkNano = System.nanoTime();
-    private LocalDateTime lastQuery;
-    private long lastQueryNano;
+  private final DecimalFormat     decimalFormat     = new DecimalFormat("#########");
+  private final DateTimeFormatter formatter         = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
+  private final LocalDateTime     lastBenchmark     = LocalDateTime.now();
+  private final long              lastBenchmarkNano = System.nanoTime();
+  private LocalDateTime           lastQuery;
+  private long                    lastQueryNano;
 
-    private LocalDateTime lastTrial;
+  private LocalDateTime           lastTrial;
 
-    private long lastTrialNano;
+  private long                    lastTrialNano;
 
-    private CSVPrinter resultFile;
+  private CSVPrinter              resultFile;
 
-    /**
-     * Constructs a Result object using the given {@link Config} object.
-     *
-     * @param config the {@link Config} object
-     */
-    public Result(Config config) {
-        if (isDebug) {
-            logger.debug("Start");
-        }
-
-        this.config = config;
-
-        openResultFile();
-
-        if (isDebug) {
-            logger.debug("End");
-        }
+  /**
+   * Constructs a Result object using the given {@link Config} object.
+   *
+   * @param config the {@link Config} object
+   */
+  public Result(Config config) {
+    if (isDebug) {
+      logger.debug("Start");
     }
 
-    private void createMeasuringPoint(int trialNo, LocalDateTime startDateTime, LocalDateTime endDateTime,
-            long duration) {
-        if (isDebug) {
-            logger.debug("Start");
-        }
+    this.config = config;
 
-        createMeasuringPoint("trial", trialNo, null, startDateTime, endDateTime, duration);
+    openResultFile();
 
-        if (isDebug) {
-            logger.debug("End");
-        }
+    if (isDebug) {
+      logger.debug("End");
+    }
+  }
+
+  private void createMeasuringPoint(int trialNo, LocalDateTime startDateTime, LocalDateTime endDateTime, long duration) {
+    if (isDebug) {
+      logger.debug("Start");
     }
 
-    private void createMeasuringPoint(LocalDateTime endDateTime, long duration) {
-        if (isDebug) {
-            logger.debug("Start");
-        }
+    createMeasuringPoint("trial",
+                         trialNo,
+                         null,
+                         startDateTime,
+                         endDateTime,
+                         duration);
 
-        createMeasuringPoint("benchmark", 0, null, lastBenchmark, endDateTime, duration);
+    if (isDebug) {
+      logger.debug("End");
+    }
+  }
 
-        if (isDebug) {
-            logger.debug("End");
-        }
+  private void createMeasuringPoint(LocalDateTime endDateTime, long duration) {
+    if (isDebug) {
+      logger.debug("Start");
     }
 
-    private void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime,
-            LocalDateTime endDateTime, long duration) {
-        if (isDebug) {
-            logger.debug("Start");
-        }
+    createMeasuringPoint("benchmark",
+                         0,
+                         null,
+                         lastBenchmark,
+                         endDateTime,
+                         duration);
 
-        try {
-            resultFile.printRecord(config.getBenchmarkRelease(), config.getBenchmarkId(), config.getBenchmarkComment(),
-                    config.getBenchmarkHostName(), config.getBenchmarkNumberCores(), config.getBenchmarkOs(),
-                    config.getBenchmarkUserName(), config.getBenchmarkDatabase(), config.getBenchmarkLanguage(),
-                    config.getBenchmarkDriver(), trialNo, sqlStatement, config.getBenchmarkCoreMultiplier(),
-                    config.getConnectionFetchSize(), config.getBenchmarkTransactionSize(), config.getFileBulkLength(),
-                    config.getFileBulkSize(), config.getBenchmarkBatchSize(), action, startDateTime.format(formatter),
-                    endDateTime.format(formatter),
-                    decimalFormat.format((long) Precision.round(duration / 1000000000.0, 0)), Long.toString(duration));
-        } catch (IOException e) {
-            logger.error("file result delimiter=: " + config.getFileResultDelimiter());
-            logger.error("file result header   =: " + config.getFileResultHeader());
-            logger.error("file result name     =: " + config.getFileBulkSize());
-            e.printStackTrace();
-        }
+    if (isDebug) {
+      logger.debug("End");
+    }
+  }
 
-        if (isDebug) {
-            logger.debug("End");
-        }
+  private void createMeasuringPoint(String action, int trialNo, String sqlStatement, LocalDateTime startDateTime, LocalDateTime endDateTime, long duration) {
+    if (isDebug) {
+      logger.debug("Start");
     }
 
-    /**
-     * End of the whole benchmark run.
-     *
-     * @param benchmarkTrials
-     * @return duration (nanoseconds)
-     */
-    public final long endBenchmark(int benchmarkTrials) {
-        if (isDebug) {
-            logger.debug("Start");
-        }
-
-        LocalDateTime endDateTime = LocalDateTime.now();
-        long duration = System.nanoTime() - lastBenchmarkNano;
-
-        createMeasuringPoint(endDateTime, duration);
-
-        try {
-            resultFile.close();
-        } catch (IOException e) {
-            logger.error("file result delimiter=: " + config.getFileResultDelimiter());
-            logger.error("file result header   =: " + config.getFileResultHeader());
-            logger.error("file result name     =: " + config.getFileBulkSize());
-            e.printStackTrace();
-        }
-
-        if (isDebug) {
-            logger.debug("End");
-        }
-
-        return duration;
+    try {
+      resultFile.printRecord(config.getBenchmarkRelease(),
+                             config.getBenchmarkId(),
+                             config.getBenchmarkComment(),
+                             config.getBenchmarkHostName(),
+                             config.getBenchmarkNumberCores(),
+                             config.getBenchmarkOs(),
+                             config.getBenchmarkUserName(),
+                             config.getBenchmarkDatabase(),
+                             config.getBenchmarkLanguage(),
+                             config.getBenchmarkDriver(),
+                             trialNo,
+                             sqlStatement,
+                             config.getBenchmarkCoreMultiplier(),
+                             config.getConnectionFetchSize(),
+                             config.getBenchmarkTransactionSize(),
+                             config.getFileBulkLength(),
+                             config.getFileBulkSize(),
+                             config.getBenchmarkBatchSize(),
+                             action,
+                             startDateTime.format(formatter),
+                             endDateTime.format(formatter),
+                             decimalFormat.format((long) Precision.round(duration / 1000000000.0,
+                                                                         0)),
+                             Long.toString(duration));
+    } catch (IOException e) {
+      logger.error("file result delimiter=: " + config.getFileResultDelimiter());
+      logger.error("file result header   =: " + config.getFileResultHeader());
+      logger.error("file result name     =: " + config.getFileBulkSize());
+      e.printStackTrace();
     }
 
-    /**
-     * End of the current insert statement.
-     *
-     * @param trialNo      the current trial number
-     * @param sqlStatement the SQL statement to be applied
-     */
-    public final void endQueryInsert(int trialNo, String sqlStatement) {
-        if (isDebug) {
-            logger.debug("Start");
-        }
+    if (isDebug) {
+      logger.debug("End");
+    }
+  }
 
-        LocalDateTime endDateTime = LocalDateTime.now();
-        long duration = System.nanoTime() - lastQueryNano;
-
-        createMeasuringPoint("query", trialNo, sqlStatement, lastQuery, endDateTime, duration);
-
-        if (isDebug) {
-            logger.debug("End");
-        }
+  /**
+   * End of the whole benchmark run.
+   *
+   * @param benchmarkTrials
+   * @return duration (nanoseconds)
+   */
+  public final long endBenchmark(int benchmarkTrials) {
+    if (isDebug) {
+      logger.debug("Start");
     }
 
-    /**
-     * End of the current select.
-     *
-     * @param trialNo      the current trial number
-     * @param sqlStatement the SQL statement to be applied
-     */
-    public final void endQuerySelect(int trialNo, String sqlStatement) {
-        if (isDebug) {
-            logger.debug("Start");
-        }
+    LocalDateTime endDateTime = LocalDateTime.now();
+    long          duration    = System.nanoTime() - lastBenchmarkNano;
 
-        LocalDateTime endDateTime = LocalDateTime.now();
-        long duration = System.nanoTime() - lastQueryNano;
+    createMeasuringPoint(endDateTime,
+                         duration);
 
-        createMeasuringPoint("query", trialNo, sqlStatement, lastQuery, endDateTime, duration);
-
-        if (isDebug) {
-            logger.debug("End");
-        }
+    try {
+      resultFile.close();
+    } catch (IOException e) {
+      logger.error("file result delimiter=: " + config.getFileResultDelimiter());
+      logger.error("file result header   =: " + config.getFileResultHeader());
+      logger.error("file result name     =: " + config.getFileBulkSize());
+      e.printStackTrace();
     }
 
-    /**
-     * End of the current trial.
-     *
-     * @param trialNo the current trial number
-     * @return duration (nanoseconds)
-     */
-    public final long endTrial(int trialNo) {
-        if (isDebug) {
-            logger.debug("Start");
-        }
-
-        long duration = System.nanoTime() - lastTrialNano;
-
-        createMeasuringPoint(trialNo, lastTrial, LocalDateTime.now(), duration);
-
-        logger.info("Duration (ms) trial         : " + (long) Precision.round(duration / 1000000.0, 0));
-
-        if (isDebug) {
-            logger.debug("End");
-        }
-        ;
-
-        return duration;
+    if (isDebug) {
+      logger.debug("End");
     }
 
-    private void openResultFile() {
-        if (isDebug) {
-            logger.debug("Start");
-        }
+    return duration;
+  }
 
-        String resultDelimiter = config.getFileResultDelimiter();
-        String resultName = config.getFileResultName();
-
-        try {
-            boolean isFileExisting = Files.exists(Paths.get(resultName));
-
-            if (!(isFileExisting)) {
-                logger.error("fatal error: program abort =====> result file \"" + resultName + "\" is missing <=====");
-                System.exit(1);
-            }
-
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(resultName, true));
-            resultFile = new CSVPrinter(bufferedWriter,
-                    CSVFormat.EXCEL.builder().setDelimiter(resultDelimiter.charAt(0)).build());
-        } catch (IOException e) {
-            logger.error("file result delimiter=: " + resultDelimiter);
-            logger.error("file result header   =: " + config.getFileResultHeader());
-            logger.error("file result name     =: " + resultName);
-            logger.error("-----------------------");
-            e.printStackTrace();
-        }
-
-        if (isDebug) {
-            logger.debug("End");
-        }
+  /**
+   * End of the current insert statement.
+   *
+   * @param trialNo      the current trial number
+   * @param sqlStatement the SQL statement to be applied
+   */
+  public final void endQueryInsert(int trialNo, String sqlStatement) {
+    if (isDebug) {
+      logger.debug("Start");
     }
 
-    /**
-     * Start a new query.
-     */
-    public final void startQuery() {
-        if (isDebug) {
-            logger.debug("Start");
-        }
+    LocalDateTime endDateTime = LocalDateTime.now();
+    long          duration    = System.nanoTime() - lastQueryNano;
 
-        lastQuery = LocalDateTime.now();
-        lastQueryNano = System.nanoTime();
+    createMeasuringPoint("query",
+                         trialNo,
+                         sqlStatement,
+                         lastQuery,
+                         endDateTime,
+                         duration);
 
-        if (isDebug) {
-            logger.debug("End");
-        }
+    if (isDebug) {
+      logger.debug("End");
+    }
+  }
+
+  /**
+   * End of the current select.
+   *
+   * @param trialNo      the current trial number
+   * @param sqlStatement the SQL statement to be applied
+   */
+  public final void endQuerySelect(int trialNo, String sqlStatement) {
+    if (isDebug) {
+      logger.debug("Start");
     }
 
-    /**
-     * Start a new trial.
-     */
-    public final void startTrial() {
-        if (isDebug) {
-            logger.debug("Start");
-        }
+    LocalDateTime endDateTime = LocalDateTime.now();
+    long          duration    = System.nanoTime() - lastQueryNano;
 
-        lastTrial = LocalDateTime.now();
-        lastTrialNano = System.nanoTime();
+    createMeasuringPoint("query",
+                         trialNo,
+                         sqlStatement,
+                         lastQuery,
+                         endDateTime,
+                         duration);
 
-        if (isDebug) {
-            logger.debug("End");
-        }
+    if (isDebug) {
+      logger.debug("End");
     }
+  }
+
+  /**
+   * End of the current trial.
+   *
+   * @param trialNo the current trial number
+   * @return duration (nanoseconds)
+   */
+  public final long endTrial(int trialNo) {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
+    long duration = System.nanoTime() - lastTrialNano;
+
+    createMeasuringPoint(trialNo,
+                         lastTrial,
+                         LocalDateTime.now(),
+                         duration);
+
+    logger.info("Duration (ms) trial         : " + (long) Precision.round(duration / 1000000.0,
+                                                                          0));
+
+    if (isDebug) {
+      logger.debug("End");
+    }
+    ;
+
+    return duration;
+  }
+
+  private void openResultFile() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
+    String resultDelimiter = config.getFileResultDelimiter();
+    String resultName      = config.getFileResultName();
+
+    try {
+      boolean isFileExisting = Files.exists(Paths.get(resultName));
+
+      if (!(isFileExisting)) {
+        logger.error("fatal error: program abort =====> result file \"" + resultName + "\" is missing <=====");
+        System.exit(1);
+      }
+
+      BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(resultName, true));
+      resultFile = new CSVPrinter(bufferedWriter, CSVFormat.EXCEL.builder().setDelimiter(resultDelimiter.charAt(0)).build());
+    } catch (IOException e) {
+      logger.error("file result delimiter=: " + resultDelimiter);
+      logger.error("file result header   =: " + config.getFileResultHeader());
+      logger.error("file result name     =: " + resultName);
+      logger.error("-----------------------");
+      e.printStackTrace();
+    }
+
+    if (isDebug) {
+      logger.debug("End");
+    }
+  }
+
+  /**
+   * Start a new query.
+   */
+  public final void startQuery() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
+    lastQuery     = LocalDateTime.now();
+    lastQueryNano = System.nanoTime();
+
+    if (isDebug) {
+      logger.debug("End");
+    }
+  }
+
+  /**
+   * Start a new trial.
+   */
+  public final void startTrial() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
+    lastTrial     = LocalDateTime.now();
+    lastTrialNano = System.nanoTime();
+
+    if (isDebug) {
+      logger.debug("End");
+    }
+  }
 
 }

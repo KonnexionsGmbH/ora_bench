@@ -20,60 +20,62 @@ import ch.konnexions.orabench.utils.Config;
  */
 public class Select implements Runnable {
 
-    /** The Constant logger. */
-    private static final Logger logger = LogManager.getLogger(Select.class);
+  private static final Logger       logger  = LogManager.getLogger(Select.class);
 
-    /** The Constant isDebug. */
-    private final static boolean isDebug = logger.isDebugEnabled();
+  private final static boolean      isDebug = logger.isDebugEnabled();
 
-    /** The bulk data partition. */
-    private final ArrayList<String[]> bulkDataPartition;
+  private final ArrayList<String[]> bulkDataPartition;
 
-    /** The config. */
-    private final Config config;
+  private final Config              config;
 
-    /** The partition key. */
-    private final int partitionKey;
+  private final int                 partitionKey;
 
-    /** The statement. */
-    private final Statement statement;
+  private final Statement           statement;
 
-    /**
-     * Instantiates a new Select class.
-     *
-     * @param config            the configuration parameters
-     * @param statement         the statement
-     * @param bulkDataPartition the bulk data partition
-     * @param partitionKey      the partition key
-     */
-    public Select(Config config, Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey) {
-        if (isDebug) {
-            logger.debug("Start");
-        }
+  private final int                 trialNumber;
 
-        this.config = config;
-        this.statement = statement;
-        this.bulkDataPartition = bulkDataPartition;
-        this.partitionKey = partitionKey;
-
-        if (isDebug) {
-            logger.debug("End");
-        }
+  /**
+   * Instantiates a new Select class.
+   *
+   * @param config            the configuration parameters
+   * @param statement         the statement
+   * @param bulkDataPartition the bulk data partition
+   * @param partitionKey      the partition key
+   * @param trialNumber       the trial number
+   */
+  public Select(Config config, Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey, int trialNumber) {
+    if (isDebug) {
+      logger.debug("Start");
     }
 
-    /**
-     * Runs the thread implementer.
-     */
-    @Override
-    public final void run() {
-        if (isDebug) {
-            logger.debug("Start");
-        }
+    this.config            = config;
+    this.statement         = statement;
+    this.bulkDataPartition = bulkDataPartition;
+    this.partitionKey      = partitionKey;
+    this.trialNumber       = trialNumber;
 
-        OraBench.runSelectHelper(statement, bulkDataPartition, partitionKey, config);
-
-        if (isDebug) {
-            logger.debug("End");
-        }
+    if (isDebug) {
+      logger.debug("End");
     }
+  }
+
+  /**
+   * Runs the thread implementer.
+   */
+  @Override
+  public final void run() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
+    OraBench.runSelectHelper(statement,
+                             bulkDataPartition,
+                             partitionKey,
+                             trialNumber,
+                             config);
+
+    if (isDebug) {
+      logger.debug("End");
+    }
+  }
 }
