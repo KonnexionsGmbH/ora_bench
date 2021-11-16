@@ -99,7 +99,7 @@ int main(const int argc, const char *argv[])
       "gnu %d.%d.%d%s" //	language
 #endif
 
-      "OCPI-C (v4.2.1)%s" //	driver
+      "OCPI-C (v4.3)%s"   //	driver
       "%%d%s"             //	trial no.
       "%%s%s"             //	SQL statement
       "%d%s"              //	core multiplier
