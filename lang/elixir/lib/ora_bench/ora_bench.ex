@@ -618,7 +618,7 @@ defmodule OraBench do
       connections,
       driver,
       String.to_integer(config["benchmark.number.partitions"]),
-      1,
+      0,
       result_file,
       trial_number
     )
