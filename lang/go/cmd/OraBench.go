@@ -137,7 +137,8 @@ func loadBulk(benchmarkNumberPartitions int, fileBulkDelimiter string, fileBulkN
 	}
 
 	for i, p := range partitions {
-		log.Printf("Partition %d has %5d rows", i+1, len(p.keys))
+		log.Printf("Partition %d has %5d rows", i, len(p.keys))
+		i += 1
 	}
 
 	log.Info("End   Distribution of the data in the partitions")

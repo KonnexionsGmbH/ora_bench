@@ -20,11 +20,11 @@ dependencies {
     implementation("org.apache.commons:commons-csv:1.9.0")
     implementation("org.apache.commons:commons-math3:3.6.1")
     implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.5.31")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.31")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0")
     implementation("org.apache.logging.log4j:log4j-api:2.14.1")
     implementation("org.apache.logging.log4j:log4j-core:2.14.1")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.5.31"))
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.6.0"))
 }
 
 val jar by tasks.getting(Jar::class) {

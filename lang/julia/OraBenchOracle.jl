@@ -298,7 +298,7 @@ function get_bulk_data_partitions(
     for partition_key = 1:benchmark_number_partitions
         println(format(
             "Partition p{1:0>5d} contains {2:n} rows",
-            partition_key - 1,
+            partition_key,
             size(bulk_data_partitions[partition_key], 1),
         ))
     end

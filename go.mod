@@ -5,7 +5,8 @@ go 1.17
 require golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
 
 require (
-	github.com/godror/godror v0.28.0
+	github.com/davecgh/go-spew v1.1.1
+	github.com/godror/godror v0.28.1
 	github.com/sirupsen/logrus v1.8.1
 )
 

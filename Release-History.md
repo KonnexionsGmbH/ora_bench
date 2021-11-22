@@ -3,7 +3,40 @@
 ![Travis (.org)](https://img.shields.io/travis/KonnexionsGmbH/ora_bench.svg?branch=master)
 ![GitHub release](https://img.shields.io/github/release/KonnexionsGmbH/ora_bench.svg)
 ![GitHub Release Date](https://img.shields.io/github/release-date/KonnexionsGmbH/ora_bench.svg)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/KonnexionsGmbH/ora_bench/1.2.0.svg)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/KonnexionsGmbH/ora_bench/1.3.0.svg)
+
+----
+
+## Version 1.2.0
+
+Release Date: 27.10.2021
+
+### New Features
+
+- Programming language [`Rust`](https://www.rust-lang.org) and database driver [`Rust-oracle`](https://github.com/kubo/rust-oracle)
+
+### Applied Software
+
+| Software              | Type     | Version           | Remark |
+| ---                   | ---      | ---               | ---    |
+| C++ (gcc)             | Language | 10.3.0            |   |
+| cx_Oracle             | Driver   | 8.2.1             |   |
+| Elixir                | Language | 1.12.3-otp-24     |   |
+| Erlang                | Language | 24.1.3            | upgrade |
+| Go                    | Language | 1.17.2            |   |
+| godror                | Driver   | v0.28.0           | upgrade |
+| JDBC.jl               | Driver   | v0.5.0            |   |
+| Java                  | Language | openjdk-17.0.1    | upgrade |
+| Julia                 | Language | v1.6.3            |   |
+| Kotlin                | Language | 1.5.31            |   |
+| Oracle Instant Client | Driver   | 21.3.0.0.0        |   |
+| Oracle JDBC           | Driver   | 21.3.0.0          |   |
+| Oracle ODPI-C         | Driver   | 4.2.1             |   |
+| Oracle.jl             | Driver   | v0.3.1            |   |
+| oranif                | Driver   | 0.2.3             |   |
+| Python 3              | Language | 3.10.0            |   |
+| Rust                  | Language | 1.56.0            | new |
+| Rust-oracle           | Driver   | v0.5.3            | new |
 
 ----
 
