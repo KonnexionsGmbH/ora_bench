@@ -57,7 +57,7 @@ elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "kotlin" ]; then
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "python" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "rust" ]; then
-    export ORA_BENCH_RUN_CX_ORACLE_RUST=true
+    export ORA_BENCH_RUN_ORACLE_RUST=true
 fi
 
 if [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
