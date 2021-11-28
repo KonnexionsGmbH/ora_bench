@@ -5,6 +5,7 @@
 /.project
 /.settings/
 /bin/
+/go.sum
 /lang/*/.classpath
 /lang/*/.gradle/
 /lang/*/.project
@@ -22,6 +23,7 @@
 /lang/go/OraBench.exe
 /lang/go/orabench
 /lang/go/pkg/
+/lang/python/__pycache__/*.pyc
 /lang/rust/Cargo.lock
 /lang/rust/target/
 /lib/kotlin-*.jar
