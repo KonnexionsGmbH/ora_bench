@@ -1,5 +1,5 @@
-#ifndef _THREADS_H_
-#define _THREADS_H_
+#ifndef _ODPIS_H_
+#define _ODPIS_H_
 
 #ifdef W32
 #include <windows.h>
@@ -33,4 +33,4 @@ extern void *doSelect(void *);
 extern void init_db(void);
 extern void cleanup_db(void);
 
-#endif // _THREADS_H_
+#endif // _ODPIS_H_
