@@ -79,9 +79,15 @@ python -m pip freeze | findstr /i "cx-oracle pyyaml"
 echo.
 echo ==============================================================================
 
-python lang/python/OraBench.py
+python -m compileall lang/python/OraBench.py
 if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'python lang/python/OraBench.py' was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'python -m compileall lang/python/OraBench.py' was aborted, error code=%ERRORLEVEL%
+    exit -1073741510
+)
+
+python lang/python/__pycache__/OraBench.cpython-310.pyc
+if %ERRORLEVEL% neq 0 (
+    echo Processing of the script: %0 - step: 'python lang/python/__pycache__/OraBench.cpython-310.pyc' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 

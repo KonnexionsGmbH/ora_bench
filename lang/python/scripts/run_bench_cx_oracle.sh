@@ -55,22 +55,22 @@ if ! java -jar priv/libs/ora_bench_java.jar setup_python; then
 fi
 
 if [ "$OSTYPE" = "msys" ]; then
-    if ! python -m pip install --upgrade pip; then
+    if ! python3 -m pip install --upgrade pip; then
         exit 255
     fi
-    if ! python -m pip install -r lang/python/requirements.txt; then
+    if ! python3 -m pip install -r lang/python/requirements.txt; then
         exit 255
     fi
     echo "=============================================================================> Version Python: "
     echo " "
-    echo "Current version of Python: $(python --version)"
+    echo "Current version of Python: $(python3 --version)"
     echo " "
-    echo "Current version of pip: $(python -m pip --version)"
+    echo "Current version of pip: $(python3 -m pip --version)"
     echo " "
-    python -m pip freeze | grep -E -i 'cx_oracle|PyYAML'
+    python3 -m pip freeze | grep -E -i 'cx_oracle|PyYAML'
     echo " "
     echo "=============================================================================>"
-    if ! python lang/python/OraBench.py; then
+    if ! python3 lang/python/OraBench.py; then
         exit 255
     fi
 else
@@ -88,8 +88,12 @@ else
     echo " "
     python3 -m pip freeze | grep -E -i 'cx_oracle|PyYAML'
     echo " "
+    if ! python3 -m compileall lang/python/OraBench.py; then
+        exit 255
+    fi
+    echo " "
     echo "=============================================================================>"
-    if ! python3 lang/python/OraBench.py; then
+    if ! python3 lang/python/__pycache__/OraBench.cpython-310.pyc; then
         exit 255
     fi
 fi
