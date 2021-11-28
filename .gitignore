@@ -33,3 +33,7 @@
 /priv/ora_bench_result.tsv
 /priv/properties/ora_bench_*.properties
 /tmp/
+OraBench.exe
+lang/c/OraBench.obj
+lang/c/config.obj
+lang/c/odpi/
