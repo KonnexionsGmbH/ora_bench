@@ -1,8 +1,8 @@
 .DEFAULT_GOAL := build
 
 deps:
-	nimble install nimodpi
-	nimble install nimterop -y
+	nimble install nimodpi -n
+	nimble install nimterop -n
 .PHONY:deps
 
 tidy: deps
@@ -10,5 +10,5 @@ tidy: deps
 .PHONY:tidy
 
 build: tidy
-	nim compile -d:release -o=lang\nim\bin\ lang\nim\src\ora_bench.nim
+	nim compile -d:release -o=bin/ora_bench.exe src/ora_bench.nim
 .PHONY:build

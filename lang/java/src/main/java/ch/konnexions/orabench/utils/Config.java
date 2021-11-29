@@ -422,7 +422,7 @@ public class Config {
 
       BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameYaml(), false));
 
-      bufferedWriter.write("[DEFAULT]");
+      bufferedWriter.write("---");
       bufferedWriter.newLine();
 
       String value;
@@ -436,7 +436,7 @@ public class Config {
         }
 
         bufferedWriter.write(key.replace(".",
-                "_") + " = \"" + ((value.contentEquals("\t"))
+                "_") + ": \"" + ((value.contentEquals("\t"))
                 ? "TAB"
                 : value) + "\"");
         bufferedWriter.newLine();

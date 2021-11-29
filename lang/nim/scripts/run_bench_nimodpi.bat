@@ -45,11 +45,15 @@ echo:| TIME
 echo ===============================================================================
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
-    make -C lang\nim
+    cd lang\nim
+    
+    make
     if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'make' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
+    
+    cd ../..
 
     call lang\java\scripts\run_gradle
     if %ERRORLEVEL% neq 0 (
