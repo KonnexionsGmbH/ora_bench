@@ -61,6 +61,7 @@ For reasons of convenience the following files are generated:
 - the configuration file `priv/ora_bench_erlang.properties` with a corresponding map for Erlang, and
 - the configuration file `priv/ora_bench_python.propperties` for Python 3.
 - the configuration file `priv/ora_bench_toml.propperties` for Julia.
+- the configuration file `priv/ora_bench_yaml.propperties` for Nim.
 
 All the file names specified here are also part of the configuration file and can be changed if necessary.
 

@@ -123,6 +123,10 @@ public class OraBench {
       logger.info("Start Setup TOML OraBench Run");
       config.createConfigurationFileToml();
       logger.info("End   Setup TOML OraBench Run");
+    } else if (args[0].equals("setup_yaml")) {
+      logger.info("Start Setup YAML OraBench Run");
+      config.createConfigurationFileYaml();
+      logger.info("End   Setup YAML OraBench Run");
     } else if (args[0].contentEquals("")) {
       logger.error("Command line argument missing");
     } else {

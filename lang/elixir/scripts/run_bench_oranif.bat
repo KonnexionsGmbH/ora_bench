@@ -59,22 +59,8 @@ if exist "%ORA_BENCH_BENCHMARK_VCVARSALL%" (
 )
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
-    call lang\java\scripts\run_gradle
-    if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
-        exit -1073741510
-    )
-)
+    cd lang\elixir
 
-java -jar priv/libs/ora_bench_java.jar setup_elixir
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_elixir' was aborted, error code=%ERRORLEVEL%
-    exit -1073741510
-)
-
-cd lang\elixir
-
-if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     if EXIST deps\    rd /Q/S deps 
     if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'rd /Q/S deps' was aborted, error code=%ERRORLEVEL%
@@ -116,8 +102,24 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         echo Processing of the script: %0 - step: 'call mix deps.compile' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
+    
+    cd ..\..
+    
+    call lang\java\scripts\run_gradle
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+
+    java -jar priv/libs/ora_bench_java.jar setup_elixir
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_elixir' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
 )
     
+cd lang\elixir
+
 call mix run -e "OraBench.CLI.main(["oranif"])"
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: call mix run -e "OraBench.CLI.main(["oranif"])" was aborted, error code=%ERRORLEVEL%

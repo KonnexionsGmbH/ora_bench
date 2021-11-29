@@ -78,6 +78,12 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
+    
+    call lang\java\scripts\run_gradle
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
 
     java -jar priv/libs/ora_bench_java.jar setup_c
     if %ERRORLEVEL% neq 0 (
