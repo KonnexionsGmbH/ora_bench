@@ -45,16 +45,6 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "=============================================================================="
 
 if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
-    if ! { /bin/bash lang/java/scripts/run_gradle.sh; }; then
-        exit 255
-    fi
-fi
-
-if ! java -jar priv/libs/ora_bench_java.jar setup_erlang; then
-    exit 255
-fi
-
-(
     cd lang/erlang || exit 255
 
     if [ -d "_build" ]; then
@@ -68,7 +58,17 @@ fi
     if ! rebar3 escriptize; then
         exit 255
     fi
-)
+
+    cd ../..
+  
+    if ! { /bin/bash lang/java/scripts/run_gradle.sh; }; then
+        exit 255
+    fi
+    
+    if ! java -jar priv/libs/ora_bench_java.jar setup_erlang; then
+        exit 255
+    fi
+fi    
 
 if ! lang/erlang/_build/default/bin/orabench ${ORA_BENCH_FILE_CONFIGURATION_NAME_ERLANG}; then
     exit 255

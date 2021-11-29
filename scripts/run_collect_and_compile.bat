@@ -183,8 +183,17 @@ if ["%ORA_BENCH_RUN_GODROR_GO%"] == ["true"] (
 
     echo Setup Go - End   ===============================================================
 )
+set ORA_BENCH_RUN_JULIA=false
 
 if ["%ORA_BENCH_RUN_JDBC_JULIA%"] == ["true"] (
+    set ORA_BENCH_RUN_JULIA=true
+)
+
+if ["%ORA_BENCH_RUN_ORACLE_JULIA%"] == ["true"] (
+    set ORA_BENCH_RUN_JULIA=true
+)
+
+if ["%ORA_BENCH_RUN_JULIA%"] == ["true"] (
     echo Setup Julia - Start =============================================================
     java -jar priv/libs/ora_bench_java.jar setup_toml
     if %ERRORLEVEL% neq 0 (

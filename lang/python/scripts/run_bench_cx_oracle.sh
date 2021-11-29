@@ -20,7 +20,6 @@ if [ -z "${ORA_BENCH_CONNECTION_SERVICE}" ]; then
 fi
 
 export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
-export ORA_BENCH_FILE_CONFIGURATION_NAME_PYTHON=priv/properties/ora_bench_python.properties
 
 echo "=============================================================================="
 echo "Start $0"
@@ -39,28 +38,19 @@ echo "BENCHMARK_CORE_MULTIPLIER      : ${ORA_BENCH_BENCHMARK_CORE_MULTIPLIER}"
 echo "BENCHMARK_TRANSACTION_SIZE     : ${ORA_BENCH_BENCHMARK_TRANSACTION_SIZE}"
 echo "------------------------------------------------------------------------------"
 echo "FILE_CONFIGURATION_NAME        : ${ORA_BENCH_FILE_CONFIGURATION_NAME}"
-echo "FILE_CONFIGURATION_NAME_PYTHON : ${ORA_BENCH_FILE_CONFIGURATION_NAME_PYTHON}"
 echo "------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "=============================================================================="
 
 if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
-    if ! { /bin/bash lang/java/scripts/run_gradle.sh; }; then
-        exit 255
-    fi
-fi
-
-if ! java -jar priv/libs/ora_bench_java.jar setup_python; then
-    exit 255
-fi
-
-if [ "$OSTYPE" = "msys" ]; then
     if ! python3 -m pip install --upgrade pip; then
         exit 255
     fi
+    
     if ! python3 -m pip install -r lang/python/requirements.txt; then
         exit 255
     fi
+    
     echo "=============================================================================> Version Python: "
     echo " "
     echo "Current version of Python: $(python3 --version)"
@@ -70,32 +60,22 @@ if [ "$OSTYPE" = "msys" ]; then
     python3 -m pip freeze | grep -E -i 'cx_oracle|PyYAML'
     echo " "
     echo "=============================================================================>"
-    if ! python3 lang/python/OraBench.py; then
-        exit 255
-    fi
-else
-    if ! python3 -m pip install --upgrade pip; then
-        exit 255
-    fi
-    if ! python3 -m pip install -r lang/python/requirements.txt; then
-        exit 255
-    fi
-    echo "=============================================================================> Version Python: "
-    echo " "
-    echo "Current version of Python: $(python3 --version)"
-    echo " "
-    echo "Current version of pip: $(python3 -m pip --version)"
-    echo " "
-    python3 -m pip freeze | grep -E -i 'cx_oracle|PyYAML'
-    echo " "
+    
     if ! python3 -m compileall lang/python/OraBench.py; then
         exit 255
     fi
-    echo " "
-    echo "=============================================================================>"
-    if ! python3 lang/python/__pycache__/OraBench.cpython-310.pyc; then
+
+    if ! { /bin/bash lang/java/scripts/run_gradle.sh; }; then
         exit 255
     fi
+
+    if ! java -jar priv/libs/ora_bench_java.jar setup_python; then
+        exit 255
+    fi
+fi
+
+if ! python3 lang/python/__pycache__/OraBench.cpython-310.pyc; then
+    exit 255
 fi
 
 echo ""

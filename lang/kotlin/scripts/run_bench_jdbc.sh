@@ -50,10 +50,10 @@ if ! [ "${ORA_BENCH_MULTIPLE_RUN}" = "true" ]; then
     if ! { /bin/bash lang/java/scripts/run_gradle.sh; }; then
         exit 255
     fi
-fi
 
-if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
-    exit 255
+    if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
+        exit 255
+    fi
 fi
 
 if ! java -jar priv/libs/ora_bench_kotlin.jar; then

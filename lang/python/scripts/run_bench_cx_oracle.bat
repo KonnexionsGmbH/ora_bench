@@ -20,7 +20,6 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
 )
 
 set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
-set ORA_BENCH_FILE_CONFIGURATION_NAME_PYTHON=priv\properties\ora_bench_python.properties
 
 echo ===============================================================================
 echo Start %0
@@ -39,7 +38,6 @@ echo BENCHMARK_CORE_MULTIPLIER      : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
 echo BENCHMARK_TRANSACTION_SIZE     : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo -------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME        : %ORA_BENCH_FILE_CONFIGURATION_NAME%
-echo FILE_CONFIGURATION_NAME_PYTHON : %ORA_BENCH_FILE_CONFIGURATION_NAME_PYTHON%
 echo -------------------------------------------------------------------------------
 echo:| TIME
 echo ===============================================================================
