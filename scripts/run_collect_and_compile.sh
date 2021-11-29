@@ -79,11 +79,15 @@ if [ "${ORA_BENCH_RUN_ORANIF_ELIXIR}" == "true" ]; then
             exit 255
         fi
     fi
-
+    
     if ! mix local.hex --force; then
         exit 255
     fi
     
+    if ! mix local.rebar --force; then
+        exit 255
+    fi
+
     if ! mix deps.clean --all; then
         exit 255
     fi

@@ -61,6 +61,10 @@ if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
         exit 255
     fi
     
+    if ! mix local.rebar --force; then
+        exit 255
+    fi
+
     if ! mix deps.clean --all; then
         exit 255
     fi
