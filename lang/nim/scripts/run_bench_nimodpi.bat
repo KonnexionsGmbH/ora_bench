@@ -20,7 +20,6 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
 )
 
 set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
-set ORA_BENCH_FILE_CONFIGURATION_NAME_YAML=priv\properties\ora_bench_yaml.properties
 
 echo ===============================================================================
 echo Start %0
@@ -39,7 +38,6 @@ echo BENCHMARK_CORE_MULTIPLIER    : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
 echo BENCHMARK_TRANSACTION_SIZE   : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo -------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME      : %ORA_BENCH_FILE_CONFIGURATION_NAME%
-echo FILE_CONFIGURATION_NAME_YAML : %ORA_BENCH_FILE_CONFIGURATION_NAME_YAML%
 echo -------------------------------------------------------------------------------
 echo:| TIME
 echo ===============================================================================
@@ -61,14 +59,14 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         exit -1073741510
     )
 
-    java -jar priv/libs/ora_bench_java.jar setup_yaml
+    java -jar priv/libs/ora_bench_java.jar setup_default
     if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_yaml' was aborted, error code=%ERRORLEVEL%
+        echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_default' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 )
 
-lang\nim\bin\ora_bench.exe %ORA_BENCH_FILE_CONFIGURATION_NAME_YAML%
+lang\nim\bin\ora_bench.exe %ORA_BENCH_FILE_CONFIGURATION_NAME%
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'lang\nim\bin\ora_bench.exe' was aborted, error code=%ERRORLEVEL%
     exit -1073741510

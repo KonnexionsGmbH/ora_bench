@@ -1,8 +1,8 @@
 .DEFAULT_GOAL := build
 
 deps:
-	nimble install nimodpi -n
-	nimble install nimterop -n
+	nimble install nimodpi -y
+	nimble install nimterop -y
 .PHONY:deps
 
 pretty: deps
