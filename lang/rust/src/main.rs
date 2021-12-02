@@ -1,14 +1,16 @@
-mod orabench;
-
-#[macro_use]
-extern crate log;
 extern crate chrono;
 extern crate crossbeam;
+#[macro_use]
+extern crate log;
 extern crate rustc_version_runtime;
 
-use env_logger::Env;
-use orabench::run_benchmark;
 use std::env;
+
+use env_logger::Env;
+
+use orabench::run_benchmark;
+
+mod orabench;
 
 // =============================================================================
 // Main function.

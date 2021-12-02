@@ -1,28 +1,15 @@
-use chrono::prelude::*;
-use csv::Writer;
-use java_properties::read;
-
-use chrono::Duration;
-
-use crossbeam::thread;
-use oracle::{Batch, Connection, Error};
-use rustc_version_runtime::version;
 use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
 use std::io::BufReader;
 use std::path::Path;
 
-// =============================================================================
-// Global constants.
-// -----------------------------------------------------------------------------
-
-const POS_ACTION: usize = 18;
-const POS_DURATION_NS: usize = 22;
-const POS_DURATION_SEC: usize = 21;
-const POS_END_TIME: usize = 20;
-const POS_SQL_STMNT: usize = 11;
-const POS_START_TIME: usize = 19;
-const POS_TRIAL_NO: usize = 10;
+use chrono::prelude::*;
+use chrono::Duration;
+use crossbeam::thread;
+use csv::Writer;
+use java_properties::read;
+use oracle::{Batch, Connection, Error};
+use rustc_version_runtime::version;
 
 // =============================================================================
 // Type definitions.
@@ -112,6 +99,14 @@ fn create_result_file(
     statistics: &mut Vec<StatisticsEntry>,
 ) -> (i64, i64, i64) {
     debug!("Start create_statistics_file()");
+
+    const POS_ACTION: usize = 18;
+    const POS_DURATION_NS: usize = 22;
+    const POS_DURATION_SEC: usize = 21;
+    const POS_END_TIME: usize = 20;
+    const POS_SQL_STMNT: usize = 11;
+    const POS_START_TIME: usize = 19;
+    const POS_TRIAL_NO: usize = 10;
 
     let file_delimiter: u8 = *config
         .get("file.result.delimiter")
