@@ -26,16 +26,17 @@ benchmark run are stored in a central configuration file.
 
 The currently supported database drivers are:
 
-| Driver | Programming Language(s) |
-| :---   | :---                    |
-| [cx_Oracle](https://oracle.github.io/python-cx_Oracle) | [Python 3](https://www.python.org) |
-| [godror](https://golangrepo.com/repo/godror-godror-go-database-drivers) | [Go](https://golang.org)|
-| [JDBC.jl](https://github.com/felipenoris/JDBC.jl) | [Julia](https://julialang.org) |
-| [Oracle JDBC](https://www.oracle.com/database/technologies/appdev/jdbc.html) | [Java](https://openjdk.java.net) &amp; [Kotlin](https://kotlinlang.org) |
-| [Oracle ODPI-C](https://oracle.github.io/odpi) | [C++](https://docs.microsoft.com/en-us/cpp/?view=msvc-160) ([gcc](https://gcc.gnu.org)) |
-| [Oracle.jl](https://github.com/felipenoris/Oracle.jl) | [Julia](https://julialang.org) |
-| [oranif](https://github.com/KonnexionsGmbH/oranif) | [Elixir](https://elixir-lang.org) &amp; [Erlang](https://www.erlang.org) |
-| [Rust-oracle](https://github.com/kubo/rust-oracle) | [Rust](https://www.rust-lang.org) |
+| Driver                                                                       | Programming Language(s)                                                                 |
+|:-----------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
+| [cx_Oracle](https://oracle.github.io/python-cx_Oracle)                       | [Python 3](https://www.python.org)                                                      |
+| [godror](https://golangrepo.com/repo/godror-godror-go-database-drivers)      | [Go](https://golang.org)                                                                |
+| [JDBC.jl](https://github.com/felipenoris/JDBC.jl)                            | [Julia](https://julialang.org)                                                          |
+| [nimodpi](https://github.com/mikra01/nimodpi)                                | [Nim](https://nim-lang.org)                                                            |
+| [Oracle JDBC](https://www.oracle.com/database/technologies/appdev/jdbc.html) | [Java](https://openjdk.java.net) &amp; [Kotlin](https://kotlinlang.org)                 |
+| [Oracle ODPI-C](https://oracle.github.io/odpi)                               | [C++](https://docs.microsoft.com/en-us/cpp/?view=msvc-160) ([gcc](https://gcc.gnu.org)) |
+| [Oracle.jl](https://github.com/felipenoris/Oracle.jl)                        | [Julia](https://julialang.org)                                                          |
+| [oranif](https://github.com/KonnexionsGmbH/oranif)                           | [Elixir](https://elixir-lang.org) &amp; [Erlang](https://www.erlang.org)                |
+| [Rust-oracle](https://github.com/kubo/rust-oracle)                           | [Rust](https://www.rust-lang.org)                                                       |
 
 The following Oracle database versions are provided in a benchmark run via Docker container:
 
@@ -58,10 +59,9 @@ is `priv/properties/ora_bench.properties`. A detailed description of the configu
 For reasons of convenience the following files are generated:
 
 - the configuration file `priv/ora_bench_c.propperties` for C++ (gcc),
-- the configuration file `priv/ora_bench_erlang.properties` with a corresponding map for Erlang, and
-- the configuration file `priv/ora_bench_python.propperties` for Python 3.
+- the configuration file `priv/ora_bench_erlang.properties` with a corresponding map for Erlang, 
+- the configuration file `priv/ora_bench_python.propperties` for Python 3, and
 - the configuration file `priv/ora_bench_toml.propperties` for Julia.
-- the configuration file `priv/ora_bench_yaml.propperties` for Nim.
 
 All the file names specified here are also part of the configuration file and can be changed if necessary.
 
@@ -82,6 +82,7 @@ link [here](https://github.com/KonnexionsGmbH/ora_bench).
 - [Java, e.g. the open-source JDK](https://openjdk.java.net)
 - [Julia](https://julialang.org/downloads/)
 - [Kotlin](https://kotlinlang.org/docs/tutorials/command-line.html)
+- [Nim](https://nim-lang.org/install.html)
 - [Oracle Instant Client](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
 - [Python 3](https://www.python.org/downloads/)
 - [rebar3](https://www.rebar3.org/)
