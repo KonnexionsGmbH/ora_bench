@@ -18,6 +18,7 @@ echo RUN_GODROR_GO                     : %ORA_BENCH_RUN_GODROR_GO%
 echo RUN_JDBC_JAVA                     : %ORA_BENCH_RUN_JDBC_JAVA%
 echo RUN_JDBC_JULIA                    : %ORA_BENCH_RUN_JDBC_JULIA%
 echo RUN_JDBC_KOTLIN                   : %ORA_BENCH_RUN_JDBC_KOTLIN%
+echo RUN_NIMODPI_NIM                   : %ORA_BENCH_RUN_NIMODPI_NIM%
 echo RUN_ODPI_C                        : %ORA_BENCH_RUN_ODPI_C%
 echo RUN_ORACLE_JULIA                  : %ORA_BENCH_RUN_ORACLE_JULIA%
 echo RUN_ORACLE_RUST                   : %ORA_BENCH_RUN_ORACLE_RUST%
@@ -91,6 +92,14 @@ if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] EQU ["true"] (
     call lang\kotlin\scripts\run_bench_jdbc.bat
     if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'call lang\kotlin\scripts\run_bench_jdbc.bat' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+)
+
+if ["%ORA_BENCH_RUN_NIMODPI_NIM%"] EQU ["true"] (
+    call lang\nim\scripts\run_bench_nimodpi.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\nim\scripts\run_bench_nimodpi.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 )

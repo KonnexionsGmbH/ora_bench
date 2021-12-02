@@ -114,6 +114,7 @@ public class Config {
   private String                                                 fileConfigurationNameJson;
   private String                                                 fileConfigurationNamePython;
   private String                                                 fileConfigurationNameToml;
+  private String                                                 fileConfigurationNameYaml;
   private String                                                 fileResultDelimiter;
   private String                                                 fileResultHeader;
   private String                                                 fileResultName;
@@ -410,6 +411,48 @@ public class Config {
   }
 
   /**
+   * Creates the YAML version of the configuration file.
+   */
+  public final void createConfigurationFileYaml() {
+    if (isDebug) {
+      logger.debug("Start");
+    }
+
+    try {
+
+      BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getFileConfigurationNameYaml(), false));
+
+      bufferedWriter.write("---");
+      bufferedWriter.newLine();
+
+      String value;
+
+      for (final String key : keysSorted) {
+        if ("file.result.header".contentEquals(key)) {
+          value = propertiesConfiguration.getString(key).replace(";",
+                  fileResultDelimiter);
+        } else {
+          value = propertiesConfiguration.getString(key);
+        }
+
+        bufferedWriter.write(key.replace(".",
+                "_") + ": \"" + ((value.contentEquals("\t"))
+                ? "TAB"
+                : value) + "\"");
+        bufferedWriter.newLine();
+      }
+
+      bufferedWriter.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    if (isDebug) {
+      logger.debug("End");
+    }
+  }
+
+  /**
    * @return the batch size of the INSERT operation
    */
   public final int getBenchmarkBatchSize() {
@@ -639,6 +682,14 @@ public class Config {
    */
   private final String getFileConfigurationNameToml() {
     return fileConfigurationNameToml;
+  }
+
+  /**
+   * @return the name of the configuration file for the YAML version. The file
+   *         name may contain the absolute or relative file path.
+   */
+  private final String getFileConfigurationNameYaml() {
+    return fileConfigurationNameYaml;
   }
 
   /**
@@ -884,6 +935,7 @@ public class Config {
 
     fileConfigurationNamePython = propertiesConfiguration.getString("file.configuration.name.python");
     fileConfigurationNameToml   = propertiesConfiguration.getString("file.configuration.name.toml");
+    fileConfigurationNameYaml   = propertiesConfiguration.getString("file.configuration.name.yaml");
     fileResultDelimiter         = propertiesConfiguration.getString("file.result.delimiter");
     fileResultHeader            = propertiesConfiguration.getString("file.result.header").replace(";",
                                                                                                   fileResultDelimiter);

@@ -20,6 +20,7 @@ export ORA_BENCH_RUN_GODROR_GO=false
 export ORA_BENCH_RUN_JDBC_JAVA=false
 export ORA_BENCH_RUN_JDBC_JULIA=false
 export ORA_BENCH_RUN_JDBC_KOTLIN=false
+export ORA_BENCH_RUN_NIMODPI_NIM=false
 export ORA_BENCH_RUN_ODPI_C=false
 export ORA_BENCH_RUN_ORACLE_JULIA=false
 export ORA_BENCH_RUN_ORACLE_RUST=false
@@ -32,14 +33,14 @@ if [ "${ORA_BENCH_CHOICE_DRIVER}" = "complete" ]; then
     export ORA_BENCH_RUN_JDBC_JAVA=true
     export ORA_BENCH_RUN_JDBC_JULIA=true
     export ORA_BENCH_RUN_JDBC_KOTLIN=true
-    export ORA_BENCH_RUN_ODPI_C=false
+    export ORA_BENCH_RUN_NIMODPI_NIM=true
+    export ORA_BENCH_RUN_ODPI_C=true
     export ORA_BENCH_RUN_ORACLE_JULIA=true
     export ORA_BENCH_RUN_ORACLE_RUST=true
     export ORA_BENCH_RUN_ORANIF_ELIXIR=true
     export ORA_BENCH_RUN_ORANIF_ERLANG=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "c" ]; then
     export ORA_BENCH_RUN_ODPI_C=true
-    export ORA_BENCH_RUN_ODPI_C=false
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "elixir" ]; then
     export ORA_BENCH_RUN_ORANIF_ELIXIR=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "erlang" ]; then
@@ -54,6 +55,8 @@ elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "julia_oracle" ]; then
     export ORA_BENCH_RUN_ORACLE_JULIA=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "kotlin" ]; then
     export ORA_BENCH_RUN_JDBC_KOTLIN=true
+elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "nim" ]; then
+    export ORA_BENCH_RUN_NIMODPI_NIM=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "python" ]; then
     export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "rust" ]; then
@@ -101,6 +104,7 @@ echo "RUN_GODROR_GO                     : ${ORA_BENCH_RUN_GODROR_GO}"
 echo "RUN_JDBC_JAVA                     : ${ORA_BENCH_RUN_JDBC_JAVA}"
 echo "RUN_JDBC_JULIA                    : ${ORA_BENCH_RUN_JDBC_JULIA}"
 echo "RUN_JDBC_KOTLIN                   : ${ORA_BENCH_RUN_JDBC_KOTLIN}"
+echo "RUN_NIMODPI_NIM                   : ${ORA_BENCH_RUN_NIMODPI_NIM}"
 echo "RUN_ODPI_C                        : ${ORA_BENCH_RUN_ODPI_C}"
 echo "RUN_ORACLE_JULIA                  : ${ORA_BENCH_RUN_ORACLE_JULIA}"
 echo "RUN_ORACLE_RUST                   : ${ORA_BENCH_RUN_ORACLE_RUST}"

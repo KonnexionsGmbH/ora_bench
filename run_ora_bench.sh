@@ -41,6 +41,7 @@ if [ -z "$1" ]; then
     echo "julia_jdbc         - Julia and JDBC.jl"
     echo "julia_oracle       - Julia and Oracle.jl"
     echo "kotlin             - Kotlin and Oracle JDBC"
+    echo "nim                - Nim and nimodpi"
     echo "python             - Python 3 and cx_Oracle"
     echo "rust               - Rust and Rust-oracle"
     echo "------------------------------------------------------------------------------"

@@ -46,27 +46,29 @@ export ORA_BENCH_RUN_GODROR_GO=true
 export ORA_BENCH_RUN_JDBC_JAVA=true
 export ORA_BENCH_RUN_JDBC_JULIA=true
 export ORA_BENCH_RUN_JDBC_KOTLIN=true
+export ORA_BENCH_RUN_NIMODPI_NIM=false
 export ORA_BENCH_RUN_ODPI_C=false
 export ORA_BENCH_RUN_ORACLE_JULIA=true
 export ORA_BENCH_RUN_ORACLE_RUST=true
 export ORA_BENCH_RUN_ORANIF_ELIXIR=true
 export ORA_BENCH_RUN_ORANIF_ERLANG=true
 
-echo "ORACLE_DATABASE_EXISTING : ${ORA_BENCH_ORACLE_DATABASE_EXISTING}"
-echo "ORACLE_DATABASE_18C      : ${ORA_BENCH_ORACLE_DATABASE_18C}"
-echo "ORACLE_DATABASE_19C      : ${ORA_BENCH_ORACLE_DATABASE_19C}"
-echo "ORACLE_DATABASE_21C      : ${ORA_BENCH_ORACLE_DATABASE_21C}"
+echo "ORACLE_DATABASE_EXISTING         : ${ORA_BENCH_ORACLE_DATABASE_EXISTING}"
+echo "ORACLE_DATABASE_18C              : ${ORA_BENCH_ORACLE_DATABASE_18C}"
+echo "ORACLE_DATABASE_19C              : ${ORA_BENCH_ORACLE_DATABASE_19C}"
+echo "ORACLE_DATABASE_21C              : ${ORA_BENCH_ORACLE_DATABASE_21C}"
 echo "--------------------------------------------------------------------------------"
-echo "RUN_CX_ORACLE_PYTHON     : ${ORA_BENCH_RUN_CX_ORACLE_PYTHON}"
-echo "RUN_GODROR_GO            : ${ORA_BENCH_RUN_GODROR_GO}"
-echo "RUN_JDBC_JAVA            : ${ORA_BENCH_RUN_JDBC_JAVA}"
-echo "RUN_JDBC_JULIA           : ${ORA_BENCH_RUN_JDBC_JULIA}"
-echo "RUN_JDBC_KOTLIN          : ${ORA_BENCH_RUN_JDBC_KOTLIN}"
-echo "RUN_ODPI_C               : ${ORA_BENCH_RUN_ODPI_C}"
-echo "RUN_ORACLE_JULIA         : ${ORA_BENCH_RUN_ORACLE_JULIA}"
-echo "RUN_ORACLE_RUST          : ${ORA_BENCH_RUN_ORACLE_RUST}"
-echo "RUN_ORANIF_ELIXIR        : ${ORA_BENCH_RUN_ORANIF_ELIXIR}"
-echo "RUN_ORANIF_ERLANG        : ${ORA_BENCH_RUN_ORANIF_ERLANG}"
+echo "RUN_CX_ORACLE_PYTHON              : ${ORA_BENCH_RUN_CX_ORACLE_PYTHON}"
+echo "RUN_GODROR_GO                     : ${ORA_BENCH_RUN_GODROR_GO}"
+echo "RUN_JDBC_JAVA                     : ${ORA_BENCH_RUN_JDBC_JAVA}"
+echo "RUN_JDBC_JULIA                    : ${ORA_BENCH_RUN_JDBC_JULIA}"
+echo "RUN_JDBC_KOTLIN                   : ${ORA_BENCH_RUN_JDBC_KOTLIN}"
+echo "RUN_NIMODPI_NIM                   : ${ORA_BENCH_RUN_NIMODPI_NIM}"
+echo "RUN_ODPI_C                        : ${ORA_BENCH_RUN_ODPI_C}"
+echo "RUN_ORACLE_JULIA                  : ${ORA_BENCH_RUN_ORACLE_JULIA}"
+echo "RUN_ORACLE_RUST                   : ${ORA_BENCH_RUN_ORACLE_RUST}"
+echo "RUN_ORANIF_ELIXIR                 : ${ORA_BENCH_RUN_ORANIF_ELIXIR}"
+echo "RUN_ORANIF_ERLANG                 : ${ORA_BENCH_RUN_ORANIF_ERLANG}"
 echo "================================================================================"
 
 if [ "${ORA_BENCH_ORACLE_DATABASE_EXISTING}" = "true" ] \

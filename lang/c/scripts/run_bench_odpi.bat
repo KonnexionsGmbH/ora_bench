@@ -49,18 +49,18 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ===============================================================================
 
-echo --------------------------------------------------------------------------------
-echo Set environment variables for C / C++ compilation.
-echo --------------------------------------------------------------------------------
-if exist "%ORA_BENCH_BENCHMARK_VCVARSALL%" (
-    call "%ORA_BENCH_BENCHMARK_VCVARSALL%" x64
-    if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
-        exit -1073741510
-    )
-)
-
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    echo --------------------------------------------------------------------------------
+    echo Set environment variables for C / C++ compilation.
+    echo --------------------------------------------------------------------------------
+    if exist "%ORA_BENCH_BENCHMARK_VCVARSALL%" (
+        call "%ORA_BENCH_BENCHMARK_VCVARSALL%" x64
+        if %ERRORLEVEL% neq 0 (
+            echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
+            exit -1073741510
+        )
+    )
+
     nmake -f lang\c\Makefile.win32 clean
     if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'nmake -f lang\c\Makefile.win32 clean' was aborted, error code=%ERRORLEVEL%
@@ -73,6 +73,12 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
         exit -1073741510
     )
 
+    call lang\java\scripts\run_gradle
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+    
     call lang\java\scripts\run_gradle
     if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%

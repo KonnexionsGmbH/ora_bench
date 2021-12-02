@@ -20,7 +20,6 @@ if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
 )
 
 set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
-set ORA_BENCH_FILE_CONFIGURATION_NAME_PYTHON=priv\properties\ora_bench_python.properties
 
 echo ===============================================================================
 echo Start %0
@@ -39,49 +38,54 @@ echo BENCHMARK_CORE_MULTIPLIER      : %ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%
 echo BENCHMARK_TRANSACTION_SIZE     : %ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%
 echo -------------------------------------------------------------------------------
 echo FILE_CONFIGURATION_NAME        : %ORA_BENCH_FILE_CONFIGURATION_NAME%
-echo FILE_CONFIGURATION_NAME_PYTHON : %ORA_BENCH_FILE_CONFIGURATION_NAME_PYTHON%
 echo -------------------------------------------------------------------------------
 echo:| TIME
 echo ===============================================================================
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
+    python -m pip install --upgrade pip
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'python -m pip install -r lang/python/requirements.txt' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+    
+    python -m pip install -r lang/python/requirements.txt
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'python -m pip install -r lang/python/requirements.txt' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+    
+    echo ============================================================================== Version Python:
+    echo.
+    python --version
+    echo.
+    python -m pip --version
+    python -m pip freeze | findstr /i "cx-oracle pyyaml"
+    echo.
+    echo ==============================================================================
+    
+    python -m compileall lang/python/OraBench.py
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'python -m compileall lang/python/OraBench.py' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
+    
     call lang\java\scripts\run_gradle
     if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
+
+    java -jar priv/libs/ora_bench_java.jar setup_python
+    if %ERRORLEVEL% neq 0 (
+        echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_python' was aborted, error code=%ERRORLEVEL%
+        exit -1073741510
+    )
 )
 
-java -jar priv/libs/ora_bench_java.jar setup_python
+python lang/python/__pycache__/OraBench.cpython-310.pyc
 if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_python' was aborted, error code=%ERRORLEVEL%
-    exit -1073741510
-)
-
-python -m pip install --upgrade pip
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'python -m pip install -r lang/python/requirements.txt' was aborted, error code=%ERRORLEVEL%
-    exit -1073741510
-)
-
-python -m pip install -r lang/python/requirements.txt
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'python -m pip install -r lang/python/requirements.txt' was aborted, error code=%ERRORLEVEL%
-    exit -1073741510
-)
-
-echo ============================================================================== Version Python:
-echo.
-python --version
-echo.
-python -m pip --version
-python -m pip freeze | findstr /i "cx-oracle pyyaml"
-echo.
-echo ==============================================================================
-
-python lang/python/OraBench.py
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'python lang/python/OraBench.py' was aborted, error code=%ERRORLEVEL%
+    echo Processing of the script: %0 - step: 'python lang/python/__pycache__/OraBench.cpython-310.pyc' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 

@@ -9,6 +9,8 @@ rem ----------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
+set ORA_BENCH_MULTIPLE_RUN=true
+
 set ORA_BENCH_BENCHMARK_COMMENT="Standard series (locally)"
 
 if exist ora_bench.log del /f /q ora_bench.log
@@ -38,6 +40,7 @@ if ["%1"] EQU [""] (
     echo julia_jdbc         - Julia and JDBC.jl
     echo julia_oracle       - Julia and Oracle.jl
     echo kotlin             - Kotlin and Oracle JDBC
+    echo nim                - Nim and nimodpi
     echo python             - Python 3 and cx_Oracle
     echo rust               - Rust and Rust-oracle
     echo -------------------------------------------------------------------------------
@@ -112,8 +115,10 @@ echo.
     echo -------------------------------------------------------------------------------
     echo ora_bench - Oracle benchmark - all databases with property variations.
     echo -------------------------------------------------------------------------------
-    echo CHOICE_DRIVER                 : %ORA_BENCH_CHOICE_DRIVER%
-    echo CHOICE_DB                     : %ORA_BENCH_CHOICE_DB%
+    echo MULTIPLE_RUN                      : %ORA_BENCH_MULTIPLE_RUN%
+    echo ------------------------------------------------------------------------------
+    echo CHOICE_DRIVER                     : %ORA_BENCH_CHOICE_DRIVER%
+    echo CHOICE_DB                         : %ORA_BENCH_CHOICE_DB%
     echo -------------------------------------------------------------------------------
     echo:| TIME
     echo ===============================================================================

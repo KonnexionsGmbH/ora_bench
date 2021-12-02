@@ -43,52 +43,58 @@ date +"DATE TIME : %d.%m.%Y %H:%M:%S"
 echo "=============================================================================="
 
 if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
+    cd lang/elixir || exit 255
+
+    if [ -f "mix.lock" ]; then
+        if ! rm -f mix.lock; then
+            exit 255
+        fi
+    fi
+
+    if [ -f "deps" ]; then
+        if ! rm -rf deps; then
+            exit 255
+        fi
+    fi
+
+    if ! mix local.hex --force; then
+        exit 255
+    fi
+    
+    if ! mix local.rebar --force; then
+        exit 255
+    fi
+
+    if ! mix deps.clean --all; then
+        exit 255
+    fi
+
+    if ! mix deps.get; then
+        exit 255
+    fi
+
+    if ! mix deps.compile; then
+        exit 255
+    fi
+
+    cd ../..
+
     if ! { /bin/bash lang/java/scripts/run_gradle.sh; }; then
         exit 255
     fi
-fi
 
-if ! java -jar priv/libs/ora_bench_java.jar setup_elixir; then
+    if ! java -jar priv/libs/ora_bench_java.jar setup_elixir; then
+        exit 255
+    fi
+fi
+    
+cd lang/elixir || exit 255
+
+if ! mix run -e "OraBench.CLI.main([\"oranif\"])"; then
     exit 255
 fi
 
-(
-    cd lang/elixir || exit 255
-    
-    if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
-
-        if [ -f "mix.lock" ]; then
-            if ! rm -f mix.lock; then
-                exit 255
-            fi
-        fi
-        if [ -f "deps" ]; then
-            if ! rm -rf deps; then
-                exit 255
-            fi
-        fi
-
-        if ! mix local.hex --force; then
-            exit 255
-        fi
-        
-        if ! mix deps.clean --all; then
-            exit 255
-        fi
-
-        if ! mix deps.get; then
-            exit 255
-        fi
-
-        if ! mix deps.compile; then
-            exit 255
-        fi
-    fi    
-    
-    if ! mix run -e "OraBench.CLI.main([\"oranif\"])"; then
-        exit 255
-    fi
-)
+cd ../..
 
 echo ""
 echo "------------------------------------------------------------------------------"

@@ -20,23 +20,27 @@ Release Date: dd.mm.2021
 | Software              | Type     | Version           | Remark |
 | ---                   | ---      | ---               | ---    |
 | C++ (gcc)             | Language | 10.3.0            |   |
-| cx_Oracle             | Driver   | 8.2.1             |   |
+| C++ (gcc) - ODPI-C    | Driver   | 4.3               | upgrade |
 | Elixir                | Language | 1.12.3-otp-24     |   |
-| Erlang                | Language | 24.1.3            |   |
-| Go                    | Language | 1.17.2            |   |
-| godror                | Driver   | v0.28.0           |   |
-| JDBC.jl               | Driver   | v0.5.0            |   |
+| Elixir- oranif        | Driver   | 0.2.3             |   |
+| Erlang                | Language | 24.1.7            | upgrade |
+| Erlang - oranif       | Driver   | see Elixir             |   |
+| Go                    | Language | 1.17.3            | upgrade |
+| Go - godror           | Driver   | v0.29.0           | upgrade |
 | Java                  | Language | openjdk-17.0.1    |   |
-| Julia                 | Language | v1.6.3            |   |
-| Kotlin                | Language | 1.5.31            |   |
-| Oracle Instant Client | Driver   | 21.3.0.0.0        |   |
-| Oracle JDBC           | Driver   | 21.3.0.0          |   |
-| Oracle ODPI-C         | Driver   | 4.2.1             |   |
-| Oracle.jl             | Driver   | v0.3.1            |   |
-| oranif                | Driver   | 0.2.3             |   |
+| Java - JDBC           | Driver   | 21.3.0.0          |   |
+| Julia                 | Language | v1.6.4            | upgrade |
+| Julia - JDBC.jl       | Driver   | v0.5.0            |   |
+| Julia - Oracle.jl     | Driver   | v0.3.1            |   |
+| Kotlin                | Language | 1.6.0             | upgrade |
+| Kotlin - JDBC         | Driver   | see Java          |   |
+| Nim                   | Language | 1.6.0             | new |
+| Nim - nimodpi         | Driver   | ???               | new |
+| Oracle Instant Client | Driver   | 21.4.0.0.0        | upgrade |
 | Python 3              | Language | 3.10.0            |   |
-| Rust                  | Language | 1.56.0            |   |
-| Rust-oracle           | Driver   | v0.5.3            |   |
+| Python 3 - cx_Oracle  | Driver   | 8.3.0             | upgrade |
+| Rust                  | Language | 1.56.1            | upgrade |
+| Rust - Rust-oracle    | Driver   | v0.5.3            |   |
 
 ### Open issues
 
