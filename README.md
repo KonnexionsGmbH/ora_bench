@@ -40,11 +40,12 @@ The currently supported database drivers are:
 
 The following Oracle database versions are provided in a benchmark run via Docker container:
 
-| Shortcut   | Oracle Database Version |
-| :---       | :--- |
-| db_18_4_xe | [Oracle Database 18c 18.4 (Express Edition) - Linux x86-64](https://docs.oracle.com/en/database/oracle/oracle-database/18/) |
-| db_19_3_ee | [Oracle Database 19c 19.3 - Linux x86-64](https://docs.oracle.com/en/database/oracle/oracle-database/19/index.html) |
-| db_21_3_ee | [Oracle Database 21c 21.3 - Linux x86-64](https://docs.oracle.com/en/database/oracle/oracle-database/21/index.html) |
+| Shortcut   | Oracle Database Version                                                                                                   |
+|:-----------|:--------------------------------------------------------------------------------------------------------------------------|
+| db_18_4_xe | [Oracle Database 18c (Express Edition) - Linux x86-64](https://docs.oracle.com/en/database/oracle/oracle-database/18/)    |
+| db_19_3_ee | [Oracle Database 19c 19.3 - Linux x86-64](https://docs.oracle.com/en/database/oracle/oracle-database/19/index.html)       |
+| db_21_3_ee | [Oracle Database 21c 21.3 - Linux x86-64](https://docs.oracle.com/en/database/oracle/oracle-database/21/index.html)       |
+| db_21_3_xe | [Oracle Database 21c (Express Edition) - Linux x64 (OL8)](https://www.oracle.com/database/technologies/xe-downloads.html) |
 
 The results of the benchmark runs are collected in either csv (comma-separated values) or tsv (tab-separated values) files.
 

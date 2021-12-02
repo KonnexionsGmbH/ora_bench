@@ -40,7 +40,7 @@ if [ -z "$1" ]; then
     echo "julia_jdbc         - Julia and JDBC.jl"
     echo "julia_oracle       - Julia and Oracle.jl"
     echo "kotlin             - Kotlin and Oracle JDBC"
-    echo "nim                - nim and nimodpi"
+    echo "nim                - Nim and nimodpi"
     echo "python             - Python 3 and cx_Oracle"
     echo "rust               - Rust and Rust-oracle"
     echo "------------------------------------------------------------------------------"
@@ -58,9 +58,10 @@ if [ -z "$2" ]; then
     echo "=============================================================================="
     echo "complete           - All implemented variations"
     echo "------------------------------------------------------------------------------"
-    echo "18                 - Oracle Database 18c Express Edition"
+    echo "18xe               - Oracle Database 18c Express Edition"
     echo "19                 - Oracle Database 19c"
     echo "21                 - Oracle Database 21c"
+    echo "21xe               - Oracle Database 21c Express Edition"
     echo "------------------------------------------------------------------------------"
     read -rp "Enter the desired database version [default: ${ORA_BENCH_CHOICE_DB_DEFAULT}] " ORA_BENCH_CHOICE_DB
     export ORA_BENCH_CHOICE_DB=${ORA_BENCH_CHOICE_DB}
@@ -75,17 +76,21 @@ fi
 export ORA_BENCH_RUN_DB_18_4_XE=false
 export ORA_BENCH_RUN_DB_19_3_EE=false
 export ORA_BENCH_RUN_DB_21_3_EE=false
+export ORA_BENCH_RUN_DB_21_3_XE=false
 
 if [ "${ORA_BENCH_CHOICE_DB}" = "complete" ]; then
     export ORA_BENCH_RUN_DB_18_4_XE=true
     export ORA_BENCH_RUN_DB_19_3_EE=true
     export ORA_BENCH_RUN_DB_21_3_EE=true
-elif [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
+    export ORA_BENCH_RUN_DB_21_3_XE=true
+elif [ "${ORA_BENCH_CHOICE_DB}" = "18xe" ]; then
     export ORA_BENCH_RUN_DB_18_4_XE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then
     export ORA_BENCH_RUN_DB_19_3_EE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "21" ]; then
     export ORA_BENCH_RUN_DB_21_3_EE=true
+elif [ "${ORA_BENCH_CHOICE_DB}" = "21xe" ]; then
+    export ORA_BENCH_RUN_DB_21_3_XE=true
 fi
 
 export ORA_BENCH_PASSWORD_SYS=oracle
@@ -140,7 +145,7 @@ if [ "${ORA_BENCH_RUN_DB_19_3_EE}" = "true" ]; then
 fi
 
 if [ "${ORA_BENCH_RUN_DB_21_3_EE}" = "true" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
+    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     if ! { /bin/bash scripts/run_properties_variations.sh; }; then
         exit 255

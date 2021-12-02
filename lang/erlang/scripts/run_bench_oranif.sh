@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------------
 
 if [ -z "${ORA_BENCH_BENCHMARK_DATABASE}" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
+    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
 fi
 if [ -z "${ORA_BENCH_CONNECTION_HOST}" ]; then
     export ORA_BENCH_CONNECTION_HOST=localhost

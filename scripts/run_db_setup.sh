@@ -9,7 +9,7 @@
 set -e
 
 if [ -z "${ORA_BENCH_BENCHMARK_DATABASE}" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
+    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
 fi
 if [ -z "${ORA_BENCH_CONNECTION_HOST}" ]; then
     export ORA_BENCH_CONNECTION_HOST=localhost
@@ -73,7 +73,8 @@ if [ "$OSTYPE" = "msys" ]; then
 else
     rm -f ~/.sqlnet.ora
     if [ "${ORA_BENCH_BENCHMARK_DATABASE}" = "db_19_3_ee" ] ||
-       [ "${ORA_BENCH_BENCHMARK_DATABASE}" = "db_21_3_ee" ]; then
+       [ "${ORA_BENCH_BENCHMARK_DATABASE}" = "db_21_3_ee" ] ||
+       [ "${ORA_BENCH_BENCHMARK_DATABASE}" = "db_21_3_xe" ]; then
         echo "DISABLE_OOB=ON" >> ~/.sqlnet.ora
     fi
     if ! sqlplus sys/${ORA_BENCH_PASSWORD_SYS}@//${ORA_BENCH_CONNECTION_HOST}:${ORA_BENCH_CONNECTION_PORT}/${ORA_BENCH_CONNECTION_SERVICE} AS SYSDBA @scripts/run_db_setup.sql; then

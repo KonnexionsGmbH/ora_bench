@@ -72,7 +72,7 @@ if [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
 if [ "${ORA_BENCH_CHOICE_DB}" = "21" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
+    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
 fi
 
 if [ -z "${ORA_BENCH_CONNECTION_HOST}" ]; then
@@ -116,6 +116,7 @@ echo "--------------------------------------------------------------------------
 echo "RUN_DB_18_4_XE                    : ${ORA_BENCH_RUN_DB_18_4_XE}"
 echo "RUN_DB_19_3_EE                    : ${ORA_BENCH_RUN_DB_19_3_EE}"
 echo "RUN_DB_21_3_EE                    : ${ORA_BENCH_RUN_DB_21_3_EE}"
+echo "RUN_DB_21_3_XE                    : ${ORA_BENCH_RUN_DB_21_3_XE}"
 echo "------------------------------------------------------------------------------"
 echo "BENCHMARK_BATCH_SIZE              : ${ORA_BENCH_BENCHMARK_BATCH_SIZE}"
 echo "BENCHMARK_COMMENT                 : ${ORA_BENCH_BENCHMARK_COMMENT}"

@@ -57,9 +57,10 @@ if ["%2"] EQU [""] (
     echo ===============================================================================
     echo complete           - All implemented variations
     echo -------------------------------------------------------------------------------
-    echo 18                 - Oracle Database 18c Express Edition
+    echo 18xe               - Oracle Database 18c Express Edition
     echo 19                 - Oracle Database 19c 
     echo 21                 - Oracle Database 21c
+    echo 21xe               - Oracle Database 21c Express Edition
     echo -------------------------------------------------------------------------------
     set /P  ORA_BENCH_CHOICE_DB="Enter the desired database version [default: %ORA_BENCH_CHOICE_DB_DEFAULT%] "
 
@@ -75,14 +76,16 @@ set ERRORLEVEL=0
 set ORA_BENCH_RUN_DB_18_4_XE=false
 set ORA_BENCH_RUN_DB_19_3_EE=false
 set ORA_BENCH_RUN_DB_21_3_EE=false
+set ORA_BENCH_RUN_DB_21_3_XE=false
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["complete"] (
     set ORA_BENCH_RUN_DB_18_4_XE=true
     set ORA_BENCH_RUN_DB_19_3_EE=true
     set ORA_BENCH_RUN_DB_21_3_EE=true
+    set ORA_BENCH_RUN_DB_21_3_XE=true
 )
 
-if ["%ORA_BENCH_CHOICE_DB%"] EQU ["18"] (
+if ["%ORA_BENCH_CHOICE_DB%"] EQU ["18xe"] (
     set ORA_BENCH_RUN_DB_18_4_XE=true
 )
 
@@ -92,6 +95,10 @@ if ["%ORA_BENCH_CHOICE_DB%"] EQU ["19"] (
 
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["21"] (
     set ORA_BENCH_RUN_DB_21_3_EE=true
+)
+
+if ["%ORA_BENCH_CHOICE_DB%"] EQU ["21xe"] (
+    set ORA_BENCH_RUN_DB_21_3_XE=true
 )
 
 set ORA_BENCH_PASSWORD_SYS=oracle
@@ -148,7 +155,7 @@ echo.
     )
 
     if ["%ORA_BENCH_RUN_DB_21_3_EE%"] EQU ["true"] (
-        set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
+        set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_variations.bat
         if %ERRORLEVEL% neq 0 (
