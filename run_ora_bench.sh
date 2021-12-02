@@ -155,7 +155,7 @@ fi
 
 if [ "${ORA_BENCH_RUN_DB_21_3_XE}" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
-    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    export ORA_BENCH_CONNECTION_SERVICE=xe
     if ! { /bin/bash scripts/run_properties_${ORA_BENCH_PROPERTIES}.sh; }; then
         exit 255
     fi

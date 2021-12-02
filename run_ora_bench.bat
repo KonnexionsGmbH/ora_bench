@@ -171,7 +171,7 @@ echo.
 
     if ["%ORA_BENCH_RUN_DB_21_3_XE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
-        set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+        set ORA_BENCH_CONNECTION_SERVICE=xe
         call scripts\run_properties_%ORA_BENCH_PROPERTIES%.bat
         if %ERRORLEVEL% neq 0 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_%ORA_BENCH_PROPERTIES%.bat' was aborted, error code=%ERRORLEVEL%
