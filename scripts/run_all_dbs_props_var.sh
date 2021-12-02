@@ -145,6 +145,14 @@ if [ "${ORA_BENCH_RUN_DB_19_3_EE}" = "true" ]; then
 fi
 
 if [ "${ORA_BENCH_RUN_DB_21_3_EE}" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
+    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    if ! { /bin/bash scripts/run_properties_variations.sh; }; then
+        exit 255
+    fi
+fi
+
+if [ "${ORA_BENCH_RUN_DB_21_3_XE}" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     if ! { /bin/bash scripts/run_properties_variations.sh; }; then
