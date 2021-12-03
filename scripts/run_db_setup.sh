@@ -18,7 +18,7 @@ if [ -z "${ORA_BENCH_CONNECTION_PORT}" ]; then
     export ORA_BENCH_CONNECTION_PORT=1521
 fi
 if [ -z "${ORA_BENCH_CONNECTION_SERVICE}" ]; then
-    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    export ORA_BENCH_CONNECTION_SERVICE=xepdb1
 fi
 if [ -z "${ORA_BENCH_PASSWORD_SYS}" ]; then
     export ORA_BENCH_PASSWORD_SYS=oracle

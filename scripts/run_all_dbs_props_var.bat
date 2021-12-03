@@ -17,7 +17,7 @@ if exist ora_bench.log del /f /q ora_bench.log
 if exist priv\ora_bench_result.csv del /f /q priv\ora_bench_result.csv
 if exist priv\ora_bench_result.tsv del /f /q priv\ora_bench_result.tsv
 
-set ORA_BENCH_CHOICE_DB_DEFAULT=complete
+set ORA_BENCH_CHOICE_DB_DEFAULT=21xe
 set ORA_BENCH_CHOICE_DRIVER_DEFAULT=none
 
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
@@ -166,7 +166,7 @@ echo.
 
     if ["%ORA_BENCH_RUN_DB_21_3_XE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
-        set ORA_BENCH_CONNECTION_SERVICE=xe
+        set ORA_BENCH_CONNECTION_SERVICE=xepdb1
         call scripts\run_properties_variations.bat
         if %ERRORLEVEL% neq 0 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_variations.bat' was aborted, error code=%ERRORLEVEL%

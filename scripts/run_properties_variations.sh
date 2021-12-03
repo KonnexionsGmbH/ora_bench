@@ -65,13 +65,16 @@ elif [ "${ORA_BENCH_CHOICE_DRIVER}" = "rust" ]; then
     export ORA_BENCH_RUN_ORACLE_RUST=true
 fi
 
-if [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
+if [ "${ORA_BENCH_CHOICE_DB}" = "18xe" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
 fi
 if [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
 fi
 if [ "${ORA_BENCH_CHOICE_DB}" = "21" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
+fi
+if [ "${ORA_BENCH_CHOICE_DB}" = "21xe" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
 fi
 
@@ -82,7 +85,7 @@ if [ -z "${ORA_BENCH_CONNECTION_PORT}" ]; then
     export ORA_BENCH_CONNECTION_PORT=1521
 fi
 if [ -z "${ORA_BENCH_CONNECTION_SERVICE}" ]; then
-    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    export ORA_BENCH_CONNECTION_SERVICE=xepdb1
 fi
 if [ -z "${ORA_BENCH_FILE_CONFIGURATION_NAME}" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties

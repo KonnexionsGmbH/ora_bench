@@ -18,7 +18,7 @@ rm -f ora_bench.log
 rm -f priv/ora_bench_result.csv
 rm -f priv/ora_bench_result.tsv
 
-export ORA_BENCH_CHOICE_DB_DEFAULT=complete
+export ORA_BENCH_CHOICE_DB_DEFAULT=21xe
 export ORA_BENCH_CHOICE_DRIVER_DEFAULT=none
 
 if [ -z "${ORA_BENCH_CONNECTION_HOST}" ]; then
@@ -155,7 +155,7 @@ fi
 
 if [ "${ORA_BENCH_RUN_DB_21_3_XE}" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
-    export ORA_BENCH_CONNECTION_SERVICE=xe
+    export ORA_BENCH_CONNECTION_SERVICE=xepdb1 
     if ! { /bin/bash scripts/run_properties_${ORA_BENCH_PROPERTIES}.sh; }; then
         exit 255
     fi
