@@ -33,9 +33,10 @@ export ORA_BENCH_CONNECTION_HOST=localhost
 export ORA_BENCH_CONNECTION_PORT=1521
 
 export ORA_BENCH_ORACLE_DATABASE_ANY=false
-export ORA_BENCH_ORACLE_DATABASE_18C=false
+export ORA_BENCH_ORACLE_DATABASE_18C_XE=false
 export ORA_BENCH_ORACLE_DATABASE_19C=false
-export ORA_BENCH_ORACLE_DATABASE_21C=true
+export ORA_BENCH_ORACLE_DATABASE_21C=false
+export ORA_BENCH_ORACLE_DATABASE_21C_XE=true
 export ORA_BENCH_ORACLE_DATABASE_EXISTING=false
 
 export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
@@ -54,9 +55,10 @@ export ORA_BENCH_RUN_ORANIF_ELIXIR=true
 export ORA_BENCH_RUN_ORANIF_ERLANG=true
 
 echo "ORACLE_DATABASE_EXISTING         : ${ORA_BENCH_ORACLE_DATABASE_EXISTING}"
-echo "ORACLE_DATABASE_18C              : ${ORA_BENCH_ORACLE_DATABASE_18C}"
+echo "ORACLE_DATABASE_18C_XE           : ${ORA_BENCH_ORACLE_DATABASE_18C_XE}"
 echo "ORACLE_DATABASE_19C              : ${ORA_BENCH_ORACLE_DATABASE_19C}"
 echo "ORACLE_DATABASE_21C              : ${ORA_BENCH_ORACLE_DATABASE_21C}"
+echo "ORACLE_DATABASE_21C_XE           : ${ORA_BENCH_ORACLE_DATABASE_21C_XE}"
 echo "--------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON              : ${ORA_BENCH_RUN_CX_ORACLE_PYTHON}"
 echo "RUN_GODROR_GO                     : ${ORA_BENCH_RUN_GODROR_GO}"
@@ -72,9 +74,10 @@ echo "RUN_ORANIF_ERLANG                 : ${ORA_BENCH_RUN_ORANIF_ERLANG}"
 echo "================================================================================"
 
 if [ "${ORA_BENCH_ORACLE_DATABASE_EXISTING}" = "true" ] \
-|| [ "${ORA_BENCH_ORACLE_DATABASE_18C}" = "true" ] \
+|| [ "${ORA_BENCH_ORACLE_DATABASE_18C_XE}" = "true" ] \
 || [ "${ORA_BENCH_ORACLE_DATABASE_19C}" = "true" ] \
-|| [ "${ORA_BENCH_ORACLE_DATABASE_21C}" = "true" ]; then
+|| [ "${ORA_BENCH_ORACLE_DATABASE_21C}" = "true" ] \
+|| [ "${ORA_BENCH_ORACLE_DATABASE_21C_XE}" = "true" ]; then
     export ORA_BENCH_ORACLE_DATABASE_ANY=true
 fi
 
@@ -137,7 +140,7 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         fi
     fi
 
-    if [ "${ORA_BENCH_ORACLE_DATABASE_18C}" = "true" ]; then
+    if [ "${ORA_BENCH_ORACLE_DATABASE_18C_XE}" = "true" ]; then
         echo "--------------------------------------------------------------------------------"
         echo "Oracle Database Express Edition 18c."
         echo "--------------------------------------------------------------------------------"
@@ -159,51 +162,51 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         echo "--------------------------------------------------------------------------------"
         export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
         export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    fi
     
-        if ! { /bin/bash scripts/run_db_setup.sh; }; then
+    if [ "${ORA_BENCH_ORACLE_DATABASE_21C_XE}" = "true" ]; then
+        echo "--------------------------------------------------------------------------------"
+        echo "Oracle Database Express Edition 21c."
+        echo "--------------------------------------------------------------------------------"
+        export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
+        export ORA_BENCH_CONNECTION_SERVICE=xe
+    fi
+
+    if ! { /bin/bash scripts/run_db_setup.sh; }; then
+        exit 255
+    fi
+
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+
+    if ! { /bin/bash scripts/run_all_drivers.sh; }; then
             exit 255
-        fi
+    fi
 
-        export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
-        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
+    
+    if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+            exit 255
+    fi
 
-        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
-                exit 255
-        fi
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
-        export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
-        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-        
-        export ORA_BENCH_RUN_JDBC_JULIA=false
-        export ORA_BENCH_RUN_ORACLE_JULIA=false
-        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
-                exit 255
-        fi
-        export ORA_BENCH_RUN_JDBC_JULIA=true
-        export ORA_BENCH_RUN_ORACLE_JULIA=true
+    if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+            exit 255
+    fi
+    export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
 
-        export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
-        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
-        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
+    export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
+    export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
+    export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
-        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
-                exit 255
-        fi
-        export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
-
-        export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
-        export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
-        export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
-
-        export ORA_BENCH_RUN_JDBC_JULIA=false
-        export ORA_BENCH_RUN_ORACLE_JULIA=false
-        if ! { /bin/bash scripts/run_all_drivers.sh; }; then
-                exit 255
-        fi
-        export ORA_BENCH_RUN_JDBC_JULIA=true
-        export ORA_BENCH_RUN_ORACLE_JULIA=true
+    if ! { /bin/bash scripts/run_all_drivers.sh; }; then
+            exit 255
     fi
 fi
 

@@ -6,25 +6,34 @@ rem run_bench_odpi.sh: Oracle Benchmark based on ODPI-C.
 rem
 rem --------------------------------------------------------------------------------
 
+set ORA_BENCH_BENCHMARK_DATABASE_DEFAULT=db_21_3
+set ORA_BENCH_CONNECTION_HOST_DEFAULT=localhost
+set ORA_BENCH_CONNECTION_PORT_DEFAULT=1521
+set ORA_BENCH_CONNECTION_SERVICE_DEFAULT=orclpdb1
+set ORA_BENCH_PASSWORD_SYS_DEFAULT=oracle
+
 if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (
-    set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
+    set ORA_BENCH_BENCHMARK_DATABASE=%ORA_BENCH_BENCHMARK_DATABASE_DEFAULT%
 )
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
-    set javaORA_BENCH_CONNECTION_HOST=localhost
+    set ORA_BENCH_CONNECTION_HOST=%ORA_BENCH_CONNECTION_HOST_DEFAULT%
 )
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_PORT=1521
+    set ORA_BENCH_CONNECTION_PORT=%ORA_BENCH_CONNECTION_PORT_DEFAULT%
 )
 if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    set ORA_BENCH_CONNECTION_SERVICE=%ORA_BENCH_CONNECTION_SERVICE_DEFAULT%
 )
-
-set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
-set ORA_BENCH_FILE_CONFIGURATION_NAME_C=priv\properties\ora_bench_c.properties
+if ["%ORA_BENCH_PASSWORD_SYS%"] EQU [""] (
+    set ORA_BENCH_PASSWORD_SYS=%ORA_BENCH_PASSWORD_SYS_DEFAULT%
+)
 
 if ["%ORA_BENCH_BENCHMARK_VCVARSALL%"] EQU [""] (
     set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
 )
+
+set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
+set ORA_BENCH_FILE_CONFIGURATION_NAME_C=priv\properties\ora_bench_c.properties
 
 echo ===============================================================================
 echo Start %0

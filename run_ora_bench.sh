@@ -14,18 +14,20 @@ export ORA_BENCH_PROPERTIES=standard
 
 export ORA_BENCH_BENCHMARK_COMMENT='Standard tests (locally)'
 
+export ORA_BENCH_BENCHMARK_DATABASE_DEFAULT=21
+export ORA_BENCH_CHOICE_DRIVER_DEFAULT=none
+export ORA_BENCH_CONNECTION_HOST_DEFAULT=localhost
+export ORA_BENCH_CONNECTION_PORT_DEFAULT=1521
+
 rm -f ora_bench.log
 rm -f priv/ora_bench_result.csv
 rm -f priv/ora_bench_result.tsv
 
-export ORA_BENCH_CHOICE_DB_DEFAULT=complete
-export ORA_BENCH_CHOICE_DRIVER_DEFAULT=none
-
 if [ -z "${ORA_BENCH_CONNECTION_HOST}" ]; then
-    export ORA_BENCH_CONNECTION_HOST=localhost
+    export ORA_BENCH_CONNECTION_HOST=${ORA_BENCH_CONNECTION_HOST_DEFAULT}
 fi
 if [ -z "${ORA_BENCH_CONNECTION_PORT}" ]; then
-    export ORA_BENCH_CONNECTION_PORT=1521
+    export ORA_BENCH_CONNECTION_PORT=${ORA_BENCH_CONNECTION_PORT_DEFAULT}
 fi
 
 if [ -z "$1" ]; then
@@ -59,15 +61,16 @@ if [ -z "$2" ]; then
     echo "=============================================================================="
     echo "complete           - All implemented variations"
     echo "------------------------------------------------------------------------------"
-    echo "18                 - Oracle Database 18c Express Edition"
+    echo "18xe               - Oracle Database 18c Express Edition"
     echo "19                 - Oracle Database 19c"
     echo "21                 - Oracle Database 21c"
+    echo "21xe               - Oracle Database 21c Express Edition"
     echo "------------------------------------------------------------------------------"
-    read -rp "Enter the desired database version [default: ${ORA_BENCH_CHOICE_DB_DEFAULT}] " ORA_BENCH_CHOICE_DB
+    read -rp "Enter the desired database version [default: ${ORA_BENCH_BENCHMARK_DATABASE_DEFAULT}] " ORA_BENCH_CHOICE_DB
     export ORA_BENCH_CHOICE_DB=${ORA_BENCH_CHOICE_DB}
 
     if [ -z "${ORA_BENCH_CHOICE_DB}" ]; then
-        export ORA_BENCH_CHOICE_DB=${ORA_BENCH_CHOICE_DB_DEFAULT}
+        export ORA_BENCH_CHOICE_DB=${ORA_BENCH_BENCHMARK_DATABASE_DEFAULT}
     fi
 else
     export ORA_BENCH_CHOICE_DB=$2
@@ -76,17 +79,21 @@ fi
 export ORA_BENCH_RUN_DB_18_4_XE=false
 export ORA_BENCH_RUN_DB_19_3_EE=false
 export ORA_BENCH_RUN_DB_21_3_EE=false
+export ORA_BENCH_RUN_DB_21_3_XE=false
 
 if [ "${ORA_BENCH_CHOICE_DB}" = "complete" ]; then
     export ORA_BENCH_RUN_DB_18_4_XE=true
     export ORA_BENCH_RUN_DB_19_3_EE=true
     export ORA_BENCH_RUN_DB_21_3_EE=true
-elif [ "${ORA_BENCH_CHOICE_DB}" = "18" ]; then
+    export ORA_BENCH_RUN_DB_21_3_XE=true
+elif [ "${ORA_BENCH_CHOICE_DB}" = "18xe" ]; then
     export ORA_BENCH_RUN_DB_18_4_XE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "19" ]; then
     export ORA_BENCH_RUN_DB_19_3_EE=true
 elif [ "${ORA_BENCH_CHOICE_DB}" = "21" ]; then
     export ORA_BENCH_RUN_DB_21_3_EE=true
+elif [ "${ORA_BENCH_CHOICE_DB}" = "21xe" ]; then
+    export ORA_BENCH_RUN_DB_21_3_XE=true
 fi
 
 export ORA_BENCH_PASSWORD_SYS=oracle
@@ -143,6 +150,14 @@ fi
 if [ "${ORA_BENCH_RUN_DB_21_3_EE}" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
     export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    if ! { /bin/bash scripts/run_properties_${ORA_BENCH_PROPERTIES}.sh; }; then
+        exit 255
+    fi
+fi
+
+if [ "${ORA_BENCH_RUN_DB_21_3_XE}" = "true" ]; then
+    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
+    export ORA_BENCH_CONNECTION_SERVICE=xe 
     if ! { /bin/bash scripts/run_properties_${ORA_BENCH_PROPERTIES}.sh; }; then
         exit 255
     fi

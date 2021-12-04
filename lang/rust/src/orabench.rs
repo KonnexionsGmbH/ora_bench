@@ -27,6 +27,15 @@ struct ParamsRunInsert<'a> {
 }
 
 #[derive(Clone, Copy)]
+struct ParamsRunSelect<'a> {
+    benchmark_core_multiplier: u32,
+    benchmark_number_partitions: usize,
+    connections: &'a Vec<Connection>,
+    partitions: &'a Vec<Vec<(String, String)>>,
+    sql_select: &'a str,
+}
+
+#[derive(Clone, Copy)]
 struct ParamsRunTrial<'a> {
     benchmark_batch_size: u32,
     benchmark_core_multiplier: u32,
@@ -695,13 +704,9 @@ fn run_insert_helper<'a>(
 // Supervise function for retrieving of the database data.
 // -----------------------------------------------------------------------------
 
-fn run_select<'a>(
-    benchmark_core_multiplier: u32,
-    benchmark_number_partitions: usize,
-    connections: &'a [Connection],
-    partitions: &'a [Vec<(String, String)>],
-    sql_select: &'a str,
-    statistics: &'a mut Vec<StatisticsEntry>,
+fn run_select(
+    params: ParamsRunSelect,
+    statistics: &mut Vec<StatisticsEntry>,
     trial_no: u32,
 ) -> Result<(), Error> {
     debug!("Start run_select()");
@@ -723,25 +728,25 @@ fn run_select<'a>(
         ENDIF
     ENDWHILE
     */
-    if benchmark_core_multiplier == 0 {
-        for partition_no in 0..benchmark_number_partitions {
+    if params.benchmark_core_multiplier == 0 {
+        for partition_no in 0..params.benchmark_number_partitions {
             run_select_helper(
-                &connections[partition_no],
+                &params.connections[partition_no],
                 partition_no,
-                &partitions[partition_no],
-                sql_select,
+                &params.partitions[partition_no],
+                params.sql_select,
                 trial_no,
             );
         }
     } else {
         thread::scope(|s| {
-            for partition_no in 0..benchmark_number_partitions {
+            for partition_no in 0..params.benchmark_number_partitions {
                 s.spawn(move |_| {
                     run_select_helper(
-                        &connections[partition_no],
+                        &params.connections[partition_no],
                         partition_no,
-                        &partitions[partition_no],
-                        sql_select,
+                        &params.partitions[partition_no],
+                        params.sql_select,
                         trial_no,
                     );
                 });
@@ -754,7 +759,7 @@ fn run_select<'a>(
     statistics.push(StatisticsEntry {
         action: "select".to_string(),
         end_time: Local::now(),
-        sql_stmnt: sql_select.parse().unwrap(),
+        sql_stmnt: params.sql_select.parse().unwrap(),
         start_time,
         trial_no,
     });
@@ -913,15 +918,14 @@ fn run_trial(params: ParamsRunTrial, statistics: &mut Vec<StatisticsEntry>, tria
                   trial_no,
                   bulk_data_partitions)
     */
-    let result_run_select = run_select(
-        params.benchmark_core_multiplier,
-        params.benchmark_number_partitions,
-        params.connections,
-        params.partitions,
-        params.sql_select,
-        statistics,
-        trial_no,
-    );
+    let params_run_select = ParamsRunSelect {
+        benchmark_core_multiplier: params.benchmark_core_multiplier,
+        benchmark_number_partitions: params.benchmark_number_partitions,
+        connections: params.connections,
+        partitions: params.partitions,
+        sql_select: params.sql_select,
+    };
+    let result_run_select = run_select(params_run_select, statistics, trial_no);
     if result_run_select.is_err() {
         error!(
             "run_trial() - Problem in run_select: {}",

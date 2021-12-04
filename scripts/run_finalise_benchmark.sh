@@ -8,8 +8,10 @@
 
 set -e
 
+export ORA_BENCH_FILE_CONFIGURATION_NAME_DEFAULT=priv/properties/ora_bench.properties
+
 if [ -z "${ORA_BENCH_FILE_CONFIGURATION_NAME}" ]; then
-    export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+    export ORA_BENCH_FILE_CONFIGURATION_NAME=${ORA_BENCH_FILE_CONFIGURATION_NAME_DEFAULT}
 fi
 
 echo "=============================================================================="

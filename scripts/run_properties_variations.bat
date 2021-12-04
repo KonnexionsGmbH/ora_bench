@@ -97,15 +97,18 @@ if ["%ORA_BENCH_CHOICE_DB%"] EQU ["19"] (
 if ["%ORA_BENCH_CHOICE_DB%"] EQU ["21"] (
     set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
 )
+if ["%ORA_BENCH_CHOICE_DB%"] EQU ["21xe"] (
+    set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
+)
 
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
-    set javaORA_BENCH_CONNECTION_HOST=localhost
+    set ORA_BENCH_CONNECTION_HOST=localhost
 )
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
     set ORA_BENCH_CONNECTION_PORT=1521
 )
 if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    set ORA_BENCH_CONNECTION_SERVICE=xe
 )
 if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
     set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
@@ -137,6 +140,7 @@ echo ---------------------------------------------------------------------------
 echo RUN_DB_18_4_XE                    : %ORA_BENCH_RUN_DB_18_4_XE%
 echo RUN_DB_19_3_EE                    : %ORA_BENCH_RUN_DB_19_3_EE%
 echo RUN_DB_21_3_EE                    : %ORA_BENCH_RUN_DB_21_3_EE%
+echo RUN_DB_21_3_XE                    : %ORA_BENCH_RUN_DB_21_3_XE%
 echo -------------------------------------------------------------------------------
 echo BENCHMARK_BATCH_SIZE              : %ORA_BENCH_BENCHMARK_BATCH_SIZE%
 echo BENCHMARK_COMMENT                 : %ORA_BENCH_BENCHMARK_COMMENT%

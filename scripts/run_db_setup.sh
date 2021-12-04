@@ -8,20 +8,26 @@
 
 set -e
 
+export ORA_BENCH_BENCHMARK_DATABASE_DEFAULT=db_21_3
+export ORA_BENCH_CONNECTION_HOST_DEFAULT=localhost
+export ORA_BENCH_CONNECTION_PORT_DEFAULT=1521
+export ORA_BENCH_CONNECTION_SERVICE_DEFAULT=orclpdb1
+export ORA_BENCH_PASSWORD_SYS_DEFAULT=oracle
+
 if [ -z "${ORA_BENCH_BENCHMARK_DATABASE}" ]; then
-    export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
+    export ORA_BENCH_BENCHMARK_DATABASE=${ORA_BENCH_BENCHMARK_DATABASE_DEFAULT}
 fi
 if [ -z "${ORA_BENCH_CONNECTION_HOST}" ]; then
-    export ORA_BENCH_CONNECTION_HOST=localhost
+    export ORA_BENCH_CONNECTION_HOST=${ORA_BENCH_CONNECTION_HOST_DEFAULT}
 fi
 if [ -z "${ORA_BENCH_CONNECTION_PORT}" ]; then
-    export ORA_BENCH_CONNECTION_PORT=1521
+    export ORA_BENCH_CONNECTION_PORT=${ORA_BENCH_CONNECTION_PORT_DEFAULT}
 fi
 if [ -z "${ORA_BENCH_CONNECTION_SERVICE}" ]; then
-    export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
+    export ORA_BENCH_CONNECTION_SERVICE=${ORA_BENCH_CONNECTION_SERVICE_DEFAULT}
 fi
 if [ -z "${ORA_BENCH_PASSWORD_SYS}" ]; then
-    export ORA_BENCH_PASSWORD_SYS=oracle
+    export ORA_BENCH_PASSWORD_SYS=${ORA_BENCH_PASSWORD_SYS_DEFAULT}
 fi
 
 echo "=============================================================================="
@@ -73,7 +79,8 @@ if [ "$OSTYPE" = "msys" ]; then
 else
     rm -f ~/.sqlnet.ora
     if [ "${ORA_BENCH_BENCHMARK_DATABASE}" = "db_19_3_ee" ] ||
-       [ "${ORA_BENCH_BENCHMARK_DATABASE}" = "db_21_3_ee" ]; then
+       [ "${ORA_BENCH_BENCHMARK_DATABASE}" = "db_21_3_ee" ] ||
+       [ "${ORA_BENCH_BENCHMARK_DATABASE}" = "db_21_3_xe" ]; then
         echo "DISABLE_OOB=ON" >> ~/.sqlnet.ora
     fi
     if ! sqlplus sys/${ORA_BENCH_PASSWORD_SYS}@//${ORA_BENCH_CONNECTION_HOST}:${ORA_BENCH_CONNECTION_PORT}/${ORA_BENCH_CONNECTION_SERVICE} AS SYSDBA @scripts/run_db_setup.sql; then
