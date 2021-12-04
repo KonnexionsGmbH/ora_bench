@@ -30,6 +30,7 @@ if ["%ORA_BENCH_PASSWORD_SYS%"] EQU [""] (
 )
 
 set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
+set ORA_BENCH_FILE_CONFIGURATION_NAME_PYTHON=priv\properties\ora_bench_python.properties
 
 echo ===============================================================================
 echo Start %0

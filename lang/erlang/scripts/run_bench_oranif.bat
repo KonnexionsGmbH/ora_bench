@@ -29,6 +29,7 @@ if ["%ORA_BENCH_PASSWORD_SYS%"] EQU [""] (
     set ORA_BENCH_PASSWORD_SYS=%ORA_BENCH_PASSWORD_SYS_DEFAULT%
 )
 
+set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 set ORA_BENCH_FILE_CONFIGURATION_NAME_ERLANG=priv\properties\ora_bench_erlang.properties
 
 if ["%ORA_BENCH_BENCHMARK_VCVARSALL%"] EQU [""] (

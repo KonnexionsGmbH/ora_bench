@@ -28,6 +28,7 @@ if [ -z "${ORA_BENCH_PASSWORD_SYS}" ]; then
     export ORA_BENCH_PASSWORD_SYS=${ORA_BENCH_PASSWORD_SYS_DEFAULT}
 fi
 
+export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
 export ORA_BENCH_FILE_CONFIGURATION_NAME_TOML=priv/properties/ora_bench_toml.properties
 
 echo "=============================================================================="

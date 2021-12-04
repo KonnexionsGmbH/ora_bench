@@ -32,7 +32,8 @@ if ["%ORA_BENCH_BENCHMARK_VCVARSALL%"] EQU [""] (
     set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
 )
 
-set ORA_BENCH_FILE_CONFIGURATION_NAME_C=priv/properties/ora_bench_c.properties
+set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
+set ORA_BENCH_FILE_CONFIGURATION_NAME_C=priv\properties\ora_bench_c.properties
 
 echo ===============================================================================
 echo Start %0
