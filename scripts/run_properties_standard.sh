@@ -83,7 +83,7 @@ if [ -z "${ORA_BENCH_CONNECTION_PORT}" ]; then
     export ORA_BENCH_CONNECTION_PORT=1521
 fi
 if [ -z "${ORA_BENCH_CONNECTION_SERVICE}" ]; then
-    export ORA_BENCH_CONNECTION_SERVICE=xepdb1
+    export ORA_BENCH_CONNECTION_SERVICE=xe
 fi
 if [ -z "${ORA_BENCH_FILE_CONFIGURATION_NAME}" ]; then
     export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties

@@ -169,7 +169,7 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         echo "Oracle Database Express Edition 21c."
         echo "--------------------------------------------------------------------------------"
         export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
-        export ORA_BENCH_CONNECTION_SERVICE=xepdb1
+        export ORA_BENCH_CONNECTION_SERVICE=xe
     fi
 
     if ! { /bin/bash scripts/run_db_setup.sh; }; then

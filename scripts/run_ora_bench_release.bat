@@ -189,7 +189,7 @@ echo.
             echo Oracle Database Express Edition 21c.
             echo --------------------------------------------------------------------------------
             set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
-            set ORA_BENCH_CONNECTION_SERVICE=xepdb1
+            set ORA_BENCH_CONNECTION_SERVICE=xe
         )
         
         call scripts\run_db_setup.bat

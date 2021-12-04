@@ -6,20 +6,29 @@ rem run_bench_oracle.bat: Oracle Benchmark based on Julia.
 rem
 rem --------------------------------------------------------------------------------
 
+set ORA_BENCH_BENCHMARK_DATABASE_DEFAULT=db_21_3
+set ORA_BENCH_CONNECTION_HOST_DEFAULT=localhost
+set ORA_BENCH_CONNECTION_PORT_DEFAULT=1521
+set ORA_BENCH_CONNECTION_SERVICE_DEFAULT=orclpdb1
+set ORA_BENCH_PASSWORD_SYS_DEFAULT=oracle
+set ORA_BENCH_FILE_CONFIGURATION_NAME_DEFAULT=priv/properties/ora_bench.properties
+
 if ["%ORA_BENCH_BENCHMARK_DATABASE%"] EQU [""] (
-    set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
+    set ORA_BENCH_BENCHMARK_DATABASE=%ORA_BENCH_BENCHMARK_DATABASE_DEFAULT%
 )
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
-    set javaORA_BENCH_CONNECTION_HOST=localhost
+    set ORA_BENCH_CONNECTION_HOST=%ORA_BENCH_CONNECTION_HOST_DEFAULT%
 )
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_PORT=1521
+    set ORA_BENCH_CONNECTION_PORT=%ORA_BENCH_CONNECTION_PORT_DEFAULT%
 )
 if ["%ORA_BENCH_CONNECTION_SERVICE%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_SERVICE=xepdb1
+    set ORA_BENCH_CONNECTION_SERVICE=%ORA_BENCH_CONNECTION_SERVICE_DEFAULT%
+)
+if ["%ORA_BENCH_PASSWORD_SYS%"] EQU [""] (
+    set ORA_BENCH_PASSWORD_SYS=%ORA_BENCH_PASSWORD_SYS_DEFAULT%
 )
 
-set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
 set ORA_BENCH_FILE_CONFIGURATION_NAME_TOML=priv\properties\ora_bench_toml.properties
 
 echo ===============================================================================

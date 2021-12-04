@@ -8,8 +8,10 @@ rem ----------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
+set ORA_BENCH_FILE_CONFIGURATION_NAME_DEFAULT=priv/properties/ora_bench.properties
+
 if ["%ORA_BENCH_FILE_CONFIGURATION_NAME%"] EQU [""] (
-    set ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties
+    set ORA_BENCH_FILE_CONFIGURATION_NAME=%ORA_BENCH_FILE_CONFIGURATION_NAME_DEFAULT%
 )
 
 echo ===============================================================================

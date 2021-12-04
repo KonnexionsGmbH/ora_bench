@@ -13,18 +13,20 @@ set ORA_BENCH_MULTIPLE_RUN=true
 
 set ORA_BENCH_BENCHMARK_COMMENT="Standard series (locally)"
 
+set ORA_BENCH_BENCHMARK_DATABASE_DEFAULT=21
+set ORA_BENCH_CHOICE_DRIVER_DEFAULT=none
+set ORA_BENCH_CONNECTION_HOST_DEFAULT=localhost
+set ORA_BENCH_CONNECTION_PORT_DEFAULT=1521
+
 if exist ora_bench.log del /f /q ora_bench.log
 if exist priv\ora_bench_result.csv del /f /q priv\ora_bench_result.csv
 if exist priv\ora_bench_result.tsv del /f /q priv\ora_bench_result.tsv
 
-set ORA_BENCH_CHOICE_DB_DEFAULT=21xe
-set ORA_BENCH_CHOICE_DRIVER_DEFAULT=none
-
 if ["%ORA_BENCH_CONNECTION_HOST%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_HOST=localhost
+    set ORA_BENCH_CONNECTION_HOST=%ORA_BENCH_CONNECTION_HOST_DEFAULT%
 )
 if ["%ORA_BENCH_CONNECTION_PORT%"] EQU [""] (
-    set ORA_BENCH_CONNECTION_PORT=1521
+    set ORA_BENCH_CONNECTION_PORT=%ORA_BENCH_CONNECTION_PORT_DEFAULT%
 )
 
 if ["%1"] EQU [""] (
@@ -62,10 +64,10 @@ if ["%2"] EQU [""] (
     echo 21                 - Oracle Database 21c
     echo 21xe               - Oracle Database 21c Express Edition
     echo -------------------------------------------------------------------------------
-    set /P  ORA_BENCH_CHOICE_DB="Enter the desired database version [default: %ORA_BENCH_CHOICE_DB_DEFAULT%] "
+    set /P  ORA_BENCH_CHOICE_DB="Enter the desired database version [default: %ORA_BENCH_BENCHMARK_DATABASE_DEFAULT%] "
 
     if ["!ORA_BENCH_CHOICE_DB!"] EQU [""] (
-        set ORA_BENCH_CHOICE_DB=%ORA_BENCH_CHOICE_DB_DEFAULT%
+        set ORA_BENCH_CHOICE_DB=%ORA_BENCH_BENCHMARK_DATABASE_DEFAULT%
     )
 ) else (
     set ORA_BENCH_CHOICE_DB=%2
@@ -166,7 +168,7 @@ echo.
 
     if ["%ORA_BENCH_RUN_DB_21_3_XE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
-        set ORA_BENCH_CONNECTION_SERVICE=xepdb1
+        set ORA_BENCH_CONNECTION_SERVICE=xe
         call scripts\run_properties_variations.bat
         if %ERRORLEVEL% neq 0 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_variations.bat' was aborted, error code=%ERRORLEVEL%
