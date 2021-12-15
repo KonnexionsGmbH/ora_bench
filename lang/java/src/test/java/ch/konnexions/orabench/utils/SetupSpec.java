@@ -25,26 +25,30 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class SetupSpec {
-    @Test
-    @DisplayName("creation of the bulk file")
-    public void connect() {
-        Config config = new Config();
+  @Test
+  @DisplayName("creation of the bulk file")
+  public void connect() {
+    Config config       = new Config();
 
-        Setup setup = new Setup(config);
+    Setup  setup        = new Setup(config);
 
-        String fileBulkName = config.getFileBulkName();
-        assertNotNull(fileBulkName, () -> "Property .");
+    String fileBulkName = config.getFileBulkName();
+    assertNotNull(fileBulkName,
+                  () -> "Property .");
 
-        fileBulkName = config.getFileBulkName();
-        assertNotNull(fileBulkName, () -> "The same database connection should be used.");
+    fileBulkName = config.getFileBulkName();
+    assertNotNull(fileBulkName,
+                  () -> "The same database connection should be used.");
 
-        setup.createBulkFile();
+    setup.createBulkFile();
 
-        Database database = new Database(config);
+    Database   database     = new Database(config);
 
-        Connection connection_1 = database.connect();
-        Connection connection_2 = database.connect();
+    Connection connection_1 = database.connect();
+    Connection connection_2 = database.connect();
 
-        assertEquals(connection_1, connection_2, () -> "The same database connection should be used.");
-    }
+    assertEquals(connection_1,
+                 connection_2,
+                 () -> "The same database connection should be used.");
+  }
 }

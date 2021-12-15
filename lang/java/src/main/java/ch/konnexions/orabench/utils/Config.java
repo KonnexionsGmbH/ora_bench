@@ -430,15 +430,15 @@ public class Config {
       for (final String key : keysSorted) {
         if ("file.result.header".contentEquals(key)) {
           value = propertiesConfiguration.getString(key).replace(";",
-                  fileResultDelimiter);
+                                                                 fileResultDelimiter);
         } else {
           value = propertiesConfiguration.getString(key);
         }
 
         bufferedWriter.write(key.replace(".",
-                "_") + ": \"" + ((value.contentEquals("\t"))
-                ? "TAB"
-                : value) + "\"");
+                                         "_") + ": \"" + ((value.contentEquals("\t"))
+                                             ? "TAB"
+                                             : value) + "\"");
         bufferedWriter.newLine();
       }
 
