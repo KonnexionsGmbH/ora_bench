@@ -26,39 +26,43 @@ using Oracle
 using TOML
 using TimesDates
 
-thread_type_spawn = true
-
 # ----------------------------------------------------------------------------------
 # Creating the database connections.
 # ----------------------------------------------------------------------------------
 
 function create_connections(
-    benchmark_number_partitions::Int64, 
-    config::Dict{String,Any}, 
-    sql_insert::String
-)::Tuple{Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}},Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}},Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}}}
+    benchmark_number_partitions::Int64,
+    config::Dict{String,Any},
+    sql_insert::String,
+)::Tuple{
+    Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}},
+    Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}},
+    Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}},
+}
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
+    @debug "\nStart $(function_name)"
 
     connection_user = config["DEFAULT"]["connection_user"]::String
     connection_password = config["DEFAULT"]["connection_password"]::String
-    connection_string = 
+    connection_string =
         "jdbc:oracle:thin:@//$(config["DEFAULT"]["connection_host"]::String):$(config["DEFAULT"]["connection_port"]::String)/$(config["DEFAULT"]["connection_service"]::String)?oracle.net.disableOob=true"::String
 
     connections = Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}}()
     statements = Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}}()
-    prepared_statements = Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}}()
-    
+    prepared_statements =
+        Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}}()
+
     for partition_key = 1:benchmark_number_partitions
         try
-            @debug "      $(function_name) Connection #$(partition_key) - to be openend"
+            @debug "\n      $(function_name) Connection #$(partition_key) - to be openend"
             connections[partition_key] = JDBC.DriverManager.getConnection(
                 connection_string,
-                 Dict("user" => connection_user, "password" => connection_password),
+                Dict("user" => connection_user, "password" => connection_password),
             )
             statements[partition_key] = JDBC.createStatement(connections[partition_key])
-            prepared_statements[partition_key] = JDBC.prepareStatement(connections[partition_key],sql_insert)
-            @debug "      $(function_name) Connection #$(partition_key) - is now open"
+            prepared_statements[partition_key] =
+                JDBC.prepareStatement(connections[partition_key], sql_insert)
+            @debug "\n      $(function_name) Connection #$(partition_key) - is now open"
         catch reason
             @info "partition_key      =$(partition_key)"
             @info "connection_string  =$(connection_string)"
@@ -70,9 +74,9 @@ function create_connections(
         end
     end
 
-    @debug "End   $(function_name)"
-    
-    (connections,statements,prepared_statements)
+    @debug "\nEnd   $(function_name)"
+
+    (connections, statements, prepared_statements)
 end
 
 # ----------------------------------------------------------------------------------
@@ -80,21 +84,21 @@ end
 # ----------------------------------------------------------------------------------
 
 function create_result(
-    action::String, 
-    benchmark_globals::Vector{Any}, 
-    config::Dict{String,Any}, 
-    result_file::IOStream, 
-    sql_operation::String, 
-    sql_statement::String, 
-    start_date_time::TimesDates.TimeDate, 
-    trial_number::Int64, 
+    action::String,
+    benchmark_globals::Vector{Any},
+    config::Dict{String,Any},
+    result_file::IOStream,
+    sql_operation::String,
+    sql_statement::String,
+    start_date_time::TimesDates.TimeDate,
+    trial_number::Int64,
 )::Int64
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
+    @debug "\nStart $(function_name)"
 
     end_date_time = TimeDate(now())
     duration_ns = (end_date_time - start_date_time).value
-    file_result_delimiter = 
+    file_result_delimiter =
         replace(config["DEFAULT"]["file_result_delimiter"], "TAB" => "\t")
 
     if sql_operation == "insert"
@@ -105,51 +109,51 @@ function create_result(
 
     write(
         result_file,
-        config["DEFAULT"]["benchmark_release"] * 
+        config["DEFAULT"]["benchmark_release"] *
         file_result_delimiter *
-        config["DEFAULT"]["benchmark_id"] * 
+        config["DEFAULT"]["benchmark_id"] *
         file_result_delimiter *
-        config["DEFAULT"]["benchmark_comment"] * 
+        config["DEFAULT"]["benchmark_comment"] *
         file_result_delimiter *
-        config["DEFAULT"]["benchmark_host_name"] * 
+        config["DEFAULT"]["benchmark_host_name"] *
         file_result_delimiter *
-        config["DEFAULT"]["benchmark_number_cores"] * 
+        config["DEFAULT"]["benchmark_number_cores"] *
         file_result_delimiter *
-        config["DEFAULT"]["benchmark_os"] * 
+        config["DEFAULT"]["benchmark_os"] *
         file_result_delimiter *
-        config["DEFAULT"]["benchmark_user_name"] * 
+        config["DEFAULT"]["benchmark_user_name"] *
         file_result_delimiter *
-        config["DEFAULT"]["benchmark_database"] * 
+        config["DEFAULT"]["benchmark_database"] *
         file_result_delimiter *
-        benchmark_globals[IX_BENCHMARK_LANGUAGE] * 
+        benchmark_globals[IX_BENCHMARK_LANGUAGE] *
         file_result_delimiter *
-        benchmark_globals[IX_BENCHMARK_DRIVER] * 
+        benchmark_globals[IX_BENCHMARK_DRIVER] *
         file_result_delimiter *
-        string(trial_number) * 
+        string(trial_number) *
         file_result_delimiter *
         sql_statement *
         file_result_delimiter *
-        string(parse(Int64, config["DEFAULT"]["benchmark_core_multiplier"])) * 
+        string(parse(Int64, config["DEFAULT"]["benchmark_core_multiplier"])) *
         file_result_delimiter *
-        config["DEFAULT"]["connection_fetch_size"] * 
+        config["DEFAULT"]["connection_fetch_size"] *
         file_result_delimiter *
-        config["DEFAULT"]["benchmark_transaction_size"] * 
+        config["DEFAULT"]["benchmark_transaction_size"] *
         file_result_delimiter *
-        config["DEFAULT"]["file_bulk_length"] * 
+        config["DEFAULT"]["file_bulk_length"] *
         file_result_delimiter *
-        string(parse(Int64, config["DEFAULT"]["file_bulk_size"])) * 
+        string(parse(Int64, config["DEFAULT"]["file_bulk_size"])) *
         file_result_delimiter *
-        string(parse(Int64, config["DEFAULT"]["benchmark_batch_size"])) * 
+        string(parse(Int64, config["DEFAULT"]["benchmark_batch_size"])) *
         file_result_delimiter *
         action *
         file_result_delimiter *
-        string(start_date_time) * 
+        string(start_date_time) *
         file_result_delimiter *
-        string(end_date_time) * 
+        string(end_date_time) *
         file_result_delimiter *
-        string(round((end_date_time - start_date_time).value * 0.001)) * 
+        string(round((end_date_time - start_date_time).value * 0.001)) *
         file_result_delimiter *
-        string(duration_ns) * 
+        string(duration_ns) *
         file_result_delimiter *
         "\n",
     )
@@ -158,9 +162,9 @@ function create_result(
         println("Duration (ms) trial         : $(round(duration_ns / 1000000))")
     end
 
-    @debug "End   $(function_name)"
+    @debug "\nEnd   $(function_name)"
 
-    return duration_ns
+    duration_ns
 end
 
 # ----------------------------------------------------------------------------------
@@ -168,16 +172,16 @@ end
 # ----------------------------------------------------------------------------------
 
 function create_result_measuring_point_end(
-    action::String, 
-    benchmark_globals::Vector{Any}, 
-    config::Dict{String,Any}, 
-    result_file::IOStream, 
-    trial_number::Int64 = 0, 
-    sql_operation::String = "", 
-    sql_statement::String = "", 
+    action::String,
+    benchmark_globals::Vector{Any},
+    config::Dict{String,Any},
+    result_file::IOStream,
+    trial_number::Int64 = 0,
+    sql_operation::String = "",
+    sql_statement::String = "",
 )::Int64
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
+    @debug "\nStart $(function_name)"
 
     if action == "query"
         duration_ns = create_result(
@@ -219,9 +223,9 @@ function create_result_measuring_point_end(
         )
     end
 
-    @debug "End   $(function_name)"
+    @debug "\nEnd   $(function_name)"
 
-    return duration_ns
+    duration_ns
 end
 
 # ----------------------------------------------------------------------------------
@@ -230,7 +234,7 @@ end
 
 function create_result_measuring_point_start(action::String, benchmark_globals::Vector{Any})
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
+    @debug "\nStart $(function_name)"
 
     if action == "query"
         benchmark_globals[IX_LAST_QUERY] = TimeDate(now())
@@ -242,7 +246,7 @@ function create_result_measuring_point_start(action::String, benchmark_globals::
         )
     end
 
-    @debug "End   $(function_name)"
+    @debug "\nEnd   $(function_name)"
     nothing
 end
 
@@ -251,12 +255,12 @@ end
 # ----------------------------------------------------------------------------------
 
 function get_bulk_data_partitions(
-    config::Dict{String,Any}, 
+    config::Dict{String,Any},
 )::Dict{Int64,DataFrames.DataFrame}
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
+    @debug "\nStart $(function_name)"
 
-    benchmark_number_partitions = 
+    benchmark_number_partitions =
         parse(Int64, config["DEFAULT"]["benchmark_number_partitions"])
 
     file_bulk_name = config["DEFAULT"]["file_bulk_name"]
@@ -281,7 +285,7 @@ function get_bulk_data_partitions(
         ),
     )::DataFrames.DataFrame
 
-    @debug "      $(function_name) - size of bulk_data $(size(bulk_data,1))"
+    @debug "\n      $(function_name) - size of bulk_data $(size(bulk_data,1))"
 
     # ----------------------------------------------------------------------------------
     # Loading the bulk file into memory.
@@ -295,7 +299,7 @@ function get_bulk_data_partitions(
 
     for row in eachrow(bulk_data)
         key = row[1]
-        partition_key = 
+        partition_key =
             mod(Int(key[1]) * 251 + Int(key[2]), benchmark_number_partitions) + 1
         push!(bulk_data_partitions[partition_key], row)
     end
@@ -303,17 +307,19 @@ function get_bulk_data_partitions(
     println("Start Distribution of the data in the partitions")
 
     for partition_key = 1:benchmark_number_partitions
-        println(format(
-            "Partition p{1:0>5d} contains {2:n} rows",
-            partition_key,
-            size(bulk_data_partitions[partition_key], 1),
-        ))
+        println(
+            format(
+                "Partition p{1:0>5d} contains {2:n} rows",
+                partition_key,
+                size(bulk_data_partitions[partition_key], 1),
+            ),
+        )
     end
 
     println("End   Distribution of the data in the partitions")
 
-    @debug "End   $(function_name)"
-    return bulk_data_partitions
+    @debug "\nEnd   $(function_name)"
+    bulk_data_partitions
 end
 
 # ----------------------------------------------------------------------------------
@@ -326,34 +332,38 @@ function main()
     old_logger = global_logger(logger)
 
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
-
-    println("Start OraBenchJdbc.jl - Number Threads: $(Threads.nthreads())")
+    @debug "\nStart $(function_name)"
 
     numberArgs = size(ARGS, 1)
 
     println("main() - number arguments=$(numberArgs)")
 
     if numberArgs == 0
-        @error "main() - no command line argument available"
+        @error "\nmain() - no command line argument available"
         throw(ArgumentError)
     end
 
     println("main() - 1st argument=$(ARGS[1])")
 
     if numberArgs > 1
-        @error "main() - more than one command line argument available"
+        @error "\nmain() - more than one command line argument available"
         throw(ArgumentError)
     end
 
     # READ the configuration parameters into the memory (config params `file.configuration.name ...`)
     config = TOML.parsefile(ARGS[1])::Dict{String,Any}
 
+    if parse(Int64, config["DEFAULT"]["benchmark_core_multiplier"]) == 0
+        println("Start OraBenchJdbc.jl - Number Threads       : 1")
+    else
+        println("Start OraBenchJdbc.jl - Number Threads       : $(Threads.nthreads())")
+    end
+
     run_benchmark(config)
 
     println("End   OraBenchJdbc.jl")
 
-    @debug "End   $(function_name)"
+    @debug "\nEnd   $(function_name)"
     nothing
 end
 
@@ -363,26 +373,26 @@ end
 
 function run_benchmark(config::Dict{String,Any})
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
+    @debug "\nStart $(function_name)"
 
     # save the current time as the start time of the 'benchmark' action
     file_result_name = config["DEFAULT"]["file_result_name"]
 
     benchmark_globals = Array([
         # LAST_BENCHMARK
-        ""::String, 
+        ""::String,
         # LAST_TRIAL
-        ""::String, 
+        ""::String,
         # LAST_QUERY
-        ""::String, 
+        ""::String,
         # DURATION_INSERT_SUM
-        0::Int64, 
+        0::Int64,
         # DURATION_SELECT_SUM
-        0::Int64, 
+        0::Int64,
         # BENCHMARK_DRIVER
-        ""::String, 
+        ""::String,
         # BENCHMARK_LANGUAGE
-        ""::String, 
+        ""::String,
     ])::Vector{Any}
 
     global IX_BENCHMARK_DRIVER = 6::Int64
@@ -413,9 +423,9 @@ function run_benchmark(config::Dict{String,Any})
     bulk_data_partitions = get_bulk_data_partitions(config)
 
     # create a separate database connection (without auto commit behaviour) for each partition
-    benchmark_number_partitions = 
+    benchmark_number_partitions =
         parse(Int64, config["DEFAULT"]["benchmark_number_partitions"])::Int64
-        
+
     JDBC.usedriver("priv/libs/ojdbc.jar")
     JDBC.init()
 
@@ -423,8 +433,9 @@ function run_benchmark(config::Dict{String,Any})
         replace(config["DEFAULT"]["sql_insert"], ":key" => "?"),
         ":data" => "?",
     )::String
-        
-    (connections,statements,prepared_statements) = create_connections(benchmark_number_partitions, config, sql_insert)
+
+    (connections, statements, prepared_statements) =
+        create_connections(benchmark_number_partitions, config, sql_insert)
 
     #=
       trial_max = 0
@@ -479,9 +490,9 @@ function run_benchmark(config::Dict{String,Any})
       ENDWHILE    
     =#
     for partition_key = 1:benchmark_number_partitions
-        @debug "      $(function_name) Connection #$(partition_key) - to be closed"
+        @debug "\n      $(function_name) Connection #$(partition_key) - to be closed"
         JDBC.close(connections[partition_key])
-        @debug "      $(function_name) Connection #$(partition_key) - is now closed"
+        @debug "\n      $(function_name) Connection #$(partition_key) - is now closed"
     end
 
     JDBC.destroy()
@@ -499,12 +510,14 @@ function run_benchmark(config::Dict{String,Any})
     # INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
     println("Duration (ms) trial min.    : $(round(trial_min / 1000000))")
     println("Duration (ms) trial max.    : $(round(trial_max / 1000000))")
-    println("Duration (ms) trial average : $(round(trial_sum / 1000000 / parse(Int64, config["DEFAULT"]["benchmark_trials"])))")
+    println(
+        "Duration (ms) trial average : $(round(trial_sum / 1000000 / parse(Int64, config["DEFAULT"]["benchmark_trials"])))",
+    )
 
     # INFO  Duration (ms) benchmark run : duration_benchmark
     println("Duration (ms) benchmark run : $(round(duration_ns_benchmark / 1000000))")
 
-    @debug "End   $(function_name)"
+    @debug "\nEnd   $(function_name)"
     nothing
 end
 
@@ -513,21 +526,24 @@ end
 # ----------------------------------------------------------------------------------
 
 function run_insert(
-    benchmark_batch_size::Int64, 
-    benchmark_core_multiplier::Int64, 
-    benchmark_globals::Vector{Any}, 
-    benchmark_number_partitions::Int64, 
-    benchmark_transaction_size::Int64, 
-    bulk_data_partitions::Dict{Int64,DataFrames.DataFrame}, 
-    config::Dict{String,Any}, 
-    connections::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}}, 
-    prepared_statements::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}}, 
-    result_file::IOStream, 
-    sql_insert::String, 
-    trial_number::Int64, 
+    benchmark_batch_size::Int64,
+    benchmark_core_multiplier::Int64,
+    benchmark_globals::Vector{Any},
+    benchmark_number_partitions::Int64,
+    benchmark_transaction_size::Int64,
+    bulk_data_partitions::Dict{Int64,DataFrames.DataFrame},
+    config::Dict{String,Any},
+    connections::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}},
+    prepared_statements::Dict{
+        Int64,
+        JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")},
+    },
+    result_file::IOStream,
+    sql_insert::String,
+    trial_number::Int64,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name) - trial_number=$(trial_number)"
+    @debug "\nStart $(function_name) - trial_number=$(trial_number)"
 
     # save the current time as the start time of the 'query' action
     create_result_measuring_point_start("query", benchmark_globals)
@@ -550,7 +566,6 @@ function run_insert(
         for partition_key = 1:benchmark_number_partitions
             run_insert_helper(
                 benchmark_batch_size,
-                benchmark_core_multiplier,
                 benchmark_transaction_size,
                 bulk_data_partitions[partition_key],
                 connections[partition_key],
@@ -561,34 +576,17 @@ function run_insert(
             )
         end
     else
-        if thread_type_spawn == true
-            @sync for partition_key = 1:benchmark_number_partitions
-                Threads.@spawn run_insert_helper(
-                    benchmark_batch_size,
-                    benchmark_core_multiplier,
-                    benchmark_transaction_size,
-                    bulk_data_partitions[partition_key],
-                    connections[partition_key],
-                    partition_key,
-                    prepared_statements[partition_key],
-                    sql_insert,
-                    trial_number,
-                )
-            end
-        else
-            @threads for partition_key = 1:benchmark_number_partitions
-                run_insert_helper(
-                    benchmark_batch_size,
-                    benchmark_core_multiplier,
-                    benchmark_transaction_size,
-                    bulk_data_partitions[partition_key],
-                    connections[partition_key],
-                    partition_key,
-                    prepared_statements[partition_key],
-                    sql_insert,
-                    trial_number,
-                )
-            end
+        @threads for partition_key = 1:benchmark_number_partitions
+            run_insert_helper(
+                benchmark_batch_size,
+                benchmark_transaction_size,
+                bulk_data_partitions[partition_key],
+                connections[partition_key],
+                partition_key,
+                prepared_statements[partition_key],
+                sql_insert,
+                trial_number,
+            )
         end
     end
 
@@ -603,7 +601,7 @@ function run_insert(
         sql_insert,
     )
 
-    @debug "End   $(function_name) - trial_number=$(trial_number)"
+    @debug "\nEnd   $(function_name) - trial_number=$(trial_number)"
     nothing
 end
 
@@ -612,18 +610,17 @@ end
 # ----------------------------------------------------------------------------------
 
 function run_insert_helper(
-    benchmark_batch_size::Int64, 
-    benchmark_core_multiplier::Int64, 
-    benchmark_transaction_size::Int64, 
-    bulk_data_partition::DataFrames.DataFrame, 
-    connection::JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}, 
-    partition_key::Int64, 
-    prepared_statement::JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}, 
-    sql_insert::String, 
-    trial_number::Int64, 
+    benchmark_batch_size::Int64,
+    benchmark_transaction_size::Int64,
+    bulk_data_partition::DataFrames.DataFrame,
+    connection::JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")},
+    partition_key::Int64,
+    prepared_statement::JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")},
+    sql_insert::String,
+    trial_number::Int64,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
+    @debug "\nStart $(function_name)"
 
     #=
       IF trial_no == 1
@@ -631,7 +628,7 @@ function run_insert_helper(
       ENDIF   
     =#
     if trial_number == 1
-        println("Start insert partition_key=$(partition_key)")
+        println("Start insert partition_key=$(partition_key) - thread id=$(threadid())")
     end
 
     #=
@@ -639,16 +636,16 @@ function run_insert_helper(
       collection batch_collection = empty
       WHILE iterating through the collection bulk_data_partition
             count + 1
-              
+
             add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection 
-              
+
             IF config_param 'benchmark.batch.size' > 0
                IF count modulo config param 'benchmark.batch.size' == 0 
                   execute the SQL statements in the collection batch_collection
                   batch_collection = empty
                ENDIF                    
             ENDIF                
-              
+
             IF  config param 'benchmark.transaction.size' > 0 
             AND count modulo config param 'benchmark.transaction.size' == 0
                 commit
@@ -659,28 +656,28 @@ function run_insert_helper(
     count = 0
 
     for bulk_data_row in eachrow(bulk_data_partition)
-        JDBC.setString(prepared_statement, 1, bulk_data_row.key);
-        JDBC.setString(prepared_statement, 2, bulk_data_row.data);
+        JDBC.setString(prepared_statement, 1, bulk_data_row.key)
+        JDBC.setString(prepared_statement, 2, bulk_data_row.data)
 
         count += 1
 
         JDBC.executeUpdate(prepared_statement)
-#         if benchmark_batch_size >= 0
-#             JDBC.executeUpdate(prepared_statement)
-#         else
-#             JDBC.addBatch(prepared_statement)
-#             if benchmark_batch_size > 0 && mod(count, benchmark_batch_size) == 0
-#                 @debug "      $(function_name) - partition_key=$(partition_key) - before bulk"
-#                 JDBC.executeBatch()
-#                 @debug "      $(function_name) - partition_key=$(partition_key) - after  bulk"
-#             end
-#         end
+        #         if benchmark_batch_size >= 0
+        #             JDBC.executeUpdate(prepared_statement)
+        #         else
+        #             JDBC.addBatch(prepared_statement)
+        #             if benchmark_batch_size > 0 && mod(count, benchmark_batch_size) == 0
+        #                 @debug "\n      $(function_name) - partition_key=$(partition_key) - before bulk"
+        #                 JDBC.executeBatch()
+        #                 @debug "\n      $(function_name) - partition_key=$(partition_key) - after  bulk"
+        #             end
+        #         end
 
         if benchmark_transaction_size > 0
             if mod(count, benchmark_transaction_size) == 0
-                @debug "      $(function_name) - partition_key=$(partition_key) - before commit"
+                @debug "\n      $(function_name) - partition_key=$(partition_key) - before commit"
                 JDBC.commit(connection)
-                @debug "      $(function_name) - partition_key=$(partition_key) - after  commit"
+                @debug "\n      $(function_name) - partition_key=$(partition_key) - after  commit"
             end
         end
     end
@@ -690,16 +687,16 @@ function run_insert_helper(
          execute the SQL statements in the collection batch_collection
       ENDIF
     =#
-#     if benchmark_batch_size > 0 && mod(count, benchmark_batch_size) > 0
-#         @debug "      $(function_name) - partition_key=$(partition_key) - before bulk final"
-#         JDBC.executeBatch()
-#         @debug "      $(function_name) - partition_key=$(partition_key) - after  bulk final"
-#     end
+    #     if benchmark_batch_size > 0 && mod(count, benchmark_batch_size) > 0
+    #         @debug "\n      $(function_name) - partition_key=$(partition_key) - before bulk final"
+    #         JDBC.executeBatch()
+    #         @debug "\n      $(function_name) - partition_key=$(partition_key) - after  bulk final"
+    #     end
 
     # commit
-    @debug "      $(function_name) - partition_key=$(partition_key) - before commit - final"
+    @debug "\n      $(function_name) - partition_key=$(partition_key) - before commit - final"
     JDBC.commit(connection)
-    @debug "      $(function_name) - partition_key=$(partition_key) - after  commit - final"
+    @debug "\n      $(function_name) - partition_key=$(partition_key) - after  commit - final"
 
     #=
       IF trial_no == 1
@@ -707,10 +704,10 @@ function run_insert_helper(
       ENDIF   
     =#
     if trial_number == 1
-        println("End   insert partition_key=$(partition_key)")
+        println("End   insert partition_key=$(partition_key) - thread id=$(threadid())")
     end
 
-    @debug "End   $(function_name)"
+    @debug "\nEnd   $(function_name)"
     nothing
 end
 
@@ -719,18 +716,18 @@ end
 # ----------------------------------------------------------------------------------
 
 function run_select(
-    benchmark_core_multiplier::Int64, 
-    benchmark_globals::Vector{Any}, 
-    benchmark_number_partitions::Int64, 
-    bulk_data_partitions::Dict{Int64,DataFrames.DataFrame}, 
-    config::Dict{String,Any}, 
-    result_file::IOStream, 
-    sql_select::String, 
-    statements::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}}, 
-    trial_number::Int64, 
+    benchmark_core_multiplier::Int64,
+    benchmark_globals::Vector{Any},
+    benchmark_number_partitions::Int64,
+    bulk_data_partitions::Dict{Int64,DataFrames.DataFrame},
+    config::Dict{String,Any},
+    result_file::IOStream,
+    sql_select::String,
+    statements::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}},
+    trial_number::Int64,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name) - trial_number=$(trial_number)"
+    @debug "\nStart $(function_name) - trial_number=$(trial_number)"
 
     # save the current time as the start time of the 'query' action
     create_result_measuring_point_start("query", benchmark_globals)
@@ -752,7 +749,6 @@ function run_select(
     if benchmark_core_multiplier == 0
         for partition_key = 1:benchmark_number_partitions
             run_select_helper(
-                benchmark_core_multiplier,
                 size(bulk_data_partitions[partition_key], 1),
                 partition_key,
                 sql_select,
@@ -761,28 +757,14 @@ function run_select(
             )
         end
     else
-        if thread_type_spawn == true
-            @sync for partition_key = 1:benchmark_number_partitions
-                Threads.@spawn run_select_helper(
-                    benchmark_core_multiplier,
-                    size(bulk_data_partitions[partition_key], 1),
-                    partition_key,
-                    sql_select,
-                    statements[partition_key],
-                    trial_number,
-                )
-            end
-        else
-            @threads for partition_key = 1:benchmark_number_partitions
-                run_select_helper(
-                    benchmark_core_multiplier,
-                    size(bulk_data_partitions[partition_key], 1),
-                    partition_key,
-                    sql_select,
-                    statements[partition_key],
-                    trial_number,
+        @threads for partition_key = 1:benchmark_number_partitions
+            run_select_helper(
+                size(bulk_data_partitions[partition_key], 1),
+                partition_key,
+                sql_select,
+                statements[partition_key],
+                trial_number,
             )
-            end
         end
     end
 
@@ -797,7 +779,7 @@ function run_select(
         sql_select,
     )
 
-    @debug "End   $(function_name) - trial_number=$(trial_number)"
+    @debug "\nEnd   $(function_name) - trial_number=$(trial_number)"
     nothing
 end
 
@@ -806,15 +788,14 @@ end
 # ----------------------------------------------------------------------------------
 
 function run_select_helper(
-    benchmark_core_multiplier::Int64, 
-    count_expected::Int64, 
-    partition_key::Int64, 
-    sql_select::String, 
-    statement::JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}, 
-    trial_number::Int64, 
+    count_expected::Int64,
+    partition_key::Int64,
+    sql_select::String,
+    statement::JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")},
+    trial_number::Int64,
 )
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name)"
+    @debug "\nStart $(function_name)"
 
     #=
       IF trial_no == 1
@@ -822,7 +803,7 @@ function run_select_helper(
       ENDIF   
     =#
     if trial_number == 1
-        println("Start select partition_key=$(partition_key)")
+        println("Start select partition_key=$(partition_key) - thread id=$(threadid())")
     end
 
     # execute the SQL statement in config param 'sql.select'
@@ -839,9 +820,9 @@ function run_select_helper(
     =#
     count = 0
 
-        for _ in result_set
-            count += 1
-        end
+    for _ in result_set
+        count += 1
+    end
 
     #=
       IF NOT count = size(bulk_data_partition)
@@ -849,7 +830,7 @@ function run_select_helper(
       ENDIF                    
     =#
     if count != count_expected
-        @error "Partition $(partition_key - 1) number rows: expected=$(count_expected) - found=$(count)"
+        @error "\nPartition $(partition_key - 1) number rows: expected=$(count_expected) - found=$(count)"
         throw(ErrorException)
     end
 
@@ -859,10 +840,10 @@ function run_select_helper(
       ENDIF   
     =#
     if trial_number == 1
-        println("End   select partition_key=$(partition_key)")
+        println("End   select partition_key=$(partition_key) - thread id=$(threadid())")
     end
 
-    @debug "End   $(function_name)"
+    @debug "\nEnd   $(function_name)"
     nothing
 end
 
@@ -871,18 +852,21 @@ end
 # ----------------------------------------------------------------------------------
 
 function run_trial(
-    benchmark_globals::Vector{Any}, 
-    bulk_data_partitions::Dict{Int64,DataFrames.DataFrame}, 
-    config::Dict{String,Any}, 
-    connections::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}}, 
-    prepared_statements::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")}}, 
-    result_file::IOStream, 
-    sql_insert::String, 
-    statements::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}}, 
-    trial_number::Int64, 
+    benchmark_globals::Vector{Any},
+    bulk_data_partitions::Dict{Int64,DataFrames.DataFrame},
+    config::Dict{String,Any},
+    connections::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Connection")}},
+    prepared_statements::Dict{
+        Int64,
+        JDBC.JavaCall.JavaObject{Symbol("java.sql.PreparedStatement")},
+    },
+    result_file::IOStream,
+    sql_insert::String,
+    statements::Dict{Int64,JDBC.JavaCall.JavaObject{Symbol("java.sql.Statement")}},
+    trial_number::Int64,
 )::Int64
     function_name = string(StackTraces.stacktrace()[1].func)
-    @debug "Start $(function_name) - trial_number=$(trial_number)"
+    @debug "\nStart $(function_name) - trial_number=$(trial_number)"
 
     # save the current time as the start time of the 'trial' action
     create_result_measuring_point_start("trial", benchmark_globals)
@@ -902,11 +886,11 @@ function run_trial(
 
     try
         JDBC.executeUpdate(statements[1], sql_create)
-        @debug "last DDL statement=$(sql_create)"
+        @debug "\nlast DDL statement=$(sql_create)"
     catch
         JDBC.executeUpdate(statements[1], sql_drop)
         JDBC.executeUpdate(statements[1], sql_create)
-        @debug "last DDL statement after DROP=$(sql_create)"
+        @debug "\nlast DDL statement after DROP=$(sql_create)"
     end
 
     #=
@@ -916,9 +900,9 @@ function run_trial(
     =#
     benchmark_batch_size = parse(Int64, config["DEFAULT"]["benchmark_batch_size"])
     benchmark_core_multiplier = parse(Int64, config["DEFAULT"]["benchmark_core_multiplier"])
-    benchmark_number_partitions = 
+    benchmark_number_partitions =
         parse(Int64, config["DEFAULT"]["benchmark_number_partitions"])
-    benchmark_transaction_size = 
+    benchmark_transaction_size =
         parse(Int64, config["DEFAULT"]["benchmark_transaction_size"])
 
     run_insert(
@@ -957,7 +941,7 @@ function run_trial(
 
     # drop the database table (config param 'sql.drop')
     JDBC.executeUpdate(statements[1], sql_drop)
-    @debug "last DDL statement=$(sql_drop)"
+    @debug "\nlast DDL statement=$(sql_drop)"
 
     # WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
     duration_ns = create_result_measuring_point_end(
@@ -968,9 +952,9 @@ function run_trial(
         trial_number,
     )
 
-    @debug "End   $(function_name) - trial_number=$(trial_number)"
+    @debug "\nEnd   $(function_name) - trial_number=$(trial_number)"
 
-    return duration_ns
+    duration_ns
 end
 
 

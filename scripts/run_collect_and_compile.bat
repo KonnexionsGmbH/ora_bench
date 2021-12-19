@@ -1,10 +1,10 @@
 @echo off
 
-rem --------------------------------------------------------------------------------
+rem ---------------------------------------------------------------------------------
 rem
 rem collect_and_compile.bat: Collect libraries and compile. 
 rem
-rem --------------------------------------------------------------------------------
+rem ---------------------------------------------------------------------------------
 
 setlocal EnableDelayedExpansion
 
@@ -12,14 +12,14 @@ if ["%ORA_BENCH_BENCHMARK_VCVARSALL%"] EQU [""] (
     set "ORA_BENCH_BENCHMARK_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
 )
 
-echo ===============================================================================
+echo ================================================================================
 echo Start %0
-echo -------------------------------------------------------------------------------
+echo --------------------------------------------------------------------------------
 echo ora_bench - Oracle benchmark - collect libraries and compile.
-echo -------------------------------------------------------------------------------
+echo --------------------------------------------------------------------------------
 echo BENCHMARK_VCVARSALL               : %ORA_BENCH_BENCHMARK_VCVARSALL%
 echo BULKFILE_EXISTING                 : %ORA_BENCH_BULKFILE_EXISTING%
-echo -------------------------------------------------------------------------------
+echo --------------------------------------------------------------------------------
 echo RUN_CX_ORACLE_PYTHON              : %ORA_BENCH_RUN_CX_ORACLE_PYTHON%
 echo RUN_GODROR_GO                     : %ORA_BENCH_RUN_GODROR_GO%
 echo RUN_JDBC_JAVA                     : %ORA_BENCH_RUN_JDBC_JAVA%
@@ -31,13 +31,13 @@ echo RUN_ORACLE_JULIA                  : %ORA_BENCH_RUN_ORACLE_JULIA%
 echo RUN_ORACLE_RUST                   : %ORA_BENCH_RUN_ORACLE_RUST%
 echo RUN_ORANIF_ELIXIR                 : %ORA_BENCH_RUN_ORANIF_ELIXIR%
 echo RUN_ORANIF_ERLANG                 : %ORA_BENCH_RUN_ORANIF_ERLANG%
-echo -------------------------------------------------------------------------------
+echo --------------------------------------------------------------------------------
 echo GOROOT                            : %GOROOT%
 echo GRADLE_HOME                       : %GRADLE_HOME%
 echo LD_LIBRARY_PATH                   : %LD_LIBRARY_PATH%
-echo -------------------------------------------------------------------------------
+echo --------------------------------------------------------------------------------
 echo:| TIME
-echo ===============================================================================
+echo ================================================================================
 
 echo --------------------------------------------------------------------------------
 echo Set environment variables for C / C++ compilation.
@@ -194,14 +194,14 @@ if ["%ORA_BENCH_RUN_ORACLE_JULIA%"] == ["true"] (
 )
 
 if ["%ORA_BENCH_RUN_JULIA%"] == ["true"] (
-    echo Setup Julia - Start =============================================================
+    echo Setup Julia - Start ============================================================
     java -jar priv/libs/ora_bench_java.jar setup_toml
     if %ERRORLEVEL% neq 0 (
         echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_toml' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
-    echo Setup Julia - End   =============================================================
+    echo Setup Julia - End   ============================================================
 )
 
 if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] == ["true"] (
@@ -252,14 +252,14 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] == ["true"] (
         exit -1073741510
     )
     
-    echo ============================================================================== Version Python:
+    echo ================================================================================ Version Python:
     echo.
     python --version
     echo.
     python -m pip --version
     python -m pip freeze | findstr /i "cx-oracle pyyaml"
     echo.
-    echo ==============================================================================
+    echo ================================================================================
     
     python -m compileall lang/python/OraBench.py
     if %ERRORLEVEL% neq 0 (
@@ -293,8 +293,8 @@ if ["%ORA_BENCH_RUN_ORACLE_RUST%"] == ["true"] (
     echo Setup Rust - End   =============================================================
 )
 
-echo -------------------------------------------------------------------------------
+echo --------------------------------------------------------------------------------
 echo:| TIME
-echo -------------------------------------------------------------------------------
+echo --------------------------------------------------------------------------------
 echo End   %0
-echo ===============================================================================
+echo ================================================================================

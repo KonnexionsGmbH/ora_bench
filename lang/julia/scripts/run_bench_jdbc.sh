@@ -64,7 +64,9 @@ if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
 fi
 
 export JULIA_COPY_STACKS=yes
-if ! julia --threads 8 lang/julia/OraBenchJdbc.jl ${ORA_BENCH_FILE_CONFIGURATION_NAME_TOML}; then
+export JULIA_NUM_THREADS=auto
+
+if ! julia lang/julia/OraBenchJdbc.jl ${ORA_BENCH_FILE_CONFIGURATION_NAME_TOML}; then
     exit 255
 fi
 

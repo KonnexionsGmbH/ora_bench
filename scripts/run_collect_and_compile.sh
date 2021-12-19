@@ -8,13 +8,13 @@
 
 set -e
 
-echo "=============================================================================="
+echo "================================================================================="
 echo "Start $0"
-echo "------------------------------------------------------------------------------"
+echo "---------------------------------------------------------------------------------"
 echo "ora_bench - Oracle benchmark - collect libraries and compile."
-echo "------------------------------------------------------------------------------"
+echo "---------------------------------------------------------------------------------"
 echo "BULKFILE_EXISTING                 : $BULKFILE_EXISTING"
-echo "------------------------------------------------------------------------------"
+echo "---------------------------------------------------------------------------------"
 echo "RUN_CX_ORACLE_PYTHON              : ${ORA_BENCH_RUN_CX_ORACLE_PYTHON}"
 echo "RUN_GODROR_GO                     : ${ORA_BENCH_RUN_GODROR_GO}"
 echo "RUN_JDBC_JAVA                     : ${ORA_BENCH_RUN_JDBC_JAVA}"
@@ -26,13 +26,13 @@ echo "RUN_ORACLE_JULIA                  : ${ORA_BENCH_RUN_ORACLE_JULIA}"
 echo "RUN_ORACLE_RUST                   : ${ORA_BENCH_RUN_ORACLE_RUST}"
 echo "RUN_ORANIF_ELIXIR                 : ${ORA_BENCH_RUN_ORANIF_ELIXIR}"
 echo "RUN_ORANIF_ERLANG                 : ${ORA_BENCH_RUN_ORANIF_ERLANG}"
-echo "------------------------------------------------------------------------------"
+echo "---------------------------------------------------------------------------------"
 echo "GOROOT                            : $GOROOT"
 echo "GRADLE_HOME                       : $GRADLE_HOME"
 echo "LD_LIBRARY_PATH                   : $LD_LIBRARY_PATH"
-echo "------------------------------------------------------------------------------"
+echo "---------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
-echo "=============================================================================="
+echo "================================================================================="
 
 if [ "$BULKFILE_EXISTING" != "true" ]; then
     if ! { /bin/bash scripts/run_create_bulk_file.sh; }; then
@@ -41,7 +41,7 @@ if [ "$BULKFILE_EXISTING" != "true" ]; then
 fi
 
 if [ "${ORA_BENCH_RUN_ODPI_C}" == "true" ]; then
-    echo "Setup C++ [gcc] - Start ========================================================"
+    echo "Setup C++ [gcc] - Start ========================================================="
     if [ "$OSTYPE" = "msys" ]; then
         if ! nmake -f lang/c/Makefile.win32 clean; then
             exit 255
@@ -61,11 +61,11 @@ if [ "${ORA_BENCH_RUN_ODPI_C}" == "true" ]; then
     if ! java -jar priv/libs/ora_bench_java.jar setup_c; then
         exit 255
     fi
-    echo "Setup C++ [gcc] - End   ========================================================"
+    echo "Setup C++ [gcc] - End   ========================================================="
 fi
 
 if [ "${ORA_BENCH_RUN_ORANIF_ELIXIR}" == "true" ]; then
-    echo "Setup Elixir - Start ==========================================================="
+    echo "Setup Elixir - Start ============================================================"
     cd lang/elixir || exit 255
 
     if [ -f "mix.lock" ]; then
@@ -105,11 +105,11 @@ if [ "${ORA_BENCH_RUN_ORANIF_ELIXIR}" == "true" ]; then
     if ! java -jar priv/libs/ora_bench_java.jar setup_elixir; then
         exit 255
     fi
-    echo "Setup Elixir - End   ==========================================================="
+    echo "Setup Elixir - End   ============================================================"
 fi
 
 if [ "${ORA_BENCH_RUN_ORANIF_ERLANG}" == "true" ]; then
-    echo "Setup Erlang - Start ==========================================================="
+    echo "Setup Erlang - Start ============================================================"
     cd lang/erlang || exit 255
 
     if [ -d "_build" ]; then
@@ -129,11 +129,11 @@ if [ "${ORA_BENCH_RUN_ORANIF_ERLANG}" == "true" ]; then
     if ! java -jar priv/libs/ora_bench_java.jar setup_erlang; then
         exit 255
     fi
-    echo "Setup Erlang - End   ==========================================================="
+    echo "Setup Erlang - End   ============================================================"
 fi
 
 if [ "${ORA_BENCH_RUN_GODROR_GO}" == "true" ]; then
-    echo "Setup Go - Start ==============================================================="
+    echo "Setup Go - Start ================================================================"
     if ! make -C lang/go; then
         exit 255
     fi
@@ -141,20 +141,20 @@ if [ "${ORA_BENCH_RUN_GODROR_GO}" == "true" ]; then
     if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
         exit 255
     fi
-    echo "Setup Go - End   ==============================================================="
+    echo "Setup Go - End   ================================================================"
 fi
 
 if [ "${ORA_BENCH_RUN_JDBC_JULIA}" == "true" ] ||
    [ "${ORA_BENCH_RUN_ORACLE_JULIA}" == "true" ]; then
-    echo "Setup Julia - Start ============================================================"
+    echo "Setup Julia - Start ============================================================="
     if ! java -jar priv/libs/ora_bench_java.jar setup_toml; then
         exit 255
     fi
-    echo "Setup Julia - End   ============================================================"
+    echo "Setup Julia - End   ============================================================="
 fi
 
 if [ "${ORA_BENCH_RUN_JDBC_KOTLIN}" == "true" ]; then
-    echo "Setup Kotlin - Start ==========================================================="
+    echo "Setup Kotlin - Start ============================================================"
     if ! { ./lang/kotlin/scripts/run_gradle.sh; }; then
         exit 255
     fi
@@ -162,11 +162,11 @@ if [ "${ORA_BENCH_RUN_JDBC_KOTLIN}" == "true" ]; then
     if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
         exit 255
     fi
-    echo "Setup Kotlin - End   ==========================================================="
+    echo "Setup Kotlin - End   ============================================================"
 fi
 
 if [ "${ORA_BENCH_RUN_NIMODPI_NIM}" == "true" ]; then
-    echo "Setup Nim - Start =============================================================="
+    echo "Setup Nim - Start ==============================================================="
     if ! make -C lang/nim; then
         exit 255
     fi
@@ -174,11 +174,11 @@ if [ "${ORA_BENCH_RUN_NIMODPI_NIM}" == "true" ]; then
     if ! java -jar priv/libs/ora_bench_java.jar setup_yaml; then
         exit 255
     fi
-    echo "Setup Nim - End   =============================================================="
+    echo "Setup Nim - End   ==============================================================="
 fi
 
 if [ "${ORA_BENCH_RUN_CX_ORACLE_PYTHON}" == "true" ]; then
-    echo "Setup Python 3 - Start ========================================================="
+    echo "Setup Python 3 - Start =========================================================="
     if ! python3 -m pip install --upgrade pip; then
         exit 255
     fi
@@ -204,11 +204,11 @@ if [ "${ORA_BENCH_RUN_CX_ORACLE_PYTHON}" == "true" ]; then
     if ! java -jar priv/libs/ora_bench_java.jar setup_python; then
         exit 255
     fi
-    echo "Setup Python 3 - End   ========================================================="
+    echo "Setup Python 3 - End   =========================================================="
 fi
 
 if [ "${ORA_BENCH_RUN_ORACLE_RUST}" == "true" ]; then
-    echo "Setup Rust - Start ============================================================="
+    echo "Setup Rust - Start =============================================================="
     if ! make -C lang/rust; then
         exit 255
     fi
@@ -216,12 +216,12 @@ if [ "${ORA_BENCH_RUN_ORACLE_RUST}" == "true" ]; then
     if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
       exit 255
     fi
-    echo "Setup Rust - End   ============================================================="
+    echo "Setup Rust - End   =============================================================="
 fi
 
 echo ""
-echo "------------------------------------------------------------------------------"
+echo "---------------------------------------------------------------------------------"
 date +"DATE TIME : %d.%m.%Y %H:%M:%S"
-echo "------------------------------------------------------------------------------"
+echo "---------------------------------------------------------------------------------"
 echo "End   $0"
-echo "=============================================================================="
+echo "================================================================================="

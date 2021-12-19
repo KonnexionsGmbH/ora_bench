@@ -63,7 +63,10 @@ if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
     fi
 fi
 
-if ! julia --threads 8 lang/julia/OraBenchOracle.jl ${ORA_BENCH_FILE_CONFIGURATION_NAME_TOML}; then
+export JULIA_NUM_THREADS=auto
+export JULIA_NUM_THREADS=2
+
+if ! julia lang/julia/OraBenchOracle.jl ${ORA_BENCH_FILE_CONFIGURATION_NAME_TOML}; then
     exit 255
 fi
 
