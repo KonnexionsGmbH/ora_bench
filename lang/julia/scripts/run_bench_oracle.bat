@@ -68,7 +68,9 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     )
 )
 
-julia --threads 8 lang\julia\OraBenchOracle.jl %ORA_BENCH_FILE_CONFIGURATION_NAME_TOML%
+set JULIA_NUM_THREADS=auto
+
+julia lang\julia\OraBenchOracle.jl %ORA_BENCH_FILE_CONFIGURATION_NAME_TOML%
 if %ERRORLEVEL% neq 0 (
     echo Processing of the script: %0 - step: 'julia OraBenchOracle.jl' was aborted, error code=%ERRORLEVEL%
     exit -1073741510

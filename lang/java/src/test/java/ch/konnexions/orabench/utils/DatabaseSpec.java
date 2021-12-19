@@ -24,16 +24,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class DatabaseSpec {
-    @Test
-    @DisplayName("always the same database connection")
-    public void connect() {
-        Config config = new Config();
+  @Test
+  @DisplayName("always the same database connection")
+  public void connect() {
+    Config     config       = new Config();
 
-        Database database = new Database(config);
+    Database   database     = new Database(config);
 
-        Connection connection_1 = database.connect();
-        Connection connection_2 = database.connect();
+    Connection connection_1 = database.connect();
+    Connection connection_2 = database.connect();
 
-        assertEquals(connection_1, connection_2, () -> "The same database connection should be used.");
-    }
+    assertEquals(connection_1,
+                 connection_2,
+                 () -> "The same database connection should be used.");
+  }
 }

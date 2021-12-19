@@ -4,14 +4,14 @@ set -e
 
 # ------------------------------------------------------------------------------
 #
-# run_ora_bench_release.sh: Release run for VMWare and WSL2.
+# run_bench_release.sh: Release run for VMWare and WSL2.
 #
 # ------------------------------------------------------------------------------
 
 echo ""
 echo "Script $0 is now running"
 
-export LOG_FILE=run_ora_bench_release.log
+export LOG_FILE=run_bench_release.log
 
 echo ""
 echo "You can find the run log in the file $LOG_FILE"
@@ -35,8 +35,8 @@ export ORA_BENCH_CONNECTION_PORT=1521
 export ORA_BENCH_ORACLE_DATABASE_ANY=false
 export ORA_BENCH_ORACLE_DATABASE_18C_XE=false
 export ORA_BENCH_ORACLE_DATABASE_19C=false
-export ORA_BENCH_ORACLE_DATABASE_21C=false
-export ORA_BENCH_ORACLE_DATABASE_21C_XE=true
+export ORA_BENCH_ORACLE_DATABASE_21C=true
+export ORA_BENCH_ORACLE_DATABASE_21C_XE=false
 export ORA_BENCH_ORACLE_DATABASE_EXISTING=false
 
 export ORA_BENCH_FILE_CONFIGURATION_NAME=priv/properties/ora_bench.properties

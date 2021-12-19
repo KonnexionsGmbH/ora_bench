@@ -2,7 +2,7 @@
 
 rem ------------------------------------------------------------------------------
 rem
-rem run_ora_bench_release.bat: Release run for Windows 10.
+rem run_bench_release.bat: Release run for Windows 10.
 rem
 rem ------------------------------------------------------------------------------
 
@@ -17,8 +17,8 @@ set ORA_BENCH_CONNECTION_PORT=1521
 set ORA_BENCH_ORACLE_DATABASE_ANY=false
 set ORA_BENCH_ORACLE_DATABASE_18C_XE=false
 set ORA_BENCH_ORACLE_DATABASE_19C=false
-set ORA_BENCH_ORACLE_DATABASE_21C=false
-set ORA_BENCH_ORACLE_DATABASE_21C_XE=true
+set ORA_BENCH_ORACLE_DATABASE_21C=true
+set ORA_BENCH_ORACLE_DATABASE_21C_XE=false
 set ORA_BENCH_ORACLE_DATABASE_EXISTING=false
 
 set ORA_BENCH_FILE_CONFIGURATION_NAME=priv\properties\ora_bench.properties
@@ -55,12 +55,12 @@ if ["%ORA_BENCH_ORACLE_DATABASE_21_XEC%"] EQU ["true"] (
 echo.
 echo Script %0 is now running
 echo.
-echo You can find the run log in the file run_ora_bench_release.log
+echo You can find the run log in the file run_bench_release.log
 echo.
 echo Please wait ...
 echo.
 
-> run_ora_bench_release.log 2>&1 (
+> run_bench_release.log 2>&1 (
 
     echo ================================================================================
     echo Start %0

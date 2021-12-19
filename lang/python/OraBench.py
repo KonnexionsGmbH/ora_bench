@@ -393,7 +393,7 @@ def main():
     logger.info("Start OraBench.py")
 
     locale.setlocale(locale.LC_ALL,
-                     "de_DE.utf8")
+                     "de_CH.utf8")
 
     run_benchmark(logger)
 
