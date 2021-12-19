@@ -564,6 +564,7 @@ function run_insert(
     =#
     if benchmark_core_multiplier == 0
         for partition_key = 1:benchmark_number_partitions
+            println("singlethreaded threadid=$(threadid())")
             run_insert_helper(
                 benchmark_batch_size,
                 benchmark_transaction_size,
@@ -576,7 +577,8 @@ function run_insert(
             )
         end
     else
-        @threads for partition_key = 1:benchmark_number_partitions
+        @threads for partition_key = 1:benchmark_number_partitions 
+            println("multithreaded threadid=$(threadid())")
             run_insert_helper(
                 benchmark_batch_size,
                 benchmark_transaction_size,
@@ -628,7 +630,7 @@ function run_insert_helper(
       ENDIF   
     =#
     if trial_number == 1
-        println("Start insert partition_key=$(partition_key) - thread id=$(threadid())")
+        println("Start insert partition_key=$(partition_key))")
     end
 
     #=
@@ -704,7 +706,7 @@ function run_insert_helper(
       ENDIF   
     =#
     if trial_number == 1
-        println("End   insert partition_key=$(partition_key) - thread id=$(threadid())")
+        println("End   insert partition_key=$(partition_key))")
     end
 
     @debug "\nEnd   $(function_name)"
@@ -748,6 +750,7 @@ function run_select(
     =#
     if benchmark_core_multiplier == 0
         for partition_key = 1:benchmark_number_partitions
+            println("singlethreaded threadid=$(threadid())")
             run_select_helper(
                 size(bulk_data_partitions[partition_key], 1),
                 partition_key,
@@ -758,6 +761,7 @@ function run_select(
         end
     else
         @threads for partition_key = 1:benchmark_number_partitions
+            println("multithreaded threadid=$(threadid())")
             run_select_helper(
                 size(bulk_data_partitions[partition_key], 1),
                 partition_key,
@@ -803,7 +807,7 @@ function run_select_helper(
       ENDIF   
     =#
     if trial_number == 1
-        println("Start select partition_key=$(partition_key) - thread id=$(threadid())")
+        println("Start select partition_key=$(partition_key))")
     end
 
     # execute the SQL statement in config param 'sql.select'
@@ -840,7 +844,7 @@ function run_select_helper(
       ENDIF   
     =#
     if trial_number == 1
-        println("End   select partition_key=$(partition_key) - thread id=$(threadid())")
+        println("End   select partition_key=$(partition_key))")
     end
 
     @debug "\nEnd   $(function_name)"
