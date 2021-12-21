@@ -10,13 +10,11 @@ class RunSelectHelper(
     logger: Logger,
     isDebug: Boolean,
     statement: Statement,
-    benchmarkCoreMultiplier: Int,
     bulkDataPartition: ArrayList<Array<String>>,
     partitionKey: Int,
     connectionFetchSize: Int,
     sqlSelect: String
 ) : Runnable {
-    private val benchmarkCoreMultiplier: Int
     private val bulkDataPartition: ArrayList<Array<String>>
     private val connectionFetchSize: Int
     private val isDebug: Boolean
@@ -33,7 +31,6 @@ class RunSelectHelper(
             logger.debug("Start")
         }
 
-        this.benchmarkCoreMultiplier = benchmarkCoreMultiplier
         this.bulkDataPartition = bulkDataPartition
         this.connectionFetchSize = connectionFetchSize
         this.isDebug = isDebug
@@ -59,7 +56,6 @@ class RunSelectHelper(
             logger,
             isDebug,
             statement,
-            benchmarkCoreMultiplier,
             bulkDataPartition,
             partitionKey,
             connectionFetchSize,

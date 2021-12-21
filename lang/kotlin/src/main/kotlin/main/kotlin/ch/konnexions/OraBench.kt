@@ -98,18 +98,13 @@ class OraBench {
             isDebug: Boolean,
             connection: Connection,
             preparedStatement: PreparedStatement,
-            benchmarkCoreMultiplier: Int,
             partitionKey: Int,
             bulkDataPartition: ArrayList<Array<String>>,
             benchmarkBatchSize: Int,
             benchmarkTransactionSize: Int
         ) {
             if (isDebug) {
-                logger.debug("Start $partitionKey")
-            }
-
-            if (benchmarkCoreMultiplier > 0) {
-                logger.info("Start fun runInsertHelper(): $partitionKey")
+                logger.debug("Start fun runInsertHelper(): $partitionKey")
             }
 
             /*
@@ -180,12 +175,8 @@ class OraBench {
             // commit
             connection.commit()
 
-            if (benchmarkCoreMultiplier > 0) {
-                logger.info("End   fun runInsertHelper(): $partitionKey")
-            }
-
             if (isDebug) {
-                logger.debug("End   $partitionKey")
+                logger.debug("End   fun runInsertHelper(): $partitionKey")
             }
         }
 
@@ -200,18 +191,13 @@ class OraBench {
             logger: Logger,
             isDebug: Boolean,
             statement: Statement,
-            benchmarkCoreMultiplier: Int,
             bulkDataPartition: ArrayList<Array<String>>,
             partitionKey: Int,
             connectionFetchSize: Int,
             sqlSelect: String
         ) {
             if (isDebug) {
-                logger.debug("Start $partitionKey")
-            }
-
-            if (benchmarkCoreMultiplier > 0) {
-                logger.info("Start fun runSelectHelper(): $partitionKey")
+                logger.debug("Start fun runSelectHelper(): $partitionKey")
             }
 
             var count = 0
@@ -248,12 +234,8 @@ class OraBench {
                 exitProcess(1)
             }
 
-            if (benchmarkCoreMultiplier > 0) {
-                logger.info("End   fun runSelectHelper(): $partitionKey")
-            }
-
             if (isDebug) {
-                logger.debug("End   $partitionKey")
+                logger.debug("End   fun runSelectHelper(): $partitionKey")
             }
         }
     }
@@ -445,7 +427,7 @@ class OraBench {
         }
 
         if (action == "trial") {
-            logger.info("Duration (ms) trial         : " + Precision.round(duration / 1000000.0, 0).toLong())
+            println("Duration (ms) trial         : " + Precision.round(duration / 1000000.0, 0).toLong())
         }
 
         if (isDebug) {
@@ -522,10 +504,10 @@ class OraBench {
 
             bufferedReader.close()
 
-            logger.info("Start Distribution of the data in the partitions")
+            println("Start Distribution of the data in the partitions")
 
             for (i in 0 until benchmarkNumberPartitions) {
-                logger.info(
+                println(
                     "Partition p" + String.format(
                         "%05d",
                         i
@@ -536,7 +518,7 @@ class OraBench {
                 )
             }
 
-            logger.info("End   Distribution of the data in the partitions")
+            println("End   Distribution of the data in the partitions")
         } catch (e: IOException) {
             e.printStackTrace()
             exitProcess(1)
@@ -841,12 +823,12 @@ class OraBench {
         // INFO  Duration (ms) trial min.    : trial_min
         // INFO  Duration (ms) trial max.    : trial_max
         // INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
-        logger.info("Duration (ms) trial min.    : " + Precision.round(minTrialDurationNano / 1000000.0, 0).toLong())
-        logger.info("Duration (ms) trial max.    : " + Precision.round(maxTrialDurationNano / 1000000.0, 0).toLong())
-        logger.info("Duration (ms) trial average : " + Precision.round(sumTrialDurationNano / 1000000.0 / benchmarkTrials, 0).toLong())
+        println("Duration (ms) trial min.    : " + Precision.round(minTrialDurationNano / 1000000.0, 0).toLong())
+        println("Duration (ms) trial max.    : " + Precision.round(maxTrialDurationNano / 1000000.0, 0).toLong())
+        println("Duration (ms) trial average : " + Precision.round(sumTrialDurationNano / 1000000.0 / benchmarkTrials, 0).toLong())
 
         // INFO  Duration (ms) benchmark run : duration_benchmark
-        logger.info("Duration (ms) benchmark run : " + Precision.round(durationBenchmark / 1000000.0, 0).toLong())
+        println("Duration (ms) benchmark run : " + Precision.round(durationBenchmark / 1000000.0, 0).toLong())
 
         if (isDebug) {
             logger.debug("End")
@@ -895,7 +877,6 @@ class OraBench {
                 runInsertHelper(
                     connections[i],
                     preparedStatements[i],
-                    benchmarkCoreMultiplier,
                     i,
                     bulkDataPartitions[i],
                     trialNumber
@@ -907,7 +888,6 @@ class OraBench {
                         isDebug,
                         connections[i],
                         preparedStatements[i],
-                        benchmarkCoreMultiplier,
                         i,
                         bulkDataPartitions[i],
                         benchmarkBatchSize,
@@ -941,7 +921,6 @@ class OraBench {
     private fun runInsertHelper(
         connection: Connection,
         preparedStatement: PreparedStatement,
-        benchmarkCoreMultiplier: Int,
         partitionKey: Int,
         bulkDataPartition: ArrayList<Array<String>>,
         trialNumber: Int
@@ -956,7 +935,7 @@ class OraBench {
         ENDIF
          */
         if (trialNumber == 1) {
-            logger.info("Start insert partitionKey=$partitionKey")
+            println("Start insert partitionKey=$partitionKey")
         }
 
         runInsertHelper(
@@ -964,7 +943,6 @@ class OraBench {
             isDebug,
             connection,
             preparedStatement,
-            benchmarkCoreMultiplier,
             partitionKey,
             bulkDataPartition,
             benchmarkBatchSize,
@@ -977,7 +955,7 @@ class OraBench {
         ENDIF
          */
         if (trialNumber == 1) {
-            logger.info("End   insert partitionKey=$partitionKey")
+            println("End   insert partitionKey=$partitionKey")
         }
 
         if (isDebug) {
@@ -1026,7 +1004,6 @@ class OraBench {
             if (benchmarkCoreMultiplier == 0) {
                 runSelectHelper(
                     statements[i],
-                    benchmarkCoreMultiplier,
                     bulkDataPartitions[i],
                     i,
                     trialNumber
@@ -1037,7 +1014,6 @@ class OraBench {
                         logger,
                         isDebug,
                         statements[i],
-                        benchmarkCoreMultiplier,
                         bulkDataPartitions[i],
                         i,
                         connectionFetchSize,
@@ -1071,7 +1047,6 @@ class OraBench {
      */
     private fun runSelectHelper(
         statement: Statement,
-        benchmarkCoreMultiplier: Int,
         bulkDataPartition: ArrayList<Array<String>>,
         partitionKey: Int,
         trialNumber: Int
@@ -1086,14 +1061,13 @@ class OraBench {
         ENDIF
          */
         if (trialNumber == 1) {
-            logger.info("Start select partitionKey=$partitionKey")
+            println("Start select partitionKey=$partitionKey")
         }
 
         runSelectHelper(
             logger,
             isDebug,
             statement,
-            benchmarkCoreMultiplier,
             bulkDataPartition,
             partitionKey,
             connectionFetchSize,
@@ -1106,7 +1080,7 @@ class OraBench {
         ENDIF
          */
         if (trialNumber == 1) {
-            logger.info("End   select partitionKey=$partitionKey")
+            println("End   select partitionKey=$partitionKey")
         }
 
         if (isDebug) {
@@ -1138,7 +1112,7 @@ class OraBench {
         resultTrialStart()
 
         // INFO  Start trial no. trial_no
-        logger.info("Start trial no. $trialNumber")
+        println("Start trial no. $trialNumber")
 
         /*  
         create the database table (config param 'sql.create')
@@ -1224,14 +1198,14 @@ fun main(args: Array<String>) {
         oraBench.logger.debug("Start")
     }
 
-    oraBench.logger.info("Start OraBench.kt")
+    println("Start OraBench.kt")
 
     val numberArgs: Int = args.size
 
-    oraBench.logger.info("main() - number arguments=$numberArgs")
+    println("main() - number arguments=$numberArgs")
 
     if (numberArgs != 0) {
-        oraBench.logger.info("main() - 1st argument=" + args[0])
+        println("main() - 1st argument=" + args[0])
         oraBench.logger.error("main() - Unknown command line argument(s)")
     }
 
@@ -1240,7 +1214,7 @@ fun main(args: Array<String>) {
 
     oraBench.runBenchmark()
 
-    oraBench.logger.info("End   OraBench.kt")
+    println("End   OraBench.kt")
 
     if (oraBench.isDebug) {
         oraBench.logger.debug("End")

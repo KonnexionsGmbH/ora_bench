@@ -12,14 +12,12 @@ class RunInsertHelper(
     isDebug: Boolean,
     connection: Connection,
     preparedStatement: PreparedStatement,
-    benchmarkCoreMultiplier: Int,
     partitionKey: Int,
     bulkDataPartition: ArrayList<Array<String>>,
     benchmarkSize: Int,
     benchmarkTransactionSize: Int
 ) :
     Runnable {
-    private val benchmarkCoreMultiplier: Int
     private val benchmarkSize: Int
     private val benchmarkTransactionSize: Int
     private val bulkDataPartition: ArrayList<Array<String>>
@@ -37,7 +35,6 @@ class RunInsertHelper(
             logger.debug("Start")
         }
 
-        this.benchmarkCoreMultiplier = benchmarkCoreMultiplier
         this.benchmarkSize = benchmarkSize
         this.benchmarkTransactionSize = benchmarkTransactionSize
         this.bulkDataPartition = bulkDataPartition
@@ -65,7 +62,6 @@ class RunInsertHelper(
             isDebug,
             connection,
             preparedStatement,
-            benchmarkCoreMultiplier,
             partitionKey,
             bulkDataPartition,
             benchmarkSize,
