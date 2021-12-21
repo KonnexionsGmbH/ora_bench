@@ -34,23 +34,23 @@ var resultPos = 0
 func main() {
 	//log.SetLevel(log.DebugLevel)
 
-	log.Info("Start OraBench.go")
+	fmt.Println("Start OraBench.go")
 
 	numberArgs := len(os.Args)
 
-	log.Info(fmt.Sprintf("main() - number arguments=%2d", numberArgs))
+	fmt.Println("main() - number arguments =", numberArgs)
 
 	if numberArgs == 0 {
 		log.Fatal("main() - no command line argument available")
 	}
 
-	log.Info(fmt.Sprintf("main() - 1st argument=%v", os.Args[0]))
+	fmt.Println("main() - 1st argument =", os.Args[0])
 
 	if numberArgs == 1 {
 		log.Fatal("main() - command line argument missing")
 	}
 
-	log.Info(fmt.Sprintf("main() - 2nd argument=%v", os.Args[1]))
+	fmt.Println("main() - 2nd argument =", os.Args[1])
 
 	if numberArgs > 2 {
 		log.Info(fmt.Sprintf("main() - 3rd argument=%v", os.Args[2]))
@@ -59,7 +59,7 @@ func main() {
 
 	runBenchmark()
 
-	log.Info("End   OraBench.go")
+	fmt.Println("End   OraBench.go")
 	os.Exit(0)
 }
 
@@ -87,14 +87,12 @@ func initDb(ctx context.Context, configs map[string]interface{}) {
 	if err != nil {
 		_, err = db.ExecContext(ctx, configs["sql.drop"].(string))
 		if err != nil {
-			log.Info(errors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
-			os.Exit(1)
+			log.Fatal(errors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
 		}
 
 		_, err = db.ExecContext(ctx, configs["sql.create"].(string))
 		if err != nil {
-			log.Info(errors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
-			os.Exit(1)
+			log.Fatal(errors.Errorf("%s -> %w", configs["sql.drop"].(string), err))
 		}
 	}
 
@@ -104,7 +102,7 @@ func initDb(ctx context.Context, configs map[string]interface{}) {
 func loadBulk(benchmarkNumberPartitions int, fileBulkDelimiter string, fileBulkName string) []bulkPartition {
 	log.Debug("Start loadBulk()")
 
-	log.Info("Start Distribution of the data in the partitions")
+	fmt.Println("Start Distribution of the data in the partitions")
 
 	partitions := make([]bulkPartition, benchmarkNumberPartitions)
 
@@ -137,11 +135,11 @@ func loadBulk(benchmarkNumberPartitions int, fileBulkDelimiter string, fileBulkN
 	}
 
 	for i, p := range partitions {
-		log.Printf("Partition %d has %5d rows", i, len(p.keys))
+		fmt.Printf("Partition %2d has %5d rows\n", i, len(p.keys))
 		i += 1
 	}
 
-	log.Info("End   Distribution of the data in the partitions")
+	fmt.Println("End   Distribution of the data in the partitions")
 
 	log.Debug("End   loadBulk()")
 
@@ -357,12 +355,12 @@ func runBenchmark() {
 	// INFO  Duration (ms) trial min.    : trial_min
 	// INFO  Duration (ms) trial max.    : trial_max
 	// INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
-	log.Info("Duration (ms) trial min.    : ", math.Round(float64(trialMin/1000000)))
-	log.Info("Duration (ms) trial max.    : ", math.Round(float64(trialMax/1000000)))
-	log.Info("Duration (ms) trial average : ", math.Round(float64(trialSum/1000000/int64(trials))))
+	fmt.Println("Duration (ms) trial min.    : ", math.Round(float64(trialMin/1000000)))
+	fmt.Println("Duration (ms) trial max.    : ", math.Round(float64(trialMax/1000000)))
+	fmt.Println("Duration (ms) trial average : ", math.Round(float64(trialSum/1000000/int64(trials))))
 
 	// INFO  Duration (ms) benchmark run : duration_benchmark
-	log.Info("Duration (ms) benchmark run : ", math.Round(float64(endBenchTs.Sub(startBenchTs).Nanoseconds()/1000000)))
+	fmt.Println("Duration (ms) benchmark run : ", math.Round(float64(endBenchTs.Sub(startBenchTs).Nanoseconds()/1000000)))
 
 	log.Debug("End   runBenchmark()")
 }
@@ -439,7 +437,7 @@ func runInsertHelper(
 		ENDIF
 	*/
 	if trial == 1 {
-		log.Info("Start insert partition_key=", partition)
+		fmt.Println("Start insert partition_key =", partition)
 	}
 
 	defer wg.Done()
@@ -520,7 +518,7 @@ func runInsertHelper(
 		ENDIF
 	*/
 	if trial == 1 {
-		log.Info("End   insert partition_key=", partition)
+		fmt.Println("End   insert partition_key =", partition)
 	}
 
 	log.Debug("End   runInsertHelper()")
@@ -597,7 +595,7 @@ func runSelectHelper(
 		ENDIF
 	*/
 	if trial == 1 {
-		log.Info("Start select partition_key=", partition)
+		fmt.Println("Start select partition_key =", partition)
 	}
 
 	defer wg.Done()
@@ -648,7 +646,7 @@ func runSelectHelper(
 		ENDIF
 	*/
 	if trial == 1 {
-		log.Info("End   select partition_key=", partition)
+		fmt.Println("End   select partition_key =", partition)
 	}
 
 	log.Debug("End   runSelectHelper()")
@@ -664,7 +662,7 @@ func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, 
 	startTrialTs := time.Now()
 
 	// INFO  Start trial no. trial_no
-	log.Info("Start trial no. ", trialNo)
+	fmt.Println("Start trial no. ", trialNo)
 
 	/*
 	   create the database table (config param 'sql.create')
@@ -703,7 +701,7 @@ func runTrial(ctx context.Context, configs map[string]interface{}, trialNo int, 
 
 	var durationNs = endTrialTs.Sub(startTrialTs).Nanoseconds()
 
-	log.Info("Duration (ms) trial         : ", math.Round(float64(durationNs/1000000)))
+	fmt.Println("Duration (ms) trial         : ", math.Round(float64(durationNs/1000000)))
 
 	log.Debug("End   runTrial()")
 
