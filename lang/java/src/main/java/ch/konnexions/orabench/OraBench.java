@@ -63,20 +63,20 @@ public class OraBench {
       logger.debug("Start");
     }
 
-    logger.info("Start OraBench.java");
+    System.out.println("Start OraBench.java");
 
     int numberArgs = args.length;
 
-    logger.info("main() - number arguments=" + numberArgs);
+    System.out.println("main() - number arguments=" + numberArgs);
 
     if (numberArgs == 0) {
       logger.error("main() - no command line argument available");
     }
 
-    logger.info("main() - 1st argument=" + args[0]);
+    System.out.println("main() - 1st argument=" + args[0]);
 
     if (numberArgs > 1) {
-      logger.info("main() - 2nd argument=" + args[1]);
+      System.out.println("main() - 2nd argument=" + args[1]);
       logger.error("main() - more than one command line argument available");
     }
 
@@ -85,55 +85,55 @@ public class OraBench {
     final Config config = new Config();
 
     if (args[0].equals("finalise")) {
-      logger.info("Start Finalise OraBench Run");
+      System.out.println("Start Finalise OraBench Run");
       new Config().resetNotAvailables();
-      logger.info("End   Finalise OraBench Run");
+      System.out.println("End   Finalise OraBench Run");
     } else if (args[0].equals("runBenchmark")) {
-      logger.info("Start Running OraBench");
+      System.out.println("Start Running OraBench");
       new OraBench().runBenchmark();
-      logger.info("End   Running OraBench");
+      System.out.println("End   Running OraBench");
     } else if (args[0].equals("setup")) {
-      logger.info("Start Setup OraBench Run");
+      System.out.println("Start Setup OraBench Run");
       new Setup(config).createBulkFile();
-      logger.info("End   Setup OraBench Run");
+      System.out.println("End   Setup OraBench Run");
     } else if (args[0].equals("setup_c")) {
-      logger.info("Start Setup ODPI-C OraBench Run");
+      System.out.println("Start Setup ODPI-C OraBench Run");
       config.createConfigurationFileC();
-      logger.info("End   Setup ODPI-C OraBench Run");
+      System.out.println("End   Setup ODPI-C OraBench Run");
     } else if (args[0].equals("setup_default")) {
-      logger.info("Start Setup Properties OraBench Run");
-      logger.info("End   Setup Properties OraBench Run");
+      System.out.println("Start Setup Properties OraBench Run");
+      System.out.println("End   Setup Properties OraBench Run");
     } else if (args[0].equals("setup_elixir")) {
-      logger.info("Start Setup Elixir OraBench Run");
+      System.out.println("Start Setup Elixir OraBench Run");
       new Config();
-      logger.info("End   Setup Elixir OraBench Run");
+      System.out.println("End   Setup Elixir OraBench Run");
     } else if (args[0].equals("setup_erlang")) {
-      logger.info("Start Setup Erlang OraBench Run");
+      System.out.println("Start Setup Erlang OraBench Run");
       config.createConfigurationFileErlang();
-      logger.info("End   Setup Erlang OraBench Run");
+      System.out.println("End   Setup Erlang OraBench Run");
     } else if (args[0].equals("setup_json")) {
-      logger.info("Start Setup JSON OraBench Run");
+      System.out.println("Start Setup JSON OraBench Run");
       config.createConfigurationFileJson();
-      logger.info("End   Setup Erlang OraBench Run");
+      System.out.println("End   Setup Erlang OraBench Run");
     } else if (args[0].equals("setup_python")) {
-      logger.info("Start Setup Python 3 OraBench Run");
+      System.out.println("Start Setup Python 3 OraBench Run");
       config.createConfigurationFilePython();
-      logger.info("End   Setup Python 3 OraBench Run");
+      System.out.println("End   Setup Python 3 OraBench Run");
     } else if (args[0].equals("setup_toml")) {
-      logger.info("Start Setup TOML OraBench Run");
+      System.out.println("Start Setup TOML OraBench Run");
       config.createConfigurationFileToml();
-      logger.info("End   Setup TOML OraBench Run");
+      System.out.println("End   Setup TOML OraBench Run");
     } else if (args[0].equals("setup_yaml")) {
-      logger.info("Start Setup YAML OraBench Run");
+      System.out.println("Start Setup YAML OraBench Run");
       config.createConfigurationFileYaml();
-      logger.info("End   Setup YAML OraBench Run");
+      System.out.println("End   Setup YAML OraBench Run");
     } else if (args[0].contentEquals("")) {
       logger.error("Command line argument missing");
     } else {
       logger.error("Unknown command line argument");
     }
 
-    logger.info("End   OraBench.java");
+    System.out.println("End   OraBench.java");
 
     if (isDebug) {
       logger.debug("End");
@@ -232,15 +232,15 @@ public class OraBench {
 
       bufferedReader.close();
 
-      logger.info("Start Distribution of the data in the partitions");
+      System.out.println("Start Distribution of the data in the partitions");
 
       for (int i = 0; i < numberPartitions; i++) {
-        logger.info("Partition p" + String.format("%05d",
+        System.out.println("Partition p" + String.format("%05d",
                                                   i) + " contains " + String.format("%9d",
                                                                                     bulkDataPartitions.get(i).size()) + " rows");
       }
 
-      logger.info("End   Distribution of the data in the partitions");
+      System.out.println("End   Distribution of the data in the partitions");
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -346,15 +346,15 @@ public class OraBench {
     // INFO Duration (ms) trial max. : trial_max
     // INFO Duration (ms) trial average : trial_sum / config_param
     // 'benchmark.trials'
-    logger.info("Duration (ms) trial min.    : " + (long) Precision.round(minTrialNano / 1000000.0,
+    System.out.println("Duration (ms) trial min.    : " + (long) Precision.round(minTrialNano / 1000000.0,
                                                                           0));
-    logger.info("Duration (ms) trial max.    : " + (long) Precision.round(maxTrialNano / 1000000.0,
+    System.out.println("Duration (ms) trial max.    : " + (long) Precision.round(maxTrialNano / 1000000.0,
                                                                           0));
-    logger.info("Duration (ms) trial average : " + (long) Precision.round(sumTrialNano / 1000000.0 / benchmarkTrials,
+    System.out.println("Duration (ms) trial average : " + (long) Precision.round(sumTrialNano / 1000000.0 / benchmarkTrials,
                                                                           0));
 
     // INFO Duration (ms) benchmark run : duration_benchmark
-    logger.info("Duration (ms) benchmark run : " + (long) Precision.round(durationBenchmark / 1000000.0,
+    System.out.println("Duration (ms) benchmark run : " + (long) Precision.round(durationBenchmark / 1000000.0,
                                                                           0));
 
     if (isDebug) {
@@ -462,7 +462,7 @@ public class OraBench {
      *  ENDIF
      */
     if (trialNumber == 1) {
-      logger.info("Start insert partitionKey=" + partitionKey);
+      System.out.println("Start insert partitionKey=" + partitionKey);
     }
 
     try {
@@ -531,7 +531,7 @@ public class OraBench {
      *  ENDIF
      */
     if (trialNumber == 1) {
-      logger.info("End   insert partitionKey=" + partitionKey);
+      System.out.println("End   insert partitionKey=" + partitionKey);
     }
 
     if (isDebug) {
@@ -627,7 +627,7 @@ public class OraBench {
      *  ENDIF
      */
     if (trialNumber == 1) {
-      logger.info("Start select partitionKey=" + partitionKey);
+      System.out.println("Start select partitionKey=" + partitionKey);
     }
 
     try {
@@ -669,7 +669,7 @@ public class OraBench {
      *  ENDIF
      */
     if (trialNumber == 1) {
-      logger.info("End   select partitionKey=" + partitionKey);
+      System.out.println("End   select partitionKey=" + partitionKey);
     }
 
     if (isDebug) {
@@ -702,7 +702,7 @@ public class OraBench {
     result.startTrial();
 
     // INFO  Start trial no. trial_no
-    logger.info("Start trial no. " + trialNumber);
+    System.out.println("Start trial no. " + trialNumber);
 
     /*
      * create the database table (config param 'sql.create') 

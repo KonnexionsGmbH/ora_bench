@@ -252,7 +252,7 @@ public class Result {
                          LocalDateTime.now(),
                          duration);
 
-    logger.info("Duration (ms) trial         : " + (long) Precision.round(duration / 1000000.0,
+    System.out.println("Duration (ms) trial         : " + (long) Precision.round(duration / 1000000.0,
                                                                           0));
 
     if (isDebug) {

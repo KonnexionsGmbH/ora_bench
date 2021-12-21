@@ -1239,9 +1239,9 @@ public class Config {
 
     }
 
-    logger.info("benchmarkBatchSize      =" + benchmarkBatchSize);
-    logger.info("benchmarkCoreMultiplier =" + benchmarkCoreMultiplier);
-    logger.info("benchmarkTransactionSize=" + benchmarkTransactionSize);
+    System.out.println("benchmarkBatchSize      =" + benchmarkBatchSize);
+    System.out.println("benchmarkCoreMultiplier =" + benchmarkCoreMultiplier);
+    System.out.println("benchmarkTransactionSize=" + benchmarkTransactionSize);
 
     if (isDebug) {
       logger.debug("End");

@@ -127,7 +127,7 @@ public class Setup {
 
       bulkFile.close();
 
-      logger.info("bulk file written: file name=" + config.getFileBulkName() + " size=" + fileBulkSize + " length=" + fileBulkLength);
+      System.out.println("bulk file written: file name=" + config.getFileBulkName() + " size=" + fileBulkSize + " length=" + fileBulkLength);
 
       createResultFile();
 
@@ -171,7 +171,7 @@ public class Setup {
 
         bufferedWriter.close();
 
-        logger.info("missing result file created: file name=" + config.getFileResultName());
+        System.out.println("missing result file created: file name=" + config.getFileResultName());
       }
     } catch (IOException e) {
       logger.error("file result delimiter=: " + resultDelimiter);
