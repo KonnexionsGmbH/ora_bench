@@ -27,7 +27,6 @@ import kotlin.system.exitProcess
 
 class OraBench {
     val logger: Logger = LogManager.getLogger(OraBench::class.java)
-    val isDebug: Boolean = logger.isDebugEnabled
 
     private var benchmarkBatchSize by Delegates.notNull<Int>()
     private lateinit var benchmarkComment: String
@@ -78,6 +77,8 @@ class OraBench {
     private var lastTrial: LocalDateTime? = null
     private var lastTrialNano: Long = 0
 
+    private var noThreads: Int = Runtime.getRuntime().availableProcessors()
+
     private var resultFile: CSVPrinter? = null
 
     private lateinit var sqlCreate: String
@@ -95,16 +96,23 @@ class OraBench {
          */
         fun runInsertHelper(
             logger: Logger,
-            isDebug: Boolean,
             connection: Connection,
             preparedStatement: PreparedStatement,
             partitionKey: Int,
             bulkDataPartition: ArrayList<Array<String>>,
             benchmarkBatchSize: Int,
-            benchmarkTransactionSize: Int
+            benchmarkTransactionSize: Int,
+            trialNumber: Int
         ) {
-            if (isDebug) {
-                logger.debug("Start fun runInsertHelper(): $partitionKey")
+            logger.debug("Start $partitionKey <- companion object - threadId=${Thread.currentThread().name}")
+
+            /*
+            IF trial_no == 1
+               INFO Start insert partition_key=partition_key
+            ENDIF
+             */
+            if (trialNumber == 1) {
+                println("Start insert partitionKey=$partitionKey")
             }
 
             /*
@@ -175,9 +183,16 @@ class OraBench {
             // commit
             connection.commit()
 
-            if (isDebug) {
-                logger.debug("End   fun runInsertHelper(): $partitionKey")
+            /*
+            IF trial_no == 1
+               INFO End   insert partition_key=partition_key
+            ENDIF
+             */
+            if (trialNumber == 1) {
+                println("End   insert partitionKey=$partitionKey")
             }
+
+            logger.debug("End   $partitionKey <- companion object - threadId=${Thread.currentThread().name}")
         }
 
         /**
@@ -189,15 +204,22 @@ class OraBench {
          */
         fun runSelectHelper(
             logger: Logger,
-            isDebug: Boolean,
             statement: Statement,
             bulkDataPartition: ArrayList<Array<String>>,
             partitionKey: Int,
             connectionFetchSize: Int,
-            sqlSelect: String
+            sqlSelect: String,
+            trialNumber: Int
         ) {
-            if (isDebug) {
-                logger.debug("Start fun runSelectHelper(): $partitionKey")
+            logger.debug("Start $partitionKey <- companion object - threadId=${Thread.currentThread().name}")
+
+            /*
+            IF trial_no == 1
+               INFO Start select partition_key=partition_key
+            ENDIF
+             */
+            if (trialNumber == 1) {
+                println("Start select partitionKey=$partitionKey")
             }
 
             var count = 0
@@ -234,9 +256,16 @@ class OraBench {
                 exitProcess(1)
             }
 
-            if (isDebug) {
-                logger.debug("End   fun runSelectHelper(): $partitionKey")
+            /*
+            IF trial_no == 1
+               INFO End   select partition_key=partition_key
+            ENDIF
+             */
+            if (trialNumber == 1) {
+                println("End   select partitionKey=$partitionKey")
             }
+
+            logger.debug("End   $partitionKey <- companion object - threadId=${Thread.currentThread().name}")
         }
     }
 
@@ -246,9 +275,7 @@ class OraBench {
      * @return the database connection
      */
     private fun connect(): Connection? {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         val url = "jdbc:oracle:thin:@//$connectionHost:$connectionPort/$connectionService?oracle.net.disableOob=true"
 
@@ -273,9 +300,7 @@ class OraBench {
             }
         }
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
 
         return connection
     }
@@ -288,9 +313,7 @@ class OraBench {
      *         Connection, PreparedStatement and Statement
      */
     private fun createDatabaseObjects(): ArrayList<Any> {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         val connections: ArrayList<Connection> =
             ArrayList(benchmarkNumberPartitions)
@@ -324,9 +347,7 @@ class OraBench {
             }
         }
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
 
         return ArrayList(
             listOf<ArrayList<out Any>>(
@@ -343,9 +364,7 @@ class OraBench {
         endDateTime: LocalDateTime,
         duration: Long
     ) {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         createMeasuringPoint(
             "trial",
@@ -356,15 +375,11 @@ class OraBench {
             duration
         )
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
     }
 
     private fun createMeasuringPoint(endDateTime: LocalDateTime, duration: Long) {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         createMeasuringPoint(
             "benchmark",
@@ -375,9 +390,7 @@ class OraBench {
             duration
         )
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
     }
 
     private fun createMeasuringPoint(
@@ -388,9 +401,7 @@ class OraBench {
         endDateTime: LocalDateTime,
         duration: Long
     ) {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         try {
             resultFile!!.printRecord(
@@ -430,15 +441,11 @@ class OraBench {
             println("Duration (ms) trial         : " + Precision.round(duration / 1000000.0, 0).toLong())
         }
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
     }
 
     private fun executorServiceShutdown() {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         if (benchmarkCoreMultiplier > 0) {
             executorService!!.shutdown()
@@ -457,9 +464,7 @@ class OraBench {
             }
         }
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
     }
 
     /**
@@ -468,9 +473,7 @@ class OraBench {
      * @return the bulk data partitioned
      */
     private fun getBulkDataPartitions(): ArrayList<ArrayList<Array<String>>> {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         val bulkDataPartitions: ArrayList<ArrayList<Array<String>>> =
             ArrayList(benchmarkNumberPartitions)
@@ -524,17 +527,13 @@ class OraBench {
             exitProcess(1)
         }
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
 
         return bulkDataPartitions
     }
 
     fun getConfig() {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         FileInputStream(fileConfigurationName).use { config.load(it) }
 
@@ -575,18 +574,14 @@ class OraBench {
         sqlInsert = config.getProperty("sql.insert")
         sqlSelect = config.getProperty("sql.select")
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
     }
 
     /**
      * End of the whole benchmark run.
      */
     private fun resultBenchmarkEnd(): Long {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         val endDateTime: LocalDateTime = LocalDateTime.now()
         val duration: Long = System.nanoTime() - lastBenchmarkNano
@@ -606,17 +601,13 @@ class OraBench {
             exitProcess(1)
         }
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
 
         return duration
     }
 
     private fun resultBenchmarkStart() {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         val resultDelimiter = fileResultDelimiter
         val resultName = fileResultName
@@ -640,9 +631,7 @@ class OraBench {
             exitProcess(1)
         }
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
     }
 
     /**
@@ -652,9 +641,7 @@ class OraBench {
      * @param sqlStatement the SQL statement to be applied
      */
     private fun resultQueryEnd(trialNo: Int, sqlStatement: String?) {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         val endDateTime = LocalDateTime.now()
         val duration = System.nanoTime() - lastQueryNano
@@ -668,25 +655,19 @@ class OraBench {
             duration
         )
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
     }
 
     /**
      * Start a new query.
      */
     private fun resultQueryStart() {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         lastQuery = LocalDateTime.now()
         lastQueryNano = System.nanoTime()
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
     }
 
     /**
@@ -695,9 +676,7 @@ class OraBench {
      * @param trialNo the current trial number
      */
     private fun resultTrialEnd(trialNo: Int): Long {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         val duration: Long = System.nanoTime() - lastTrialNano
 
@@ -708,9 +687,7 @@ class OraBench {
             duration
         )
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
 
         return duration
     }
@@ -719,28 +696,26 @@ class OraBench {
      * Start a new trial.
      */
     private fun resultTrialStart() {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         lastTrial = LocalDateTime.now()
         lastTrialNano = System.nanoTime()
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
     }
 
     /**
      * Performing a complete benchmark run that can consist of several trial runs.
      */
     fun runBenchmark() {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         // save the current time as the start time of the 'benchmark' action
         resultBenchmarkStart()
+
+        if (benchmarkCoreMultiplier > 0) {
+            println("Available threads=$noThreads")
+        }
 
         // READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
         val bulkDataPartitions: ArrayList<ArrayList<Array<String>>> = getBulkDataPartitions()
@@ -830,9 +805,7 @@ class OraBench {
         // INFO  Duration (ms) benchmark run : duration_benchmark
         println("Duration (ms) benchmark run : " + Precision.round(durationBenchmark / 1000000.0, 0).toLong())
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
     }
 
     /**
@@ -849,9 +822,7 @@ class OraBench {
         trialNumber: Int,
         bulkDataPartitions: ArrayList<ArrayList<Array<String>>>
     ) {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         // save the current time as the start time of the 'query' action
         resultQueryStart()
@@ -869,7 +840,7 @@ class OraBench {
         ENDWHILE
         */
         if (benchmarkCoreMultiplier > 0) {
-            executorService = Executors.newFixedThreadPool(benchmarkNumberPartitions)
+            executorService = Executors.newFixedThreadPool(noThreads)
         }
 
         for (i in 0 until benchmarkNumberPartitions) {
@@ -885,13 +856,13 @@ class OraBench {
                 executorService?.execute(
                     RunInsertHelper(
                         logger,
-                        isDebug,
                         connections[i],
                         preparedStatements[i],
                         i,
                         bulkDataPartitions[i],
                         benchmarkBatchSize,
-                        benchmarkTransactionSize
+                        benchmarkTransactionSize,
+                        trialNumber
                     )
                 )
             }
@@ -905,9 +876,7 @@ class OraBench {
             sqlInsert
         )
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
     }
 
     /**
@@ -925,9 +894,7 @@ class OraBench {
         bulkDataPartition: ArrayList<Array<String>>,
         trialNumber: Int
     ) {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start - threadId=${Thread.currentThread().name}")
 
         /*
         IF trial_no == 1
@@ -940,13 +907,13 @@ class OraBench {
 
         runInsertHelper(
             logger,
-            isDebug,
             connection,
             preparedStatement,
             partitionKey,
             bulkDataPartition,
             benchmarkBatchSize,
-            benchmarkTransactionSize
+            benchmarkTransactionSize,
+            trialNumber
         )
 
         /*
@@ -958,9 +925,7 @@ class OraBench {
             println("End   insert partitionKey=$partitionKey")
         }
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End   - threadId=${Thread.currentThread().name}")
     }
 
     /**
@@ -975,9 +940,7 @@ class OraBench {
         trialNumber: Int,
         bulkDataPartitions: ArrayList<ArrayList<Array<String>>>
     ) {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         // save the current time as the start time of the 'query' action
         resultQueryStart()
@@ -997,7 +960,7 @@ class OraBench {
         ENDWHILE
         */
         if (benchmarkCoreMultiplier > 0) {
-            executorService = Executors.newFixedThreadPool(benchmarkNumberPartitions)
+            executorService = Executors.newFixedThreadPool(noThreads)
         }
 
         for (i in 0 until benchmarkNumberPartitions) {
@@ -1012,12 +975,12 @@ class OraBench {
                 executorService?.execute(
                     RunSelectHelper(
                         logger,
-                        isDebug,
                         statements[i],
                         bulkDataPartitions[i],
                         i,
                         connectionFetchSize,
-                        sqlSelect
+                        sqlSelect,
+                        trialNumber
                     )
                 )
             }
@@ -1031,9 +994,7 @@ class OraBench {
             sqlSelect
         )
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
     }
 
     /**
@@ -1051,9 +1012,7 @@ class OraBench {
         partitionKey: Int,
         trialNumber: Int
     ) {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start - threadId=${Thread.currentThread().name}")
 
         /*
         IF trial_no == 1
@@ -1066,12 +1025,12 @@ class OraBench {
 
         runSelectHelper(
             logger,
-            isDebug,
             statement,
             bulkDataPartition,
             partitionKey,
             connectionFetchSize,
-            sqlSelect
+            sqlSelect,
+            trialNumber
         )
 
         /*
@@ -1083,9 +1042,7 @@ class OraBench {
             println("End   select partitionKey=$partitionKey")
         }
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End   - threadId=${Thread.currentThread().name}")
     }
 
     /**
@@ -1104,9 +1061,7 @@ class OraBench {
         trialNumber: Int,
         bulkDataPartitions: ArrayList<ArrayList<Array<String>>>
     ): Long {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start")
 
         // save the current time as the start time of the 'trial' action
         resultTrialStart()
@@ -1124,16 +1079,12 @@ class OraBench {
         try {
             statements[0].executeUpdate(sqlCreate)
 
-            if (isDebug) {
-                logger.debug("last DDL statement=$sqlCreate")
-            }
+            logger.debug("last DDL statement=$sqlCreate")
         } catch (es1: SQLException) {
             try {
                 statements[0].executeUpdate(sqlDrop)
                 statements[0].executeUpdate(sqlCreate)
-                if (isDebug) {
-                    logger.debug("last DDL statement after DROP=$sqlCreate")
-                }
+                logger.debug("last DDL statement after DROP=$sqlCreate")
             } catch (es2: SQLException) {
                 es2.printStackTrace()
                 exitProcess(1)
@@ -1167,9 +1118,7 @@ class OraBench {
         try {
             statements[0].executeUpdate(sqlDrop)
 
-            if (isDebug) {
-                logger.debug("last DDL statement=$sqlDrop")
-            }
+            logger.debug("last DDL statement=$sqlDrop")
         } catch (es: SQLException) {
             es.printStackTrace()
             exitProcess(1)
@@ -1178,9 +1127,7 @@ class OraBench {
         // WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
         val duration: Long = resultTrialEnd(trialNumber)
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End")
 
         return duration
     }
@@ -1194,9 +1141,7 @@ class OraBench {
 fun main(args: Array<String>) {
     val oraBench = OraBench()
 
-    if (oraBench.isDebug) {
-        oraBench.logger.debug("Start")
-    }
+    oraBench.logger.debug("Start")
 
     println("Start OraBench.kt")
 
@@ -1216,9 +1161,7 @@ fun main(args: Array<String>) {
 
     println("End   OraBench.kt")
 
-    if (oraBench.isDebug) {
-        oraBench.logger.debug("End")
-    }
+    oraBench.logger.debug("End")
 
     exitProcess(0)
 }

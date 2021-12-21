@@ -8,62 +8,54 @@ import java.sql.Statement
  */
 class RunSelectHelper(
     logger: Logger,
-    isDebug: Boolean,
     statement: Statement,
     bulkDataPartition: ArrayList<Array<String>>,
     partitionKey: Int,
     connectionFetchSize: Int,
-    sqlSelect: String
+    sqlSelect: String,
+    trialNumber: Int
 ) : Runnable {
     private val bulkDataPartition: ArrayList<Array<String>>
     private val connectionFetchSize: Int
-    private val isDebug: Boolean
     private val logger: Logger
     private val partitionKey: Int
     private val sqlSelect: String
     private val statement: Statement
+    private val trialNumber: Int
 
     /**
      * Instantiates a new Select class.
      */
     init {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start <- init <- RunSelectHelper")
 
         this.bulkDataPartition = bulkDataPartition
         this.connectionFetchSize = connectionFetchSize
-        this.isDebug = isDebug
         this.logger = logger
         this.partitionKey = partitionKey
         this.sqlSelect = sqlSelect
         this.statement = statement
+        this.trialNumber = trialNumber
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End   <- init <- RunSelectHelper")
     }
 
     /**
      * Runs the thread implementer.
      */
     override fun run() {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start <- run <- RunSelectHelper")
 
         OraBench.runSelectHelper(
             logger,
-            isDebug,
             statement,
             bulkDataPartition,
             partitionKey,
             connectionFetchSize,
-            sqlSelect
+            sqlSelect,
+            trialNumber
         )
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End   <- run <- RunSelectHelper")
     }
 }

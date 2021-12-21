@@ -9,67 +9,59 @@ import java.sql.PreparedStatement
  */
 class RunInsertHelper(
     logger: Logger,
-    isDebug: Boolean,
     connection: Connection,
     preparedStatement: PreparedStatement,
     partitionKey: Int,
     bulkDataPartition: ArrayList<Array<String>>,
     benchmarkSize: Int,
-    benchmarkTransactionSize: Int
+    benchmarkTransactionSize: Int,
+    trialNumber: Int
 ) :
     Runnable {
     private val benchmarkSize: Int
     private val benchmarkTransactionSize: Int
     private val bulkDataPartition: ArrayList<Array<String>>
     private val connection: Connection
-    private val isDebug: Boolean
     private val logger: Logger
     private val partitionKey: Int
     private val preparedStatement: PreparedStatement
+    private val trialNumber: Int
 
     /**
      * Instantiates a new Insert class.
      */
     init {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start <- init <- RunInsertHelper")
 
         this.benchmarkSize = benchmarkSize
         this.benchmarkTransactionSize = benchmarkTransactionSize
         this.bulkDataPartition = bulkDataPartition
         this.connection = connection
-        this.isDebug = isDebug
         this.logger = logger
         this.partitionKey = partitionKey
         this.preparedStatement = preparedStatement
+        this.trialNumber = trialNumber
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End   <- init <- RunInsertHelper")
     }
 
     /**
      * Runs the thread implementer.
      */
     override fun run() {
-        if (isDebug) {
-            logger.debug("Start")
-        }
+        logger.debug("Start <- run <- RunInsertHelper")
 
         OraBench.runInsertHelper(
             logger,
-            isDebug,
             connection,
             preparedStatement,
             partitionKey,
             bulkDataPartition,
             benchmarkSize,
-            benchmarkTransactionSize
+            benchmarkTransactionSize,
+            trialNumber
         )
 
-        if (isDebug) {
-            logger.debug("End")
-        }
+        logger.debug("End   <- run <- RunInsertHelper")
     }
 }
