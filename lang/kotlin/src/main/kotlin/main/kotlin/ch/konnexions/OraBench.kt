@@ -104,7 +104,7 @@ class OraBench {
             benchmarkTransactionSize: Int,
             trialNumber: Int
         ) {
-            logger.debug("Start $partitionKey <- companion object - threadId=${Thread.currentThread().name}")
+            logger.debug("Start $partitionKey <- companion object - threadName=${Thread.currentThread().name}")
 
             /*
             IF trial_no == 1
@@ -192,7 +192,7 @@ class OraBench {
                 println("End   insert partitionKey=$partitionKey")
             }
 
-            logger.debug("End   $partitionKey <- companion object - threadId=${Thread.currentThread().name}")
+            logger.debug("End   $partitionKey <- companion object - threadName=${Thread.currentThread().name}")
         }
 
         /**
@@ -211,7 +211,7 @@ class OraBench {
             sqlSelect: String,
             trialNumber: Int
         ) {
-            logger.debug("Start $partitionKey <- companion object - threadId=${Thread.currentThread().name}")
+            logger.debug("Start $partitionKey <- companion object - threadName=${Thread.currentThread().name}")
 
             /*
             IF trial_no == 1
@@ -265,7 +265,7 @@ class OraBench {
                 println("End   select partitionKey=$partitionKey")
             }
 
-            logger.debug("End   $partitionKey <- companion object - threadId=${Thread.currentThread().name}")
+            logger.debug("End   $partitionKey <- companion object - threadName=${Thread.currentThread().name}")
         }
     }
 
@@ -447,21 +447,19 @@ class OraBench {
     private fun executorServiceShutdown() {
         logger.debug("Start")
 
-        if (benchmarkCoreMultiplier > 0) {
-            executorService!!.shutdown()
+        executorService!!.shutdown()
 
-            try {
-                @Suppress("ControlFlowWithEmptyBody")
-                while (!executorService!!.awaitTermination(
-                        1,
-                        TimeUnit.SECONDS
-                    )
-                ) {
-                }
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-                exitProcess(1)
+        try {
+            @Suppress("ControlFlowWithEmptyBody")
+            while (!executorService!!.awaitTermination(
+                    1,
+                    TimeUnit.SECONDS
+                )
+            ) {
             }
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+            exitProcess(1)
         }
 
         logger.debug("End")
@@ -839,12 +837,8 @@ class OraBench {
               ENDIF
         ENDWHILE
         */
-        if (benchmarkCoreMultiplier > 0) {
-            executorService = Executors.newFixedThreadPool(noThreads)
-        }
-
-        for (i in 0 until benchmarkNumberPartitions) {
-            if (benchmarkCoreMultiplier == 0) {
+        if (benchmarkCoreMultiplier == 0) {
+            for (i in 0 until benchmarkNumberPartitions) {
                 runInsertHelper(
                     connections[i],
                     preparedStatements[i],
@@ -852,7 +846,11 @@ class OraBench {
                     bulkDataPartitions[i],
                     trialNumber
                 )
-            } else {
+            }
+        } else {
+            executorService = Executors.newFixedThreadPool(noThreads)
+
+            for (i in 0 until benchmarkNumberPartitions) {
                 executorService?.execute(
                     RunInsertHelper(
                         logger,
@@ -866,9 +864,9 @@ class OraBench {
                     )
                 )
             }
-        }
 
-        executorServiceShutdown()
+            executorServiceShutdown()
+        }
 
         // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')        
         resultQueryEnd(
@@ -894,7 +892,7 @@ class OraBench {
         bulkDataPartition: ArrayList<Array<String>>,
         trialNumber: Int
     ) {
-        logger.debug("Start - threadId=${Thread.currentThread().name}")
+        logger.debug("Start - threadName=${Thread.currentThread().name}")
 
         /*
         IF trial_no == 1
@@ -925,7 +923,7 @@ class OraBench {
             println("End   insert partitionKey=$partitionKey")
         }
 
-        logger.debug("End   - threadId=${Thread.currentThread().name}")
+        logger.debug("End   - threadName=${Thread.currentThread().name}")
     }
 
     /**
@@ -959,19 +957,19 @@ class OraBench {
               ENDIF
         ENDWHILE
         */
-        if (benchmarkCoreMultiplier > 0) {
-            executorService = Executors.newFixedThreadPool(noThreads)
-        }
-
-        for (i in 0 until benchmarkNumberPartitions) {
-            if (benchmarkCoreMultiplier == 0) {
+        if (benchmarkCoreMultiplier == 0) {
+            for (i in 0 until benchmarkNumberPartitions) {
                 runSelectHelper(
                     statements[i],
                     bulkDataPartitions[i],
                     i,
                     trialNumber
                 )
-            } else {
+            }
+        } else {
+            executorService = Executors.newFixedThreadPool(noThreads)
+
+            for (i in 0 until benchmarkNumberPartitions) {
                 executorService?.execute(
                     RunSelectHelper(
                         logger,
@@ -983,10 +981,10 @@ class OraBench {
                         trialNumber
                     )
                 )
+
+                executorServiceShutdown()
             }
         }
-
-        executorServiceShutdown()
 
         // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
         resultQueryEnd(
@@ -1012,7 +1010,7 @@ class OraBench {
         partitionKey: Int,
         trialNumber: Int
     ) {
-        logger.debug("Start - threadId=${Thread.currentThread().name}")
+        logger.debug("Start - threadName=${Thread.currentThread().name}")
 
         /*
         IF trial_no == 1
@@ -1042,7 +1040,7 @@ class OraBench {
             println("End   select partitionKey=$partitionKey")
         }
 
-        logger.debug("End   - threadId=${Thread.currentThread().name}")
+        logger.debug("End   - threadName=${Thread.currentThread().name}")
     }
 
     /**
