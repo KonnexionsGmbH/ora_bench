@@ -41,6 +41,7 @@ public class OraBench {
   private final static boolean isDebug         = logger.isDebugEnabled();
   private final Config         config          = new Config();
   private ExecutorService      executorService = null;
+  private final int            noThreads       = Runtime.getRuntime().availableProcessors();
 
   /**
    * This is the main method for the Oracle benchmark run. The operations to be
@@ -236,8 +237,8 @@ public class OraBench {
 
       for (int i = 0; i < numberPartitions; i++) {
         System.out.println("Partition p" + String.format("%05d",
-                                                  i) + " contains " + String.format("%9d",
-                                                                                    bulkDataPartitions.get(i).size()) + " rows");
+                                                         i) + " contains " + String.format("%9d",
+                                                                                           bulkDataPartitions.get(i).size()) + " rows");
       }
 
       System.out.println("End   Distribution of the data in the partitions");
@@ -259,6 +260,10 @@ public class OraBench {
   private void runBenchmark() {
     if (isDebug) {
       logger.debug("Start");
+    }
+
+    if (config.getBenchmarkCoreMultiplier() > 0) {
+      System.out.println("Available threads=" + noThreads);
     }
 
     // save the current time as the start time of the 'benchmark' action
@@ -347,15 +352,15 @@ public class OraBench {
     // INFO Duration (ms) trial average : trial_sum / config_param
     // 'benchmark.trials'
     System.out.println("Duration (ms) trial min.    : " + (long) Precision.round(minTrialNano / 1000000.0,
-                                                                          0));
+                                                                                 0));
     System.out.println("Duration (ms) trial max.    : " + (long) Precision.round(maxTrialNano / 1000000.0,
-                                                                          0));
+                                                                                 0));
     System.out.println("Duration (ms) trial average : " + (long) Precision.round(sumTrialNano / 1000000.0 / benchmarkTrials,
-                                                                          0));
+                                                                                 0));
 
     // INFO Duration (ms) benchmark run : duration_benchmark
     System.out.println("Duration (ms) benchmark run : " + (long) Precision.round(durationBenchmark / 1000000.0,
-                                                                          0));
+                                                                                 0));
 
     if (isDebug) {
       logger.debug("End");
@@ -398,7 +403,7 @@ public class OraBench {
      * ENDWHILE
      */
     if (config.getBenchmarkCoreMultiplier() > 0) {
-      executorService = Executors.newFixedThreadPool(config.getBenchmarkNumberPartitions());
+      executorService = Executors.newFixedThreadPool(noThreads);
     }
 
     for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
@@ -453,7 +458,7 @@ public class OraBench {
                                      int trialNumber,
                                      Config config) {
     if (isDebug) {
-      logger.debug("Start");
+      logger.debug("Start - threadName=" + Thread.currentThread().getName());
     }
 
     /*
@@ -535,7 +540,7 @@ public class OraBench {
     }
 
     if (isDebug) {
-      logger.debug("End");
+      logger.debug("End   - threadName=" + Thread.currentThread().getName());
     }
   }
 
@@ -570,7 +575,7 @@ public class OraBench {
      * ENDWHILE
      */
     if (config.getBenchmarkCoreMultiplier() > 0) {
-      executorService = Executors.newFixedThreadPool(config.getBenchmarkNumberPartitions());
+      executorService = Executors.newFixedThreadPool(noThreads);
     }
 
     for (int i = 0; i < config.getBenchmarkNumberPartitions(); i++) {
@@ -618,7 +623,7 @@ public class OraBench {
    */
   public static void runSelectHelper(Statement statement, ArrayList<String[]> bulkDataPartition, int partitionKey, int trialNumber, Config config) {
     if (isDebug) {
-      logger.debug("Start");
+      logger.debug("Start - threadName=" + Thread.currentThread().getName());
     }
 
     /*
@@ -673,7 +678,7 @@ public class OraBench {
     }
 
     if (isDebug) {
-      logger.debug("End");
+      logger.debug("End   - threadName=" + Thread.currentThread().getName());
     }
   }
 
