@@ -10,6 +10,7 @@ use csv::Writer;
 use java_properties::read;
 use oracle::{Batch, Connection, Error};
 use rustc_version_runtime::version;
+use thread_id;
 
 // =============================================================================
 // Type definitions.
@@ -334,7 +335,7 @@ fn load_bulk(
         .unwrap();
     let file_bulk_name: String = config.get("file.bulk.name").unwrap().clone();
 
-    info!("Start Distribution of the data in the partitions");
+    println!("Start Distribution of the data in the partitions");
 
     let bulk_file = match File::open(&file_bulk_name) {
         Ok(bulk_file) => bulk_file,
@@ -376,14 +377,14 @@ fn load_bulk(
     }
 
     for (partition, partition_vector) in partitions.iter().enumerate() {
-        info!(
+        println!(
             "Partition {} has {} rows",
             partition,
-            partition_vector.len()
+            partition_vector.len(),
         );
     }
 
-    info!("End   Distribution of the data in the partitions");
+    println!("End   Distribution of the data in the partitions");
 
     debug!("End   load_bulk()");
 
@@ -461,6 +462,10 @@ pub(crate) fn run_benchmark(file_name_config: String) {
         sql_select: config.get("sql.select").unwrap(),
     };
 
+    if params_run_trial.benchmark_core_multiplier > 0 {
+        println!("Available threads={}", num_cpus::get());
+    }
+
     for trial_no in 1..=trials {
         run_trial(params_run_trial, &mut statistics, trial_no);
     }
@@ -494,15 +499,15 @@ pub(crate) fn run_benchmark(file_name_config: String) {
 
     let (trial_min, trial_max, trial_total) = create_result_file(&config, &mut statistics);
 
-    info!("Duration (ms) trial min.    : {}", trial_min);
-    info!("Duration (ms) trial max.    : {}", trial_max);
-    info!(
+    println!("Duration (ms) trial min.    : {}", trial_min);
+    println!("Duration (ms) trial max.    : {}", trial_max);
+    println!(
         "Duration (ms) trial average : {}",
-        math::round::half_up((trial_total / trials as i64) as f64, 2)
+        math::round::half_up((trial_total / trials as i64) as f64, 2),
     );
-    info!(
+    println!(
         "Duration (ms) benchmark run : {}",
-        (end_time - start_time).num_milliseconds()
+        (end_time - start_time).num_milliseconds(),
     );
 
     debug!("End   run_benchmark()");
@@ -562,7 +567,7 @@ fn run_insert(
                 });
             }
         })
-        .unwrap();
+            .unwrap();
     }
 
     // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
@@ -592,7 +597,7 @@ fn run_insert_helper<'a>(
     sql_insert: &'a str,
     trial_no: u32,
 ) {
-    debug!("Start run_insert_helper()");
+    debug!("Start run_insert_helper() - threadId={}", thread_id::get());
 
     /*
     IF trial_no == 1
@@ -600,7 +605,7 @@ fn run_insert_helper<'a>(
     ENDIF
     */
     if trial_no == 1 {
-        info!("Start insert partition_key={}", partition_no);
+        println!("Start insert partition_key={}", partition_no);
     }
 
     /*
@@ -694,10 +699,10 @@ fn run_insert_helper<'a>(
     ENDIF
     */
     if trial_no == 1 {
-        info!("End   insert partition_key={}", partition_no);
+        println!("End   insert partition_key={}", partition_no);
     }
 
-    debug!("End   run_insert_helper()");
+    debug!("End   run_insert_helper() - threadId={}", thread_id::get());
 }
 
 // =============================================================================
@@ -752,7 +757,7 @@ fn run_select(
                 });
             }
         })
-        .unwrap();
+            .unwrap();
     }
 
     // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
@@ -780,7 +785,7 @@ fn run_select_helper<'a>(
     sql_select: &'a str,
     trial_no: u32,
 ) {
-    debug!("Start run_select_helper()");
+    debug!("Start run_select_helper() - threadId={}", thread_id::get());
 
     /*
     IF trial_no == 1
@@ -788,7 +793,7 @@ fn run_select_helper<'a>(
     ENDIF
     */
     if trial_no == 1 {
-        info!("Start select partition_key={}", partition_no);
+        println!("Start select partition_key={}", partition_no);
     }
 
     // execute the SQL statement in config param 'sql.select
@@ -838,10 +843,10 @@ fn run_select_helper<'a>(
     ENDIF
     */
     if trial_no == 1 {
-        info!("End   select partition_key={}", partition_no);
+        println!("End   select partition_key={}", partition_no);
     }
 
-    debug!("End   run_select_helper()");
+    debug!("End   run_select_helper() - threadId={}", thread_id::get());
 }
 
 // =============================================================================
@@ -855,7 +860,7 @@ fn run_trial(params: ParamsRunTrial, statistics: &mut Vec<StatisticsEntry>, tria
     let start_time: DateTime<Local> = Local::now();
 
     // INFO  Start trial no. trial_no
-    info!("Start trial no. {}", trial_no);
+    println!("Start trial no. {}", trial_no);
 
     /*
     create the database table (config param 'sql.create')
@@ -956,9 +961,9 @@ fn run_trial(params: ParamsRunTrial, statistics: &mut Vec<StatisticsEntry>, tria
         trial_no,
     });
 
-    info!(
+    println!(
         "Duration (ms) trial         : {}",
-        (end_time - start_time).num_milliseconds()
+        (end_time - start_time).num_milliseconds(),
     );
 
     debug!("End   run_trial()");

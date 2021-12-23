@@ -2,6 +2,7 @@ extern crate chrono;
 extern crate crossbeam;
 #[macro_use]
 extern crate log;
+extern crate num_cpus;
 extern crate rustc_version_runtime;
 
 use std::env;
@@ -27,7 +28,7 @@ fn main() {
 
     let number_args = args.len();
 
-    info!("main() - number arguments={}", number_args);
+    println!("main() - number arguments={}", number_args);
 
     if number_args <= 1 {
         error!("main() - not enough command line arguments available");
@@ -36,7 +37,7 @@ fn main() {
 
     let file_name_config = args[1].clone();
 
-    info!("main() - 2nd argument={}", file_name_config);
+    println!("main() - 2nd argument={}", file_name_config);
 
     if number_args > 2 {
         error!("main() - more than two command line arguments available");
