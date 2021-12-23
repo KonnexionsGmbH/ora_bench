@@ -5,6 +5,7 @@ import datetime
 import locale
 import logging
 import logging.config
+import multiprocessing
 import os
 import sys
 import threading
@@ -119,7 +120,7 @@ def create_result(logger,
                       str(round(duration_ns)) + "\n")
 
     if action == "trial":
-        logger.info("Duration (ms) trial         : " + str(round(duration_ns / 1000000)))
+        print("Duration (ms) trial         : " + str(round(duration_ns / 1000000)))
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("End")
@@ -300,13 +301,13 @@ def get_bulk_data_partitions(logger,
         bulk_data_partition.append([key_data_tuple])
         bulk_data_partitions[partition_key] = bulk_data_partition
 
-    logger.info("Start Distribution of the data in the partitions")
+    print("Start Distribution of the data in the partitions")
 
     for partition_key in range(0,
                                benchmark_number_partitions):
-        logger.info("Partition p" + "{:0>5d}".format(partition_key) + " contains " + "{0:n}".format(len(bulk_data_partitions[partition_key])) + " rows")
+        print("Partition p" + "{:0>5d}".format(partition_key) + " contains " + "{0:n}".format(len(bulk_data_partitions[partition_key])) + " rows")
 
-    logger.info("End   Distribution of the data in the partitions")
+    print("End   Distribution of the data in the partitions")
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("End")
@@ -390,14 +391,14 @@ def main():
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("Start")
 
-    logger.info("Start OraBench.py")
+    print("Start OraBench.py")
 
     locale.setlocale(locale.LC_ALL,
                      "de_CH.utf8")
 
     run_benchmark(logger)
 
-    logger.info("End   OraBench.py")
+    print("End   OraBench.py")
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("End")
@@ -413,6 +414,11 @@ def run_benchmark(logger):
 
     # READ the configuration parameters into the memory (config params `file.configuration.name ...`)
     config = get_config(logger)
+
+    benchmark_core_multiplier = config["benchmark.core.multiplier"]
+
+    if benchmark_core_multiplier > 0:
+        print("Available threads=" + str(multiprocessing.cpu_count()))
 
     # save the current time as the start time of the "benchmark" action
     measurement_data_result_file = create_result_measuring_point_start_benchmark(logger,
@@ -457,6 +463,7 @@ def run_benchmark(logger):
     for trial_number in range(0,
                               benchmark_trials):
         duration_ns_trial = run_trial(logger,
+                                      benchmark_core_multiplier,
                                       benchmark_globals,
                                       bulk_data_partitions,
                                       config,
@@ -495,12 +502,12 @@ def run_benchmark(logger):
     # INFO  Duration (ms) trial min.    : trial_min
     # INFO  Duration (ms) trial max.    : trial_max
     # INFO  Duration (ms) trial average : trial_sum / config_param 'benchmark.trials'
-    logger.info("Duration (ms) trial min.    : " + str(round(trial_min / 1000000)))
-    logger.info("Duration (ms) trial max.    : " + str(round(trial_max / 1000000)))
-    logger.info("Duration (ms) trial average : " + str(round(trial_sum / 1000000 / benchmark_trials)))
+    print("Duration (ms) trial min.    : " + str(round(trial_min / 1000000)))
+    print("Duration (ms) trial max.    : " + str(round(trial_max / 1000000)))
+    print("Duration (ms) trial average : " + str(round(trial_sum / 1000000 / benchmark_trials)))
 
     # INFO  Duration (ms) benchmark run : duration_benchmark
-    logger.info("Duration (ms) benchmark run : " + str(round(duration_ns_benchmark / 1000000)))
+    print("Duration (ms) benchmark run : " + str(round(duration_ns_benchmark / 1000000)))
 
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug("End")
@@ -601,13 +608,13 @@ def run_insert_helper(logger,
                       sql_insert,
                       trial_number):
     if logger.isEnabledFor(logging.DEBUG):
-        logger.debug("Start")
+        logger.debug("Start - threadId=" + str(threading.get_ident()))
 
     # IF trial_no == 1
     #    INFO Start insert partition_key=partition_key
     # ENDIF
     if trial_number == 1:
-        logger.info("Start insert partition_key=" + str(partition_key))
+        print("Start insert partition_key=" + str(partition_key))
 
     # count = 0
     # collection batch_collection = empty
@@ -660,10 +667,10 @@ def run_insert_helper(logger,
     #    INFO End   insert partition_key=partition_key
     # ENDIF
     if trial_number == 1:
-        logger.info("End   insert partition_ley=" + str(partition_key))
+        print("End   insert partition_ley=" + str(partition_key))
 
     if logger.isEnabledFor(logging.DEBUG):
-        logger.debug("End")
+        logger.debug("End   - threadId=" + str(threading.get_ident()))
 
 
 # ----------------------------------------------------------------------------------
@@ -749,13 +756,13 @@ def run_select_helper(logger,
                       sql_statement,
                       trial_number):
     if logger.isEnabledFor(logging.DEBUG):
-        logger.debug("Start")
+        logger.debug("Start - threadId=" + str(threading.get_ident()))
 
     # IF trial_no == 1
     #    INFO Start select partition_key=partition_key
     # ENDIF
     if trial_number == 1:
-        logger.info("Start select partition_key=" + str(partition_key))
+        print("Start select partition_key=" + str(partition_key))
 
     # execute the SQL statement in config param "sql.select"
     cursor.execute(sql_statement + " where partition_key = " + str(partition_key))
@@ -780,10 +787,10 @@ def run_select_helper(logger,
     #    INFO End   insert partition_key=partition_key
     # ENDIF
     if trial_number == 1:
-        logger.info("End   select partition_ley=" + str(partition_key))
+        print("End   select partition_ley=" + str(partition_key))
 
     if logger.isEnabledFor(logging.DEBUG):
-        logger.debug("End")
+        logger.debug("End   - threadId=" + str(threading.get_ident()))
 
 
 # ----------------------------------------------------------------------------------
@@ -791,6 +798,7 @@ def run_select_helper(logger,
 # ----------------------------------------------------------------------------------
 
 def run_trial(logger,
+              benchmark_core_multiplier,
               benchmark_globals,
               bulk_data_partitions,
               config,
@@ -809,7 +817,7 @@ def run_trial(logger,
                                                             benchmark_globals)
 
     # INFO  Start trial no. trial_no
-    logger.info("Start trial no. " + str(trial_number))
+    print("Start trial no. " + str(trial_number))
 
     # create the database table (config param "sql.create")
     # IF error
@@ -824,7 +832,6 @@ def run_trial(logger,
         cursors[0].execute(sql_create)
         logger.debug("last DDL statement after DROP=" + sql_create)
 
-    benchmark_core_multiplier = config["benchmark.core.multiplier"]
     benchmark_number_partitions = config["benchmark.number.partitions"]
 
     # DO run_insert(database connections,
