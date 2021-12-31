@@ -45,7 +45,7 @@ export ORA_BENCH_PASSWORD_SYS=oracle
 export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 export ORA_BENCH_RUN_GODROR_GO=true
 export ORA_BENCH_RUN_JDBC_JAVA=true
-export ORA_BENCH_RUN_JDBC_JULIA=true
+export ORA_BENCH_RUN_JDBC_JULIA=false
 export ORA_BENCH_RUN_JDBC_KOTLIN=true
 export ORA_BENCH_RUN_NIMODPI_NIM=false
 export ORA_BENCH_RUN_ODPI_C=false
@@ -119,9 +119,11 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
         export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 
+        export ORA_BENCH_RUN_ORACLE_JULIA=false
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
+        export ORA_BENCH_RUN_ORACLE_JULIA=true
 
         export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
         export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
@@ -135,9 +137,11 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
         export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
+        export ORA_BENCH_RUN_ORACLE_JULIA=false
         if ! { /bin/bash scripts/run_all_drivers.sh; }; then
                 exit 255
         fi
+        export ORA_BENCH_RUN_ORACLE_JULIA=true
     fi
 
     if [ "${ORA_BENCH_ORACLE_DATABASE_18C_XE}" = "true" ]; then
@@ -188,9 +192,11 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
     export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
     
+    export ORA_BENCH_RUN_ORACLE_JULIA=false
     if ! { /bin/bash scripts/run_all_drivers.sh; }; then
             exit 255
     fi
+    export ORA_BENCH_RUN_ORACLE_JULIA=true
 
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
     export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
@@ -205,9 +211,11 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
     export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
+    export ORA_BENCH_RUN_ORACLE_JULIA=false
     if ! { /bin/bash scripts/run_all_drivers.sh; }; then
             exit 255
     fi
+    export ORA_BENCH_RUN_ORACLE_JULIA=true
 fi
 
 echo "--------------------------------------------------------------------------------"

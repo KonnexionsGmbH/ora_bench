@@ -26,17 +26,17 @@ benchmark run are stored in a central configuration file.
 
 The currently supported database drivers are:
 
-| Driver                                                                       | Programming Language(s)                                                                 |
-|:-----------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
-| [cx_Oracle](https://oracle.github.io/python-cx_Oracle)                       | [Python 3](https://www.python.org)                                                      |
-| [godror](https://golangrepo.com/repo/godror-godror-go-database-drivers)      | [Go](https://golang.org)                                                                |
-| [JDBC.jl](https://github.com/felipenoris/JDBC.jl)                            | [Julia](https://julialang.org)                                                          |
-| [nimodpi](https://github.com/mikra01/nimodpi)                                | [Nim](https://nim-lang.org)                                                            |
-| [Oracle JDBC](https://www.oracle.com/database/technologies/appdev/jdbc.html) | [Java](https://openjdk.java.net) &amp; [Kotlin](https://kotlinlang.org)                 |
-| [Oracle ODPI-C](https://oracle.github.io/odpi)                               | [C++](https://docs.microsoft.com/en-us/cpp/?view=msvc-160) ([gcc](https://gcc.gnu.org)) |
-| [Oracle.jl](https://github.com/felipenoris/Oracle.jl)                        | [Julia](https://julialang.org)                                                          |
-| [oranif](https://github.com/KonnexionsGmbH/oranif)                           | [Elixir](https://elixir-lang.org) &amp; [Erlang](https://www.erlang.org)                |
-| [Rust-oracle](https://github.com/kubo/rust-oracle)                           | [Rust](https://www.rust-lang.org)                                                       |
+| Driver                                                                       | Programming Language(s)                                                                 | Remarks                                                        |
+|:-----------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|:---------------------------------------------------------------|
+| [cx_Oracle](https://oracle.github.io/python-cx_Oracle)                       | [Python 3](https://www.python.org)                                                      |                                                                |
+| [godror](https://golangrepo.com/repo/godror-godror-go-database-drivers)      | [Go](https://golang.org)                                                                |                                                                |
+| [~~JDBC.jl~~](https://github.com/felipenoris/JDBC.jl)                        | [~~Julia~~](https://julialang.org)                                                      | is currently not considered due to massive performance issues  |
+| [nimodpi](https://github.com/mikra01/nimodpi)                                | [Nim](https://nim-lang.org)                                                             |                                                                |
+| [Oracle JDBC](https://www.oracle.com/database/technologies/appdev/jdbc.html) | [Java](https://openjdk.java.net) &amp; [Kotlin](https://kotlinlang.org)                 |                                                                |
+| [Oracle ODPI-C](https://oracle.github.io/odpi)                               | [C++](https://docs.microsoft.com/en-us/cpp/?view=msvc-160) ([gcc](https://gcc.gnu.org)) |                                                                |
+| [Oracle.jl](https://github.com/felipenoris/Oracle.jl)                        | [Julia](https://julialang.org)                                                          |                                                                |
+| [oranif](https://github.com/KonnexionsGmbH/oranif)                           | [Elixir](https://elixir-lang.org) &amp; [Erlang](https://www.erlang.org)                |                                                                |
+| [Rust-oracle](https://github.com/kubo/rust-oracle)                           | [Rust](https://www.rust-lang.org)                                                       |                                                                |
 
 The following Oracle database versions are provided in a benchmark run via Docker container:
 

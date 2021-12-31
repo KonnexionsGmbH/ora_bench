@@ -10,7 +10,6 @@ use csv::Writer;
 use java_properties::read;
 use oracle::{Batch, Connection, Error};
 use rustc_version_runtime::version;
-use thread_id;
 
 // =============================================================================
 // Type definitions.
@@ -567,7 +566,7 @@ fn run_insert(
                 });
             }
         })
-            .unwrap();
+        .unwrap();
     }
 
     // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
@@ -757,7 +756,7 @@ fn run_select(
                 });
             }
         })
-            .unwrap();
+        .unwrap();
     }
 
     // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')

@@ -981,9 +981,9 @@ class OraBench {
                         trialNumber
                     )
                 )
-
-                executorServiceShutdown()
             }
+
+            executorServiceShutdown()
         }
 
         // WRITE an entry for the action 'query' in the result file (config param 'file.result.name')

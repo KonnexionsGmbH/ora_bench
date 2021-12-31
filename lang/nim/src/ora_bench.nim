@@ -17,7 +17,7 @@ type
   ConfigType = Table[string, string]
 
 type
-  ConnectionsType = Table[uint, OracleConnection]
+  ConnectionsType = seq[db_oracle.OracleConnection]
 
 type
   PartitionType = seq[BulkRecordType]
@@ -31,17 +31,15 @@ type
     benchmarkCoreMultiplier: uint
     benchmarkNumberPartitions: uint
     benchmarkTransactionSize: uint
-    connections: ConnectionsType
     partitions: PartitionsType
-    sqlInsert: string
+    sqlInsertStr: string
 
 type
   ParamsRunSelectType = object
     benchmarkCoreMultiplier: uint
     benchmarkNumberPartitions: uint
-    connections: ConnectionsType
     partitions: PartitionsType
-    sqlSelect: string
+    sqlSelectStr: string
 
 type
   ParamsRunTrialType = object
@@ -49,12 +47,11 @@ type
     benchmarkCoreMultiplier: uint
     benchmarkNumberPartitions: uint
     benchmarkTransactionSize: uint
-    connections: ConnectionsType
     partitions: PartitionsType
-    sqlCreate: string
-    sqlDrop: string
-    sqlInsert: string
-    sqlSelect: string
+    sqlCreateStr: string
+    sqlDropStr: string
+    sqlInsertStr: string
+    sqlSelectStr: string
 
 type
   StatisticsEntryType = object
@@ -71,25 +68,31 @@ type
 # Forward declarations
 # ------------------------------------------------------------------------------
 
-proc commit(connection: OracleConnection)
+proc commit(connection: db_oracle.OracleConnection)
 proc createConnections(logger: Logger, config: ConfigType,
-    octx: var OracleContext, benchmarkNumberPartitions: uint): ConnectionsType
+    octx: var db_oracle.OracleContext, benchmarkNumberPartitions: uint): ConnectionsType
 proc getConfig(logger: Logger, fileNameConfig: string): Table[string, string]
 proc loadBulk(logger: Logger, config: ConfigType,
     benchmarkNumberPartitions: uint): PartitionsType
 proc main()
 proc runBenchmark(logger: Logger, fileNameConfig: string)
-proc runInsert(logger: Logger, paramsRunInsert: ParamsRunInsertType,
-    statistics: StatisticsType, trialNo: uint)
+proc runInsert(logger: Logger, connections: var ConnectionsType,
+    paramsRunInsert: ParamsRunInsertType,
+
+statistics: StatisticsType, trialNo: uint)
 proc runInsertHelper(logger: Logger, benchmarkBatchSize: uint,
-    benchmarkTransactionSize: uint, connection: OracleConnection,
+    benchmarkTransactionSize: uint, connection: db_oracle.OracleConnection,
     partitionNo: uint, partition: PartitionType, sqlInsert: string, trialNo: uint)
-proc runSelect(logger: Logger, paramsRunSelect: ParamsRunSelectType,
-    statistics: StatisticsType, trialNo: uint)
-proc runSelectHelper(logger: Logger, connection: OracleConnection,
+proc runSelect(logger: Logger, connections: var ConnectionsType,
+    paramsRunSelect: ParamsRunSelectType,
+
+statistics: StatisticsType, trialNo: uint)
+proc runSelectHelper(logger: Logger, connection: db_oracle.OracleConnection,
     partitionNo: uint, partition: PartitionType, sqlSelect: string, trialNo: uint)
-proc runTrial(logger: Logger, paramsRunTrial: ParamsRunTrialType,
-    statistics: StatisticsType, trialNo: uint)
+proc runTrial(logger: Logger, connections: var ConnectionsType,
+    paramsRunTrial: ParamsRunTrialType,
+
+statistics: StatisticsType, trialNo: uint)
 
 # ==============================================================================
 # Program start
@@ -101,7 +104,7 @@ main()
 # Commit the transaction.
 # -----------------------------------------------------------------------------
 
-proc commit(connection: OracleConnection) =
+proc commit(connection: db_oracle.OracleConnection) =
   connection.commit()
 
 # ==============================================================================
@@ -110,10 +113,10 @@ proc commit(connection: OracleConnection) =
 # -----------------------------------------------------------------------------
 
 proc createConnections(logger: Logger, config: ConfigType,
-    octx: var OracleContext, benchmarkNumberPartitions: uint): ConnectionsType =
+    octx: var db_oracle.OracleContext, benchmarkNumberPartitions: uint): ConnectionsType =
   logger.log(lvlDebug, "Start createConnections()")
 
-  let connectionString: string = "//" &
+  let connectionStr: string = "//" &
     config["connection.host"] &
     ":" &
     config["connection.port"] &
@@ -122,10 +125,17 @@ proc createConnections(logger: Logger, config: ConfigType,
   let password: string = config["connection.password"]
   let user: string = config["connection.user"]
 
+  var connection: db_oracle.OracleConnection
   var connections: ConnectionsType
 
   for i in 0..benchmarkNumberPartitions - 1:
-    createConnection(octx, connectionString, user, password, connections[uint(i)])
+    try:
+      db_oracle.createConnection(octx, connectionStr, user, password, connection)
+    except:
+      logger.log(lvlFatal, "Problem creating database connection #", i, ": ",
+          getCurrentExceptionMsg())
+
+    connections.add(connection)
 
   logger.log(lvlDebug, "End   createConnections()")
 
@@ -231,7 +241,7 @@ proc createResultFile(logger: Logger, config: ConfigType,
 #             statisticsEntry.endTime
 #         }
 
-#         let startTime: DateTime<Local> = statisticsEntry.startTime
+  let startTime: DateTime = now()
 
 #         let difference: Duration = endTime - startTime
 
@@ -309,7 +319,7 @@ proc getConfig(logger: Logger, fileNameConfig: string): Table[string, string] =
   var config: ConfigType
 
   for line in lines(fileNameConfig):
-    var columns = split(line, '=')
+    var columns = split(line, '=', 1)
     config[columns[0]] = columns[1]
 
   logger.log(lvlDebug, "End   getConfig()")
@@ -335,8 +345,7 @@ proc loadBulk(logger: Logger, config: ConfigType,
   for i in 0..benchmarkNumberPartitions - 1:
     partitions[uint(i)] = newSeq[BulkRecordType](partitionSize)
 
-  logger.log(lvlInfo, "Start Distribution of the data in the partitions")
-
+  stdout.writeline "Start Distribution of the data in the partitions"
 
   for line in lines(fileBulkName):
     if isFirst:
@@ -350,9 +359,9 @@ proc loadBulk(logger: Logger, config: ConfigType,
     partitions[partition].add(columns)
 
   for i in 0..benchmarkNumberPartitions - 1:
-    logger.log(lvlInfo, "PartitionType ", i, " has ", partitions[uint(i)].len(), " rows")
+    stdout.writeline "PartitionType ", i, " has ", partitions[uint(i)].len(), " rows"
 
-  logger.log(lvlInfo, "End   Distribution of the data in the partitions")
+  stdout.writeline "End   Distribution of the data in the partitions"
 
   logger.log(lvlDebug, "End   loadBulk()")
 
@@ -373,14 +382,14 @@ proc main() =
 
   logger.log(lvlDebug, "Start main()")
 
-  logger.log(lvlInfo, "main() - number arguments=", numberArgs)
+  stdout.writeline "main() - number arguments=", numberArgs
 
   if numberArgs < 1:
     logger.log(lvlFatal, "main() - not enough command line arguments available")
 
   fileNameConfig = paramStr(1)
 
-  logger.log(lvlInfo, "main() - 1st argument=", fileNameConfig)
+  stdout.writeline "main() - 1st argument=", fileNameConfig
 
   if numberArgs > 1:
     logger.log(lvlFatal, "main() - more than one command line arguments available")
@@ -407,9 +416,9 @@ proc runBenchmark(logger: Logger, fileNameConfig: string) =
   ## READ the bulk file data into the partitioned collection bulk_data_partitions (config param 'file.bulk.name')
   var partitions: PartitionsType = loadBulk(logger, config, benchmarkNumberPartitions)
 
-  var octx: OracleContext
+  var octx: db_oracle.OracleContext
 
-  newOracleContext(octx, DpiAuthMode.SYSDBA)
+  db_oracle.newOracleContext(octx, DpiAuthMode.DEFAULTAUTHMODE)
 
   var connections: ConnectionsType = createConnections(logger, config, octx, benchmarkNumberPartitions)
 
@@ -420,9 +429,9 @@ proc runBenchmark(logger: Logger, fileNameConfig: string) =
       trialNo,
       bulk_data_partitions)
     ENDWHILE
-    ]#
-  let sqlInsert: string = replaceWord(replaceWord(config["sql.insert"], ":key",
-      ":1"), ":data", ":2")
+  ]#
+  let sqlInsertStr: string = replaceWord(replaceWord(("\"" & config[
+      "sql.insert"]) & "\"", ":key", ":1"), ":data", ":2")
   let trials: uint = parseuint(config["benchmark.trials"])
 
   var paramsRunTrial = ParamsRunTrialType(
@@ -431,16 +440,15 @@ proc runBenchmark(logger: Logger, fileNameConfig: string) =
         benchmarkNumberPartitions: benchmarkNumberPartitions,
         benchmarkTransactionSize: parseuint(config[
             "benchmark.transaction.size"]),
-        connections: connections,
         partitions: partitions,
-        sqlCreate: config["sql.create"],
-        sqlDrop: config["sql.drop"],
-        sqlInsert: sqlInsert,
-        sqlSelect: config["sql.select"])
+        sqlCreateStr: ("\"" & config["sql.create"]) & "\"",
+        sqlDropStr: ("\"" & config["sql.drop"]) & "\"",
+        sqlInsertStr: sqlInsertStr,
+        sqlSelectStr: ("\"" & config["sql.select"]) & "\"")
   var statistics = newSeq[StatisticsEntryType](trials * 3 + 1)
 
   for trialNo in 1..trials:
-    runTrial(logger, paramsRunTrial, statistics, uint(trialNo))
+    runTrial(logger, connections, paramsRunTrial, statistics, uint(trialNo))
 
   #[
   partition_no = 0
@@ -448,12 +456,18 @@ proc runBenchmark(logger: Logger, fileNameConfig: string) =
     close the database connection
   ENDWHILE
   ]#
-    # for connection in connections.iter() {
-    #     match connection.close() {
-    #         Ok(_) => {}
-    #         Err(error) => {
-    #             error!("runBenchmark() - Problem connection.close(): {}", error)
-    #             std::process::exit(1)
+  for i in 0..benchmarkNumberPartitions - 1:
+    try:
+      connections[i].releaseConnection
+    except:
+      logger.log(lvlFatal, "Problem releasing database connection #", i, ": ",
+          getCurrentExceptionMsg())
+
+  try:
+    db_oracle.destroyOracleContext(octx)
+  except:
+    logger.log(lvlFatal, "Problem destroying Oracle context: ",
+        getCurrentExceptionMsg())
 
   ## WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
   let endTime: DateTime = now()
@@ -468,16 +482,11 @@ proc runBenchmark(logger: Logger, fileNameConfig: string) =
 
   # let (trialMin, trialMax, trialTotal) = createResultFile(&config, &mut statistics)
 
-  # logger.log(lvlInfo, "Duration (ms) trial min.    : {}", trialMin)
-  # logger.log(lvlInfo, "Duration (ms) trial max.    : {}", trialMax)
-  # logger.log(lvlInfo,
-  #     "Duration (ms) trial average : {}",
-  #     math::round::half_up((trialTotal / trials as int64) as f64, 2)
-  # )
-  # logger.log(lvlInfo,
-  #     "Duration (ms) benchmark run : {}",
-  #     (endTime - startTime).num_milliseconds()
-  # )
+  # stdout.writeline "Duration (ms) trial min.    : ", trialMin
+  # stdout.writeline "Duration (ms) trial max.    : ", trialMax
+  # stdout.writeline "Duration (ms) trial average : ", math::round::half_up((trialTotal / trials as int64) as f64, 2)
+  stdout.writeline "Duration (ms) benchmark run : ", (endTime -
+      startTime).inMilliseconds()
 
   destroyOracleContext(octx)
 
@@ -487,12 +496,14 @@ proc runBenchmark(logger: Logger, fileNameConfig: string) =
 # Supervise function for inserting data into the database.
 # -----------------------------------------------------------------------------
 
-proc runInsert(logger: Logger, paramsRunInsert: ParamsRunInsertType,
-    statistics: StatisticsType, trialNo: uint) =
+proc runInsert(logger: Logger, connections: var ConnectionsType,
+    paramsRunInsert: ParamsRunInsertType,
+
+statistics: StatisticsType, trialNo: uint) =
   logger.log(lvlDebug, "Start runInsert()")
 
-#     # save the current time as the start of the 'query' action
-#     let startTime: DateTime<Local> = Local::now()
+  # save the current time as the start of the 'query' action
+  let startTime: DateTime = now()
 
 #     /*
 #     partitionNo = 0
@@ -558,36 +569,35 @@ proc runInsertHelper(logger: Logger, benchmarkBatchSize: uint,
     trialNo: uint) =
   logger.log(lvlDebug, "Start runInsertHelper()")
 
-#     /*
-#     IF trialNo == 1
-#        INFO Start insert partitionKey=partitionKey
-#     ENDIF
-#     */
-#     if trialNo == 1 {
-#         logger.log(lvlInfo, "Start insert partitionKey={}", partitionNo)
-#     }
+  #[
+  IF trialNo == 1
+    INFO Start insert partitionKey=partitionKey
+  ENDIF
+  ]#
+  if trialNo == 1:
+    stdout.writeline "Start insert partitionKey=", partitionNo
 
-#     /*
-#     count = 0
-#     collection batchCollection = empty
-#     WHILE iterating through the collection bulkDataPartition
-#       count + 1
+  #[
+  count = 0
+  collection batchCollection = empty
+  WHILE iterating through the collection bulkDataPartition
+    count + 1
 
-#       add the SQL statement in config param 'sql.insert' with the current bulkData entry to the collection batchCollection
+    add the SQL statement in config param 'sql.insert' with the current bulkData entry to the collection batchCollection
 
-#       IF configParam 'benchmark.batch.size' > 0
-#           IF count modulo config param 'benchmark.batch.size' = 0
-#               execute the SQL statements in the collection batchCollection
-#               batchCollection = empty
-#           ENDIF
-#       ENDIF
+    IF configParam 'benchmark.batch.size' > 0
+      IF count modulo config param 'benchmark.batch.size' = 0
+        execute the SQL statements in the collection batchCollection
+        batchCollection = empty
+      ENDIF
+    ENDIF
 
-#       IF  config param 'benchmark.transaction.size' > 0
-#       AND count modulo config param 'benchmark.transaction.size' = 0
-#           commit
-#       ENDIF
-#     ENDWHILE
-#     */
+    IF  config param 'benchmark.transaction.size' > 0
+    AND count modulo config param 'benchmark.transaction.size' = 0
+      commit
+    ENDIF
+  ENDWHILE
+  ]#
 
 #     var batchCollection = connection
 #         .batch(
@@ -640,11 +650,11 @@ proc runInsertHelper(logger: Logger, benchmarkBatchSize: uint,
 #         }
 #     }
 
-#     /*
-#     IF collection batchCollection is not empty
-#       execute the SQL statements in the collection batchCollection
-#     ENDIF
-#     */
+  #[
+  IF collection batchCollection is not empty
+    execute the SQL statements in the collection batchCollection
+  ENDIF
+  ]#
 #     if benchmarkBatchSize != 1 {
 #         executeBatch(&mut batchCollection)
 #     }
@@ -652,14 +662,13 @@ proc runInsertHelper(logger: Logger, benchmarkBatchSize: uint,
 #     # commit
 #     commit(connection)
 
-#     /*
-#     IF trialNo == 1
-#        INFO End   insert partitionKey=partitionKey
-#     ENDIF
-#     */
-#     if trialNo == 1 {
-#         logger.log(lvlInfo, "End   insert partitionKey={}", partitionNo)
-#     }
+  #[
+  IF trialNo == 1
+    INFO End   insert partitionKey=partitionKey
+  ENDIF
+  ]#
+  if trialNo == 1:
+    stdout.writeline "End   insert partitionKey=", partitionNo
 
   logger.log(lvlDebug, "End   runInsertHelper()")
 
@@ -667,27 +676,29 @@ proc runInsertHelper(logger: Logger, benchmarkBatchSize: uint,
 # Supervise function for retrieving of the database data.
 # -----------------------------------------------------------------------------
 
-proc runSelect(logger: Logger, paramsRunSelect: ParamsRunSelectType,
-    statistics: StatisticsType, trialNo: uint) =
+proc runSelect(logger: Logger, connections: var ConnectionsType,
+    paramsRunSelect: ParamsRunSelectType,
+
+statistics: StatisticsType, trialNo: uint) =
   logger.log(lvlDebug, "Start runSelect()")
 
-#     # save the current time as the start of the 'query' action
-#     let startTime: DateTime<Local> = Local::now()
+  # save the current time as the start of the 'query' action
+  let startTime: DateTime = now()
 
-#     /*
-#     partitionNo = 0
-#     WHILE partitionNo < configParam 'benchmark.number.partitions'
-#         IF configParam 'benchmark.core.multiplier' = 0
-#             DO runSelectHelper(database connections(partitionNo),
-#                                  bulkDataPartitions(partitionNo,
-#                                  partitionNo)
-#         ELSE
-#             DO runSelectHelper(database connections(partitionNo),
-#                                  bulkDataPartitions(partitionNo,
-#                                  partitionNo) as a thread
-#         ENDIF
-#     ENDWHILE
-#     */
+  #[
+  partitionNo = 0
+  WHILE partitionNo < configParam 'benchmark.number.partitions'
+    IF configParam 'benchmark.core.multiplier' = 0
+      DO runSelectHelper(database connections(partitionNo),
+                         bulkDataPartitions(partitionNo,
+                         partitionNo)
+    ELSE
+      DO runSelectHelper(database connections(partitionNo),
+                         bulkDataPartitions(partitionNo,
+                         partitionNo) as a thread
+    ENDIF
+  ENDWHILE
+  ]#
 #     if benchmarkCoreMultiplier == 0 {
 #         for partitionNo in 0..benchmarkNumberPartitions {
 #             runSelectHelper(
@@ -715,7 +726,7 @@ proc runSelect(logger: Logger, paramsRunSelect: ParamsRunSelectType,
 
 #     }
 
-#     # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
+  # WRITE an entry for the action 'query' in the result file (config param 'file.result.name')
 #     statistics.push(StatisticsEntryType {
 #         action: "select".toString(),
 #         endTime: Local::now(),
@@ -735,14 +746,13 @@ proc runSelectHelper(logger: Logger, connection: OracleConnection,
     trialNo: uint) =
   logger.log(lvlDebug, "Start runSelectHelper()")
 
-#     /*
-#     IF trialNo == 1
-#        INFO Start select partitionKey=partitionKey
-#     ENDIF
-#     */
-#     if trialNo == 1 {
-#         logger.log(lvlInfo, "Start select partitionKey={}", partitionNo)
-#     }
+  #[
+  IF trialNo == 1
+    INFO Start select partitionKey=partitionKey
+  ENDIF
+  ]#
+  if trialNo == 1:
+    stdout.writeline "Start select partitionKey=", partitionNo
 
 #     # execute the SQL statement in config param 'sql.select
 #     var sqlSelectComplete: string = sqlSelect.toString()
@@ -759,23 +769,22 @@ proc runSelectHelper(logger: Logger, connection: OracleConnection,
 #         }
 #     }
 
-#     /*
-#     int count = 0
-#     WHILE iterating through the result set
-#         count + 1
-#     ENDWHILE
-#     */
+  #[
+  int count = 0
+  WHILE iterating through the result set
+    count + 1
+  ENDWHILE
+  ]#
 #     var count: uint = 0
 #     for Row in rows {
 #         count += 1
 #     }
 
-#     /*
-#     IF NOT count = size(bulkDataPartition)
-#         display an error message
-#     ENDIF
-#     */
-
+  #[
+  IF NOT count = size(bulkDataPartition)
+    display an error message
+  ENDIF
+  ]#
 #     if count != partition.len() {
 #         error!(
 #             "Number rows: expected={} - found={}",
@@ -785,14 +794,13 @@ proc runSelectHelper(logger: Logger, connection: OracleConnection,
 #         std::process::exit(1)
 #     }
 
-#     /*
-#     IF trialNo == 1
-#        INFO End   select partitionKey=partitionKey
-#     ENDIF
-#     */
-#     if trialNo == 1 {
-#         logger.log(lvlInfo, "End   select partitionKey={}", partitionNo)
-#     }
+  #[
+  IF trialNo == 1
+    INFO End   select partitionKey=partitionKey
+  ENDIF
+  ]#
+  if trialNo == 1:
+    stdout.writeline "End   select partitionKey=", partitionNo
 
   logger.log(lvlDebug, "End   runSelectHelper()")
 
@@ -800,53 +808,56 @@ proc runSelectHelper(logger: Logger, connection: OracleConnection,
 # Performing a single trial run.
 # -----------------------------------------------------------------------------
 
-proc runTrial(logger: Logger, paramsRunTrial: ParamsRunTrialType,
-    statistics: StatisticsType, trialNo: uint) =
+proc runTrial(logger: Logger, connections: var ConnectionsType,
+    paramsRunTrial: ParamsRunTrialType,
+
+statistics: StatisticsType, trialNo: uint) =
   logger.log(lvlDebug, "Start runTrial()")
 
-#     # save the current time as the start of the 'trial' action
-#     let startTime: DateTime<Local> = Local::now()
+  # save the current time as the start of the 'trial' action
+  let startTime: DateTime = now()
 
-#     # INFO  Start trial no. trialNo
-#     logger.log(lvlInfo, "Start trial no. {}", trialNo)
+  # INFO  Start trial no. trialNo
+  stdout.writeline "Start trial no. ", trialNo
 
-#     /*
-#     create the database table (config param 'sql.create')
-#     IF error
-#         drop the database table (config param 'sql.drop')
-#         create the database table (config param 'sql.create')
-#     ENDIF
-#     */
-#     var resultCreateDrop = params.connections[0].execute(params.sqlCreate, &[])
-#     if resultCreateDrop.isOk() {
-#         logger.log(lvlDebug, "last DDL statement={}", params.sqlCreate)
-#     } else {
-#         resultCreateDrop = params.connections[0].execute(params.sqlDrop, &[])
-#         if resultCreateDrop.isErr() {
-#             error!(
-#                 "runTrial() - Problem dropping the database table: {}",
-#                 resultCreateDrop.err()
-#             )
-#             std::process::exit(1)
-#         }
+  #[
+  create the database table (config param 'sql.create')
+  IF error
+    drop the database table (config param 'sql.drop')
+    create the database table (config param 'sql.create')
+  ENDIF
+  ]#
+  var resultSet: db_oracle.ResultSet
 
-#         resultCreateDrop = params.connections[0].execute(params.sqlCreate, &[])
-#         if resultCreateDrop.isErr() {
-#             error!(
-#                 "runTrial() - Problem creating the database table: {}",
-#                 resultCreateDrop.err()
-#             )
-#             std::process::exit(1)
-#         }
+  var sqlCreateSql: db_oracle.SqlQuery = osql paramsRunTrial.sqlCreateStr
+  var sqlCreatePS: db_oracle.PreparedStatement
 
-#         logger.log(lvlDebug, "last DDL statement after DROP={}", params.sqlCreate)
-#     }
+  var sqlDropSql: db_oracle.SqlQuery = osql paramsRunTrial.sqlDropStr
+  var sqlDropPS: db_oracle.PreparedStatement
 
-#     /*
-#     DO runInsert(database connections,
-#                   trialNo,
-#                   bulkDataPartitions)
-#     */
+  db_oracle.newPreparedStatement(connections[0], sqlCreateSql,
+      sqlCreatePS, 1)
+  db_oracle.newPreparedStatement(connections[0], sqlDropSql,
+      sqlDropPS, 1)
+
+  try:
+    executeStatement(sqlCreatePS, resultSet)
+    logger.log(lvlDebug, "last DDL statement=", paramsRunTrial.sqlCreateStr)
+  except:
+    try:
+      executeStatement(sqlDropPS, resultSet)
+      executeStatement(sqlCreatePS, resultSet)
+      logger.log(lvlDebug, "last DDL statement after DROP=",
+          paramsRunTrial.sqlCreateStr)
+    except:
+      logger.log(lvlFatal, "runTrial() - Problem dropping the database table: ",
+          getCurrentExceptionMsg())
+
+  #[
+  DO runInsert(database connections,
+               trialNo,
+               bulkDataPartitions)
+  ]#
 #     let paramsRunInsert = ParamsRunInsert {
 #         benchmarkBatchSize: params.benchmarkBatchSize,
 #         benchmarkCoreMultiplier: params.benchmarkCoreMultiplier,
@@ -866,11 +877,11 @@ proc runTrial(logger: Logger, paramsRunTrial: ParamsRunTrialType,
 #         std::process::exit(1)
 #     }
 
-#     /*
-#     DO runSelect(database connections,
-#                   trialNo,
-#                   bulkDataPartitions)
-#     */
+  #[
+  DO runSelect(database connections,
+               trialNo,
+               bulkDataPartitions)
+  ]#
 #     let resultRunSelect = runSelect(
 #         params.benchmarkCoreMultiplier,
 #         params.benchmarkNumberPartitions,
@@ -888,7 +899,7 @@ proc runTrial(logger: Logger, paramsRunTrial: ParamsRunTrialType,
 #         std::process::exit(1)
 #     }
 
-#     # drop the database table (config param 'sql.drop')
+  # drop the database table (config param 'sql.drop')
 #     resultCreateDrop = params.connections[0].execute(params.sqlDrop, &[])
 #     if resultCreateDrop.isErr() {
 #         error!(
@@ -899,8 +910,8 @@ proc runTrial(logger: Logger, paramsRunTrial: ParamsRunTrialType,
 #     }
 #     logger.log(lvlDebug, "last DDL statement={}", params.sqlCreate)
 
-#     # WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
-#     let endTime: DateTime<Local> = Local::now()
+  # WRITE an entry for the action 'trial' in the result file (config param 'file.result.name')
+  let endTime: DateTime = now()
 
 #     statistics.push(StatisticsEntryType {
 #         action: "trial".toString(),
@@ -910,9 +921,7 @@ proc runTrial(logger: Logger, paramsRunTrial: ParamsRunTrialType,
 #         trialNo,
 #     })
 
-#     logger.log(lvlInfo,
-#         "Duration (ms) trial         : {}",
-#         (endTime - startTime).numMilliseconds()
-#     )
+  stdout.writeline "Duration (ms) trial         : ", (endTime -
+      startTime).inMilliseconds()
 
   logger.log(lvlDebug, "End   runTrial()")

@@ -17,37 +17,36 @@ Release Date: dd.mm.2021
 
 ### Applied Software
 
-| Software              | Type     | Version           | Remark |
-| ---                   | ---      | ---               | ---    |
-| C++ (gcc)             | Language | 10.3.0            |   |
-| C++ (gcc) - ODPI-C    | Driver   | 4.3               | upgrade |
-| Elixir                | Language | 1.12.3-otp-24     |   |
-| Elixir- oranif        | Driver   | 0.2.3             |   |
-| Erlang                | Language | 24.1.7            | upgrade |
-| Erlang - oranif       | Driver   | see Elixir             |   |
-| Go                    | Language | 1.17.3            | upgrade |
-| Go - godror           | Driver   | v0.29.0           | upgrade |
-| Java                  | Language | openjdk-17.0.1    |   |
-| Java - JDBC           | Driver   | 21.3.0.0          |   |
-| Julia                 | Language | v1.6.4            | upgrade |
-| Julia - JDBC.jl       | Driver   | v0.5.0            |   |
-| Julia - Oracle.jl     | Driver   | v0.3.1            |   |
-| Kotlin                | Language | 1.6.0             | upgrade |
-| Kotlin - JDBC         | Driver   | see Java          |   |
-| Nim                   | Language | 1.6.0             | new |
-| Nim - nimodpi         | Driver   | ???               | new |
-| Oracle Instant Client | Driver   | 21.4.0.0.0        | upgrade |
-| Python 3              | Language | 3.10.0            |   |
-| Python 3 - cx_Oracle  | Driver   | 8.3.0             | upgrade |
-| Rust                  | Language | 1.56.1            | upgrade |
-| Rust - Rust-oracle    | Driver   | v0.5.3            |   |
+| Software              | Type        | Version           | Remark  |
+| ---                   |-------------| ---               |---------|
+| C++ (gcc)             | Language    | 10.3.0            |         |
+| C++ (gcc) - ODPI-C    | Driver      | 4.3               | upgrade |
+| Elixir                | Language    | 1.12.3-otp-24     |         |
+| Elixir- oranif        | Driver      | 0.2.3             |         |
+| Erlang                | Language    | 24.1.7            | upgrade |
+| Erlang - oranif       | Driver      | see Elixir             |         |
+| Go                    | Language    | 1.17.3            | upgrade |
+| Go - godror           | Driver      | v0.29.0           | upgrade |
+| Java                  | Language    | openjdk-17.0.1    |         |
+| Java - JDBC           | Driver      | 21.3.0.0          |         |
+| Julia                 | Language    | v1.6.4            | upgrade |
+| ~~Julia - JDBC.jl~~   | ~~Driver~~  | ~~v0.5.0~~        | n/a     |
+| Julia - Oracle.jl     | Driver      | v0.3.1            |         |
+| Kotlin                | Language    | 1.6.0             | upgrade |
+| Kotlin - JDBC         | Driver      | see Java          |         |
+| Nim                   | Language    | 1.6.0             | new     |
+| Nim - nimodpi         | Driver      | ???               | new     |
+| Oracle Instant Client | Driver      | 21.4.0.0.0        | upgrade |
+| Python 3              | Language    | 3.10.0            |         |
+| Python 3 - cx_Oracle  | Driver      | 8.3.0             | upgrade |
+| Rust                  | Language    | 1.56.1            | upgrade |
+| Rust - Rust-oracle    | Driver      | v0.5.3            |         |
 
 ### Open issues
 
 - C & ODPI-C: (see [here](#issues_c_odpi))
 - Elixir & oranif: (see [here](#issues_elixir_oranif))
 - Erlang & oranif: (see [here](#issues_erlang_oranif))
-- Julia & JDBC,jl: (see [here](#issues_julia_jdbc))
 - Julia & Oracle,jl: (see [here](#issues_julia_oracle))
 
 ----
@@ -202,30 +201,6 @@ Release Date: dd.mm.2021
     Start insert partition_key=24
     Start insert partition_key=25
     Start insert partition_key=23
-
-### <a name="issues_julia_jdbc"></a> Julia & JDBC.jl
-
-#### Issue: Batch operations not supported: `addBatch` & `executeBatch`
-
-#### Issue: Windows 10 not supported:
-
-    2021-10-11 17:14:43,808 [OraBench.java] INFO  Start OraBench.java
-    2021-10-11 17:14:43,809 [OraBench.java] INFO  main() - number arguments=1
-    2021-10-11 17:14:43,810 [OraBench.java] INFO  main() - 1st argument=setup_toml
-    2021-10-11 17:14:43,884 [Config.java] INFO  benchmarkBatchSize      =0
-    2021-10-11 17:14:43,885 [Config.java] INFO  benchmarkCoreMultiplier =0
-    2021-10-11 17:14:43,885 [Config.java] INFO  benchmarkTransactionSize=0
-    2021-10-11 17:14:43,886 [OraBench.java] INFO  Start Setup TOML OraBench Run
-    2021-10-11 17:14:43,888 [OraBench.java] INFO  End   Setup TOML OraBench Run
-    2021-10-11 17:14:43,888 [OraBench.java] INFO  End   OraBench.java
-    Updating registry at `C:\Users\walte\.julia\registries\General`
-    Updating git-repo `https://github.com/JuliaRegistries/General.git`
-    -------------------------------------------------------------------------------
-    The current time is: 17:14:52.55
-    Enter the new time:
-    -------------------------------------------------------------------------------
-    End   lang\julia\scripts\run_bench_jdbc
-
 
 ### <a name="issues_julia_oracle"></a> Julia & Oracle.jl
 
