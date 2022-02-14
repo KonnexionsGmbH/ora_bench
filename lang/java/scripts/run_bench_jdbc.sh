@@ -2,7 +2,7 @@
 
 # ----------------------------------------------------------------------------------
 #
-# run_bench_jdbc.sh: Oracle Benchmark based on Java.
+# run_bench_jdbc.sh_: Oracle Benchmark based on Java.
 #
 # ----------------------------------------------------------------------------------
 
@@ -55,6 +55,10 @@ if ! [ "${ORA_BENCH_MULTIPLE_RUN}" = "true" ]; then
     if ! { ./lang/java/scripts/run_gradle.sh; }; then
         exit 255
     fi
+fi
+
+if ! { gradle dependencies; }; then
+    exit 255
 fi
 
 if ! java -jar priv/libs/ora_bench_java.jar runBenchmark; then

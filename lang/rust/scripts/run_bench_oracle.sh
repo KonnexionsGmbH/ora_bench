@@ -59,7 +59,7 @@ if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
     if ! make -C lang/rust; then
         exit 255
     fi
-    
+
     if ! { /bin/bash lang/java/scripts/run_gradle.sh; }; then
         exit 255
     fi
@@ -69,7 +69,7 @@ if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
     fi
 fi
 
-if ! cargo run --manifest-path lang/rust/Cargo.toml --release ${ORA_BENCH_FILE_CONFIGURATION_NAME}; then
+if ! cargo run --verbose --manifest-path lang/rust/Cargo.toml --release ${ORA_BENCH_FILE_CONFIGURATION_NAME}; then
     exit 255
 fi
 

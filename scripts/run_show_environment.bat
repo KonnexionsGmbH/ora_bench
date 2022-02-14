@@ -19,78 +19,64 @@ echo ===========================================================================
 
 echo =============================================================================== Version Elixir:
 call elixir -v
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step:  'call elixir -v' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
-    
-echo =============================================================================== Version Git:
-git --version
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'git --version' was aborted, error code=%ERRORLEVEL%
-    exit -1073741510
-)
-    
-echo =============================================================================== Version Go:
-go version
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'go version' was aborted, error code=%ERRORLEVEL%
+
+echo =============================================================================== Version Erlang:
+rebar3 version
+if ERRORLEVEL 1 (
+    echo Processing of the script: %0 - step:  'rebar3 version' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 
-echo =============================================================================== Version Gradle:
-call gradle -version
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'call gradle -version' was aborted, error code=%ERRORLEVEL%
+echo =============================================================================== Version Go:
+go version
+if ERRORLEVEL 1 (
+    echo Processing of the script: %0 - step: 'go version' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 
 echo =============================================================================== Version Java:
 java -version
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'java -version' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
-    
+
+remecho "=============================================================================> Version Julia: "
+remjulia -version
+remif ERRORLEVEL 1 (
+rem    echo Processing of the script: %0 - step: 'julia -version' was aborted, error code=%ERRORLEVEL%
+rem    exit -1073741510
+rem)
+
 echo =============================================================================== Version Kotlin:
 call kotlin -version
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'call kotlin -version' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
-    
-echo =============================================================================== Version Mix:
-call mix --version
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'call mix --version' was aborted, error code=%ERRORLEVEL%
+
+echo "=============================================================================> Version Nim: "
+nim --version
+if ERRORLEVEL 1 (
+    echo Processing of the script: %0 - step: 'nim --version' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
-    
-echo =============================================================================== Version Oracle Instant client:
-sqlplus -V
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'sqlplus -V' was aborted, error code=%ERRORLEVEL%
-    exit -1073741510
-)
-    
+
 echo =============================================================================== Version Python 3:
 python --version
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'python --version' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
-    
-echo =============================================================================== Version Rebar3:
-call rebar3 version
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'call rebar3 version' was aborted, error code=%ERRORLEVEL%
-    exit -1073741510
-)
-    
-echo =============================================================================== Version Windows:
-systeminfo | findstr Build
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'systeminfo | findstr Build'  was aborted, error code=%ERRORLEVEL%
+
+echo =============================================================================== Version Rust:
+rustc --version
+if ERRORLEVEL 1 (
+    echo Processing of the script: %0 - step: 'rustc --version' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 

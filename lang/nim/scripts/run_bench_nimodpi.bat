@@ -54,30 +54,30 @@ echo ===========================================================================
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     cd lang\nim
-    
+
     make
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'make' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
-    
+
     cd ../..
 
     call lang\java\scripts\run_gradle
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
     java -jar priv/libs/ora_bench_java.jar setup_default
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_default' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 )
 
 lang\nim\bin\ora_bench.exe %ORA_BENCH_FILE_CONFIGURATION_NAME%
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'lang\nim\bin\ora_bench.exe' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )

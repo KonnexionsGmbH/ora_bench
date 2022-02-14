@@ -10,4 +10,6 @@ clippy: fmt
 
 build: clippy
 	cargo build $(release)
+	cargo install --list
 .PHONY:build
+

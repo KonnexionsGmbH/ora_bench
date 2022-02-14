@@ -16,21 +16,21 @@ echo ===========================================================================
 
 cd lang\kotlin
 
-call gradle init --warning-mode all
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'call gradle init --warning-mode all' was aborted, error code=%ERRORLEVEL%
+call gradle init --warning-mode all --build-file build.gradle.kts
+if ERRORLEVEL 1 (
+    echo Processing of the script: %0 - step: 'call gradle init --warning-mode all --build-file build.gradle.kts' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 
-call gradle clean --warning-mode all
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'call gradle clean --warning-mode all' was aborted, error code=%ERRORLEVEL%
+call gradle clean --warning-mode all --build-file build.gradle.kts
+if ERRORLEVEL 1 (
+    echo Processing of the script: %0 - step: 'call gradle clean --warning-mode all --build-file build.gradle.kts' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 
-call gradle jar --warning-mode all
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'call gradle jar --warning-mode all' was aborted, error code=%ERRORLEVEL%
+call gradle jar --warning-mode all --build-file build.gradle.kts
+if ERRORLEVEL 1 (
+    echo Processing of the script: %0 - step: 'call gradle jar --warning-mode all --build-file build.gradle.kts' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 

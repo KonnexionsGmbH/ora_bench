@@ -54,26 +54,32 @@ echo ===========================================================================
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     call lang\kotlin\scripts\run_gradle
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\kotlin\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
     call lang\java\scripts\run_gradle
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
     java -jar priv/libs/ora_bench_java.jar setup_default
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_default' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 )
 
+call gradle dependencies --build-file lang\kotlin\build.gradle.kts
+if ERRORLEVEL 1 (
+    echo Processing of the script: %0 - step: 'call gradle dependencies --build-file lang\kotlin\build.gradle.kts' was aborted, error code=%ERRORLEVEL%
+    exit -1073741510
+)
+
 java -jar priv/libs/ora_bench_kotlin.jar
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_kotlin.jar' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )

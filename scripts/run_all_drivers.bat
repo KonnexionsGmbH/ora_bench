@@ -34,7 +34,7 @@ echo ===========================================================================
 
 if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
     call lang\c\scripts\run_bench_odpi.bat
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\c\scripts\run_bench_odpi.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
@@ -42,7 +42,7 @@ if ["%ORA_BENCH_RUN_ODPI_C%"] EQU ["true"] (
 
 if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
     call lang\elixir\scripts\run_bench_oranif.bat
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\elixir\scripts\run_bench_oranif.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
@@ -50,7 +50,7 @@ if ["%ORA_BENCH_RUN_ORANIF_ELIXIR%"] EQU ["true"] (
 
 if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
     call lang\erlang\scripts\run_bench_oranif.bat
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\erlang\scripts\run_bench_oranif.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
@@ -58,7 +58,7 @@ if ["%ORA_BENCH_RUN_ORANIF_ERLANG%"] EQU ["true"] (
 
 if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU ["true"] (
     call lang\go\scripts\run_bench_godror.bat
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\go\scripts\run_bench_godror.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
@@ -66,31 +66,31 @@ if ["%ORA_BENCH_RUN_GODROR_GO%"] EQU ["true"] (
 
 if ["%ORA_BENCH_RUN_JDBC_JAVA%"] EQU ["true"] (
     call lang\java\scripts\run_bench_jdbc.bat
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\java\scripts\run_bench_jdbc.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 )
 
-if ["%ORA_BENCH_RUN_JDBC_JULIA%"] EQU ["true"] (
-    call lang\julia\scripts\run_bench_jdbc.bat
-    if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'call lang\julia\scripts\run_bench_jdbc.bat' was aborted, error code=%ERRORLEVEL%
-        exit -1073741510
-    )
-)
+remif ["%ORA_BENCH_RUN_JDBC_JULIA%"] EQU ["true"] (
+rem    call lang\julia\scripts\run_bench_jdbc.bat
+rem    if ERRORLEVEL 1 (
+rem        echo Processing of the script: %0 - step: 'call lang\julia\scripts\run_bench_jdbc.bat' was aborted, error code=%ERRORLEVEL%
+rem        exit -1073741510
+rem    )
+rem)
 
-if ["%ORA_BENCH_RUN_ORACLE_JULIA%"] EQU ["true"] (
-    call lang\julia\scripts\run_bench_oracle.bat
-    if %ERRORLEVEL% neq 0 (
-        echo Processing of the script: %0 - step: 'call lang\julia\scripts\run_bench_oracle.bat' was aborted, error code=%ERRORLEVEL%
-        exit -1073741510
-    )
-)
+remif ["%ORA_BENCH_RUN_ORACLE_JULIA%"] EQU ["true"] (
+rem    call lang\julia\scripts\run_bench_oracle.bat
+rem    if ERRORLEVEL 1 (
+rem        echo Processing of the script: %0 - step: 'call lang\julia\scripts\run_bench_oracle.bat' was aborted, error code=%ERRORLEVEL%
+rem        exit -1073741510
+rem    )
+rem)
 
 if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] EQU ["true"] (
     call lang\kotlin\scripts\run_bench_jdbc.bat
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\kotlin\scripts\run_bench_jdbc.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
@@ -98,7 +98,7 @@ if ["%ORA_BENCH_RUN_JDBC_KOTLIN%"] EQU ["true"] (
 
 if ["%ORA_BENCH_RUN_NIMODPI_NIM%"] EQU ["true"] (
     call lang\nim\scripts\run_bench_nimodpi.bat
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\nim\scripts\run_bench_nimodpi.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
@@ -106,7 +106,7 @@ if ["%ORA_BENCH_RUN_NIMODPI_NIM%"] EQU ["true"] (
 
 if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
     call lang\python\scripts\run_bench_cx_oracle.bat
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\python\scripts\run_bench_cx_oracle.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
@@ -114,7 +114,7 @@ if ["%ORA_BENCH_RUN_CX_ORACLE_PYTHON%"] EQU ["true"] (
 
 if ["%ORA_BENCH_RUN_ORACLE_RUST%"] EQU ["true"] (
     call lang\rust\scripts\run_bench_oracle.bat
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\rust\scripts\run_bench_oracle.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
@@ -122,11 +122,11 @@ if ["%ORA_BENCH_RUN_ORACLE_RUST%"] EQU ["true"] (
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] NEQ ["none"] (
     call scripts\run_finalise_benchmark.bat
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call scripts\run_finalise_benchmark.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
-)    
+)
 
 echo -------------------------------------------------------------------------------
 echo:| TIME

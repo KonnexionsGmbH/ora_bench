@@ -45,7 +45,7 @@ export ORA_BENCH_PASSWORD_SYS=oracle
 export ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
 export ORA_BENCH_RUN_GODROR_GO=true
 export ORA_BENCH_RUN_JDBC_JAVA=true
-export ORA_BENCH_RUN_JDBC_JULIA=false
+#export ORA_BENCH_RUN_JDBC_JULIA=true
 export ORA_BENCH_RUN_JDBC_KOTLIN=true
 export ORA_BENCH_RUN_NIMODPI_NIM=false
 export ORA_BENCH_RUN_ODPI_C=false
@@ -63,7 +63,7 @@ echo "--------------------------------------------------------------------------
 echo "RUN_CX_ORACLE_PYTHON              : ${ORA_BENCH_RUN_CX_ORACLE_PYTHON}"
 echo "RUN_GODROR_GO                     : ${ORA_BENCH_RUN_GODROR_GO}"
 echo "RUN_JDBC_JAVA                     : ${ORA_BENCH_RUN_JDBC_JAVA}"
-echo "RUN_JDBC_JULIA                    : ${ORA_BENCH_RUN_JDBC_JULIA}"
+#echo "RUN_JDBC_JULIA                    : ${ORA_BENCH_RUN_JDBC_JULIA}"
 echo "RUN_JDBC_KOTLIN                   : ${ORA_BENCH_RUN_JDBC_KOTLIN}"
 echo "RUN_NIMODPI_NIM                   : ${ORA_BENCH_RUN_NIMODPI_NIM}"
 echo "RUN_ODPI_C                        : ${ORA_BENCH_RUN_ODPI_C}"
@@ -99,7 +99,7 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
     if ! { /bin/bash scripts/run_create_bulk_file.sh; }; then
         exit 255
     fi
-    
+
     if [ "${ORA_BENCH_ORACLE_DATABASE_EXISTING}" = "true" ]; then
         echo "--------------------------------------------------------------------------------"
         echo "Oracle Database already existing."
@@ -167,7 +167,7 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
         export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
         export ORA_BENCH_CONNECTION_SERVICE=orclpdb1
     fi
-    
+
     if [ "${ORA_BENCH_ORACLE_DATABASE_21C_XE}" = "true" ]; then
         echo "--------------------------------------------------------------------------------"
         echo "Oracle Database Express Edition 21c."
@@ -191,7 +191,7 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=0
     export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
     export ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
-    
+
     export ORA_BENCH_RUN_ORACLE_JULIA=false
     if ! { /bin/bash scripts/run_all_drivers.sh; }; then
             exit 255
@@ -205,7 +205,7 @@ if [ "${ORA_BENCH_ORACLE_DATABASE_ANY}" = "true" ]; then
     if ! { /bin/bash scripts/run_all_drivers.sh; }; then
             exit 255
     fi
-    export ORA_BENCH_RUN_ORACLE_JL_JULIA=true
+    export ORA_BENCH_RUN_ORACLE_JULIA=true
 
     export ORA_BENCH_BENCHMARK_BATCH_SIZE=512
     export ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1

@@ -16,7 +16,7 @@ echo "==========================================================================
 
 (
     cd lang/kotlin || exit
-    
+
     if ! { gradle init --warning-mode all; }; then
         exit 255
     fi
@@ -29,7 +29,7 @@ echo "==========================================================================
     if ! { gradle jar --warning-mode all; }; then
         exit 255
     fi
-    
+
     cp -f build/libs/ora_bench.jar ../../priv/libs/ora_bench_kotlin.jar
 )
 

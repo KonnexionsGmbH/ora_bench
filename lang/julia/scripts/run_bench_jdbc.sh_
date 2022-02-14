@@ -2,7 +2,7 @@
 
 # ----------------------------------------------------------------------------------
 #
-# run_bench_jdbc.sh: Oracle Benchmark based on Julia.
+# run_bench_jdbc.sh_: Oracle Benchmark based on Julia.
 #
 # ----------------------------------------------------------------------------------
 
@@ -61,6 +61,10 @@ if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
     if ! java -jar priv/libs/ora_bench_java.jar setup_toml; then
         exit 255
     fi
+fi
+
+if ! julia lang/julia/PkgStatus.jl; then
+    exit 255
 fi
 
 export JULIA_COPY_STACKS=yes

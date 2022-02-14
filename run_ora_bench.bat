@@ -5,7 +5,7 @@ set ORA_BENCH_PROPERTIES=standard
 
 rem --------------------------------------------------------------------------------
 rem
-rem run_ora_bench.bat: Oracle Benchmark for all database versions 
+rem run_ora_bench.bat: Oracle Benchmark for all database versions
 rem                    with ORA_BENCH_PROPERTIES properties.
 rem
 rem --------------------------------------------------------------------------------
@@ -42,8 +42,8 @@ if ["%1"] EQU [""] (
     echo erlang             - Erlang and oranif
     echo go                 - Go and godror
     echo java               - Java and Oracle JDBC
-    echo julia_jdbc         - Julia and JDBC.jl
-    echo julia_oracle       - Julia and Oracle.jl
+rem    echo julia_jdbc         - Julia and JDBC.jl
+rem    echo julia_oracle       - Julia and Oracle.jl
     echo kotlin             - Kotlin and Oracle JDBC
     echo nim                - Nim and nimodpi
     echo python             - Python 3 and cx_Oracle
@@ -63,7 +63,7 @@ if ["%2"] EQU [""] (
     echo complete           - All implemented variations
     echo -------------------------------------------------------------------------------
     echo 18xe               - Oracle Database 18c Express Edition
-    echo 19                 - Oracle Database 19c 
+    echo 19                 - Oracle Database 19c
     echo 21                 - Oracle Database 21c
     echo 21xe               - Oracle Database 21c Express Edition
     echo -------------------------------------------------------------------------------
@@ -132,30 +132,30 @@ echo.
     echo -------------------------------------------------------------------------------
     echo:| TIME
     echo ===============================================================================
-   
+
     call scripts\run_create_bulk_file.bat
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call scripts\run_create_bulk_file.bat' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
-    
+
     set ORA_BENCH_BULKFILE_EXISTING=true
 
     if ["%ORA_BENCH_RUN_DB_18_4_XE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
         set ORA_BENCH_CONNECTION_SERVICE=xe
         call scripts\run_properties_%ORA_BENCH_PROPERTIES%.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_%ORA_BENCH_PROPERTIES%.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
     )
-    
+
     if ["%ORA_BENCH_RUN_DB_19_3_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_%ORA_BENCH_PROPERTIES%.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_%ORA_BENCH_PROPERTIES%.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
@@ -165,7 +165,7 @@ echo.
         set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_%ORA_BENCH_PROPERTIES%.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_%ORA_BENCH_PROPERTIES%.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
@@ -175,7 +175,7 @@ echo.
         set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
         set ORA_BENCH_CONNECTION_SERVICE=xe
         call scripts\run_properties_%ORA_BENCH_PROPERTIES%.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_%ORA_BENCH_PROPERTIES%.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )

@@ -39,7 +39,7 @@ if [ -z "$1" ]; then
     echo "erlang             - Erlang and oranif"
     echo "go                 - Go and godror"
     echo "java               - Java and Oracle JDBC"
-    echo "julia_jdbc         - Julia and JDBC.jl"
+#    echo "julia_jdbc         - Julia and JDBC.jl"
     echo "julia_oracle       - Julia and Oracle.jl"
     echo "kotlin             - Kotlin and Oracle JDBC"
     echo "nim                - Nim and nimodpi"

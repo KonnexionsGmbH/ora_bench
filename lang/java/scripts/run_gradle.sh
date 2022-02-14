@@ -16,7 +16,7 @@ echo "==========================================================================
 
 (
     cd lang/java || exit
-    
+
     if ! { gradle init --warning-mode all; }; then
         exit 255
     fi
@@ -24,7 +24,7 @@ echo "==========================================================================
     if ! { gradle clean --warning-mode all; }; then
         exit 255
     fi
-    
+
     if ! { gradle copyJarToLib --warning-mode all; }; then
         exit 255
     fi

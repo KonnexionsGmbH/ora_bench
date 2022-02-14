@@ -18,7 +18,7 @@ echo "--------------------------------------------------------------------------
 echo "RUN_CX_ORACLE_PYTHON              : ${ORA_BENCH_RUN_CX_ORACLE_PYTHON}"
 echo "RUN_GODROR_GO                     : ${ORA_BENCH_RUN_GODROR_GO}"
 echo "RUN_JDBC_JAVA                     : ${ORA_BENCH_RUN_JDBC_JAVA}"
-echo "RUN_JDBC_JULIA                    : ${ORA_BENCH_RUN_JDBC_JULIA}"
+#echo "RUN_JDBC_JULIA                    : ${ORA_BENCH_RUN_JDBC_JULIA}"
 echo "RUN_JDBC_KOTLIN                   : ${ORA_BENCH_RUN_JDBC_KOTLIN}"
 echo "RUN_NIMODPI_NIM                   : ${ORA_BENCH_RUN_NIMODPI_NIM}"
 echo "RUN_ODPI_C                        : ${ORA_BENCH_RUN_ODPI_C}"
@@ -79,11 +79,11 @@ if [ "${ORA_BENCH_RUN_ORANIF_ELIXIR}" == "true" ]; then
             exit 255
         fi
     fi
-    
+
     if ! mix local.hex --force; then
         exit 255
     fi
-    
+
     if ! mix local.rebar --force; then
         exit 255
     fi
@@ -125,7 +125,7 @@ if [ "${ORA_BENCH_RUN_ORANIF_ERLANG}" == "true" ]; then
     fi
 
     cd ../..
-  
+
     if ! java -jar priv/libs/ora_bench_java.jar setup_erlang; then
         exit 255
     fi
@@ -137,15 +137,15 @@ if [ "${ORA_BENCH_RUN_GODROR_GO}" == "true" ]; then
     if ! make -C lang/go; then
         exit 255
     fi
-    
+
     if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
         exit 255
     fi
     echo "Setup Go - End   ================================================================"
 fi
 
-if [ "${ORA_BENCH_RUN_JDBC_JULIA}" == "true" ] ||
-   [ "${ORA_BENCH_RUN_ORACLE_JULIA}" == "true" ]; then
+#if [ "${ORA_BENCH_RUN_JDBC_JULIA}" == "true" ] ||
+if [ "${ORA_BENCH_RUN_ORACLE_JULIA}" == "true" ]; then
     echo "Setup Julia - Start ============================================================="
     if ! java -jar priv/libs/ora_bench_java.jar setup_toml; then
         exit 255
@@ -170,7 +170,7 @@ if [ "${ORA_BENCH_RUN_NIMODPI_NIM}" == "true" ]; then
     if ! make -C lang/nim; then
         exit 255
     fi
-    
+
     if ! java -jar priv/libs/ora_bench_java.jar setup_yaml; then
         exit 255
     fi
@@ -182,11 +182,11 @@ if [ "${ORA_BENCH_RUN_CX_ORACLE_PYTHON}" == "true" ]; then
     if ! python3 -m pip install --upgrade pip; then
         exit 255
     fi
-    
+
     if ! python3 -m pip install -r lang/python/requirements.txt; then
         exit 255
     fi
-    
+
     echo "=============================================================================> Version Python: "
     echo " "
     echo "Current version of Python: $(python3 --version)"
@@ -196,7 +196,7 @@ if [ "${ORA_BENCH_RUN_CX_ORACLE_PYTHON}" == "true" ]; then
     python3 -m pip freeze | grep -E -i 'cx_oracle|PyYAML'
     echo " "
     echo "=============================================================================>"
-    
+
     if ! python3 -m compileall lang/python/OraBench.py; then
         exit 255
     fi
@@ -212,7 +212,7 @@ if [ "${ORA_BENCH_RUN_ORACLE_RUST}" == "true" ]; then
     if ! make -C lang/rust; then
         exit 255
     fi
-    
+
     if ! java -jar priv/libs/ora_bench_java.jar setup_default; then
       exit 255
     fi

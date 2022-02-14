@@ -16,7 +16,7 @@ echo "--------------------------------------------------------------------------
 echo "RUN_CX_ORACLE_PYTHON              : ${ORA_BENCH_RUN_CX_ORACLE_PYTHON}"
 echo "RUN_GODROR_GO                     : ${ORA_BENCH_RUN_GODROR_GO}"
 echo "RUN_JDBC_JAVA                     : ${ORA_BENCH_RUN_JDBC_JAVA}"
-echo "RUN_JDBC_JULIA                    : ${ORA_BENCH_RUN_JDBC_JULIA}"
+#echo "RUN_JDBC_JULIA                    : ${ORA_BENCH_RUN_JDBC_JULIA}"
 echo "RUN_JDBC_KOTLIN                   : ${ORA_BENCH_RUN_JDBC_KOTLIN}"
 echo "RUN_NIMODPI_NIM                   : ${ORA_BENCH_RUN_NIMODPI_NIM}"
 echo "RUN_ODPI_C                        : ${ORA_BENCH_RUN_ODPI_C}"
@@ -62,11 +62,11 @@ if [ "${ORA_BENCH_RUN_JDBC_JAVA}" = "true" ]; then
     fi
 fi
 
-if [ "${ORA_BENCH_RUN_JDBC_JULIA}" = "true" ]; then
-    if ! { /bin/bash lang/julia/scripts/run_bench_jdbc.sh; }; then
-        exit 255
-    fi
-fi
+#if [ "${ORA_BENCH_RUN_JDBC_JULIA}" = "true" ]; then
+#    if ! { /bin/bash lang/julia/scripts/run_bench_jdbc.sh; }; then
+#        exit 255
+#    fi
+#fi
 
 if [ "${ORA_BENCH_RUN_ORACLE_JULIA}" = "true" ]; then
     if ! { /bin/bash lang/julia/scripts/run_bench_oracle.sh; }; then

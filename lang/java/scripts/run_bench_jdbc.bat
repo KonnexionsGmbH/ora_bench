@@ -54,14 +54,20 @@ echo ===========================================================================
 
 if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     call lang\java\scripts\run_gradle
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
-)    
+)
+
+call gradle dependencies --build-file lang\java\build.gradle
+if ERRORLEVEL 1 (
+    echo Processing of the script: %0 - step: 'call gradle dependencies --build-file lang\java\build.gradle' was aborted, error code=%ERRORLEVEL%
+    exit -1073741510
+)
 
 java -jar priv/libs/ora_bench_java.jar runBenchmark
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar runBenchmark' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )

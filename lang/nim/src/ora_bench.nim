@@ -134,6 +134,7 @@ proc createConnections(logger: Logger, config: ConfigType,
     except:
       logger.log(lvlFatal, "Problem creating database connection #", i, ": ",
           getCurrentExceptionMsg())
+      quit QuitFailure
 
     connections.add(connection)
 
@@ -386,6 +387,7 @@ proc main() =
 
   if numberArgs < 1:
     logger.log(lvlFatal, "main() - not enough command line arguments available")
+    quit QuitFailure
 
   fileNameConfig = paramStr(1)
 
@@ -393,6 +395,7 @@ proc main() =
 
   if numberArgs > 1:
     logger.log(lvlFatal, "main() - more than one command line arguments available")
+    quit QuitFailure
 
   runBenchmark(logger, fileNameConfig)
 
@@ -462,12 +465,14 @@ proc runBenchmark(logger: Logger, fileNameConfig: string) =
     except:
       logger.log(lvlFatal, "Problem releasing database connection #", i, ": ",
           getCurrentExceptionMsg())
+      quit QuitFailure
 
   try:
     db_oracle.destroyOracleContext(octx)
   except:
     logger.log(lvlFatal, "Problem destroying Oracle context: ",
         getCurrentExceptionMsg())
+    quit QuitFailure
 
   ## WRITE an entry for the action 'benchmark' in the result file (config param 'file.result.name')
   let endTime: DateTime = now()
@@ -830,28 +835,37 @@ statistics: StatisticsType, trialNo: uint) =
   var resultSet: db_oracle.ResultSet
 
   var sqlCreateSql: db_oracle.SqlQuery = osql paramsRunTrial.sqlCreateStr
-  var sqlCreatePS: db_oracle.PreparedStatement
+  # var sqlCreatePS: db_oracle.PreparedStatement
 
   var sqlDropSql: db_oracle.SqlQuery = osql paramsRunTrial.sqlDropStr
-  var sqlDropPS: db_oracle.PreparedStatement
+  # var sqlDropPS: db_oracle.PreparedStatement
 
-  db_oracle.newPreparedStatement(connections[0], sqlCreateSql,
-      sqlCreatePS, 1)
-  db_oracle.newPreparedStatement(connections[0], sqlDropSql,
-      sqlDropPS, 1)
+  # db_oracle.newPreparedStatement(connections[0], sqlCreateSql,
+  #     sqlCreatePS, 1)
+  # db_oracle.newPreparedStatement(connections[0], sqlDropSql,
+  #     sqlDropPS, 1)
 
   try:
-    executeStatement(sqlCreatePS, resultSet)
+    logger.log(lvlInfo, "runTrial() - sqlCreateSql: ",
+        paramsRunTrial.sqlCreateStr)
+    db_oracle.executeDDL(connections[0], sqlCreateSql)
     logger.log(lvlDebug, "last DDL statement=", paramsRunTrial.sqlCreateStr)
   except:
+    logger.log(lvlInfo, "runTrial() - Problem creating the database table: ",
+        getCurrentExceptionMsg())
     try:
-      executeStatement(sqlDropPS, resultSet)
-      executeStatement(sqlCreatePS, resultSet)
+      logger.log(lvlInfo, "runTrial() - sqlDropSql  : ",
+          paramsRunTrial.sqlDropStr)
+      db_oracle.executeDDL(connections[0], sqlDropSql)
+      logger.log(lvlInfo, "runTrial() - sqlCreateSql: ",
+          paramsRunTrial.sqlCreateStr)
+      db_oracle.executeDDL(connections[0], sqlCreateSql)
       logger.log(lvlDebug, "last DDL statement after DROP=",
           paramsRunTrial.sqlCreateStr)
     except:
       logger.log(lvlFatal, "runTrial() - Problem dropping the database table: ",
           getCurrentExceptionMsg())
+      quit QuitFailure
 
   #[
   DO runInsert(database connections,

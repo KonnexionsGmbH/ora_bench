@@ -17,8 +17,8 @@ echo ===========================================================================
 cd lang\kotlin
 
 call gradle dokkaHtml --warning-mode all
-if %ERRORLEVEL% neq 0 (
-    echo Processing of the script: %0 - step: 'call gradle dokkaHtml --warning-mode all' was aborted, error code=%ERRORLEVEL%
+if ERRORLEVEL 1 (
+    echo Processing of the script: %0 - step: 'call gradle dokkaHtml --build-file lang\kotlin\build.gradle.kts --warning-mode all' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 

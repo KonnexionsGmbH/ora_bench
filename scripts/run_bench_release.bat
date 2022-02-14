@@ -93,73 +93,73 @@ echo.
         if exist ora_bench.log del /f /q ora_bench.log
         if exist priv\ora_bench_result.csv del /f /q priv\ora_bench_result.csv
         if exist priv\ora_bench_result.tsv del /f /q priv\ora_bench_result.tsv
-    
+
         echo --------------------------------------------------------------------------------
         echo Collect libraries and compile.
         echo --------------------------------------------------------------------------------
         call scripts\run_collect_and_compile.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_collect_and_compile.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
-    
+
         echo --------------------------------------------------------------------------------
         echo Create bulk file.
         echo --------------------------------------------------------------------------------
         call scripts\run_create_bulk_file.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_create_bulk_file.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
-        
+
         if ["%ORA_BENCH_ORACLE_DATABASE_EXISTING%"] EQU ["true"] (
             echo --------------------------------------------------------------------------------
             echo Oracle Database already existing.
             echo --------------------------------------------------------------------------------
             docker ps -a
             docker start ora_bench_db
-    
+
             set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
             set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
             set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 
             call scripts\run_all_drivers.bat
-            if %ERRORLEVEL% neq 0 (
+            if ERRORLEVEL 1 (
                 echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
                 exit -1073741510
             )
-    
+
             set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
             set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
             set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 
             call scripts\run_all_drivers.bat
-            if %ERRORLEVEL% neq 0 (
+            if ERRORLEVEL 1 (
                 echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
                 exit -1073741510
             )
-    
+
             set ORA_BENCH_BENCHMARK_BATCH_SIZE=512
             set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=0
             set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
             call scripts\run_all_drivers.bat
-            if %ERRORLEVEL% neq 0 (
+            if ERRORLEVEL 1 (
                 echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
                 exit -1073741510
             )
-    
+
             set ORA_BENCH_BENCHMARK_BATCH_SIZE=512
             set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
             set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
             call scripts\run_all_drivers.bat
-            if %ERRORLEVEL% neq 0 (
+            if ERRORLEVEL 1 (
                 echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
                 exit -1073741510
             )
         )
-    
+
         if ["%ORA_BENCH_ORACLE_DATABASE_18C_XE%"] EQU ["true"] (
             echo --------------------------------------------------------------------------------
             echo Oracle Database Express Edition 18c.
@@ -167,7 +167,7 @@ echo.
             set ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
             set ORA_BENCH_CONNECTION_SERVICE=xe
         )
-    
+
         if ["%ORA_BENCH_ORACLE_DATABASE_19C%"] EQU ["true"] (
             echo --------------------------------------------------------------------------------
             echo Oracle Database 19c.
@@ -175,7 +175,7 @@ echo.
             set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
             set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         )
-    
+
         if ["%ORA_BENCH_ORACLE_DATABASE_21C%"] EQU ["true"] (
             echo --------------------------------------------------------------------------------
             echo Oracle Database 21c.
@@ -183,7 +183,7 @@ echo.
             set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
             set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         )
-    
+
         if ["%ORA_BENCH_ORACLE_DATABASE_21C_XE%"] EQU ["true"] (
             echo --------------------------------------------------------------------------------
             echo Oracle Database Express Edition 21c.
@@ -191,9 +191,9 @@ echo.
             set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
             set ORA_BENCH_CONNECTION_SERVICE=xe
         )
-        
+
         call scripts\run_db_setup.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_db_setup.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
@@ -203,7 +203,7 @@ echo.
         set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 
         call scripts\run_all_drivers.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
@@ -213,7 +213,7 @@ echo.
         set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 
         call scripts\run_all_drivers.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
@@ -223,7 +223,7 @@ echo.
         set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
         call scripts\run_all_drivers.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
@@ -233,14 +233,14 @@ echo.
         set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=512
 
         call scripts\run_all_drivers.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
     )
-   
+
     start priv\audio\end_of_series.mp3
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'start priv\audio\end_of_series.mp3' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )

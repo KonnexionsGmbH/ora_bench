@@ -65,6 +65,10 @@ if ! [ "${ORA_BENCH_MULTIPLE_RUN}" = "true" ]; then
     fi
 fi
 
+if ! { gradle dependencies; }; then
+    exit 255
+fi
+
 if ! java -jar priv/libs/ora_bench_kotlin.jar; then
     exit 255
 fi

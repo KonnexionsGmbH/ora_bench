@@ -56,21 +56,21 @@ if [ "${ORA_BENCH_MULTIPLE_RUN}" != "true" ]; then
     if ! python3 -m pip install --upgrade pip; then
         exit 255
     fi
-    
+
     if ! python3 -m pip install -r lang/python/requirements.txt; then
         exit 255
     fi
-    
+
     echo "=============================================================================> Version Python: "
     echo " "
-    echo "Current version of Python: $(python3 --version)"
+    echo "Current version of Python: $(python --version)"
     echo " "
-    echo "Current version of pip: $(python3 -m pip --version)"
+    echo "Current version of pip: $(pip --version)"
     echo " "
-    python3 -m pip freeze | grep -E -i 'cx_oracle|PyYAML'
+    pip freeze | grep -E -i 'cx-Oracle|PyYAML'
     echo " "
     echo "=============================================================================>"
-    
+
     if ! python3 -m compileall lang/python/OraBench.py; then
         exit 255
     fi

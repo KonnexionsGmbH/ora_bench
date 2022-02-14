@@ -16,10 +16,10 @@ repositories {
 
 dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.10")
-    implementation("com.oracle.database.jdbc:ojdbc11:21.3.0.0")
+    implementation("com.oracle.database.jdbc:ojdbc11:21.5.0.0")
     implementation("org.apache.commons:commons-csv:1.9.0")
     implementation("org.apache.commons:commons-math3:3.6.1")
-    implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.0")
+    implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.10")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10")
     implementation("org.apache.logging.log4j:log4j-api:2.17.1")
     implementation("org.apache.logging.log4j:log4j-core:2.17.1")

@@ -63,7 +63,7 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     echo --------------------------------------------------------------------------------
     if exist "%ORA_BENCH_BENCHMARK_VCVARSALL%" (
         call "%ORA_BENCH_BENCHMARK_VCVARSALL%" x64
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
@@ -71,67 +71,67 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
 
     cd lang\elixir
 
-    if EXIST deps\    rd /Q/S deps 
-    if %ERRORLEVEL% neq 0 (
+    if EXIST deps\    rd /Q/S deps
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'rd /Q/S deps' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
-    if EXIST mix.lock del /s mix.lock 
-    if %ERRORLEVEL% neq 0 (
+    if EXIST mix.lock del /s mix.lock
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'del /s mix.lock' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
     call mix local.hex --force
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call mix local.hex --force' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
     call mix local.rebar --force
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call mix local.rebar --force' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
     call mix deps.clean --all
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call mix deps.clean --all' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
     call mix deps.get
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call mix deps.get' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
     call mix deps.compile
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call mix deps.compile' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
-    
+
     cd ..\..
-    
+
     call lang\java\scripts\run_gradle
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
     java -jar priv/libs/ora_bench_java.jar setup_elixir
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_elixir' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 )
-    
+
 cd lang\elixir
 
 call mix run -e "OraBench.CLI.main(["oranif"])"
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: call mix run -e "OraBench.CLI.main(["oranif"])" was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )

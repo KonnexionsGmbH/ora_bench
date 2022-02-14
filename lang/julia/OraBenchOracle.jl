@@ -1,4 +1,4 @@
-#= 
+#=
 OraBenchOracle:
 - Author: Konnexions GmbH
 - Date: 2021-06-26
@@ -321,6 +321,8 @@ function main()
     function_name = string(StackTraces.stacktrace()[1].func)
     @debug "\nStart $(function_name)"
 
+    println("Start OraBenchOracle.jl")
+
     numberArgs = size(ARGS, 1)
 
     println("main() - number arguments=$(numberArgs)")
@@ -421,17 +423,17 @@ function run_benchmark(config::Dict{String,Any})
       trial_no = 0
       trial_sum = 0
       WHILE trial_no < config_param 'benchmark.trials'
-            duration_trial = DO run_trial(database connections, 
-                                          trial_no, 
+            duration_trial = DO run_trial(database connections,
+                                          trial_no,
                                           bulk_data_partitions)
             IF trial_max == 0 OR duration_trial > trial_max
                trial_max = duration_trial
-            END IF                       
+            END IF
             IF trial_min == 0 OR duration_trial < trial_min
                trial_min = duration_trial
-            END IF     
-            trial_sum + duration_trial                  
-      ENDWHILE    
+            END IF
+            trial_sum + duration_trial
+      ENDWHILE
     =#
     trial_max = 0
     trial_min = 0
@@ -462,7 +464,7 @@ function run_benchmark(config::Dict{String,Any})
       partition_key = 0
       WHILE partition_key < config_param 'benchmark.number.partitions'
             close the database connection
-      ENDWHILE    
+      ENDWHILE
     =#
     for partition_key = 1:benchmark_number_partitions
         @debug "\n      $(function_name) Connection #$(partition_key) - to be closed"
@@ -523,15 +525,15 @@ function run_insert(
       partition_key = 0
       WHILE partition_key < config_param 'benchmark.number.partitions'
             IF config_param 'benchmark.core.multiplier' == 0
-               DO run_insert_helper(database connections(partition_key), 
-                                    bulk_data_partitions(partition_key), 
-                                    partition_key) 
-            ELSE     
-               DO run_insert_helper(database connections(partition_key), 
-                                   bulk_data_partitions(partition_key), 
+               DO run_insert_helper(database connections(partition_key),
+                                    bulk_data_partitions(partition_key),
+                                    partition_key)
+            ELSE
+               DO run_insert_helper(database connections(partition_key),
+                                   bulk_data_partitions(partition_key),
                                    partition_key) as a thread
             ENDIF
-      ENDWHILE    
+      ENDWHILE
     =#
     if benchmark_core_multiplier == 0
         for partition_key = 1:benchmark_number_partitions
@@ -593,7 +595,7 @@ function run_insert_helper(
     #=
       IF trial_no == 1
          INFO Start insert partition_key=partition_key
-      ENDIF   
+      ENDIF
     =#
     if trial_number == 1
         println("Start insert partition_key=$(partition_key) - thread id=$(threadid())")
@@ -605,19 +607,19 @@ function run_insert_helper(
       WHILE iterating through the collection bulk_data_partition
             count + 1
 
-            add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection 
+            add the SQL statement in config param 'sql.insert' with the current bulk_data entry to the collection batch_collection
 
             IF config_param 'benchmark.batch.size' > 0
-               IF count modulo config param 'benchmark.batch.size' == 0 
+               IF count modulo config param 'benchmark.batch.size' == 0
                   execute the SQL statements in the collection batch_collection
                   batch_collection = empty
-               ENDIF                    
-            ENDIF                
+               ENDIF
+            ENDIF
 
-            IF  config param 'benchmark.transaction.size' > 0 
+            IF  config param 'benchmark.transaction.size' > 0
             AND count modulo config param 'benchmark.transaction.size' == 0
                 commit
-            ENDIF    
+            ENDIF
       ENDWHILE
     =#
     stmt = Oracle.Stmt(connection, sql_insert)::Oracle.Stmt{Oracle.ORA_STMT_TYPE_INSERT}
@@ -681,7 +683,7 @@ function run_insert_helper(
     #=
       IF trial_no == 1
          INFO End   insert partition_key=partition_key
-      ENDIF   
+      ENDIF
     =#
     if trial_number == 1
         println("End   insert partition_key=$(partition_key) - thread id=$(threadid())")
@@ -716,15 +718,15 @@ function run_select(
       partition_key = 0
       WHILE partition_key < config_param 'benchmark.number.partitions'
             IF config_param 'benchmark.core.multiplier' == 0
-               DO run_select_helper(database connections(partition_key), 
-                                    bulk_data_partitions(partition_key, 
-                                    partition_key) 
-            ELSE    
-               DO run_select_helper(database connections(partition_key), 
-                                    bulk_data_partitions(partition_key, 
+               DO run_select_helper(database connections(partition_key),
+                                    bulk_data_partitions(partition_key,
+                                    partition_key)
+            ELSE
+               DO run_select_helper(database connections(partition_key),
+                                    bulk_data_partitions(partition_key,
                                     partition_key) as a thread
             ENDIF
-      ENDWHILE    
+      ENDWHILE
     =#
     if benchmark_core_multiplier == 0
         for partition_key = 1:benchmark_number_partitions
@@ -780,7 +782,7 @@ function run_select_helper(
     #=
       IF trial_no == 1
          INFO Start select partition_key=partition_key
-      ENDIF   
+      ENDIF
     =#
     if trial_number == 1
         println("Start select partition_key=$(partition_key) - thread id=$(threadid())")
@@ -808,8 +810,8 @@ function run_select_helper(
 
     #=
       IF NOT count = size(bulk_data_partition)
-         display an error message            
-      ENDIF                    
+         display an error message
+      ENDIF
     =#
     if count != count_expected
         @error "\nPartition $(partition_key - 1) number rows: expected=$(count_expected) - found=$(count)"
@@ -819,7 +821,7 @@ function run_select_helper(
     #=
       IF trial_no == 1
          INFO End   select partition_key=partition_key
-      ENDIF   
+      ENDIF
     =#
     if trial_number == 1
         println("End   select partition_key=$(partition_key) - thread id=$(threadid())")

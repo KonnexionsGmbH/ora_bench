@@ -65,7 +65,7 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     echo --------------------------------------------------------------------------------
     if exist "%ORA_BENCH_BENCHMARK_VCVARSALL%" (
         call "%ORA_BENCH_BENCHMARK_VCVARSALL%" x64
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'vcvarsall.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
@@ -76,13 +76,13 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     if EXIST _build\ rd /Q/S _build
 
     call rebar3 steamroll
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call rebar3 steamroll' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
     call rebar3 escriptize
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call rebar3 escriptize' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
@@ -90,20 +90,20 @@ if NOT ["%ORA_BENCH_MULTIPLE_RUN%"] == ["true"] (
     cd ..\..
 
     call lang\java\scripts\run_gradle
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'call lang\java\scripts\run_gradle' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 
     java -jar priv/libs/ora_bench_java.jar setup_erlang
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'java -jar priv/libs/ora_bench_java.jar setup_erlang' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )
 )
 
 lang\erlang\_build\default\bin\orabench %ORA_BENCH_FILE_CONFIGURATION_NAME_ERLANG%
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'lang\erlang\_build\default\bin\orabench priv\properties\ora_bench_erlang.properties' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )

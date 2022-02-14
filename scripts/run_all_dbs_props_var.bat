@@ -39,8 +39,8 @@ if ["%1"] EQU [""] (
     echo erlang             - Erlang and oranif
     echo go                 - Go and godror
     echo java               - Java and Oracle JDBC
-    echo julia_jdbc         - Julia and JDBC.jl
-    echo julia_oracle       - Julia and Oracle.jl
+rem    echo julia_jdbc         - Julia and JDBC.jl
+rem    echo julia_oracle       - Julia and Oracle.jl
     echo kotlin             - Kotlin and Oracle JDBC
     echo nim                - Nim and nimodpi
     echo python             - Python 3 and cx_Oracle
@@ -60,7 +60,7 @@ if ["%2"] EQU [""] (
     echo complete           - All implemented variations
     echo -------------------------------------------------------------------------------
     echo 18xe               - Oracle Database 18c Express Edition
-    echo 19                 - Oracle Database 19c 
+    echo 19                 - Oracle Database 19c
     echo 21                 - Oracle Database 21c
     echo 21xe               - Oracle Database 21c Express Edition
     echo -------------------------------------------------------------------------------
@@ -131,26 +131,26 @@ echo.
     echo -------------------------------------------------------------------------------
     echo:| TIME
     echo ===============================================================================
-    
+
     set ORA_BENCH_BENCHMARK_BATCH_SIZE_DEFAULT=256
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=0
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE_DEFAULT=512
-    
+
     if ["%ORA_BENCH_RUN_DB_18_4_XE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_18_4_xe
         set ORA_BENCH_CONNECTION_SERVICE=xe
         call scripts\run_properties_variations.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_variations.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
     )
-    
+
     if ["%ORA_BENCH_RUN_DB_19_3_EE%"] EQU ["true"] (
         set ORA_BENCH_BENCHMARK_DATABASE=db_19_3_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_variations.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_variations.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
@@ -160,7 +160,7 @@ echo.
         set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_ee
         set ORA_BENCH_CONNECTION_SERVICE=orclpdb1
         call scripts\run_properties_variations.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_variations.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
@@ -170,7 +170,7 @@ echo.
         set ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
         set ORA_BENCH_CONNECTION_SERVICE=xe
         call scripts\run_properties_variations.bat
-        if %ERRORLEVEL% neq 0 (
+        if ERRORLEVEL 1 (
             echo Processing of the script: %0 - step: 'call scripts\run_properties_variations.bat' was aborted, error code=%ERRORLEVEL%
             exit -1073741510
         )
@@ -179,15 +179,15 @@ echo.
     set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
     set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER_DEFAULT=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
     set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
-    
+
     echo -------------------------------------------------------------------------------
     echo:| TIME
     echo -------------------------------------------------------------------------------
     echo End   %0
     echo ===============================================================================
-    
+
     start priv\audio\end_of_series.mp3
-    if %ERRORLEVEL% neq 0 (
+    if ERRORLEVEL 1 (
         echo Processing of the script: %0 - step: 'start priv\audio\end_of_series.mp3' was aborted, error code=%ERRORLEVEL%
         exit -1073741510
     )

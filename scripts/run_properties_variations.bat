@@ -33,10 +33,10 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["complete"] (
     set ORA_BENCH_RUN_CX_ORACLE_PYTHON=true
     set ORA_BENCH_RUN_GODROR_GO=true
     set ORA_BENCH_RUN_JDBC_JAVA=true
-    set ORA_BENCH_RUN_JDBC_JULIA=true
+    set ORA_BENCH_RUN_JDBC_JULIA=false
     set ORA_BENCH_RUN_JDBC_KOTLIN=true
-    set ORA_BENCH_RUN_NIMODPI_NIM=true
-    set ORA_BENCH_RUN_ODPI_C=true
+    set ORA_BENCH_RUN_NIMODPI_NIM=false
+    set ORA_BENCH_RUN_ODPI_C=false
     set ORA_BENCH_RUN_ORACLE_JULIA=true
     set ORA_BENCH_RUN_ORACLE_RUST=true
     set ORA_BENCH_RUN_ORANIF_ELIXIR=true
@@ -63,14 +63,13 @@ if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["java"] (
     set ORA_BENCH_RUN_JDBC_JAVA=true
 )
 
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["julia_jdbc"] (
-    set ORA_BENCH_RUN_JDBC_JULIA=true
-)
+remif ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["julia_jdbc"] (
+rem    set ORA_BENCH_RUN_JDBC_JULIA=true
+rem)
 
-if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["julia_oracle"] (
-    set ORA_BENCH_RUN_ORACLE_JULIA=true
-    set ORA_BENCH_RUN_ORACLE_JULIA=false
-)
+remif ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["julia_oracle"] (
+rem    set ORA_BENCH_RUN_ORACLE_JULIA=true
+rem)
 
 if ["%ORA_BENCH_CHOICE_DRIVER%"] EQU ["kotlin"] (
     set ORA_BENCH_RUN_JDBC_KOTLIN=true
@@ -154,13 +153,13 @@ echo:| TIME
 echo ===============================================================================
 
 call scripts\run_collect_and_compile.bat
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'call scripts\run_collect_and_compile.bat' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
 
 call scripts\run_db_setup.bat
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'call scripts\run_db_setup.bat' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
@@ -170,7 +169,7 @@ set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
 set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_all_drivers.bat
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
@@ -180,7 +179,7 @@ set ORA_BENCH_BENCHMARK_BATCH_SIZE=%ORA_BENCH_BENCHMARK_BATCH_SIZE%_DEFAULT
 set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_all_drivers.bat
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
@@ -190,7 +189,7 @@ set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_all_drivers.bat
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
@@ -200,7 +199,7 @@ set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=%ORA_BENCH_BENCHMARK_CORE_MULTIPLIER%_DEFAULT
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 call scripts\run_all_drivers.bat
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
@@ -210,7 +209,7 @@ set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=%ORA_BENCH_BENCHMARK_TRANSACTION_SIZE%_DEFAULT
 call scripts\run_all_drivers.bat
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )
@@ -220,7 +219,7 @@ set ORA_BENCH_BENCHMARK_BATCH_SIZE=0
 set ORA_BENCH_BENCHMARK_CORE_MULTIPLIER=1
 set ORA_BENCH_BENCHMARK_TRANSACTION_SIZE=0
 call scripts\run_all_drivers.bat
-if %ERRORLEVEL% neq 0 (
+if ERRORLEVEL 1 (
     echo Processing of the script: %0 - step: 'call scripts\run_all_drivers.bat' was aborted, error code=%ERRORLEVEL%
     exit -1073741510
 )

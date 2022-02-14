@@ -40,7 +40,7 @@ if [ -z "$1" ]; then
     echo "erlang             - Erlang and oranif"
     echo "go                 - Go and godror"
     echo "java               - Java and Oracle JDBC"
-    echo "julia_jdbc         - Julia and JDBC.jl"
+#    echo "julia_jdbc         - Julia and JDBC.jl"
     echo "julia_oracle       - Julia and Oracle.jl"
     echo "kotlin             - Kotlin and Oracle JDBC"
     echo "nim                - Nim and nimodpi"
@@ -157,7 +157,7 @@ fi
 
 if [ "${ORA_BENCH_RUN_DB_21_3_XE}" = "true" ]; then
     export ORA_BENCH_BENCHMARK_DATABASE=db_21_3_xe
-    export ORA_BENCH_CONNECTION_SERVICE=xe 
+    export ORA_BENCH_CONNECTION_SERVICE=xe
     if ! { /bin/bash scripts/run_properties_${ORA_BENCH_PROPERTIES}.sh; }; then
         exit 255
     fi
