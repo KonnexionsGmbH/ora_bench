@@ -1,6 +1,6 @@
 plugins {
-    id("org.jetbrains.dokka") version "1.6.0"
-    kotlin("jvm") version "1.6.10"
+    id("org.jetbrains.dokka") version "1.7.10"
+    kotlin("jvm") version "1.7.10"
     application
 }
 
@@ -15,16 +15,16 @@ repositories {
 }
 
 dependencies {
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.10")
-    implementation("com.oracle.database.jdbc:ojdbc11:21.5.0.0")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.10")
+    implementation("com.oracle.database.jdbc:ojdbc11:21.6.0.1")
     implementation("org.apache.commons:commons-csv:1.9.0")
     implementation("org.apache.commons:commons-math3:3.6.1")
-    implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.10")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10")
-    implementation("org.apache.logging.log4j:log4j-api:2.17.1")
-    implementation("org.apache.logging.log4j:log4j-core:2.17.1")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.1")
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.6.10"))
+    implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
+    implementation("org.apache.logging.log4j:log4j-api:2.18.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.18.0")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.18.0")
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.7.10"))
 }
 
 val jar by tasks.getting(Jar::class) {
