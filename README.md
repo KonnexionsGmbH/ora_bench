@@ -129,30 +129,30 @@ Excerpts from a sample file can be seen in the following image:
 
 In detail, the following information is available in the result files:
 
-| Column            | Format                          | Content |
-| :---              | :---                            | :--- |
-| release           | alphanumeric                    | config param `benchmark.release` |
-| benchmark id      | alphanumeric                    | config param `benchmark.id` |
-| benchmark comment | alphanumeric                    | config param `benchmark.comment` |
-| host name         | alphanumeric                    | config param `benchmark.host.name` |
-| no. cores         | integer                         | config param `benchmark.number.cores` |
-| os                | alphanumeric                    | config param `benchmark.os` |
-| user name         | alphanumeric                    | config param `benchmark.user.name` |
-| database          | alphanumeric                    | config param `benchmark.database` |
-| language          | alphanumeric                    | config param `benchmark.language` |
-| driver            | alphanumeric                    | config param `benchmark.driver` |
-| trial no.         | integer                         | `0` if action equals `benchmark`, trial no. otherwise |
-| SQL statement     | alphanumeric                    | SQL statement if action equals `query`, empty otherwise |
-| core multiplier   | integer                         | config param `benchmark.core.multiplier` |
-| fetch size        | integer                         | config param `connection.fetch.size` |
-| transaction size  | integer                         | config param `benchmark.transaction.size` |
-| bulk length       | integer                         | config param `file.bulk.length` |
-| bulk size         | integer                         | config param `file.bulk.size` |
-| batch size        | integer                         | config param `benchmark.batch.size` |
-| action            | alphanumeric                    | one of `benchmark`, `query` or `trial`   |
-| start day time    | yyyy-mm-dd hh24:mi:ss.fffffffff | current date and time at the start of the action |
-| end day time      | yyyy-mm-dd hh24:mi:ss.fffffffff | current date and time at the end of the action |
-| duration (sec)    | integer                         | time difference in seconds between start time and end time of the action |
+| Column            | Format                          | Content                                                                      |
+|:------------------|:--------------------------------|:-----------------------------------------------------------------------------|
+| release           | alphanumeric                    | config param `benchmark.release`                                             |
+| benchmark id      | alphanumeric                    | config param `benchmark.id`                                                  |
+| benchmark comment | alphanumeric                    | config param `benchmark.comment`                                             |
+| host name         | alphanumeric                    | config param `benchmark.host.name`                                           |
+| no. cores         | integer                         | config param `benchmark.number.cores`                                        |
+| os                | alphanumeric                    | config param `benchmark.os`                                                  |
+| user name         | alphanumeric                    | config param `benchmark.user.name`                                           |
+| database          | alphanumeric                    | config param `benchmark.database`                                            |
+| language          | alphanumeric                    | config param `benchmark.language`                                            |
+| driver            | alphanumeric                    | config param `benchmark.driver`                                              |
+| trial no.         | integer                         | `0` if action equals `benchmark`, trial no. otherwise                        |
+| SQL statement     | alphanumeric                    | SQL statement if action equals `query`, empty otherwise                      |
+| core multiplier   | integer                         | config param `benchmark.core.multiplier`                                     |
+| fetch size        | integer                         | config param `connection.fetch.size`                                         |
+| transaction size  | integer                         | config param `benchmark.transaction.size`                                    |
+| bulk length       | integer                         | config param `file.bulk.length`                                              |
+| bulk size         | integer                         | config param `file.bulk.size`                                                |
+| batch size        | integer                         | config param `benchmark.batch.size`                                          |
+| action            | alphanumeric                    | one of `benchmark`, `query` or `trial`                                       |
+| start day time    | yyyy-mm-dd hh24:mi:ss.fffffffff | current date and time at the start of the action                             |
+| end day time      | yyyy-mm-dd hh24:mi:ss.fffffffff | current date and time at the end of the action                               |
+| duration (sec)    | integer                         | time difference in seconds between start time and end time of the action     |
 | duration (ns)     | integer                         | time difference in nanoseconds between start time and end time of the action |
 
 ### <a name="2.5_bulk"></a> 2.5 Bulk File

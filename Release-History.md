@@ -17,26 +17,26 @@ Release Date: 27.10.2021
 
 ### Applied Software
 
-| Software              | Type     | Version           | Remark |
-| ---                   | ---      | ---               | ---    |
-| C++ (gcc)             | Language | 10.3.0            |   |
-| cx_Oracle             | Driver   | 8.2.1             |   |
-| Elixir                | Language | 1.12.3-otp-24     |   |
+| Software              | Type     | Version           | Remark  |
+| ---                   | ---      | ---               |---------|
+| C++ (gcc)             | Language | 10.3.0            |         |
+| cx_Oracle             | Driver   | 8.2.1             |         |
+| Elixir                | Language | 1.12.3-otp-24     |         |
 | Erlang                | Language | 24.1.3            | upgrade |
-| Go                    | Language | 1.17.2            |   |
+| Go                    | Language | 1.17.2            |         |
 | godror                | Driver   | v0.28.0           | upgrade |
-| JDBC.jl               | Driver   | v0.5.0            |   |
+| JDBC.jl               | Driver   | v0.5.0            |         |
 | Java                  | Language | openjdk-17.0.1    | upgrade |
-| Julia                 | Language | v1.6.3            |   |
-| Kotlin                | Language | 1.5.31            |   |
-| Oracle Instant Client | Driver   | 21.3.0.0.0        |   |
-| Oracle JDBC           | Driver   | 21.3.0.0          |   |
-| Oracle ODPI-C         | Driver   | 4.2.1             |   |
-| Oracle.jl             | Driver   | v0.3.1            |   |
-| oranif                | Driver   | 0.2.3             |   |
-| Python 3              | Language | 3.10.0            |   |
-| Rust                  | Language | 1.56.0            | new |
-| Rust-oracle           | Driver   | v0.5.3            | new |
+| Julia                 | Language | v1.6.3            |         |
+| Kotlin                | Language | 1.5.31            |         |
+| Oracle Instant Client | Driver   | 21.3.0.0.0        |         |
+| Oracle JDBC           | Driver   | 21.3.0.0          |         |
+| Oracle ODPI-C         | Driver   | 4.2.1             |         |
+| Oracle.jl             | Driver   | v0.3.1            |         |
+| oranif                | Driver   | 0.2.3             |         |
+| Python 3              | Language | 3.10.0            |         |
+| Rust                  | Language | 1.56.0            | new     |
+| Rust-oracle           | Driver   | v0.5.3            | new     |
 
 ----
 
@@ -52,24 +52,24 @@ Release Date: 11.10.2021
 
 ### Applied Software
 
-| Software              | Type     | Version           | Remark |
-| ---                   | ---      | ---               | ---    |
-| C++ (gcc)             | Language | 10.3.0            | upgrade |
-| cx_Oracle             | Driver   | 8.2.1             |   |
-| Elixir                | Language | 1.12.3-otp-24     | upgrade |
-| Erlang                | Language | 24.1.2            | upgrade |
-| Go                    | Language | 1.17.2            | upgrade |
-| godror                | Driver   | v0.27.1           | upgrade |
-| JDBC.jl               | Driver   | v0.5.0            | new |
-| Java                  | Language | openjdk-17        | upgrade |
-| Julia                 | Language | v1.6.3            | new |
-| Kotlin                | Language | 1.5.31            | upgrade |
-| Oracle Instant Client | Driver   | 21.3.0.0.0        | upgrade |
-| Oracle JDBC           | Driver   | 21.3.0.0          | upgrade |
-| Oracle ODPI-C         | Driver   | 4.2.1             |   |
-| Oracle.jl             | Driver   | v0.3.1            | new |
-| oranif                | Driver   | 0.2.3             |   |
-| Python 3              | Language | 3.10.0            | upgrade |
+| Software              | Type     | Version       | Remark  |
+|-----------------------|----------|---------------|---------|
+| C++ (gcc)             | Language | 10.3.0        | upgrade |
+| cx_Oracle             | Driver   | 8.2.1         |         |
+| Elixir                | Language | 1.12.3-otp-24 | upgrade |
+| Erlang                | Language | 24.1.2        | upgrade |
+| Go                    | Language | 1.17.2        | upgrade |
+| godror                | Driver   | v0.27.1       | upgrade |
+| JDBC.jl               | Driver   | v0.5.0        | new     |
+| Java                  | Language | openjdk-17    | upgrade |
+| Julia                 | Language | v1.6.3        | new     |
+| Kotlin                | Language | 1.5.31        | upgrade |
+| Oracle Instant Client | Driver   | 21.3.0.0.0    | upgrade |
+| Oracle JDBC           | Driver   | 21.3.0.0      | upgrade |
+| Oracle ODPI-C         | Driver   | 4.2.1         |         |
+| Oracle.jl             | Driver   | v0.3.1        | new     |
+| oranif                | Driver   | 0.2.3         |         |
+| Python 3              | Language | 3.10.0        | upgrade |
 
 ----
 

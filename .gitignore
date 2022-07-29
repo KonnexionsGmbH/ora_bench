@@ -1,6 +1,7 @@
 /*.log
 /.classpath
-/.gradle/
+# Ignore Gradle project-specific cache directory
+.gradle
 /.history/
 /.idea/
 /.project
@@ -38,6 +39,8 @@
 /tmp/
 /tmp/go.sum
 OraBench.exe
+# Ignore Gradle build output directory
+build
 lang/c/OraBench.obj
 lang/c/config.obj
 lang/c/odpi/
