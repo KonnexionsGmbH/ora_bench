@@ -17,31 +17,31 @@ Release Date: dd.mm.2021
 
 ### Applied Software
 
-| Software             | Type       | Version        | Remark  | Source              |
-|----------------------|------------|----------------|---------|---------------------|
-| C++ (gcc)            | Language   | 10.3.0         |         |                     |
-| C++ (gcc) - ODPI-C   | Driver     | 4.3            | upgrade |                     | 
-| Elixir               | Language   | 1.13.3-otp-24  | upgrade |                     |
-| Elixir- oranif       | Driver     | 0.2.3          |         |                     |
-| Erlang               | Language   | 24.2.1         | upgrade |                     |
-| Erlang - oranif      | Driver     | see Elixir     |         |                     |
-| Go                   | Language   | 1.17.7         | upgrade |                     |
-| Go - godror          | Driver     | v0.30.2        | upgrade | go.mod              |
-| Go - logrus          | Package    | v1.8.1         | upgrade |                     |
-| Java                 | Language   | openjdk-17.0.2 | upgrade |                     |
-| Java - JDBC          | Driver     | 21.5.0.0       | upgrade | gradle dependencies |
-| Julia                | Language   | v1.7.2         | upgrade |                     |
-| ~~Julia - JDBC.jl~~  | ~~Driver~~ | ~~v0.5.0~~     | n/a     |                     |
-| Julia - Oracle.jl    | Driver     | v0.3.1         |         |                     |
-| Kotlin               | Language   | 1.6.10         | upgrade |                     |
-| Kotlin - JDBC        | Driver     | see Java       |         |                     |
-| Nim                  | Language   | 1.6.4          | new     |                     |
-| Nim - nimodpi        | Driver     | ???            | new     |                     |
-| Python 3             | Language   | 3.10.2         | upgrade |                     |
-| Python 3 - cx_Oracle | Driver     | 8.3.0          | upgrade |                     |
-| Python 3 - PyYAML    | Package    | 6.0            | upgrade |                     |
-| Rust                 | Language   | 1.56.1         | upgrade |                     |
-| Rust - Rust-oracle   | Driver     | v0.5.3         |         |                     |
+| Software             | Type          | Version        | Remark  | Source              |
+|----------------------|---------------|----------------|---------|---------------------|
+| C++ (gcc)            | Language      | 10.3.0         |         |                     |
+| C++ (gcc) - ODPI-C   | Driver        | 4.4.1          | upgrade |                     | 
+| Elixir               | Language      | 1.13.4-otp-25  | upgrade |                     |
+| Elixir- oranif       | Driver        | 0.2.3          |         |                     |
+| Erlang               | Language      | 25.0.3         | upgrade |                     |
+| Erlang - oranif      | Driver        | see Elixir     |         |                     |
+| Go                   | Language      | 1.18.4         | upgrade |                     |
+| Go - godror          | Driver        | v0.34.0        | upgrade | go.mod              |
+| Go - logrus          | Package       | v1.8.1         | upgrade |                     |
+| Java                 | Language      | openjdk-18.0.2 | upgrade |                     |
+| Java - JDBC          | Driver        | 21.6.0.0.1     | upgrade | gradle dependencies |
+| Julia                | Language      | v1.7.3         | upgrade |                     |
+| ~~Julia - JDBC.jl~~  | ~~Driver~~    | ~~v0.5.0~~     | n/a     |                     |
+| Julia - Oracle.jl    | Driver        | v0.3.1         |         |                     |
+| Kotlin               | Language      | 1.7.10         | upgrade |                     |
+| Kotlin - JDBC        | Driver        | see Java       |         |                     |
+| ~~Nim~~              | ~~Language~~  | ~~1.6.6~~      | new     |                     |
+| ~~Nim - nimodpi~~    | ~~Driver~~    | ~~???~~        | new     |                     |
+| Python 3             | Language      | 3.10.5         | upgrade |                     |
+| Python 3 - cx_Oracle | Driver        | 8.3.0          | upgrade |                     |
+| Python 3 - PyYAML    | Package       | 6.0            | upgrade |                     |
+| Rust                 | Language      | 1.62.1         | upgrade |                     |
+| Rust - Rust-oracle   | Driver        | v0.5.5         | upgrade |                     |
 
 ### Open issues
 
