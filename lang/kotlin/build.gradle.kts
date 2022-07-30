@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.10")
-    implementation("com.oracle.database.jdbc:ojdbc11:21.6.0.1")
+    implementation("com.oracle.database.jdbc:ojdbc11:21.6.0.0.1")
     implementation("org.apache.commons:commons-csv:1.9.0")
     implementation("org.apache.commons:commons-math3:3.6.1")
     implementation("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.10")
